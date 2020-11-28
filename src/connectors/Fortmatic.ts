@@ -14,7 +14,7 @@ const CHAIN_ID_NETWORK_ARGUMENT: {
   [ChainId.MAINNET]: undefined,
   [ChainId.ROPSTEN]: "ropsten",
   [ChainId.RINKEBY]: "rinkeby",
-  [ChainId.KOVAN]: "kovan"
+  [ChainId.KOVAN]: "kovan",
 };
 
 export class FortmaticConnector extends FortmaticConnectorCore {
@@ -25,7 +25,7 @@ export class FortmaticConnector extends FortmaticConnectorCore {
       if (chainId in CHAIN_ID_NETWORK_ARGUMENT) {
         this.fortmatic = new Fortmatic(
           apiKey,
-          CHAIN_ID_NETWORK_ARGUMENT[chainId as FormaticSupportedChains]
+          CHAIN_ID_NETWORK_ARGUMENT[chainId as FormaticSupportedChains],
         );
       } else {
         throw new Error(`Unsupported network ID: ${chainId}`);
@@ -34,7 +34,7 @@ export class FortmaticConnector extends FortmaticConnectorCore {
 
     const provider = this.fortmatic.getProvider();
 
-    const pollForOverlayReady = new Promise(resolve => {
+    const pollForOverlayReady = new Promise((resolve) => {
       const interval = setInterval(() => {
         if (provider.overlayReady) {
           clearInterval(interval);
@@ -46,13 +46,13 @@ export class FortmaticConnector extends FortmaticConnectorCore {
 
     const [account] = await Promise.all([
       provider.enable().then((accounts: string[]) => accounts[0]),
-      pollForOverlayReady
+      pollForOverlayReady,
     ]);
 
     return {
       provider: this.fortmatic.getProvider(),
       chainId: (this as any).chainId,
-      account
+      account,
     };
   }
 }

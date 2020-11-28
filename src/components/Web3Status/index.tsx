@@ -28,7 +28,7 @@ import {
   walletconnect,
   walletlink,
   fortmatic,
-  portis
+  portis,
 } from "../../connectors";
 
 const SpinnerWrapper = styled(Spinner)`
@@ -157,11 +157,11 @@ export default function Web3Status() {
   }, [allTransactions]);
 
   const pending = sortedRecentTransactions
-    .filter(tx => !tx.receipt)
-    .map(tx => tx.hash);
+    .filter((tx) => !tx.receipt)
+    .map((tx) => tx.hash);
   const confirmed = sortedRecentTransactions
-    .filter(tx => tx.receipt)
-    .map(tx => tx.hash);
+    .filter((tx) => tx.receipt)
+    .map((tx) => tx.hash);
 
   const hasPendingTransactions = !!pending.length;
 

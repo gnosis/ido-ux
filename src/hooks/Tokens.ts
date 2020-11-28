@@ -4,7 +4,7 @@ import { ALL_TOKENS } from "../constants/tokens";
 import {
   useAddUserToken,
   useFetchTokenByAddress,
-  useUserAddedTokens
+  useUserAddedTokens,
 } from "../state/user/hooks";
 import { isAddress } from "../utils";
 
@@ -25,7 +25,7 @@ export function useAllTokens(): { [address: string]: Token } {
         },
         // must make a copy because reduce modifies the map, and we do not
         // want to make a copy in every iteration
-        { ...ALL_TOKENS[chainId as ChainId] }
+        { ...ALL_TOKENS[chainId as ChainId] },
       );
 
     const weth = WETH[chainId as ChainId];
@@ -51,7 +51,7 @@ export function useToken(tokenAddress?: string): Token | undefined {
 // gets token information by address (typically user input) and
 // automatically adds it for the user if the token address is valid
 export function useTokenByAddressAndAutomaticallyAdd(
-  tokenAddress?: string
+  tokenAddress?: string,
 ): Token | undefined {
   const fetchTokenByAddress = useFetchTokenByAddress();
   const addToken = useAddUserToken();
@@ -64,7 +64,7 @@ export function useTokenByAddressAndAutomaticallyAdd(
     if (weth && weth.address === isAddress(tokenAddress)) return;
 
     if (tokenAddress && !token) {
-      fetchTokenByAddress(tokenAddress).then(token => {
+      fetchTokenByAddress(tokenAddress).then((token) => {
         if (token !== null) {
           addToken(token);
         }

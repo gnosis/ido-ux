@@ -83,7 +83,6 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
       ? "  margin: 0 0.25rem 0 0.75rem;"
       : "  margin: 0 0.25rem 0 0.25rem;"}
   font-size:  ${({ active }) => (active ? "20px" : "16px")};
-
 `;
 
 const StyledBalanceMax = styled.button`
@@ -145,7 +144,7 @@ export default function CurrencyInputPanel({
   hideInput = false,
   showSendWithSwap = false,
   otherSelectedTokenAddress = null,
-  id
+  id,
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation();
 
@@ -189,7 +188,7 @@ export default function CurrencyInputPanel({
               <NumericalInput
                 className="token-amount-input"
                 value={value}
-                onUserBuyAmountInput={val => {
+                onUserBuyAmountInput={(val) => {
                   onUserBuyAmountInput(val);
                 }}
               />
@@ -230,7 +229,7 @@ export default function CurrencyInputPanel({
                       "..." +
                       token.symbol.slice(
                         token.symbol.length - 5,
-                        token.symbol.length
+                        token.symbol.length,
                       )
                     : token?.symbol) || t("selectToken")}
                 </StyledTokenName>

@@ -5,7 +5,7 @@ import { warningSeverity } from "../../utils/prices";
 import { ErrorText } from "./styleds";
 
 export default function FormattedPriceImpact({
-  priceImpact
+  priceImpact,
 }: {
   priceImpact?: Percent;
 }) {

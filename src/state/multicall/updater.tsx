@@ -11,7 +11,7 @@ import {
   errorFetchingMulticallResults,
   fetchingMulticallResults,
   parseCallKey,
-  updateMulticallResults
+  updateMulticallResults,
 } from "./actions";
 
 // chunk calls so we do not exceed the gas limit
@@ -25,7 +25,7 @@ const CALL_CHUNK_SIZE = 500;
  */
 export function activeListeningKeys(
   allListeners: AppState["multicall"]["callListeners"],
-  chainId?: number
+  chainId?: number,
 ): { [callKey: string]: number } {
   if (!allListeners || !chainId) return {};
   const listeners = allListeners[chainId];
@@ -36,7 +36,7 @@ export function activeListeningKeys(
       const keyListeners = listeners[callKey];
 
       memo[callKey] = Object.keys(keyListeners)
-        .filter(key => {
+        .filter((key) => {
           const blocksPerFetch = parseInt(key);
           if (blocksPerFetch <= 0) return false;
           return keyListeners[blocksPerFetch] > 0;
@@ -46,7 +46,7 @@ export function activeListeningKeys(
         }, Infinity);
       return memo;
     },
-    {}
+    {},
   );
 }
 
@@ -61,14 +61,14 @@ export function outdatedListeningKeys(
   callResults: AppState["multicall"]["callResults"],
   listeningKeys: { [callKey: string]: number },
   chainId: number | undefined,
-  latestBlockNumber: number | undefined
+  latestBlockNumber: number | undefined,
 ): string[] {
   if (!chainId || !latestBlockNumber) return [];
   const results = callResults[chainId];
   // no results at all, load everything
   if (!results) return Object.keys(listeningKeys);
 
-  return Object.keys(listeningKeys).filter(callKey => {
+  return Object.keys(listeningKeys).filter((callKey) => {
     const blocksPerFetch = listeningKeys[callKey];
 
     const data = callResults[chainId][callKey];
@@ -92,7 +92,7 @@ export function outdatedListeningKeys(
 export default function Updater() {
   const dispatch = useDispatch<AppDispatch>();
   const state = useSelector<AppState, AppState["multicall"]>(
-    state => state.multicall
+    (state) => state.multicall,
   );
   // wait for listeners to settle before triggering updates
   const debouncedListeners = useDebounce(state.callListeners, 100);
@@ -109,13 +109,13 @@ export default function Updater() {
       state.callResults,
       listeningKeys,
       chainId,
-      latestBlockNumber
+      latestBlockNumber,
     );
   }, [chainId, state.callResults, listeningKeys, latestBlockNumber]);
 
   const serializedOutdatedCallKeys = useMemo(
     () => JSON.stringify(unserializedOutdatedCallKeys.sort()),
-    [unserializedOutdatedCallKeys]
+    [unserializedOutdatedCallKeys],
   );
 
   useEffect(() => {
@@ -123,7 +123,7 @@ export default function Updater() {
 
     const outdatedCallKeys: string[] = JSON.parse(serializedOutdatedCallKeys);
     if (outdatedCallKeys.length === 0) return;
-    const calls = outdatedCallKeys.map(key => parseCallKey(key));
+    const calls = outdatedCallKeys.map((key) => parseCallKey(key));
 
     const chunkedCalls = chunkArray(calls, CALL_CHUNK_SIZE);
 
@@ -131,13 +131,13 @@ export default function Updater() {
       fetchingMulticallResults({
         calls,
         chainId,
-        fetchingBlockNumber: latestBlockNumber
-      })
+        fetchingBlockNumber: latestBlockNumber,
+      }),
     );
 
     chunkedCalls.forEach((chunk, index) =>
       multicallContract
-        .aggregate(chunk.map(obj => [obj.address, obj.callData]))
+        .aggregate(chunk.map((obj) => [obj.address, obj.callData]))
         .then(([resultsBlockNumber, returnData]: [BigNumber, string[]]) => {
           // accumulates the length of all previous indices
           const firstCallKeyIndex = chunkedCalls
@@ -155,10 +155,10 @@ export default function Updater() {
                     memo[callKey] = returnData[i] ?? null;
                     return memo;
                   },
-                  {}
+                  {},
                 ),
-              blockNumber: resultsBlockNumber.toNumber()
-            })
+              blockNumber: resultsBlockNumber.toNumber(),
+            }),
           );
         })
         .catch((error: any) => {
@@ -166,23 +166,23 @@ export default function Updater() {
             "Failed to fetch multicall chunk",
             chunk,
             chainId,
-            error
+            error,
           );
           dispatch(
             errorFetchingMulticallResults({
               calls: chunk,
               chainId,
-              fetchingBlockNumber: latestBlockNumber
-            })
+              fetchingBlockNumber: latestBlockNumber,
+            }),
           );
-        })
+        }),
     );
   }, [
     chainId,
     multicallContract,
     dispatch,
     serializedOutdatedCallKeys,
-    latestBlockNumber
+    latestBlockNumber,
   ]);
 
   return null;

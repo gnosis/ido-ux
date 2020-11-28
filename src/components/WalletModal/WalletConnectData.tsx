@@ -17,7 +17,7 @@ interface WalletConnectDataProps {
 
 export default function WalletConnectData({
   uri = "",
-  size
+  size,
 }: WalletConnectDataProps) {
   return (
     <QRCodeWrapper>{uri && <QRCode size={size} value={uri} />}</QRCodeWrapper>

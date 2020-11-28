@@ -14,7 +14,7 @@ import useENSName from "./useENSName";
 // returns null with invalid arguments
 export function useSendCallback(
   amount?: TokenAmount,
-  recipient?: string
+  recipient?: string,
 ): null | (() => Promise<string>) {
   const { library, account, chainId } = useActiveWeb3React();
   const addTransaction = useTransactionAdder();
@@ -22,7 +22,7 @@ export function useSendCallback(
   const tokenContract = useTokenContract(amount?.token?.address);
   const balance = useTokenBalanceTreatingWETHasETH(
     account ?? undefined,
-    amount?.token
+    amount?.token,
   );
 
   return useMemo(() => {
@@ -42,7 +42,7 @@ export function useSendCallback(
         return getSigner(library, account)
           .sendTransaction({
             to: recipient,
-            value: BigNumber.from(amount.raw.toString())
+            value: BigNumber.from(amount.raw.toString()),
           })
           .then((response: TransactionResponse) => {
             addTransaction(response, {
@@ -52,7 +52,7 @@ export function useSendCallback(
                 " " +
                 token?.symbol +
                 " to " +
-                (ensName ?? recipient)
+                (ensName ?? recipient),
             });
             return response.hash;
           })
@@ -63,10 +63,10 @@ export function useSendCallback(
       } else {
         return tokenContract.estimateGas
           .transfer(recipient, amount.raw.toString())
-          .then(estimatedGasLimit =>
+          .then((estimatedGasLimit) =>
             tokenContract
               .transfer(recipient, amount.raw.toString(), {
-                gasLimit: calculateGasMargin(estimatedGasLimit)
+                gasLimit: calculateGasMargin(estimatedGasLimit),
               })
               .then((response: TransactionResponse) => {
                 addTransaction(response, {
@@ -76,12 +76,12 @@ export function useSendCallback(
                     " " +
                     token.symbol +
                     " to " +
-                    (ensName ?? recipient)
+                    (ensName ?? recipient),
                 });
                 return response.hash;
-              })
+              }),
           )
-          .catch(error => {
+          .catch((error) => {
             console.error("Failed token transfer", error);
             throw error;
           });
@@ -96,6 +96,6 @@ export function useSendCallback(
     ensName,
     recipient,
     tokenContract,
-    balance
+    balance,
   ]);
 }

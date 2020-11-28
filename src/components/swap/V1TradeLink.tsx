@@ -7,7 +7,7 @@ import { YellowCard } from "../Card";
 import { AutoColumn } from "../Column";
 
 export default function V1TradeLink({
-  v1TradeLinkIfBetter
+  v1TradeLinkIfBetter,
 }: {
   v1TradeLinkIfBetter: string;
 }) {

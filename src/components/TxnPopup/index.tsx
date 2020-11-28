@@ -29,7 +29,7 @@ export default function TxnPopup({
   hash,
   success,
   summary,
-  popKey
+  popKey,
 }: {
   hash: string;
   success?: boolean;
@@ -44,14 +44,14 @@ export default function TxnPopup({
 
   const removeThisPopup = useCallback(() => removePopup(popKey), [
     popKey,
-    removePopup
+    removePopup,
   ]);
 
   useInterval(
     () => {
       count > 150 ? removeThisPopup() : setCount(count + 1);
     },
-    isRunning ? delay : null
+    isRunning ? delay : null,
   );
 
   return (

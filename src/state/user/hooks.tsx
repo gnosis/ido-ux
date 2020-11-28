@@ -12,7 +12,7 @@ import {
   removeSerializedToken,
   SerializedPair,
   SerializedToken,
-  updateUserDarkMode
+  updateUserDarkMode,
 } from "./actions";
 import flatMap from "lodash.flatmap";
 
@@ -22,7 +22,7 @@ function serializeToken(token: Token): SerializedToken {
     address: token.address,
     decimals: token.decimals,
     symbol: token.symbol,
-    name: token.name
+    name: token.name,
   };
 }
 
@@ -32,7 +32,7 @@ function deserializeToken(serializedToken: SerializedToken): Token {
     serializedToken.address,
     serializedToken.decimals,
     serializedToken.symbol,
-    serializedToken.name
+    serializedToken.name,
   );
 }
 
@@ -43,9 +43,9 @@ export function useIsDarkMode(): boolean {
   >(
     ({ user: { matchesDarkMode, userDarkMode } }) => ({
       userDarkMode,
-      matchesDarkMode
+      matchesDarkMode,
     }),
-    shallowEqual
+    shallowEqual,
   );
 
   return userDarkMode === null ? matchesDarkMode : userDarkMode;
@@ -63,7 +63,7 @@ export function useDarkModeManager(): [boolean, () => void] {
 }
 
 export function useFetchTokenByAddress(): (
-  address: string
+  address: string,
 ) => Promise<Token | null> {
   const { library, chainId } = useActiveWeb3React();
 
@@ -74,7 +74,7 @@ export function useFetchTokenByAddress(): (
       if (!validatedAddress) return null;
       const { name, symbol, decimals } = await getTokenInfoWithFallback(
         validatedAddress,
-        library
+        library,
       );
 
       if (decimals === null) {
@@ -83,7 +83,7 @@ export function useFetchTokenByAddress(): (
         return new Token(chainId, validatedAddress, decimals, symbol, name);
       }
     },
-    [library, chainId]
+    [library, chainId],
   );
 }
 
@@ -93,33 +93,33 @@ export function useAddUserToken(): (token: Token) => void {
     (token: Token) => {
       dispatch(addSerializedToken({ serializedToken: serializeToken(token) }));
     },
-    [dispatch]
+    [dispatch],
   );
 }
 
 export function useRemoveUserAddedToken(): (
   chainId: number,
-  address: string
+  address: string,
 ) => void {
   const dispatch = useDispatch<AppDispatch>();
   return useCallback(
     (chainId: number, address: string) => {
       dispatch(removeSerializedToken({ chainId, address }));
     },
-    [dispatch]
+    [dispatch],
   );
 }
 
 export function useUserAddedTokens(): Token[] {
   const { chainId } = useActiveWeb3React();
   const serializedTokensMap = useSelector<AppState, AppState["user"]["tokens"]>(
-    ({ user: { tokens } }) => tokens
+    ({ user: { tokens } }) => tokens,
   );
 
   return useMemo(() => {
     if (!chainId) return [];
     return Object.values(serializedTokensMap[chainId as ChainId] ?? {}).map(
-      deserializeToken
+      deserializeToken,
     );
   }, [serializedTokensMap, chainId]);
 }
@@ -129,7 +129,7 @@ const ZERO = JSBI.BigInt(0);
 function serializePair(pair: Pair): SerializedPair {
   return {
     token0: serializeToken(pair.token0),
-    token1: serializeToken(pair.token1)
+    token1: serializeToken(pair.token1),
   };
 }
 
@@ -140,7 +140,7 @@ export function usePairAdder(): (pair: Pair) => void {
     (pair: Pair) => {
       dispatch(addSerializedPair({ serializedPair: serializePair(pair) }));
     },
-    [dispatch]
+    [dispatch],
   );
 }
 
@@ -150,12 +150,12 @@ export function usePairAdder(): (pair: Pair) => void {
  */
 export function useTokenWarningDismissal(
   chainId?: number,
-  token?: Token
+  token?: Token,
 ): [boolean, null | (() => void)] {
   const dismissalState = useSelector<
     AppState,
     AppState["user"]["dismissedTokenWarnings"]
-  >(state => state.user.dismissedTokenWarnings);
+  >((state) => state.user.dismissedTokenWarnings);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -169,7 +169,7 @@ export function useTokenWarningDismissal(
       ? null
       : () =>
           dispatch(
-            dismissTokenWarning({ chainId, tokenAddress: token.address })
+            dismissTokenWarning({ chainId, tokenAddress: token.address }),
           );
 
     return [dismissed, callback];
@@ -183,15 +183,15 @@ const bases = [
     "0x6B175474E89094C44Da98b954EedeAC495271d0F",
     18,
     "DAI",
-    "Dai Stablecoin"
+    "Dai Stablecoin",
   ),
   new Token(
     ChainId.MAINNET,
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     6,
     "USDC",
-    "USD//C"
-  )
+    "USD//C",
+  ),
 ];
 
 export function useAllDummyPairs(): Pair[] {
@@ -203,47 +203,47 @@ export function useAllDummyPairs(): Pair[] {
       flatMap(
         Object.values(tokens)
           // select only tokens on the current chain
-          .filter(token => token.chainId === chainId),
-        token => {
+          .filter((token) => token.chainId === chainId),
+        (token) => {
           // for each token on the current chain,
           return (
             bases
               // loop through all the bases valid for the current chain,
-              .filter(base => base.chainId === chainId)
+              .filter((base) => base.chainId === chainId)
               // to construct pairs of the given token with each base
-              .map(base => {
+              .map((base) => {
                 if (base.equals(token)) {
                   return null;
                 } else {
                   return new Pair(
                     new TokenAmount(base, ZERO),
-                    new TokenAmount(token, ZERO)
+                    new TokenAmount(token, ZERO),
                   );
                 }
               })
-              .filter(pair => !!pair) as Pair[]
+              .filter((pair) => !!pair) as Pair[]
           );
-        }
+        },
       ),
-    [tokens, chainId]
+    [tokens, chainId],
   );
 
   const savedSerializedPairs = useSelector<AppState, AppState["user"]["pairs"]>(
-    ({ user: { pairs } }) => pairs
+    ({ user: { pairs } }) => pairs,
   );
 
   const userPairs = useMemo(
     () =>
       Object.values<SerializedPair>(
-        savedSerializedPairs[chainId ?? -1] ?? {}
+        savedSerializedPairs[chainId ?? -1] ?? {},
       ).map(
-        pair =>
+        (pair) =>
           new Pair(
             new TokenAmount(deserializeToken(pair.token0), ZERO),
-            new TokenAmount(deserializeToken(pair.token1), ZERO)
-          )
+            new TokenAmount(deserializeToken(pair.token1), ZERO),
+          ),
       ),
-    [savedSerializedPairs, chainId]
+    [savedSerializedPairs, chainId],
   );
 
   return useMemo(() => {
@@ -252,7 +252,7 @@ export function useAllDummyPairs(): Pair[] {
       generatedPairs
         .concat(userPairs)
         // filter out duplicate pairs
-        .filter(pair => {
+        .filter((pair) => {
           const pairKey = `${pair.token0.address}:${pair.token1.address}`;
           if (cache[pairKey]) {
             return false;

@@ -15,7 +15,7 @@ interface TradePriceProps {
 export default function TradePrice({
   trade,
   showInverted,
-  setShowInverted
+  setShowInverted,
 }: TradePriceProps) {
   const theme = useContext(ThemeContext);
   const inputToken = trade?.inputAmount?.token;
@@ -37,7 +37,7 @@ export default function TradePrice({
       style={{
         justifyContent: "center",
         alignItems: "center",
-        display: "flex"
+        display: "flex",
       }}
     >
       {price && `${price} ${label}`}

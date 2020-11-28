@@ -12,7 +12,7 @@ import TokenLogo from "../TokenLogo";
 export function TransferModalHeader({
   recipient,
   ENSName,
-  amount
+  amount,
 }: {
   recipient: string;
   ENSName: string;

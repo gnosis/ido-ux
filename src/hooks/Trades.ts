@@ -8,14 +8,14 @@ const DAI = new Token(
   "0x6B175474E89094C44Da98b954EedeAC495271d0F",
   18,
   "DAI",
-  "Dai Stablecoin"
+  "Dai Stablecoin",
 );
 const USDC = new Token(
   ChainId.MAINNET,
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   6,
   "USDC",
-  "USD//C"
+  "USD//C",
 );
 function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
   const { chainId } = useActiveWeb3React();
@@ -34,25 +34,25 @@ function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
   // get token<->USDC pairs
   const aToUSDC = usePair(
     tokenA,
-    chainId === ChainId.MAINNET ? USDC : undefined
+    chainId === ChainId.MAINNET ? USDC : undefined,
   );
   const bToUSDC = usePair(
     tokenB,
-    chainId === ChainId.MAINNET ? USDC : undefined
+    chainId === ChainId.MAINNET ? USDC : undefined,
   );
 
   // get connecting pairs
   const DAIToETH = usePair(
     chainId === ChainId.MAINNET ? DAI : undefined,
-    WETH[chainId as ChainId]
+    WETH[chainId as ChainId],
   );
   const USDCToETH = usePair(
     chainId === ChainId.MAINNET ? USDC : undefined,
-    WETH[chainId as ChainId]
+    WETH[chainId as ChainId],
   );
   const DAIToUSDC = usePair(
     chainId === ChainId.MAINNET ? DAI : undefined,
-    chainId === ChainId.MAINNET ? USDC : undefined
+    chainId === ChainId.MAINNET ? USDC : undefined,
   );
 
   // only pass along valid pairs, non-duplicated pairs
@@ -68,7 +68,7 @@ function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
         bToUSDC,
         DAIToETH,
         USDCToETH,
-        DAIToUSDC
+        DAIToUSDC,
       ]
         // filter out invalid pairs
         .filter((p): p is Pair => !!p)
@@ -77,8 +77,9 @@ function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
           (p, i, pairs) =>
             i ===
             pairs.findIndex(
-              pair => pair?.liquidityToken.address === p.liquidityToken.address
-            )
+              (pair) =>
+                pair?.liquidityToken.address === p.liquidityToken.address,
+            ),
         ),
     [
       pairBetween,
@@ -90,8 +91,8 @@ function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
       bToUSDC,
       DAIToETH,
       USDCToETH,
-      DAIToUSDC
-    ]
+      DAIToUSDC,
+    ],
   );
 }
 
@@ -100,7 +101,7 @@ function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
  */
 export function useTradeExactIn(
   amountIn?: TokenAmount,
-  tokenOut?: Token
+  tokenOut?: Token,
 ): Trade | null {
   const inputToken = amountIn?.token;
   const outputToken = tokenOut;
@@ -122,7 +123,7 @@ export function useTradeExactIn(
  */
 export function useTradeExactOut(
   tokenIn?: Token,
-  amountOut?: TokenAmount
+  amountOut?: TokenAmount,
 ): Trade | null {
   const inputToken = tokenIn;
   const outputToken = amountOut?.token;

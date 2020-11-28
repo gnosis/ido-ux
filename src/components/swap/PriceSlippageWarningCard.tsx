@@ -7,7 +7,7 @@ import { AutoColumn } from "../Column";
 import { RowBetween, RowFixed } from "../Row";
 
 export function PriceSlippageWarningCard({
-  priceSlippage
+  priceSlippage,
 }: {
   priceSlippage: Percent;
 }) {

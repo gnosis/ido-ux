@@ -41,14 +41,14 @@ export function formatSeconds(seconds: number): string {
   return s;
 }
 
-const calculateTimeLeft = auctionEndDate => {
+const calculateTimeLeft = (auctionEndDate) => {
   const diff = auctionEndDate - +new Date();
   if (diff < 0) return 0;
   return diff;
 };
 
 export default function CountdownTimer({
-  auctionEndDate
+  auctionEndDate,
 }: {
   auctionEndDate: number;
 }) {

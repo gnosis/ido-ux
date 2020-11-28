@@ -17,10 +17,10 @@ const store = configureStore({
     user,
     transactions,
     swap,
-    multicall
+    multicall,
   },
   middleware: [...getDefaultMiddleware(), save({ states: PERSISTED_KEYS })],
-  preloadedState: load({ states: PERSISTED_KEYS })
+  preloadedState: load({ states: PERSISTED_KEYS }),
 });
 
 store.dispatch(updateVersion());

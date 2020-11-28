@@ -12,7 +12,7 @@ export default function Updater() {
 
   const dispatch = useDispatch<AppDispatch>();
   const transactions = useSelector<AppState, AppState["transactions"]>(
-    state => state.transactions
+    (state) => state.transactions,
   );
 
   const allTransactions = transactions[chainId ?? -1] ?? {};
@@ -24,11 +24,11 @@ export default function Updater() {
     if (!chainId || !library || !lastBlockNumber) return;
 
     Object.keys(allTransactions)
-      .filter(hash => !allTransactions[hash].receipt)
-      .forEach(hash => {
+      .filter((hash) => !allTransactions[hash].receipt)
+      .forEach((hash) => {
         library
           .getTransactionReceipt(hash)
-          .then(receipt => {
+          .then((receipt) => {
             if (receipt) {
               dispatch(
                 finalizeTransaction({
@@ -42,9 +42,9 @@ export default function Updater() {
                     status: receipt.status,
                     to: receipt.to,
                     transactionHash: receipt.transactionHash,
-                    transactionIndex: receipt.transactionIndex
-                  }
-                })
+                    transactionIndex: receipt.transactionIndex,
+                  },
+                }),
               );
               // add success or failure popup
               if (receipt.status === 1) {
@@ -52,21 +52,21 @@ export default function Updater() {
                   txn: {
                     hash,
                     success: true,
-                    summary: allTransactions[hash]?.summary
-                  }
+                    summary: allTransactions[hash]?.summary,
+                  },
                 });
               } else {
                 addPopup({
                   txn: {
                     hash,
                     success: false,
-                    summary: allTransactions[hash]?.summary
-                  }
+                    summary: allTransactions[hash]?.summary,
+                  },
                 });
               }
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.error(`failed to check transaction hash: ${hash}`, error);
           });
       });

@@ -13,16 +13,16 @@ const PORTIS_ID = process.env.REACT_APP_PORTIS_ID;
 
 if (typeof NETWORK_URL === "undefined") {
   throw new Error(
-    `REACT_APP_NETWORK_URL must be a defined environment variable`
+    `REACT_APP_NETWORK_URL must be a defined environment variable`,
   );
 }
 
 export const network = new NetworkConnector({
-  urls: { [Number(process.env.REACT_APP_CHAIN_ID)]: NETWORK_URL }
+  urls: { [Number(process.env.REACT_APP_CHAIN_ID)]: NETWORK_URL },
 });
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 5777]
+  supportedChainIds: [1, 3, 4, 5, 42, 5777],
 });
 
 // mainnet only
@@ -30,19 +30,19 @@ export const walletconnect = new WalletConnectConnector({
   rpc: { 1: NETWORK_URL },
   bridge: "https://bridge.walletconnect.org",
   qrcode: false,
-  pollingInterval: POLLING_INTERVAL
+  pollingInterval: POLLING_INTERVAL,
 });
 
 // mainnet only
 export const fortmatic = new FortmaticConnector({
   apiKey: FORMATIC_KEY ?? "",
-  chainId: 1
+  chainId: 1,
 });
 
 // mainnet only
 export const portis = new PortisConnector({
   dAppId: PORTIS_ID ?? "",
-  networks: [1]
+  networks: [1],
 });
 
 // mainnet only
@@ -50,5 +50,5 @@ export const walletlink = new WalletLinkConnector({
   url: NETWORK_URL,
   appName: "Uniswap",
   appLogoUrl:
-    "https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg"
+    "https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg",
 });

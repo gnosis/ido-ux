@@ -1,7 +1,7 @@
 import {
   addMulticallListeners,
   removeMulticallListeners,
-  updateMulticallResults
+  updateMulticallResults,
 } from "./actions";
 import reducer, { MulticallState } from "./reducer";
 import { Store, createStore } from "@reduxjs/toolkit";
@@ -25,20 +25,20 @@ describe("multicall reducer", () => {
           calls: [
             {
               address: "0x",
-              callData: "0x"
-            }
-          ]
-        })
+              callData: "0x",
+            },
+          ],
+        }),
       );
       expect(store.getState()).toEqual({
         callListeners: {
           [1]: {
             "0x-0x": {
-              [1]: 1
-            }
-          }
+              [1]: 1,
+            },
+          },
         },
-        callResults: {}
+        callResults: {},
       });
     });
   });
@@ -50,11 +50,11 @@ describe("multicall reducer", () => {
           calls: [
             {
               address: "0x",
-              callData: "0x"
-            }
+              callData: "0x",
+            },
           ],
-          chainId: 1
-        })
+          chainId: 1,
+        }),
       );
       expect(store.getState()).toEqual({ callResults: {}, callListeners: {} });
     });
@@ -65,25 +65,25 @@ describe("multicall reducer", () => {
           calls: [
             {
               address: "0x",
-              callData: "0x"
-            }
-          ]
-        })
+              callData: "0x",
+            },
+          ],
+        }),
       );
       store.dispatch(
         removeMulticallListeners({
           calls: [
             {
               address: "0x",
-              callData: "0x"
-            }
+              callData: "0x",
+            },
           ],
-          chainId: 1
-        })
+          chainId: 1,
+        }),
       );
       expect(store.getState()).toEqual({
         callResults: {},
-        callListeners: { [1]: { "0x-0x": {} } }
+        callListeners: { [1]: { "0x-0x": {} } },
       });
     });
   });
@@ -95,19 +95,19 @@ describe("multicall reducer", () => {
           chainId: 1,
           blockNumber: 1,
           results: {
-            abc: "0x"
-          }
-        })
+            abc: "0x",
+          },
+        }),
       );
       expect(store.getState()).toEqual({
         callResults: {
           [1]: {
             abc: {
               blockNumber: 1,
-              data: "0x"
-            }
-          }
-        }
+              data: "0x",
+            },
+          },
+        },
       });
     });
     it("updates old data", () => {
@@ -116,28 +116,28 @@ describe("multicall reducer", () => {
           chainId: 1,
           blockNumber: 1,
           results: {
-            abc: "0x"
-          }
-        })
+            abc: "0x",
+          },
+        }),
       );
       store.dispatch(
         updateMulticallResults({
           chainId: 1,
           blockNumber: 2,
           results: {
-            abc: "0x2"
-          }
-        })
+            abc: "0x2",
+          },
+        }),
       );
       expect(store.getState()).toEqual({
         callResults: {
           [1]: {
             abc: {
               blockNumber: 2,
-              data: "0x2"
-            }
-          }
-        }
+              data: "0x2",
+            },
+          },
+        },
       });
     });
     it("ignores late updates", () => {
@@ -146,28 +146,28 @@ describe("multicall reducer", () => {
           chainId: 1,
           blockNumber: 2,
           results: {
-            abc: "0x2"
-          }
-        })
+            abc: "0x2",
+          },
+        }),
       );
       store.dispatch(
         updateMulticallResults({
           chainId: 1,
           blockNumber: 1,
           results: {
-            abc: "0x1"
-          }
-        })
+            abc: "0x1",
+          },
+        }),
       );
       expect(store.getState()).toEqual({
         callResults: {
           [1]: {
             abc: {
               blockNumber: 2,
-              data: "0x2"
-            }
-          }
-        }
+              data: "0x2",
+            },
+          },
+        },
       });
     });
   });

@@ -29,8 +29,8 @@ const fadeOut = keyframes`
 const PopoverContainer = styled.div<{ show: boolean }>`
   z-index: 9999;
 
-  visibility: ${props => (!props.show ? "hidden" : "visible")};
-  animation: ${props => (!props.show ? fadeOut : fadeIn)} 150ms linear;
+  visibility: ${(props) => (!props.show ? "hidden" : "visible")};
+  animation: ${(props) => (!props.show ? fadeOut : fadeIn)} 150ms linear;
   transition: visibility 150ms linear;
 
   background: ${({ theme }) => theme.bg2};
@@ -106,10 +106,10 @@ export default function Popover({
   content,
   show,
   children,
-  placement = "auto"
+  placement = "auto",
 }: PopoverProps) {
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement>(
-    null
+    null,
   );
   const [popperElement, setPopperElement] = useState<HTMLDivElement>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement>(null);
@@ -121,9 +121,9 @@ export default function Popover({
       strategy: "fixed",
       modifiers: [
         { name: "offset", options: { offset: [8, 8] } },
-        { name: "arrow", options: { element: arrowElement } }
-      ]
-    }
+        { name: "arrow", options: { element: arrowElement } },
+      ],
+    },
   );
   useInterval(update, show ? 100 : null);
 
@@ -139,8 +139,9 @@ export default function Popover({
         >
           {content}
           <Arrow
-            className={`arrow-${attributes.popper?.["data-popper-placement"] ??
-              ""}`}
+            className={`arrow-${
+              attributes.popper?.["data-popper-placement"] ?? ""
+            }`}
             ref={setArrowElement}
             style={styles.arrow}
             {...attributes.arrow}

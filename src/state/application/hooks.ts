@@ -4,7 +4,7 @@ import {
   addPopup,
   PopupContent,
   removePopup,
-  toggleWalletModal
+  toggleWalletModal,
 } from "./actions";
 import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../index";
@@ -13,7 +13,7 @@ export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React();
 
   return useSelector(
-    (state: AppState) => state.application.blockNumber[chainId ?? -1]
+    (state: AppState) => state.application.blockNumber[chainId ?? -1],
   );
 }
 
@@ -34,7 +34,7 @@ export function useAddPopup(): (content: PopupContent) => void {
     (content: PopupContent) => {
       dispatch(addPopup({ content }));
     },
-    [dispatch]
+    [dispatch],
   );
 }
 
@@ -45,12 +45,12 @@ export function useRemovePopup(): (key: string) => void {
     (key: string) => {
       dispatch(removePopup({ key }));
     },
-    [dispatch]
+    [dispatch],
   );
 }
 
 // get the list of active popups
 export function useActivePopups(): AppState["application"]["popupList"] {
   const list = useSelector((state: AppState) => state.application.popupList);
-  return useMemo(() => list.filter(item => item.show), [list]);
+  return useMemo(() => list.filter((item) => item.show), [list]);
 }

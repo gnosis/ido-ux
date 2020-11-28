@@ -8,7 +8,7 @@ import {
   TokenAmount,
   Trade,
   TradeType,
-  WETH
+  WETH,
 } from "@uniswap/sdk";
 import { useMemo } from "react";
 import { useActiveWeb3React } from "../hooks";
@@ -17,12 +17,12 @@ import { useV1FactoryContract } from "../hooks/useContract";
 import {
   NEVER_RELOAD,
   useSingleCallResult,
-  useSingleContractMultipleData
+  useSingleContractMultipleData,
 } from "../state/multicall/hooks";
 import {
   useETHBalances,
   useTokenBalance,
-  useTokenBalances
+  useTokenBalances,
 } from "../state/wallet/hooks";
 
 function useV1PairAddress(tokenAddress?: string): string | undefined {
@@ -47,7 +47,7 @@ function useMockV1Pair(token?: Token): MockV1Pair | undefined {
   return tokenBalance && ETHBalance && token
     ? new MockV1Pair(
         tokenBalance,
-        new TokenAmount(WETH[token.chainId], ETHBalance.toString())
+        new TokenAmount(WETH[token.chainId], ETHBalance.toString()),
       )
     : undefined;
 }
@@ -60,19 +60,19 @@ export function useAllV1ExchangeAddresses(): string[] {
   const parsedCount = parseInt(exchangeCount?.toString() ?? "0");
 
   const indices = useMemo(
-    () => [...Array(parsedCount).keys()].map(ix => [ix]),
-    [parsedCount]
+    () => [...Array(parsedCount).keys()].map((ix) => [ix]),
+    [parsedCount],
   );
   const data = useSingleContractMultipleData(
     factory,
     "getTokenWithId",
     indices,
-    NEVER_RELOAD
+    NEVER_RELOAD,
   );
 
   return useMemo(
-    () => data?.map(({ result }) => result?.[0])?.filter(x => x) ?? [],
-    [data]
+    () => data?.map(({ result }) => result?.[0])?.filter((x) => x) ?? [],
+    [data],
   );
 }
 
@@ -81,20 +81,20 @@ export function useAllTokenV1ExchangeAddresses(): string[] {
   const allTokens = useAllTokens();
   const factory = useV1FactoryContract();
   const args = useMemo(
-    () => Object.keys(allTokens).map(tokenAddress => [tokenAddress]),
-    [allTokens]
+    () => Object.keys(allTokens).map((tokenAddress) => [tokenAddress]),
+    [allTokens],
   );
 
   const data = useSingleContractMultipleData(
     factory,
     "getExchange",
     args,
-    NEVER_RELOAD
+    NEVER_RELOAD,
   );
 
   return useMemo(
-    () => data?.map(({ result }) => result?.[0])?.filter(x => x) ?? [],
-    [data]
+    () => data?.map(({ result }) => result?.[0])?.filter((x) => x) ?? [],
+    [data],
   );
 }
 
@@ -108,21 +108,21 @@ export function useUserProbablyHasV1Liquidity(): boolean | undefined {
     () =>
       chainId
         ? exchangeAddresses.map(
-            address => new Token(chainId, address, 18, "UNI-V1")
+            (address) => new Token(chainId, address, 18, "UNI-V1"),
           )
         : [],
-    [chainId, exchangeAddresses]
+    [chainId, exchangeAddresses],
   );
 
   const balances = useTokenBalances(account ?? undefined, fakeTokens);
 
   return useMemo(
     () =>
-      Object.keys(balances).some(tokenAddress => {
+      Object.keys(balances).some((tokenAddress) => {
         const b = balances[tokenAddress]?.raw;
         return b && JSBI.greaterThan(b, JSBI.BigInt(0));
       }),
-    [balances]
+    [balances],
   );
 }
 
@@ -132,7 +132,7 @@ export function useV1TradeLinkIfBetter(
   output?: Token,
   exactAmount?: TokenAmount,
   v2Trade?: Trade,
-  minimumDelta: Percent = new Percent("0")
+  minimumDelta: Percent = new Percent("0"),
 ): string | undefined {
   const { chainId } = useActiveWeb3React();
 
@@ -165,7 +165,7 @@ export function useV1TradeLinkIfBetter(
         ? new Trade(
             route,
             exactAmount,
-            isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT
+            isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT,
           )
         : undefined;
   } catch {}
@@ -175,7 +175,7 @@ export function useV1TradeLinkIfBetter(
     if (isExactIn) {
       // discount the v1 output amount by minimumDelta
       const discountedV1Output = v1Trade?.outputAmount.multiply(
-        new Percent("1").subtract(minimumDelta)
+        new Percent("1").subtract(minimumDelta),
       );
       // check if the discounted v1 amount is still greater than v2, short-circuiting if no v2 trade exists
       v1HasBetterTrade =
@@ -183,7 +183,7 @@ export function useV1TradeLinkIfBetter(
     } else {
       // inflate the v1 amount by minimumDelta
       const inflatedV1Input = v1Trade?.inputAmount.multiply(
-        new Percent("1").add(minimumDelta)
+        new Percent("1").add(minimumDelta),
       );
       // check if the inflated v1 amount is still less than v2, short-circuiting if no v2 trade exists
       v1HasBetterTrade =

@@ -29,7 +29,7 @@ export default function DoubleTokenLogo({
   a0,
   a1,
   size = 16,
-  margin = false
+  margin = false,
 }: DoubleTokenLogoProps) {
   return (
     <TokenWrapper sizeraw={size} margin={margin}>

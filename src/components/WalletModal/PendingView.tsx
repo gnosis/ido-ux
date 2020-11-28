@@ -77,7 +77,7 @@ export default function PendingView({
   connector,
   error = false,
   setPendingError,
-  tryActivation
+  tryActivation,
 }: {
   uri?: string;
   size?: number;
@@ -115,7 +115,7 @@ export default function PendingView({
           )}
         </LoadingWrapper>
       </LoadingMessage>
-      {Object.keys(SUPPORTED_WALLETS).map(key => {
+      {Object.keys(SUPPORTED_WALLETS).map((key) => {
         const option = SUPPORTED_WALLETS[key];
         if (option.connector === connector) {
           if (option.connector === injected) {

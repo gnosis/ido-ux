@@ -6,7 +6,7 @@ import {
   setDefaultsFromURLSearch,
   switchTokens,
   typeInput,
-  priceInput
+  priceInput,
 } from "./actions";
 
 export interface SwapState {
@@ -28,11 +28,11 @@ const initialState: SwapState = {
   auctionId: 1,
   buyAmount: "",
   [Field.INPUT]: {
-    address: ""
+    address: "",
   },
   [Field.OUTPUT]: {
-    address: ""
-  }
+    address: "",
+  },
 };
 
 function parseAuctionIdParameter(urlParam: any): number {
@@ -41,24 +41,24 @@ function parseAuctionIdParameter(urlParam: any): number {
     : 1;
 }
 
-export default createReducer<SwapState>(initialState, builder =>
+export default createReducer<SwapState>(initialState, (builder) =>
   builder
     .addCase(setDefaultsFromURLSearch, (_, { payload: { queryString } }) => {
       if (queryString && queryString.length > 1) {
         const parsedQs = parse(queryString, {
           parseArrays: false,
-          ignoreQueryPrefix: true
+          ignoreQueryPrefix: true,
         });
 
         return {
           ...initialState,
-          auctionId: parseAuctionIdParameter(parsedQs.auctionId)
+          auctionId: parseAuctionIdParameter(parsedQs.auctionId),
         };
       }
 
       return {
         ...initialState,
-        auctionId: 1
+        auctionId: 1,
       };
     })
     .addCase(selectToken, (state, { payload: { address, field } }) => {
@@ -68,33 +68,33 @@ export default createReducer<SwapState>(initialState, builder =>
         return {
           ...state,
           [field]: { address },
-          [otherField]: { address: state[field].address }
+          [otherField]: { address: state[field].address },
         };
       } else {
         // the normal case
         return {
           ...state,
-          [field]: { address }
+          [field]: { address },
         };
       }
     })
-    .addCase(switchTokens, state => {
+    .addCase(switchTokens, (state) => {
       return {
         ...state,
         [Field.INPUT]: { address: state[Field.OUTPUT].address },
-        [Field.OUTPUT]: { address: state[Field.INPUT].address }
+        [Field.OUTPUT]: { address: state[Field.INPUT].address },
       };
     })
     .addCase(typeInput, (state, { payload: { buyAmount } }) => {
       return {
         ...state,
-        buyAmount
+        buyAmount,
       };
     })
     .addCase(priceInput, (state, { payload: { price } }) => {
       return {
         ...state,
-        price
+        price,
       };
-    })
+    }),
 );

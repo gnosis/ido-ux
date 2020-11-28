@@ -22,7 +22,7 @@ export default function SwapModalFooter({
   parsedAmounts,
   realizedLPFee,
   priceImpactWithoutFee,
-  confirmText
+  confirmText,
 }: {
   trade?: Trade;
   showInverted: boolean;

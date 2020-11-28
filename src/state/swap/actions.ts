@@ -2,7 +2,7 @@ import { createAction } from "@reduxjs/toolkit";
 
 export enum Field {
   INPUT = "INPUT",
-  OUTPUT = "OUTPUT"
+  OUTPUT = "OUTPUT",
 }
 
 export const setDefaultsFromURLSearch = createAction<{
@@ -10,7 +10,7 @@ export const setDefaultsFromURLSearch = createAction<{
   queryString?: string;
 }>("setDefaultsFromURL");
 export const selectToken = createAction<{ field: Field; address: string }>(
-  "selectToken"
+  "selectToken",
 );
 export const switchTokens = createAction<void>("switchTokens");
 export const typeInput = createAction<{ buyAmount: string }>("typeInput");

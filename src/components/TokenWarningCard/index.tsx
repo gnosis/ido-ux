@@ -80,7 +80,7 @@ export default function TokenWarningCard({
       token.address &&
       chainId &&
       ALL_TOKENS[chainId] &&
-      ALL_TOKENS[chainId][token.address]
+      ALL_TOKENS[chainId][token.address],
   );
 
   const tokenSymbol = token?.symbol?.toLowerCase() ?? "";
@@ -88,7 +88,7 @@ export default function TokenWarningCard({
 
   const [dismissed, dismissTokenWarning] = useTokenWarningDismissal(
     chainId,
-    token
+    token,
   );
 
   const allTokens = useAllTokens();
@@ -96,7 +96,7 @@ export default function TokenWarningCard({
   const duplicateNameOrSymbol = useMemo(() => {
     if (isDefaultToken || !token || !chainId) return false;
 
-    return Object.keys(allTokens).some(tokenAddress => {
+    return Object.keys(allTokens).some((tokenAddress) => {
       const userToken = allTokens[tokenAddress];
       if (userToken.equals(token)) {
         return false;
@@ -158,20 +158,20 @@ const WarningContainer = styled.div`
 `;
 
 export function TokenWarningCards({
-  tokens
+  tokens,
 }: {
   tokens: { [field in Field]?: Token };
 }) {
   return (
     <WarningContainer>
-      {Object.keys(tokens).map(field =>
+      {Object.keys(tokens).map((field) =>
         tokens[field] ? (
           <TokenWarningCard
             style={{ marginBottom: 14 }}
             key={field}
             token={tokens[field]}
           />
-        ) : null
+        ) : null,
       )}
     </WarningContainer>
   );

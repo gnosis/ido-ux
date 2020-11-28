@@ -6,7 +6,7 @@ import { WETH } from "@uniswap/sdk";
 
 import EthereumLogo from "../../assets/images/ethereum-logo.png";
 
-const TOKEN_ICON_API = address =>
+const TOKEN_ICON_API = (address) =>
   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`;
 const BAD_IMAGES = {};
 

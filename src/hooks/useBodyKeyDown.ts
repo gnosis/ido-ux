@@ -4,20 +4,20 @@ import { useCallback, useEffect } from "react";
 export default function useBodyKeyDown(
   targetKey: string,
   onKeyDown: () => void,
-  suppressOnKeyDown = false
+  suppressOnKeyDown = false,
 ) {
   const downHandler = useCallback(
-    event => {
+    (event) => {
       const {
         target: { tagName },
-        key
+        key,
       } = event;
       if (key === targetKey && tagName === "BODY" && !suppressOnKeyDown) {
         event.preventDefault();
         onKeyDown();
       }
     },
-    [targetKey, onKeyDown, suppressOnKeyDown]
+    [targetKey, onKeyDown, suppressOnKeyDown],
   );
 
   useEffect(() => {

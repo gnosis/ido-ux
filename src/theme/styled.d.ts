@@ -1,6 +1,6 @@
 import {
   FlattenSimpleInterpolation,
-  ThemedCssFunction
+  ThemedCssFunction,
 } from "styled-components";
 
 export type Color = string;

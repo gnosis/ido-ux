@@ -74,7 +74,7 @@ const Popup = styled.div`
 
 function PoolPopup({
   token0,
-  token1
+  token1,
 }: {
   token0: { address?: string; symbol?: string };
   token1: { address?: string; symbol?: string };
@@ -84,7 +84,7 @@ function PoolPopup({
     // just mock it out
     return Pair.getAddress(
       new Token(ChainId.MAINNET, token0.address, 18),
-      new Token(ChainId.MAINNET, token1.address, 18)
+      new Token(ChainId.MAINNET, token1.address, 18),
     );
   }, [token0, token1]);
 
@@ -114,14 +114,14 @@ function PoolPopup({
 
 function PopupItem({
   content,
-  popKey
+  popKey,
 }: {
   content: PopupContent;
   popKey: string;
 }) {
   if ("txn" in content) {
     const {
-      txn: { hash, success, summary }
+      txn: { hash, success, summary },
     } = content;
     return (
       <TxnPopup
@@ -133,7 +133,7 @@ function PopupItem({
     );
   } else if ("poolAdded" in content) {
     const {
-      poolAdded: { token0, token1 }
+      poolAdded: { token0, token1 },
     } = content;
 
     return <PoolPopup token0={token0} token1={token1} />;
@@ -152,7 +152,7 @@ export default function Popups() {
   if (!isMobile) {
     return (
       <FixedPopupColumn gap="20px">
-        {activePopups.map(item => {
+        {activePopups.map((item) => {
           return (
             <Popup key={item.key}>
               <StyledClose
@@ -174,7 +174,7 @@ export default function Popups() {
           {activePopups // reverse so new items up front
             .slice(0)
             .reverse()
-            .map(item => {
+            .map((item) => {
               return (
                 <Popup key={item.key}>
                   <StyledClose

@@ -7,7 +7,7 @@ import { Field } from "../../state/swap/actions";
 import { CursorPointer, TYPE } from "../../theme";
 import {
   computeSlippageAdjustedAmounts,
-  computeTradePriceBreakdown
+  computeTradePriceBreakdown,
 } from "../../utils/prices";
 import { AutoColumn } from "../Column";
 import { SectionBreak } from "./styleds";
@@ -20,19 +20,19 @@ import flatMap from "lodash.flatmap";
 
 function TradeSummary({
   trade,
-  allowedSlippage
+  allowedSlippage,
 }: {
   trade: Trade;
   allowedSlippage: number;
 }) {
   const theme = useContext(ThemeContext);
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(
-    trade
+    trade,
   );
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT;
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(
     trade,
-    allowedSlippage
+    allowedSlippage,
   );
 
   return (
@@ -152,7 +152,7 @@ export function AdvancedSwapDetails({
               (token, i, array) => {
                 const lastItem = i === array.length - 1;
                 return lastItem ? [token] : [token, null];
-              }
+              },
             ).map((token, i) => {
               // use null as an indicator to insert chevrons
               if (token === null) {

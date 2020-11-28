@@ -109,10 +109,10 @@ interface InputSliderProps {
 
 export default function InputSlider({ value, onChange }: InputSliderProps) {
   const changeCallback = useCallback(
-    e => {
+    (e) => {
       onChange(e.target.value);
     },
-    [onChange]
+    [onChange],
   );
 
   return (
@@ -123,7 +123,7 @@ export default function InputSlider({ value, onChange }: InputSliderProps) {
         width: "90%",
         marginLeft: 15,
         marginRight: 15,
-        padding: "15px 0"
+        padding: "15px 0",
       }}
       onChange={changeCallback}
       aria-labelledby="input-slider"

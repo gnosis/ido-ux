@@ -14,7 +14,7 @@ type AsyncSendable = {
   path?: string;
   sendAsync?: (
     request: any,
-    callback: (error: any, response: any) => void
+    callback: (error: any, response: any) => void,
   ) => void;
   send?: (request: any, callback: (error: any, response: any) => void) => void;
 };
@@ -47,18 +47,18 @@ class MiniRpcProvider implements AsyncSendable {
       method: string;
       params?: unknown[] | object;
     },
-    callback: (error: any, response: any) => void
+    callback: (error: any, response: any) => void,
   ): void => {
     this.request(request.method, request.params)
-      .then(result =>
-        callback(null, { jsonrpc: "2.0", id: request.id, result })
+      .then((result) =>
+        callback(null, { jsonrpc: "2.0", id: request.id, result }),
       )
-      .catch(error => callback(error, null));
+      .catch((error) => callback(error, null));
   };
 
   public readonly request = async (
     method: string,
-    params?: unknown[] | object
+    params?: unknown[] | object,
   ): Promise<unknown> => {
     const response = await fetch(this.url, {
       method: "POST",
@@ -66,20 +66,20 @@ class MiniRpcProvider implements AsyncSendable {
         jsonrpc: "2.0",
         id: 1,
         method,
-        params
-      })
+        params,
+      }),
     });
     if (!response.ok)
       throw new RequestError(
         `${response.status}: ${response.statusText}`,
-        -32000
+        -32000,
       );
     const body = await response.json();
     if ("error" in body) {
       throw new RequestError(
         body?.error?.message,
         body?.error?.code,
-        body?.error?.data
+        body?.error?.data,
       );
     } else if ("result" in body) {
       return body.result;
@@ -87,7 +87,7 @@ class MiniRpcProvider implements AsyncSendable {
       throw new RequestError(
         `Received unexpected JSON-RPC response to ${method} request.`,
         -32000,
-        body
+        body,
       );
     }
   };
@@ -100,10 +100,10 @@ export class NetworkConnector extends AbstractConnector {
   constructor({ urls, defaultChainId }: NetworkConnectorArguments) {
     invariant(
       defaultChainId || Object.keys(urls).length === 1,
-      "defaultChainId is a required argument with >1 url"
+      "defaultChainId is a required argument with >1 url",
     );
     super({
-      supportedChainIds: Object.keys(urls).map((k): number => Number(k))
+      supportedChainIds: Object.keys(urls).map((k): number => Number(k)),
     });
 
     this.currentChainId = defaultChainId || Number(Object.keys(urls)[0]);
@@ -112,7 +112,7 @@ export class NetworkConnector extends AbstractConnector {
     }>((accumulator, chainId) => {
       accumulator[Number(chainId)] = new MiniRpcProvider(
         Number(chainId),
-        urls[Number(chainId)]
+        urls[Number(chainId)],
       );
       return accumulator;
     }, {});
@@ -122,7 +122,7 @@ export class NetworkConnector extends AbstractConnector {
     return {
       provider: this.providers[this.currentChainId],
       chainId: this.currentChainId,
-      account: null
+      account: null,
     };
   }
 

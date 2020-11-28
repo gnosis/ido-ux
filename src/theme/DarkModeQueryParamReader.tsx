@@ -6,7 +6,7 @@ import { AppDispatch } from "../state";
 import { updateUserDarkMode } from "../state/user/actions";
 
 export default function DarkModeQueryParamReader({
-  location: { search }
+  location: { search },
 }: RouteComponentProps) {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -16,7 +16,7 @@ export default function DarkModeQueryParamReader({
 
     const parsed = parse(search, {
       parseArrays: false,
-      ignoreQueryPrefix: true
+      ignoreQueryPrefix: true,
     });
 
     const theme = parsed.theme;

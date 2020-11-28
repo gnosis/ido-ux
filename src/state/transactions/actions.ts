@@ -19,7 +19,7 @@ export const addTransaction = createAction<{
   summary?: string;
 }>("addTransaction");
 export const clearAllTransactions = createAction<{ chainId: number }>(
-  "clearAllTransactions"
+  "clearAllTransactions",
 );
 export const finalizeTransaction = createAction<{
   chainId: number;

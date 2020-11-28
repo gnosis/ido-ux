@@ -14,7 +14,7 @@ export const ALL_TOKENS: AllTokens = [
   ...MAINNET_TOKENS,
   ...RINKEBY_TOKENS,
   ...KOVAN_TOKENS,
-  ...ROPSTEN_TOKENS
+  ...ROPSTEN_TOKENS,
 ]
 
   // put into an object
@@ -26,8 +26,8 @@ export const ALL_TOKENS: AllTokens = [
         ...tokenMap,
         [token.chainId]: {
           ...tokenMap[token.chainId],
-          [token.address]: token
-        }
+          [token.address]: token,
+        },
       };
     },
     {
@@ -35,6 +35,6 @@ export const ALL_TOKENS: AllTokens = [
       [ChainId.RINKEBY]: {},
       [ChainId.GÖRLI]: {},
       [ChainId.ROPSTEN]: {},
-      [ChainId.KOVAN]: {}
-    }
+      [ChainId.KOVAN]: {},
+    },
   );

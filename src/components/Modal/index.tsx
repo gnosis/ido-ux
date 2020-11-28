@@ -46,7 +46,7 @@ const StyledDialogOverlay = styled(({ mobile, ...rest }) => (
 const StyledDialogContent = styled(
   ({ minHeight, maxHeight, mobile, isOpen, ...rest }) => (
     <DialogContent aria-label="content" {...rest} />
-  )
+  ),
 )`
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
@@ -78,13 +78,15 @@ const StyledDialogContent = styled(
     ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
       width:  85vw;
       max-height: 66vh;
-      ${mobile &&
+      ${
+        mobile &&
         css`
           width: 100vw;
           border-radius: 20px;
           border-bottom-left-radius: 0;
           border-bottom-right-radius: 0;
-        `}
+        `
+      }
     `}
   }
 `;
@@ -112,18 +114,18 @@ export default function Modal({
   minHeight = false,
   maxHeight = 50,
   initialFocusRef = null,
-  children
+  children,
 }: ModalProps) {
   const transitions = useTransition(isOpen, null, {
     config: { duration: 200 },
     from: { opacity: 0 },
     enter: { opacity: 1 },
-    leave: { opacity: 0 }
+    leave: { opacity: 0 },
   });
 
   const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }));
   const bind = useGesture({
-    onDrag: state => {
+    onDrag: (state) => {
       let velocity = state.velocity;
       if (velocity < 1) {
         velocity = 1;
@@ -133,12 +135,12 @@ export default function Modal({
       }
       set({
         xy: state.down ? state.movement : [0, 0],
-        config: { mass: 1, tension: 210, friction: 20 }
+        config: { mass: 1, tension: 210, friction: 20 },
       });
       if (velocity > 3 && state.direction[1] > 0) {
         onDismiss();
       }
-    }
+    },
   });
 
   if (isMobile) {
@@ -158,19 +160,19 @@ export default function Modal({
                   from={{
                     transform: isOpen
                       ? "translateY(200px)"
-                      : "translateY(100px)"
+                      : "translateY(100px)",
                   }}
                   to={{
-                    transform: isOpen ? "translateY(0px)" : "translateY(200px)"
+                    transform: isOpen ? "translateY(0px)" : "translateY(200px)",
                   }}
                 >
-                  {props => (
+                  {(props) => (
                     <animated.div
                       {...bind()}
                       style={{
                         transform: (xy as any).interpolate(
-                          (x, y) => `translate3d(${0}px,${y > 0 ? y : 0}px,0)`
-                        )
+                          (x, y) => `translate3d(${0}px,${y > 0 ? y : 0}px,0)`,
+                        ),
                       }}
                     >
                       <StyledDialogContent
@@ -188,7 +190,7 @@ export default function Modal({
                   )}
                 </Spring>
               </StyledDialogOverlay>
-            )
+            ),
         )}
       </>
     );
@@ -215,7 +217,7 @@ export default function Modal({
                   {children}
                 </StyledDialogContent>
               </StyledDialogOverlay>
-            )
+            ),
         )}
       </>
     );

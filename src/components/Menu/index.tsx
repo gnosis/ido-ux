@@ -86,7 +86,7 @@ export default function Menu() {
   const [open, toggle] = useToggle(false);
 
   useEffect(() => {
-    const handleClickOutside = e => {
+    const handleClickOutside = (e) => {
       if (node.current?.contains(e.target) ?? false) {
         return;
       }

@@ -6,7 +6,7 @@ import ERC20_ABI from "../constants/abis/erc20.json";
 import {
   V1_EXCHANGE_ABI,
   V1_FACTORY_ABI,
-  V1_FACTORY_ADDRESS
+  V1_FACTORY_ADDRESS,
 } from "../constants/v1";
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from "../constants/multicall";
 import { getContract } from "../utils";
@@ -16,7 +16,7 @@ import { useActiveWeb3React } from "./index";
 export function useContract(
   address?: string,
   ABI?: any,
-  withSignerIfPossible = true
+  withSignerIfPossible = true,
 ): Contract | null {
   const { library, account } = useActiveWeb3React();
 
@@ -27,7 +27,7 @@ export function useContract(
         address,
         ABI,
         library,
-        withSignerIfPossible && account ? account : undefined
+        withSignerIfPossible && account ? account : undefined,
       );
     } catch (error) {
       console.error("Failed to get contract", error);
@@ -41,7 +41,7 @@ export function useV1FactoryContract(): Contract | null {
   return useContract(
     chainId === 1 ? V1_FACTORY_ADDRESS : undefined,
     V1_FACTORY_ABI,
-    false
+    false,
   );
 }
 
@@ -51,14 +51,14 @@ export function useV1ExchangeContract(address: string): Contract | null {
 
 export function useTokenContract(
   tokenAddress?: string,
-  withSignerIfPossible = true
+  withSignerIfPossible = true,
 ): Contract | null {
   return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible);
 }
 
 export function usePairContract(
   pairAddress?: string,
-  withSignerIfPossible = true
+  withSignerIfPossible = true,
 ): Contract | null {
   return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible);
 }
@@ -68,6 +68,6 @@ export function useMulticallContract(): Contract | null {
   return useContract(
     MULTICALL_NETWORKS[chainId as ChainId],
     MULTICALL_ABI,
-    false
+    false,
   );
 }

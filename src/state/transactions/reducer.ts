@@ -3,7 +3,7 @@ import {
   addTransaction,
   clearAllTransactions,
   finalizeTransaction,
-  SerializableTransactionReceipt
+  SerializableTransactionReceipt,
 } from "./actions";
 
 const now = () => new Date().getTime();
@@ -29,13 +29,13 @@ export interface TransactionState {
 
 const initialState: TransactionState = {};
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
     .addCase(
       addTransaction,
       (
         state,
-        { payload: { chainId, from, hash, approvalOfToken, summary } }
+        { payload: { chainId, from, hash, approvalOfToken, summary } },
       ) => {
         if (state[chainId]?.[hash]) {
           throw Error("Attempted to add existing transaction.");
@@ -46,9 +46,9 @@ export default createReducer(initialState, builder =>
           approvalOfToken,
           summary,
           from,
-          addedTime: now()
+          addedTime: now(),
         };
-      }
+      },
     )
     .addCase(clearAllTransactions, (state, { payload: { chainId } }) => {
       if (!state[chainId]) return;
@@ -64,6 +64,6 @@ export default createReducer(initialState, builder =>
         state[chainId][hash].receipt = receipt;
         state[chainId][hash].unknownStatus = false;
         state[chainId][hash].confirmedTime = now();
-      }
-    )
+      },
+    ),
 );

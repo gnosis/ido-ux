@@ -23,12 +23,12 @@ import { TokenWarningCards } from "../../components/TokenWarningCard";
 import {
   DEFAULT_DEADLINE_FROM_NOW,
   INITIAL_ALLOWED_SLIPPAGE,
-  MIN_ETH
+  MIN_ETH,
 } from "../../constants";
 import { useActiveWeb3React } from "../../hooks";
 import {
   useApproveCallbackFromTrade,
-  ApprovalState
+  ApprovalState,
 } from "../../hooks/useApproveCallback";
 import { useSwapCallback } from "../../hooks/useSwapCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
@@ -37,12 +37,12 @@ import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
-  useSwapState
+  useSwapState,
 } from "../../state/swap/hooks";
 import { TYPE } from "../../theme";
 import {
   computeTradePriceBreakdown,
-  warningSeverity
+  warningSeverity,
 } from "../../utils/prices";
 import AppBody from "../AppBody";
 import { PriceSlippageWarningCard } from "../../components/swap/PriceSlippageWarningCard";
@@ -67,7 +67,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     sellToken,
     buyToken,
     auctionEndDate,
-    sellOrder
+    sellOrder,
   } = useDerivedSwapInfo(auctionId);
   const { onUserBuyAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
@@ -86,14 +86,14 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const [txHash, setTxHash] = useState<string>("");
   const [deadline, setDeadline] = useState<number>(DEFAULT_DEADLINE_FROM_NOW);
   const [allowedSlippage, setAllowedSlippage] = useState<number>(
-    INITIAL_ALLOWED_SLIPPAGE
+    INITIAL_ALLOWED_SLIPPAGE,
   );
 
   const formattedAmounts = {
     [independentField]: buyAmount,
     [dependentField]: parsedAmounts[dependentField]
       ? parsedAmounts[dependentField].toSignificant(6)
-      : ""
+      : "",
   };
 
   const route = bestTrade?.route;
@@ -107,7 +107,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(
     bestTrade,
-    allowedSlippage
+    allowedSlippage,
   );
 
   const maxAmountInput: TokenAmount =
@@ -117,12 +117,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     tokenBalances[Field.INPUT].greaterThan(
       new TokenAmount(
         tokens[Field.INPUT],
-        tokens[Field.INPUT].equals(WETH[chainId]) ? MIN_ETH : "0"
-      )
+        tokens[Field.INPUT].equals(WETH[chainId]) ? MIN_ETH : "0",
+      ),
     )
       ? tokens[Field.INPUT].equals(WETH[chainId])
         ? tokenBalances[Field.INPUT].subtract(
-            new TokenAmount(WETH[chainId], MIN_ETH)
+            new TokenAmount(WETH[chainId], MIN_ETH),
           )
         : tokenBalances[Field.INPUT]
       : undefined;
@@ -146,12 +146,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline);
 
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(
-    bestTrade
+    bestTrade,
   );
 
   function onSwap() {
     setAttemptingTxn(true);
-    swapCallback().then(hash => {
+    swapCallback().then((hash) => {
       setTxHash(hash);
       setPendingConfirmation(false);
 
@@ -160,8 +160,8 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         action: "Swap w/o Send",
         label: [
           bestTrade.inputAmount.token.symbol,
-          bestTrade.outputAmount.token.symbol
-        ].join("/")
+          bestTrade.outputAmount.token.symbol,
+        ].join("/"),
       });
     });
   }
@@ -201,145 +201,156 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   // text to show while loading
   const pendingText = `Swapping ${parsedAmounts[Field.INPUT]?.toSignificant(
-    6
+    6,
   )} ${tokens[Field.INPUT]?.symbol} for ${parsedAmounts[
     Field.OUTPUT
   ]?.toSignificant(6)} ${tokens[Field.OUTPUT]?.symbol}`;
 
   return (
     <>
-      <div>
-        <h2>Auction</h2>
-        <h3>
-          Selling {sellOrder?.sellAmount} {sellToken?.symbol} for at least{" "}
-          {sellOrder?.sellAmount} {buyToken?.symbol}
-        </h3>
-        <CountdownTimer auctionEndDate={auctionEndDate} />
-        <br></br>
-      </div>
       <TokenWarningCards tokens={tokens} />
       <AppBody>
-        <Wrapper id="swap-page">
-          <ConfirmationModal
-            isOpen={showConfirm}
-            title="Confirm Order"
-            onDismiss={() => {
-              resetModal();
-              setShowConfirm(false);
-            }}
-            attemptingTxn={attemptingTxn}
-            pendingConfirmation={pendingConfirmation}
-            hash={txHash}
-            topContent={modalHeader}
-            bottomContent={modalBottom}
-            pendingText={pendingText}
-          />
-          <AutoColumn gap={"md"}>
-            <>
-              <CurrencyInputPanel
-                field={Field.INPUT}
-                label={"BuyAmount"}
-                value={buyAmount}
-                showMaxButton={!atMaxAmountInput}
-                token={sellToken}
-                onUserBuyAmountInput={onUserBuyAmountInput}
-                onMax={() => {
-                  maxAmountInput &&
-                    onUserBuyAmountInput(maxAmountInput.toExact());
+        <div>
+          <h2>Auction</h2>
+          <h3>
+            Selling {sellOrder?.sellAmount} {sellToken?.symbol} for at least{" "}
+            {sellOrder?.sellAmount} {buyToken?.symbol}
+          </h3>
+          <CountdownTimer auctionEndDate={auctionEndDate} />
+          <br></br>
+        </div>
+        <AppBody>
+          <Wrapper id="auction-page">
+            <Wrapper id="swap-page">
+              <ConfirmationModal
+                isOpen={showConfirm}
+                title="Confirm Order"
+                onDismiss={() => {
+                  resetModal();
+                  setShowConfirm(false);
                 }}
-                id="swap-currency-input"
+                attemptingTxn={attemptingTxn}
+                pendingConfirmation={pendingConfirmation}
+                hash={txHash}
+                topContent={modalHeader}
+                bottomContent={modalBottom}
+                pendingText={pendingText}
               />
+              <AutoColumn gap={"md"}>
+                <>
+                  <CurrencyInputPanel
+                    field={Field.INPUT}
+                    label={"Amount"}
+                    value={buyAmount}
+                    showMaxButton={!atMaxAmountInput}
+                    token={sellToken}
+                    onUserBuyAmountInput={onUserBuyAmountInput}
+                    onMax={() => {
+                      maxAmountInput &&
+                        onUserBuyAmountInput(maxAmountInput.toExact());
+                    }}
+                    id="swap-currency-input"
+                  />
 
-              <PriceInputPanel
-                field={Field.OUTPUT}
-                value={price}
-                onUserPriceInput={onUserPriceInput}
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                label={"Price"}
-                showMaxButton={false}
-                sellToken={sellToken}
-                buyToken={buyToken}
-                id="swap-currency-output"
-              />
-            </>
+                  <PriceInputPanel
+                    field={Field.OUTPUT}
+                    value={price}
+                    onUserPriceInput={onUserPriceInput}
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    label={"Price"}
+                    showMaxButton={false}
+                    sellToken={sellToken}
+                    buyToken={buyToken}
+                    id="swap-currency-output"
+                  />
+                </>
 
-            {!noRoute && (
-              <Card padding={".25rem 1.25rem 0 .75rem"} borderRadius={"20px"}>
-                <AutoColumn gap="4px">
-                  <RowBetween align="center">
-                    <Text fontWeight={500} fontSize={14} color={theme.text2}>
-                      Price
-                    </Text>
-                    <TradePrice
-                      trade={bestTrade}
-                      showInverted={showInverted}
-                      setShowInverted={setShowInverted}
-                    />
-                  </RowBetween>
-
-                  {bestTrade && priceImpactSeverity > 1 && (
-                    <RowBetween>
-                      <TYPE.main
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                          display: "flex"
-                        }}
-                        fontSize={14}
-                      >
-                        Price Impact
-                      </TYPE.main>
-                      <RowFixed>
-                        <FormattedPriceImpact
-                          priceImpact={priceImpactWithoutFee}
+                {!noRoute && (
+                  <Card
+                    padding={".25rem 1.25rem 0 .75rem"}
+                    borderRadius={"20px"}
+                  >
+                    <AutoColumn gap="4px">
+                      <RowBetween align="center">
+                        <Text
+                          fontWeight={500}
+                          fontSize={14}
+                          color={theme.text2}
+                        >
+                          Price
+                        </Text>
+                        <TradePrice
+                          trade={bestTrade}
+                          showInverted={showInverted}
+                          setShowInverted={setShowInverted}
                         />
-                        <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
-                      </RowFixed>
-                    </RowBetween>
-                  )}
-                </AutoColumn>
-              </Card>
-            )}
-          </AutoColumn>
-          <BottomGrouping>
-            {!account ? (
-              <ButtonLight onClick={toggleWalletModal}>
-                Connect Wallet
-              </ButtonLight>
-            ) : noRoute && userHasSpecifiedInputOutput ? (
-              <GreyCard style={{ textAlign: "center" }}>
-                <TYPE.main mb="4px">
-                  Insufficient liquidity for this trade.
-                </TYPE.main>
-              </GreyCard>
-            ) : approval === ApprovalState.NOT_APPROVED ||
-              approval === ApprovalState.PENDING ? (
-              <ButtonLight
-                onClick={approveCallback}
-                disabled={approval === ApprovalState.PENDING}
-              >
-                {approval === ApprovalState.PENDING ? (
-                  <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
-                ) : (
-                  "Approve " + tokens[Field.INPUT]?.symbol
+                      </RowBetween>
+
+                      {bestTrade && priceImpactSeverity > 1 && (
+                        <RowBetween>
+                          <TYPE.main
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                              display: "flex",
+                            }}
+                            fontSize={14}
+                          >
+                            Price Impact
+                          </TYPE.main>
+                          <RowFixed>
+                            <FormattedPriceImpact
+                              priceImpact={priceImpactWithoutFee}
+                            />
+                            <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
+                          </RowFixed>
+                        </RowBetween>
+                      )}
+                    </AutoColumn>
+                  </Card>
                 )}
-              </ButtonLight>
-            ) : (
-              <ButtonError
-                onClick={() => {
-                  setShowConfirm(true);
-                }}
-                id="swap-button"
-                disabled={!isValid}
-                error={isValid}
-              >
-                <Text fontSize={20} fontWeight={500}>
-                  {error ?? `Execute Order`}
-                </Text>
-              </ButtonError>
-            )}
-          </BottomGrouping>
-        </Wrapper>
+              </AutoColumn>
+              <BottomGrouping>
+                {!account ? (
+                  <ButtonLight onClick={toggleWalletModal}>
+                    Connect Wallet
+                  </ButtonLight>
+                ) : noRoute && userHasSpecifiedInputOutput ? (
+                  <GreyCard style={{ textAlign: "center" }}>
+                    <TYPE.main mb="4px">
+                      Insufficient liquidity for this trade.
+                    </TYPE.main>
+                  </GreyCard>
+                ) : approval === ApprovalState.NOT_APPROVED ||
+                  approval === ApprovalState.PENDING ? (
+                  <ButtonLight
+                    onClick={approveCallback}
+                    disabled={approval === ApprovalState.PENDING}
+                  >
+                    {approval === ApprovalState.PENDING ? (
+                      <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
+                    ) : (
+                      "Approve " + tokens[Field.INPUT]?.symbol
+                    )}
+                  </ButtonLight>
+                ) : (
+                  <ButtonError
+                    onClick={() => {
+                      setShowConfirm(true);
+                    }}
+                    id="swap-button"
+                    disabled={!isValid}
+                    error={isValid}
+                  >
+                    <Text fontSize={20} fontWeight={500}>
+                      {error ?? `Execute Order`}
+                    </Text>
+                  </ButtonError>
+                )}
+              </BottomGrouping>
+            </Wrapper>
+          </Wrapper>
+        </AppBody>
       </AppBody>
 
       {bestTrade && (

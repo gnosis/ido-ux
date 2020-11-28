@@ -6,7 +6,7 @@ import {
   withRouter,
   NavLink,
   Link as HistoryLink,
-  RouteComponentProps
+  RouteComponentProps,
 } from "react-router-dom";
 import useBodyKeyDown from "../../hooks/useBodyKeyDown";
 
@@ -19,8 +19,8 @@ const tabOrder = [
   {
     path: "/swap",
     textKey: "Place Order",
-    regex: /\/swap/
-  }
+    regex: /\/swap/,
+  },
 ];
 
 const Tabs = styled.div`
@@ -32,7 +32,7 @@ const Tabs = styled.div`
 const activeClassName = "ACTIVE";
 
 const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
+  activeClassName,
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
@@ -69,19 +69,19 @@ const ArrowLink = styled(ArrowLeft)`
 
 function NavigationTabs({
   location: { pathname },
-  history
+  history,
 }: RouteComponentProps<unknown>) {
   const { t } = useTranslation();
 
   const navigate = useCallback(
-    direction => {
+    (direction) => {
       const tabIndex = tabOrder.findIndex(({ regex }) => pathname.match(regex));
       history.push(
         tabOrder[(tabIndex + tabOrder.length + direction) % tabOrder.length]
-          .path
+          .path,
       );
     },
-    [pathname, history]
+    [pathname, history],
   );
   const navigateRight = useCallback(() => {
     navigate(1);

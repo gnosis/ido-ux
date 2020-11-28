@@ -6,7 +6,7 @@ import { CursorPointer } from "../../theme";
 import { RowBetween } from "../Row";
 import {
   AdvancedSwapDetails,
-  AdvancedSwapDetailsProps
+  AdvancedSwapDetailsProps,
 } from "./AdvancedSwapDetails";
 import { AdvancedDropdown } from "./styleds";
 

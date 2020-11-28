@@ -30,7 +30,7 @@ if (typeof GOOGLE_ANALYTICS_ID === "string") {
       ? "desktop"
       : "web3" in window || "ethereum" in window
       ? "mobileWeb3"
-      : "mobileRegular"
+      : "mobileRegular",
   });
 } else {
   ReactGA.initialize("test", { testMode: true, debug: true });
@@ -64,5 +64,5 @@ ReactDOM.render(
       </Web3ProviderNetwork>
     </Web3ReactProvider>
   </>,
-  document.getElementById("root")
+  document.getElementById("root"),
 );

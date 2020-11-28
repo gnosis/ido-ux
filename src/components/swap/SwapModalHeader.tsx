@@ -14,7 +14,7 @@ export default function SwapModalHeader({
   formattedAmounts,
   tokens,
   priceImpactSeverity,
-  independentField
+  independentField,
 }: {
   formattedAmounts?: { [field in Field]?: string };
   tokens?: { [field in Field]?: Token };

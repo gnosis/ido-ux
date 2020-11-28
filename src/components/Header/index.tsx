@@ -93,7 +93,7 @@ export default function Header() {
 
   const userEthBalance = useTokenBalanceTreatingWETHasETH(
     account,
-    WETH[chainId]
+    WETH[chainId],
   );
 
   return (

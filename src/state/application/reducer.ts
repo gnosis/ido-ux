@@ -4,7 +4,7 @@ import {
   PopupContent,
   removePopup,
   toggleWalletModal,
-  updateBlockNumber
+  updateBlockNumber,
 } from "./actions";
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent }>;
@@ -18,10 +18,10 @@ interface ApplicationState {
 const initialState: ApplicationState = {
   blockNumber: {},
   popupList: [],
-  walletModalOpen: false
+  walletModalOpen: false,
 };
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
     .addCase(updateBlockNumber, (state, action) => {
       const { chainId, blockNumber } = action.payload;
@@ -30,25 +30,25 @@ export default createReducer(initialState, builder =>
       } else {
         state.blockNumber[chainId] = Math.max(
           blockNumber,
-          state.blockNumber[chainId]
+          state.blockNumber[chainId],
         );
       }
     })
-    .addCase(toggleWalletModal, state => {
+    .addCase(toggleWalletModal, (state) => {
       state.walletModalOpen = !state.walletModalOpen;
     })
     .addCase(addPopup, (state, { payload: { content } }) => {
       state.popupList.push({
         key: nanoid(),
         show: true,
-        content
+        content,
       });
     })
     .addCase(removePopup, (state, { payload: { key } }) => {
-      state.popupList.forEach(p => {
+      state.popupList.forEach((p) => {
         if (p.key === key) {
           p.show = false;
         }
       });
-    })
+    }),
 );

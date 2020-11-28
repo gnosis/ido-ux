@@ -51,7 +51,7 @@ export default function ConfirmationModal({
   attemptingTxn,
   pendingConfirmation,
   pendingText,
-  title = ""
+  title = "",
 }: ConfirmationModalProps) {
   const { chainId } = useActiveWeb3React();
   const theme = useContext(ThemeContext);

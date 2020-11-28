@@ -7,7 +7,7 @@ import { URI_AVAILABLE } from "@web3-react/walletconnect-connector";
 import usePrevious from "../../hooks/usePrevious";
 import {
   useWalletModalOpen,
-  useWalletModalToggle
+  useWalletModalToggle,
 } from "../../state/application/hooks";
 
 import Modal from "../Modal";
@@ -48,7 +48,7 @@ const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
   font-weight: 500;
-  color: ${props =>
+  color: ${(props) =>
     props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit"};
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem;
@@ -115,13 +115,13 @@ const WALLET_VIEWS = {
   OPTIONS: "options",
   OPTIONS_SECONDARY: "options_secondary",
   ACCOUNT: "account",
-  PENDING: "pending"
+  PENDING: "pending",
 };
 
 export default function WalletModal({
   pendingTransactions,
   confirmedTransactions,
-  ENSName
+  ENSName,
 }: {
   pendingTransactions: string[]; // hashes of pending
   confirmedTransactions: string[]; // hashes of confirmed
@@ -159,7 +159,7 @@ export default function WalletModal({
   // set up uri listener for walletconnect
   const [uri, setUri] = useState();
   useEffect(() => {
-    const activateWC = uri => {
+    const activateWC = (uri) => {
       setUri(uri);
       // setWalletView(WALLET_VIEWS.PENDING)
     };
@@ -187,12 +187,12 @@ export default function WalletModal({
     connector,
     walletModalOpen,
     activePrevious,
-    connectorPrevious
+    connectorPrevious,
   ]);
 
-  const tryActivation = async connector => {
+  const tryActivation = async (connector) => {
     let name = "";
-    Object.keys(SUPPORTED_WALLETS).map(key => {
+    Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
         return (name = SUPPORTED_WALLETS[key].name);
       }
@@ -202,11 +202,11 @@ export default function WalletModal({
     ReactGA.event({
       category: "Wallet",
       action: "Change Wallet",
-      label: name
+      label: name,
     });
     setPendingWallet(connector); // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING);
-    activate(connector, undefined, true).catch(error => {
+    activate(connector, undefined, true).catch((error) => {
       if (error instanceof UnsupportedChainIdError) {
         activate(connector); // a little janky...can't use setError because the connector isn't set
       } else {
@@ -225,7 +225,7 @@ export default function WalletModal({
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask;
-    return Object.keys(SUPPORTED_WALLETS).map(key => {
+    return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key];
       // check for mobile options
       if (isMobile) {

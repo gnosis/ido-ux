@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import {
   DEFAULT_DEADLINE_FROM_NOW,
   INITIAL_ALLOWED_SLIPPAGE,
-  ROUTER_ADDRESS
+  ROUTER_ADDRESS,
 } from "../constants";
 import { useTokenAllowance } from "../data/Allowances";
 import { Field } from "../state/swap/actions";
@@ -21,13 +21,13 @@ enum SwapType {
   EXACT_ETH_FOR_TOKENS,
   TOKENS_FOR_EXACT_TOKENS,
   TOKENS_FOR_EXACT_ETH,
-  ETH_FOR_EXACT_TOKENS
+  ETH_FOR_EXACT_TOKENS,
 }
 
 function getSwapType(
   tokens: { [field in Field]?: Token },
   isExactIn: boolean,
-  chainId: number
+  chainId: number,
 ): SwapType {
   if (isExactIn) {
     if (tokens[Field.INPUT]?.equals(WETH[chainId as ChainId])) {
@@ -54,13 +54,13 @@ export function useSwapCallback(
   trade?: Trade, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips, optional
   deadline: number = DEFAULT_DEADLINE_FROM_NOW, // in seconds from now, optional
-  to?: string // recipient of output, optional
+  to?: string, // recipient of output, optional
 ): null | (() => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React();
   const inputAllowance = useTokenAllowance(
     trade?.inputAmount?.token,
     account ?? undefined,
-    ROUTER_ADDRESS
+    ROUTER_ADDRESS,
   );
   const addTransaction = useTransactionAdder();
   const recipient = to ? isAddress(to) : account;
@@ -72,7 +72,7 @@ export function useSwapCallback(
     // will always be defined
     const {
       [Field.INPUT]: slippageAdjustedInput,
-      [Field.OUTPUT]: slippageAdjustedOutput
+      [Field.OUTPUT]: slippageAdjustedOutput,
     } = computeSlippageAdjustedAmounts(trade, allowedSlippage);
 
     if (!slippageAdjustedInput || !slippageAdjustedOutput) return null;
@@ -93,20 +93,20 @@ export function useSwapCallback(
       const routerContract: Contract = getRouterContract(
         chainId,
         library,
-        account
+        account,
       );
 
-      const path = trade.route.path.map(t => t.address);
+      const path = trade.route.path.map((t) => t.address);
 
       const deadlineFromNow: number = Math.ceil(Date.now() / 1000) + deadline;
 
       const swapType = getSwapType(
         {
           [Field.INPUT]: trade.inputAmount.token,
-          [Field.OUTPUT]: trade.outputAmount.token
+          [Field.OUTPUT]: trade.outputAmount.token,
         },
         trade.tradeType === TradeType.EXACT_INPUT,
-        chainId as ChainId
+        chainId as ChainId,
       );
 
       let estimate,
@@ -122,7 +122,7 @@ export function useSwapCallback(
             slippageAdjustedOutput.raw.toString(),
             path,
             recipient,
-            deadlineFromNow
+            deadlineFromNow,
           ];
           value = null;
           break;
@@ -134,7 +134,7 @@ export function useSwapCallback(
             slippageAdjustedInput.raw.toString(),
             path,
             recipient,
-            deadlineFromNow
+            deadlineFromNow,
           ];
           value = null;
           break;
@@ -145,7 +145,7 @@ export function useSwapCallback(
             slippageAdjustedOutput.raw.toString(),
             path,
             recipient,
-            deadlineFromNow
+            deadlineFromNow,
           ];
           value = BigNumber.from(slippageAdjustedInput.raw.toString());
           break;
@@ -157,7 +157,7 @@ export function useSwapCallback(
             slippageAdjustedInput.raw.toString(),
             path,
             recipient,
-            deadlineFromNow
+            deadlineFromNow,
           ];
           value = null;
           break;
@@ -169,7 +169,7 @@ export function useSwapCallback(
             slippageAdjustedOutput.raw.toString(),
             path,
             recipient,
-            deadlineFromNow
+            deadlineFromNow,
           ];
           value = null;
           break;
@@ -180,20 +180,20 @@ export function useSwapCallback(
             slippageAdjustedOutput.raw.toString(),
             path,
             recipient,
-            deadlineFromNow
+            deadlineFromNow,
           ];
           value = BigNumber.from(slippageAdjustedInput.raw.toString());
           break;
       }
 
       return estimate(...args, value ? { value } : {})
-        .then(estimatedGasLimit =>
+        .then((estimatedGasLimit) =>
           method(...args, {
             ...(value ? { value } : {}),
-            gasLimit: calculateGasMargin(estimatedGasLimit)
-          })
+            gasLimit: calculateGasMargin(estimatedGasLimit),
+          }),
         )
-        .then(response => {
+        .then((response) => {
           if (recipient === account) {
             addTransaction(response, {
               summary:
@@ -204,7 +204,7 @@ export function useSwapCallback(
                 " for " +
                 slippageAdjustedOutput.toSignificant(3) +
                 " " +
-                trade.outputAmount.token.symbol
+                trade.outputAmount.token.symbol,
             });
           } else {
             addTransaction(response, {
@@ -218,13 +218,13 @@ export function useSwapCallback(
                 " " +
                 trade.outputAmount.token.symbol +
                 " to " +
-                (ensName ?? recipient)
+                (ensName ?? recipient),
             });
           }
 
           return response.hash;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(`Swap or gas estimate failed`, error);
           throw error;
         });
@@ -239,6 +239,6 @@ export function useSwapCallback(
     library,
     trade,
     ensName,
-    recipient
+    recipient,
   ]);
 }

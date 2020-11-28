@@ -15,7 +15,7 @@ export default function Updater() {
   // to process the latest one.
   const debouncedMaxBlockNumber = useDebounce<number | null>(
     maxBlockNumber,
-    100
+    100,
   );
 
   // update block number
@@ -23,7 +23,7 @@ export default function Updater() {
     if (!library || !chainId) return;
 
     const blockListener = (blockNumber: number) => {
-      setMaxBlockNumber(maxBlockNumber => {
+      setMaxBlockNumber((maxBlockNumber) => {
         if (typeof maxBlockNumber !== "number") return blockNumber;
         return Math.max(maxBlockNumber, blockNumber);
       });
@@ -33,14 +33,14 @@ export default function Updater() {
 
     library
       .getBlockNumber()
-      .then(blockNumber =>
-        dispatch(updateBlockNumber({ chainId, blockNumber }))
+      .then((blockNumber) =>
+        dispatch(updateBlockNumber({ chainId, blockNumber })),
       )
-      .catch(error =>
+      .catch((error) =>
         console.error(
           `Failed to get block number for chainId ${chainId}`,
-          error
-        )
+          error,
+        ),
       );
 
     library.on("block", blockListener);
@@ -53,7 +53,7 @@ export default function Updater() {
     if (!chainId || !debouncedMaxBlockNumber) return;
     if (windowVisible) {
       dispatch(
-        updateBlockNumber({ chainId, blockNumber: debouncedMaxBlockNumber })
+        updateBlockNumber({ chainId, blockNumber: debouncedMaxBlockNumber }),
       );
     }
   }, [chainId, debouncedMaxBlockNumber, windowVisible, dispatch]);

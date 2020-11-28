@@ -103,7 +103,7 @@ export default function PriceInputPanel({
   sellToken = null,
   disableTokenSelect = false,
   hideInput = false,
-  id
+  id,
 }: CurrencyInputPanelProps) {
   const theme = useContext(ThemeContext);
 
@@ -128,7 +128,7 @@ export default function PriceInputPanel({
               <NumericalInput
                 className="price"
                 value={value}
-                onUserBuyAmountInput={val => {
+                onUserBuyAmountInput={(val) => {
                   onUserPriceInput(val);
                 }}
               />

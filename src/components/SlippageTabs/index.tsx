@@ -11,11 +11,11 @@ import { darken } from "polished";
 enum SlippageError {
   InvalidInput = "InvalidInput",
   RiskyLow = "RiskyLow",
-  RiskyHigh = "RiskyHigh"
+  RiskyHigh = "RiskyHigh",
 }
 
 enum DeadlineError {
-  InvalidInput = "InvalidInput"
+  InvalidInput = "InvalidInput",
 }
 
 const FancyButton = styled.button`
@@ -100,7 +100,7 @@ export default function SlippageTabs({
   rawSlippage,
   setRawSlippage,
   deadline,
-  setDeadline
+  setDeadline,
 }: SlippageTabsProps) {
   const theme = useContext(ThemeContext);
 
@@ -136,7 +136,7 @@ export default function SlippageTabs({
     let valueAsIntFromRoundedFloat: number;
     try {
       valueAsIntFromRoundedFloat = Number.parseInt(
-        (Number.parseFloat(event.target.value) * 100).toString()
+        (Number.parseFloat(event.target.value) * 100).toString(),
       );
     } catch {}
 
@@ -227,7 +227,7 @@ export default function SlippageTabs({
                 value={slippageInput}
                 onBlur={() => {
                   parseCustomSlippage({
-                    target: { value: (rawSlippage / 100).toFixed(2) }
+                    target: { value: (rawSlippage / 100).toFixed(2) },
                   });
                 }}
                 onChange={parseCustomSlippage}
@@ -243,7 +243,9 @@ export default function SlippageTabs({
               fontSize: "14px",
               paddingTop: "7px",
               color:
-                slippageError === SlippageError.InvalidInput ? "red" : "#F3841E"
+                slippageError === SlippageError.InvalidInput
+                  ? "red"
+                  : "#F3841E",
             }}
           >
             {slippageError === SlippageError.InvalidInput
@@ -268,7 +270,7 @@ export default function SlippageTabs({
               color={!!deadlineError ? "red" : undefined}
               onBlur={() => {
                 parseCustomDeadline({
-                  target: { value: (deadline / 60).toString() }
+                  target: { value: (deadline / 60).toString() },
                 });
               }}
               placeholder={(deadline / 60).toString()}

@@ -14,15 +14,15 @@ i18next
   .use(initReactI18next)
   .init({
     backend: {
-      loadPath: LOAD_PATH
+      loadPath: LOAD_PATH,
     },
     react: {
-      useSuspense: true
+      useSuspense: true,
     },
     fallbackLng: "en",
     preload: ["en"],
     keySeparator: false,
-    interpolation: { escapeValue: false }
+    interpolation: { escapeValue: false },
   });
 
 export default i18next;

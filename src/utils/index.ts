@@ -27,16 +27,17 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   3: "ropsten.",
   4: "rinkeby.",
   5: "goerli.",
-  42: "kovan."
+  42: "kovan.",
 };
 
 export function getEtherscanLink(
   chainId: ChainId,
   data: string,
-  type: "transaction" | "address"
+  type: "transaction" | "address",
 ): string {
-  const prefix = `https://${ETHERSCAN_PREFIXES[chainId] ||
-    ETHERSCAN_PREFIXES[1]}etherscan.io`;
+  const prefix = `https://${
+    ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]
+  }etherscan.io`;
 
   switch (type) {
     case "transaction": {
@@ -72,7 +73,7 @@ export function basisPointsToPercent(num: number): Percent {
 
 export function calculateSlippageAmount(
   value: TokenAmount,
-  slippage: number
+  slippage: number,
 ): [JSBI, JSBI] {
   if (slippage < 0 || slippage > 10000) {
     throw Error(`Unexpected slippage value: ${slippage}`);
@@ -80,19 +81,19 @@ export function calculateSlippageAmount(
   return [
     JSBI.divide(
       JSBI.multiply(value.raw, JSBI.BigInt(10000 - slippage)),
-      JSBI.BigInt(10000)
+      JSBI.BigInt(10000),
     ),
     JSBI.divide(
       JSBI.multiply(value.raw, JSBI.BigInt(10000 + slippage)),
-      JSBI.BigInt(10000)
-    )
+      JSBI.BigInt(10000),
+    ),
   ];
 }
 
 // account is not optional
 export function getSigner(
   library: Web3Provider,
-  account: string
+  account: string,
 ): JsonRpcSigner {
   return library.getSigner(account).connectUnchecked();
 }
@@ -100,7 +101,7 @@ export function getSigner(
 // account is optional
 export function getProviderOrSigner(
   library: Web3Provider,
-  account?: string
+  account?: string,
 ): Web3Provider | JsonRpcSigner {
   return account ? getSigner(library, account) : library;
 }
@@ -110,7 +111,7 @@ export function getContract(
   address: string,
   ABI: any,
   library: Web3Provider,
-  account?: string
+  account?: string,
 ): Contract {
   if (!isAddress(address) || address === AddressZero) {
     throw Error(`Invalid 'address' parameter '${address}'.`);
@@ -123,7 +124,7 @@ export function getContract(
 export function getRouterContract(
   chainId: number,
   library: Web3Provider,
-  account?: string
+  account?: string,
 ) {
   return getContract(ROUTER_ADDRESS, IUniswapV2Router01ABI, library, account);
 }
@@ -132,7 +133,7 @@ export function getRouterContract(
 export function getExchangeContract(
   pairAddress: string,
   library: Web3Provider,
-  account?: string
+  account?: string,
 ) {
   return getContract(pairAddress, IUniswapV2PairABI, library, account);
 }
@@ -141,7 +142,7 @@ export function getExchangeContract(
 // decimals which falls back to null
 export async function getTokenInfoWithFallback(
   tokenAddress: string,
-  library: Web3Provider
+  library: Web3Provider,
 ): Promise<{ name: string; symbol: string; decimals: null | number }> {
   if (!isAddress(tokenAddress)) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`);
@@ -156,14 +157,14 @@ export async function getTokenInfoWithFallback(
       .catch((e: Error) => {
         console.debug("Failed to get name for token address", e, tokenAddress);
         return "Unknown";
-      })
+      }),
   );
 
   const symbolPromise: Promise<string> = token.symbol().catch(() => {
     const contractBytes32 = getContract(
       tokenAddress,
       ERC20_BYTES32_ABI,
-      library
+      library,
     );
     return contractBytes32
       .symbol()
@@ -172,7 +173,7 @@ export async function getTokenInfoWithFallback(
         console.debug(
           "Failed to get symbol for token address",
           e,
-          tokenAddress
+          tokenAddress,
         );
         return "UNKNOWN";
       });
@@ -183,7 +184,7 @@ export async function getTokenInfoWithFallback(
       console.debug(
         "Failed to get decimals for token address",
         e,
-        tokenAddress
+        tokenAddress,
       );
       return null;
     });
@@ -191,11 +192,11 @@ export async function getTokenInfoWithFallback(
   const [name, symbol, decimals]: [
     string,
     string,
-    number | null
+    number | null,
   ] = (await Promise.all([namePromise, symbolPromise, decimalsPromise])) as [
     string,
     string,
-    number | null
+    number | null,
   ];
   return { name, symbol, decimals };
 }

@@ -67,7 +67,7 @@ const Input = styled.input<{ error?: boolean }>`
 export default function AddressInputPanel({
   initialInput = "",
   onChange,
-  onError
+  onError,
 }: {
   initialInput?: string;
   onChange: (val: { address: string; name?: string }) => void;
@@ -81,7 +81,7 @@ export default function AddressInputPanel({
 
   const [data, setData] = useState<{ address: string; name: string }>({
     address: undefined,
-    name: undefined
+    name: undefined,
   });
   const [error, setError] = useState<boolean>(false);
 
@@ -100,7 +100,7 @@ export default function AddressInputPanel({
     if (isAddress(debouncedInput)) {
       library
         .lookupAddress(debouncedInput)
-        .then(name => {
+        .then((name) => {
           if (stale) return;
           // if an ENS name exists, set it as the destination
           if (name) {
@@ -121,7 +121,7 @@ export default function AddressInputPanel({
       if (debouncedInput !== "") {
         library
           .resolveName(debouncedInput)
-          .then(address => {
+          .then((address) => {
             if (stale) return;
             // if the debounced input name resolves to an address
             if (address) {
@@ -167,7 +167,7 @@ export default function AddressInputPanel({
                   href={getEtherscanLink(
                     chainId,
                     data.name || data.address,
-                    "address"
+                    "address",
                   )}
                   style={{ fontSize: "14px" }}
                 >

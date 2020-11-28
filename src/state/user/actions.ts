@@ -15,10 +15,10 @@ export interface SerializedPair {
 
 export const updateVersion = createAction<void>("updateVersion");
 export const updateMatchesDarkMode = createAction<{ matchesDarkMode: boolean }>(
-  "updateMatchesDarkMode"
+  "updateMatchesDarkMode",
 );
 export const updateUserDarkMode = createAction<{ userDarkMode: boolean }>(
-  "updateUserDarkMode"
+  "updateUserDarkMode",
 );
 export const addSerializedToken = createAction<{
   serializedToken: SerializedToken;

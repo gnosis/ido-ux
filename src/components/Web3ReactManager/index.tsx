@@ -36,7 +36,7 @@ export default function Web3ReactManager({ children }) {
   const {
     active: networkActive,
     error: networkError,
-    activate: activateNetwork
+    activate: activateNetwork,
   } = useWeb3React(NetworkContextName);
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already

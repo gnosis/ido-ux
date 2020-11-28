@@ -39,7 +39,7 @@ function PositionCard({
   pair,
   history,
   border,
-  minimal = false
+  minimal = false,
 }: PositionCardProps) {
   const { account } = useActiveWeb3React();
 
@@ -69,14 +69,14 @@ function PositionCard({
             token0,
             totalPoolTokens,
             userPoolBalance,
-            false
+            false,
           ),
           pair.getLiquidityValue(
             token1,
             totalPoolTokens,
             userPoolBalance,
-            false
-          )
+            false,
+          ),
         ]
       : [undefined, undefined];
 
@@ -269,7 +269,7 @@ function PositionCard({
                   width="48%"
                   onClick={() => {
                     history.push(
-                      "/add/" + token0?.address + "-" + token1?.address
+                      "/add/" + token0?.address + "-" + token1?.address,
                     );
                   }}
                 >
@@ -279,7 +279,7 @@ function PositionCard({
                   width="48%"
                   onClick={() => {
                     history.push(
-                      "/remove/" + token0?.address + "-" + token1?.address
+                      "/remove/" + token0?.address + "-" + token1?.address,
                     );
                   }}
                 >

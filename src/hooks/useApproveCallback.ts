@@ -7,7 +7,7 @@ import { useTokenAllowance } from "../data/Allowances";
 import { Field } from "../state/swap/actions";
 import {
   useTransactionAdder,
-  useHasPendingApproval
+  useHasPendingApproval,
 } from "../state/transactions/hooks";
 import { computeSlippageAdjustedAmounts } from "../utils/prices";
 import { calculateGasMargin } from "../utils";
@@ -18,23 +18,23 @@ export enum ApprovalState {
   UNKNOWN,
   NOT_APPROVED,
   PENDING,
-  APPROVED
+  APPROVED,
 }
 
 // returns a variable indicating the state of the approval and a function which approves if necessary or early returns
 export function useApproveCallback(
   amountToApprove?: TokenAmount,
-  addressToApprove?: string
+  addressToApprove?: string,
 ): [ApprovalState, () => Promise<void>] {
   const { account } = useActiveWeb3React();
 
   const currentAllowance = useTokenAllowance(
     amountToApprove?.token,
     account ?? undefined,
-    addressToApprove
+    addressToApprove,
   );
   const pendingApproval = useHasPendingApproval(
-    amountToApprove?.token?.address
+    amountToApprove?.token?.address,
   );
 
   // check the current approval status
@@ -79,7 +79,7 @@ export function useApproveCallback(
         useExact = true;
         return tokenContract.estimateGas.approve(
           addressToApprove,
-          amountToApprove.raw.toString()
+          amountToApprove.raw.toString(),
         );
       });
 
@@ -88,13 +88,13 @@ export function useApproveCallback(
         addressToApprove,
         useExact ? amountToApprove.raw.toString() : MaxUint256,
         {
-          gasLimit: calculateGasMargin(estimatedGas)
-        }
+          gasLimit: calculateGasMargin(estimatedGas),
+        },
       )
       .then((response: TransactionResponse) => {
         addTransaction(response, {
           summary: "Approve " + amountToApprove?.token?.symbol,
-          approvalOfToken: amountToApprove?.token?.address
+          approvalOfToken: amountToApprove?.token?.address,
         });
       })
       .catch((error: Error) => {
@@ -106,7 +106,7 @@ export function useApproveCallback(
     tokenContract,
     addressToApprove,
     amountToApprove,
-    addTransaction
+    addTransaction,
   ]);
 
   return [approval, approve];
@@ -115,14 +115,14 @@ export function useApproveCallback(
 // wraps useApproveCallback in the context of a swap
 export function useApproveCallbackFromTrade(
   trade?: Trade,
-  allowedSlippage = 0
+  allowedSlippage = 0,
 ) {
   const amountToApprove = useMemo(
     () =>
       trade
         ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT]
         : undefined,
-    [trade, allowedSlippage]
+    [trade, allowedSlippage],
   );
   return useApproveCallback(amountToApprove, ROUTER_ADDRESS);
 }

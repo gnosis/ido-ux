@@ -24,7 +24,7 @@ const QuestionWrapper = styled.div`
 
 export default function QuestionHelper({
   text,
-  disabled
+  disabled,
 }: {
   text: string;
   disabled?: boolean;

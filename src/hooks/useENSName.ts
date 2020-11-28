@@ -18,7 +18,7 @@ export default function useENSName(address?: string): string | null {
       let stale = false;
       library
         .lookupAddress(validated)
-        .then(name => {
+        .then((name) => {
           if (!stale) {
             if (name) {
               setENSName(name);

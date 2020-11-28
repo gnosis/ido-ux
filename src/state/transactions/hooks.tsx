@@ -10,7 +10,7 @@ import { TransactionDetails, TransactionState } from "./reducer";
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
   response: TransactionResponse,
-  customData?: { summary?: string; approvalOfToken?: string }
+  customData?: { summary?: string; approvalOfToken?: string },
 ) => void {
   const { chainId, account } = useActiveWeb3React();
   const dispatch = useDispatch<AppDispatch>();
@@ -20,8 +20,8 @@ export function useTransactionAdder(): (
       response: TransactionResponse,
       {
         summary,
-        approvalOfToken
-      }: { summary?: string; approvalOfToken?: string } = {}
+        approvalOfToken,
+      }: { summary?: string; approvalOfToken?: string } = {},
     ) => {
       if (!account) return;
       if (!chainId) return;
@@ -36,11 +36,11 @@ export function useTransactionAdder(): (
           from: account,
           chainId,
           approvalOfToken,
-          summary
-        })
+          summary,
+        }),
       );
     },
-    [dispatch, chainId, account]
+    [dispatch, chainId, account],
   );
 }
 
@@ -49,7 +49,7 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   const { chainId } = useActiveWeb3React();
 
   const state = useSelector<AppState, TransactionState>(
-    state => state.transactions
+    (state) => state.transactions,
   );
 
   return state[chainId ?? -1] ?? {};
@@ -60,7 +60,7 @@ export function useHasPendingApproval(tokenAddress?: string): boolean {
   const allTransactions = useAllTransactions();
   return typeof tokenAddress !== "string"
     ? false
-    : Object.keys(allTransactions).some(hash => {
+    : Object.keys(allTransactions).some((hash) => {
         if (allTransactions[hash]?.receipt) {
           return false;
         } else {

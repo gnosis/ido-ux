@@ -10,7 +10,7 @@ import {
   SerializedToken,
   updateMatchesDarkMode,
   updateUserDarkMode,
-  updateVersion
+  updateVersion,
 } from "./actions";
 
 const currentTimestamp = () => new Date().getTime();
@@ -57,15 +57,15 @@ const initialState: UserState = {
   tokens: {},
   pairs: {},
 
-  timestamp: currentTimestamp()
+  timestamp: currentTimestamp(),
 };
 
 const GIT_COMMIT_HASH: string | undefined =
   process.env.REACT_APP_GIT_COMMIT_HASH;
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
-    .addCase(updateVersion, state => {
+    .addCase(updateVersion, (state) => {
       if (GIT_COMMIT_HASH && state.lastVersion !== GIT_COMMIT_HASH) {
         state.lastVersion = GIT_COMMIT_HASH;
 
@@ -101,7 +101,7 @@ export default createReducer(initialState, builder =>
         state.tokens[chainId] = state.tokens[chainId] || {};
         delete state.tokens[chainId][address];
         state.timestamp = currentTimestamp();
-      }
+      },
     )
     .addCase(
       dismissTokenWarning,
@@ -110,7 +110,7 @@ export default createReducer(initialState, builder =>
         state.dismissedTokenWarnings[chainId] =
           state.dismissedTokenWarnings[chainId] ?? {};
         state.dismissedTokenWarnings[chainId][tokenAddress] = true;
-      }
+      },
     )
     .addCase(addSerializedPair, (state, { payload: { serializedPair } }) => {
       if (
@@ -134,6 +134,6 @@ export default createReducer(initialState, builder =>
           delete state.pairs[chainId][pairKey(tokenBAddress, tokenAAddress)];
         }
         state.timestamp = currentTimestamp();
-      }
-    )
+      },
+    ),
 );

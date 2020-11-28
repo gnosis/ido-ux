@@ -7,7 +7,7 @@ import { useSingleCallResult } from "../state/multicall/hooks";
 export function useTokenAllowance(
   token?: Token,
   owner?: string,
-  spender?: string
+  spender?: string,
 ): TokenAmount | undefined {
   const contract = useTokenContract(token?.address, false);
 
@@ -18,6 +18,6 @@ export function useTokenAllowance(
       token && allowance
         ? new TokenAmount(token, allowance.toString())
         : undefined,
-    [token, allowance]
+    [token, allowance],
   );
 }

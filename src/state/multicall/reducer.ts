@@ -5,7 +5,7 @@ import {
   fetchingMulticallResults,
   removeMulticallListeners,
   toCallKey,
-  updateMulticallResults
+  updateMulticallResults,
 } from "./actions";
 
 export interface MulticallState {
@@ -32,41 +32,41 @@ export interface MulticallState {
 }
 
 const initialState: MulticallState = {
-  callResults: {}
+  callResults: {},
 };
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
     .addCase(
       addMulticallListeners,
       (
         state,
-        { payload: { calls, chainId, options: { blocksPerFetch = 0 } = {} } }
+        { payload: { calls, chainId, options: { blocksPerFetch = 0 } = {} } },
       ) => {
         const listeners: MulticallState["callListeners"] = state.callListeners
           ? state.callListeners
           : (state.callListeners = {});
         listeners[chainId] = listeners[chainId] ?? {};
-        calls.forEach(call => {
+        calls.forEach((call) => {
           const callKey = toCallKey(call);
           listeners[chainId][callKey] = listeners[chainId][callKey] ?? {};
           listeners[chainId][callKey][blocksPerFetch] =
             (listeners[chainId][callKey][blocksPerFetch] ?? 0) + 1;
         });
-      }
+      },
     )
     .addCase(
       removeMulticallListeners,
       (
         state,
-        { payload: { chainId, calls, options: { blocksPerFetch = 1 } = {} } }
+        { payload: { chainId, calls, options: { blocksPerFetch = 1 } = {} } },
       ) => {
         const listeners: MulticallState["callListeners"] = state.callListeners
           ? state.callListeners
           : (state.callListeners = {});
 
         if (!listeners[chainId]) return;
-        calls.forEach(call => {
+        calls.forEach((call) => {
           const callKey = toCallKey(call);
           if (!listeners[chainId][callKey]) return;
           if (!listeners[chainId][callKey][blocksPerFetch]) return;
@@ -77,18 +77,18 @@ export default createReducer(initialState, builder =>
             listeners[chainId][callKey][blocksPerFetch]--;
           }
         });
-      }
+      },
     )
     .addCase(
       fetchingMulticallResults,
       (state, { payload: { chainId, fetchingBlockNumber, calls } }) => {
         state.callResults[chainId] = state.callResults[chainId] ?? {};
-        calls.forEach(call => {
+        calls.forEach((call) => {
           const callKey = toCallKey(call);
           const current = state.callResults[chainId][callKey];
           if (!current) {
             state.callResults[chainId][callKey] = {
-              fetchingBlockNumber
+              fetchingBlockNumber,
             };
           } else {
             if (current.fetchingBlockNumber ?? 0 >= fetchingBlockNumber) return;
@@ -97,33 +97,33 @@ export default createReducer(initialState, builder =>
             ].fetchingBlockNumber = fetchingBlockNumber;
           }
         });
-      }
+      },
     )
     .addCase(
       errorFetchingMulticallResults,
       (state, { payload: { fetchingBlockNumber, chainId, calls } }) => {
         state.callResults[chainId] = state.callResults[chainId] ?? {};
-        calls.forEach(call => {
+        calls.forEach((call) => {
           const callKey = toCallKey(call);
           const current = state.callResults[chainId][callKey];
           if (current && current.fetchingBlockNumber !== fetchingBlockNumber)
             return;
           delete current.fetchingBlockNumber;
         });
-      }
+      },
     )
     .addCase(
       updateMulticallResults,
       (state, { payload: { chainId, results, blockNumber } }) => {
         state.callResults[chainId] = state.callResults[chainId] ?? {};
-        Object.keys(results).forEach(callKey => {
+        Object.keys(results).forEach((callKey) => {
           const current = state.callResults[chainId][callKey];
           if ((current?.blockNumber ?? 0) > blockNumber) return;
           state.callResults[chainId][callKey] = {
             data: results[callKey],
-            blockNumber
+            blockNumber,
           };
         });
-      }
-    )
+      },
+    ),
 );

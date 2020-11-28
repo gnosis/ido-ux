@@ -6,7 +6,7 @@ describe("#chunkArray", () => {
   });
   it("size 0 throws", () => {
     expect(() => chunkArray([1, 2, 3], 0)).toThrow(
-      "maxChunkSize must be gte 1"
+      "maxChunkSize must be gte 1",
     );
   });
   it("size gte items", () => {
@@ -16,7 +16,7 @@ describe("#chunkArray", () => {
   it("size exact half", () => {
     expect(chunkArray([1, 2, 3, 4], 2)).toEqual([
       [1, 2],
-      [3, 4]
+      [3, 4],
     ]);
   });
   it("evenly distributes", () => {
@@ -24,8 +24,8 @@ describe("#chunkArray", () => {
 
     expect(chunked).toEqual([
       [...Array(34).keys()],
-      [...Array(34).keys()].map(i => i + 34),
-      [...Array(32).keys()].map(i => i + 68)
+      [...Array(34).keys()].map((i) => i + 34),
+      [...Array(32).keys()].map((i) => i + 68),
     ]);
 
     expect(chunked[0][0]).toEqual(0);

@@ -7,14 +7,14 @@ import { useMulticallContract } from "../../hooks/useContract";
 import { isAddress } from "../../utils";
 import {
   useSingleContractMultipleData,
-  useMultipleContractSingleData
+  useMultipleContractSingleData,
 } from "../multicall/hooks";
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
  */
 export function useETHBalances(
-  uncheckedAddresses?: (string | undefined)[]
+  uncheckedAddresses?: (string | undefined)[],
 ): { [address: string]: JSBI | undefined } {
   const multicallContract = useMulticallContract();
 
@@ -26,13 +26,13 @@ export function useETHBalances(
             .filter((a): a is string => a !== false)
             .sort()
         : [],
-    [uncheckedAddresses]
+    [uncheckedAddresses],
   );
 
   const results = useSingleContractMultipleData(
     multicallContract,
     "getEthBalance",
-    addresses.map(address => [address])
+    addresses.map((address) => [address]),
   );
 
   return useMemo(
@@ -43,9 +43,9 @@ export function useETHBalances(
           if (value) memo[address] = JSBI.BigInt(value.toString());
           return memo;
         },
-        {}
+        {},
       ),
-    [addresses, results]
+    [addresses, results],
   );
 }
 
@@ -54,26 +54,26 @@ export function useETHBalances(
  */
 export function useTokenBalances(
   address?: string,
-  tokens?: (Token | undefined)[]
+  tokens?: (Token | undefined)[],
 ): { [tokenAddress: string]: TokenAmount | undefined } {
   const validatedTokens: Token[] = useMemo(
     () =>
       tokens?.filter(
-        (t?: Token): t is Token => isAddress(t?.address) !== false
+        (t?: Token): t is Token => isAddress(t?.address) !== false,
       ) ?? [],
-    [tokens]
+    [tokens],
   );
 
   const validatedTokenAddresses = useMemo(
-    () => validatedTokens.map(vt => vt.address),
-    [validatedTokens]
+    () => validatedTokens.map((vt) => vt.address),
+    [validatedTokens],
   );
 
   const balances = useMultipleContractSingleData(
     validatedTokenAddresses,
     ERC20_INTERFACE,
     "balanceOf",
-    [address]
+    [address],
   );
 
   return useMemo(
@@ -90,7 +90,7 @@ export function useTokenBalances(
             return memo;
           }, {})
         : {},
-    [address, validatedTokens, balances]
+    [address, validatedTokens, balances],
   );
 }
 
@@ -98,7 +98,7 @@ export function useTokenBalances(
 // maintain compatibility until we handle them separately.
 export function useTokenBalancesTreatWETHAsETH(
   address?: string,
-  tokens?: (Token | undefined)[]
+  tokens?: (Token | undefined)[],
 ): { [tokenAddress: string]: TokenAmount | undefined } {
   const { chainId } = useActiveWeb3React();
   const { tokensWithoutWETH, includesWETH } = useMemo(() => {
@@ -106,7 +106,7 @@ export function useTokenBalancesTreatWETHAsETH(
       return { includesWETH: false, tokensWithoutWETH: [] };
     }
     let includesWETH = false;
-    const tokensWithoutWETH = tokens.filter(t => {
+    const tokensWithoutWETH = tokens.filter((t) => {
       if (!chainId) return true;
       const isWETH = t?.equals(WETH[chainId as ChainId]) ?? false;
       if (isWETH) includesWETH = true;
@@ -127,7 +127,7 @@ export function useTokenBalancesTreatWETHAsETH(
         ...balancesWithoutWETH,
         ...(ethBalance && weth
           ? { [weth.address]: new TokenAmount(weth, ethBalance) }
-          : null)
+          : null),
       };
     } else {
       return balancesWithoutWETH;
@@ -138,7 +138,7 @@ export function useTokenBalancesTreatWETHAsETH(
 // get the balance for a single token/account combo
 export function useTokenBalance(
   account?: string,
-  token?: Token
+  token?: Token,
 ): TokenAmount | undefined {
   const tokenBalances = useTokenBalances(account, [token]);
   if (!token) return;
@@ -148,7 +148,7 @@ export function useTokenBalance(
 // mimics the behavior of useAddressBalance
 export function useTokenBalanceTreatingWETHasETH(
   account?: string,
-  token?: Token
+  token?: Token,
 ): TokenAmount | undefined {
   const balances = useTokenBalancesTreatWETHAsETH(account, [token]);
   if (!token) return;
@@ -162,11 +162,11 @@ export function useAllTokenBalancesTreatingWETHasETH(): {
   const { account } = useActiveWeb3React();
   const allTokens = useAllTokens();
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [
-    allTokens
+    allTokens,
   ]);
   const balances = useTokenBalancesTreatWETHAsETH(
     account ?? undefined,
-    allTokensArray
+    allTokensArray,
   );
   return balances ?? {};
 }
