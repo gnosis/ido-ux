@@ -112,6 +112,7 @@ export function useDerivedSwapInfo(
   const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
     auctionId
   ]).result;
+  console.log(auctionInfo)
   const sellTokenAddress:
     | string
     | undefined = auctionInfo?.sellToken.toString();
