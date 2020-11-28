@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
-
+import { BigNumber } from "@ethersproject/bignumber";
+import { Text } from "rebass";
 const CountDownStyled = styled.div`
   display: flex;
   order: 2;
   font-family: var(--font-mono);
-  text-align: center;
+  text-align: left;
   font-size: 0.6rem;
   color: var(--color-text-primary);
   width: 16rem;
@@ -16,10 +17,10 @@ const CountDownStyled = styled.div`
 `;
 
 export function formatSeconds(seconds: number): string {
-  const days = Math.floor(seconds / 24 / 60 / 60 / 1000) % 360;
-  const hours = Math.floor(seconds / 60 / 60 / 1000) % 24;
-  const minutes = Math.floor(seconds / 60 / 1000) % 60;
-  const remainderSeconds = Math.floor((seconds / 1000) % 60);
+  const days = Math.floor(seconds / 24 / 60 / 60) % 360;
+  const hours = Math.floor(seconds / 60 / 60) % 24;
+  const minutes = Math.floor(seconds / 60) % 60;
+  const remainderSeconds = Math.floor(seconds % 60);
   let s = "";
 
   if (days > 0) {
@@ -31,7 +32,7 @@ export function formatSeconds(seconds: number): string {
   if (minutes > 0) {
     s += `${minutes}m `;
   }
-  if (remainderSeconds > 0 && hours !== 0) {
+  if (remainderSeconds > 0 && hours < 2) {
     s += `${remainderSeconds}s`;
   }
   if (minutes === 0 && remainderSeconds === 0) {
@@ -42,7 +43,7 @@ export function formatSeconds(seconds: number): string {
 }
 
 const calculateTimeLeft = (auctionEndDate) => {
-  const diff = auctionEndDate - +new Date();
+  const diff = auctionEndDate?.toNumber() - new Date().getTime() / 1000;
   if (diff < 0) return 0;
   return diff;
 };
@@ -62,7 +63,14 @@ export default function CountdownTimer({
 
   return (
     <CountDownStyled>
-      Auction ends: <strong>{formatSeconds(timeLeft)}</strong>
+      {timeLeft > 0 ? (
+        <Text fontSize={16} fontWeight={500} textAlign={"right"}>
+          {" "}
+          Auction ends: <br></br> <strong>{formatSeconds(timeLeft)}</strong>
+        </Text>
+      ) : (
+        ""
+      )}
     </CountDownStyled>
   );
 }

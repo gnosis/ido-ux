@@ -7,7 +7,6 @@ import { ThemeContext } from "styled-components";
 import { ButtonError, ButtonLight } from "../../components/Button";
 import Card, { GreyCard } from "../../components/Card";
 import { AutoColumn } from "../../components/Column";
-import CountdownTimer from "../../components/CountDown";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
 import PriceInputPanel from "../../components/PriceInputPanel";
@@ -45,7 +44,10 @@ import {
   warningSeverity,
 } from "../../utils/prices";
 import AppBody from "../AppBody";
+import OrderBody from "../OrderBody";
 import { PriceSlippageWarningCard } from "../../components/swap/PriceSlippageWarningCard";
+import AuctionDetails from "../../components/AuctionDetails";
+import AuctionHeader from "../../components/AuctionHeader";
 
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
@@ -211,146 +213,145 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
       <TokenWarningCards tokens={tokens} />
       <AppBody>
         <div>
-          <h2>Auction</h2>
-          <h3>
-            Selling {sellOrder?.sellAmount} {sellToken?.symbol} for at least{" "}
-            {sellOrder?.sellAmount} {buyToken?.symbol}
-          </h3>
-          <CountdownTimer auctionEndDate={auctionEndDate} />
-          <br></br>
+          <AuctionHeader></AuctionHeader>
         </div>
-        <AppBody>
-          <Wrapper id="auction-page">
-            <Wrapper id="swap-page">
-              <ConfirmationModal
-                isOpen={showConfirm}
-                title="Confirm Order"
-                onDismiss={() => {
-                  resetModal();
-                  setShowConfirm(false);
-                }}
-                attemptingTxn={attemptingTxn}
-                pendingConfirmation={pendingConfirmation}
-                hash={txHash}
-                topContent={modalHeader}
-                bottomContent={modalBottom}
-                pendingText={pendingText}
-              />
-              <AutoColumn gap={"md"}>
-                <>
-                  <CurrencyInputPanel
-                    field={Field.INPUT}
-                    label={"Amount"}
-                    value={buyAmount}
-                    showMaxButton={!atMaxAmountInput}
-                    token={sellToken}
-                    onUserBuyAmountInput={onUserBuyAmountInput}
-                    onMax={() => {
-                      maxAmountInput &&
-                        onUserBuyAmountInput(maxAmountInput.toExact());
-                    }}
-                    id="swap-currency-input"
-                  />
+        <div style={{ width: "28%", float: "left", alignContent: "center" }}>
+          <AuctionDetails></AuctionDetails>
+        </div>
+        <div style={{ width: "70%", float: "right", alignContent: "right" }}>
+          <OrderBody>
+            <Wrapper id="auction-page">
+              <Wrapper id="swap-page">
+                <ConfirmationModal
+                  isOpen={showConfirm}
+                  title="Confirm Order"
+                  onDismiss={() => {
+                    resetModal();
+                    setShowConfirm(false);
+                  }}
+                  attemptingTxn={attemptingTxn}
+                  pendingConfirmation={pendingConfirmation}
+                  hash={txHash}
+                  topContent={modalHeader}
+                  bottomContent={modalBottom}
+                  pendingText={pendingText}
+                />
+                <AutoColumn gap={"md"}>
+                  <>
+                    <CurrencyInputPanel
+                      field={Field.INPUT}
+                      label={"Amount"}
+                      value={buyAmount}
+                      showMaxButton={!atMaxAmountInput}
+                      token={buyToken}
+                      onUserBuyAmountInput={onUserBuyAmountInput}
+                      onMax={() => {
+                        maxAmountInput &&
+                          onUserBuyAmountInput(maxAmountInput.toExact());
+                      }}
+                      id="swap-currency-input"
+                    />
 
-                  <PriceInputPanel
-                    field={Field.OUTPUT}
-                    value={price}
-                    onUserPriceInput={onUserPriceInput}
-                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                    label={"Price"}
-                    showMaxButton={false}
-                    sellToken={sellToken}
-                    buyToken={buyToken}
-                    id="swap-currency-output"
-                  />
-                </>
+                    <PriceInputPanel
+                      field={Field.OUTPUT}
+                      value={price}
+                      onUserPriceInput={onUserPriceInput}
+                      // eslint-disable-next-line @typescript-eslint/no-empty-function
+                      label={"Price"}
+                      showMaxButton={false}
+                      sellToken={sellToken}
+                      buyToken={buyToken}
+                      id="swap-currency-output"
+                    />
+                  </>
 
-                {!noRoute && (
-                  <Card
-                    padding={".25rem 1.25rem 0 .75rem"}
-                    borderRadius={"20px"}
-                  >
-                    <AutoColumn gap="4px">
-                      <RowBetween align="center">
-                        <Text
-                          fontWeight={500}
-                          fontSize={14}
-                          color={theme.text2}
-                        >
-                          Price
-                        </Text>
-                        <TradePrice
-                          trade={bestTrade}
-                          showInverted={showInverted}
-                          setShowInverted={setShowInverted}
-                        />
-                      </RowBetween>
-
-                      {bestTrade && priceImpactSeverity > 1 && (
-                        <RowBetween>
-                          <TYPE.main
-                            style={{
-                              justifyContent: "center",
-                              alignItems: "center",
-                              display: "flex",
-                            }}
+                  {!noRoute && (
+                    <Card
+                      padding={".25rem 1.25rem 0 .75rem"}
+                      borderRadius={"20px"}
+                    >
+                      <AutoColumn gap="4px">
+                        <RowBetween align="center">
+                          <Text
+                            fontWeight={500}
                             fontSize={14}
+                            color={theme.text2}
                           >
-                            Price Impact
-                          </TYPE.main>
-                          <RowFixed>
-                            <FormattedPriceImpact
-                              priceImpact={priceImpactWithoutFee}
-                            />
-                            <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
-                          </RowFixed>
+                            Price
+                          </Text>
+                          <TradePrice
+                            trade={bestTrade}
+                            showInverted={showInverted}
+                            setShowInverted={setShowInverted}
+                          />
                         </RowBetween>
+
+                        {bestTrade && priceImpactSeverity > 1 && (
+                          <RowBetween>
+                            <TYPE.main
+                              style={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                display: "flex",
+                              }}
+                              fontSize={14}
+                            >
+                              Price Impact
+                            </TYPE.main>
+                            <RowFixed>
+                              <FormattedPriceImpact
+                                priceImpact={priceImpactWithoutFee}
+                              />
+                              <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
+                            </RowFixed>
+                          </RowBetween>
+                        )}
+                      </AutoColumn>
+                    </Card>
+                  )}
+                </AutoColumn>
+                <BottomGrouping>
+                  {!account ? (
+                    <ButtonLight onClick={toggleWalletModal}>
+                      Connect Wallet
+                    </ButtonLight>
+                  ) : noRoute && userHasSpecifiedInputOutput ? (
+                    <GreyCard style={{ textAlign: "center" }}>
+                      <TYPE.main mb="4px">
+                        Insufficient liquidity for this trade.
+                      </TYPE.main>
+                    </GreyCard>
+                  ) : approval === ApprovalState.NOT_APPROVED ||
+                    approval === ApprovalState.PENDING ? (
+                    <ButtonLight
+                      onClick={approveCallback}
+                      disabled={approval === ApprovalState.PENDING}
+                    >
+                      {approval === ApprovalState.PENDING ? (
+                        <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
+                      ) : (
+                        "Approve " + tokens[Field.INPUT]?.symbol
                       )}
-                    </AutoColumn>
-                  </Card>
-                )}
-              </AutoColumn>
-              <BottomGrouping>
-                {!account ? (
-                  <ButtonLight onClick={toggleWalletModal}>
-                    Connect Wallet
-                  </ButtonLight>
-                ) : noRoute && userHasSpecifiedInputOutput ? (
-                  <GreyCard style={{ textAlign: "center" }}>
-                    <TYPE.main mb="4px">
-                      Insufficient liquidity for this trade.
-                    </TYPE.main>
-                  </GreyCard>
-                ) : approval === ApprovalState.NOT_APPROVED ||
-                  approval === ApprovalState.PENDING ? (
-                  <ButtonLight
-                    onClick={approveCallback}
-                    disabled={approval === ApprovalState.PENDING}
-                  >
-                    {approval === ApprovalState.PENDING ? (
-                      <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
-                    ) : (
-                      "Approve " + tokens[Field.INPUT]?.symbol
-                    )}
-                  </ButtonLight>
-                ) : (
-                  <ButtonError
-                    onClick={() => {
-                      setShowConfirm(true);
-                    }}
-                    id="swap-button"
-                    disabled={!isValid}
-                    error={isValid}
-                  >
-                    <Text fontSize={20} fontWeight={500}>
-                      {error ?? `Execute Order`}
-                    </Text>
-                  </ButtonError>
-                )}
-              </BottomGrouping>
+                    </ButtonLight>
+                  ) : (
+                    <ButtonError
+                      onClick={() => {
+                        setShowConfirm(true);
+                      }}
+                      id="swap-button"
+                      disabled={!isValid}
+                      error={isValid}
+                    >
+                      <Text fontSize={20} fontWeight={500}>
+                        {error ?? `Execute Order`}
+                      </Text>
+                    </ButtonError>
+                  )}
+                </BottomGrouping>
+              </Wrapper>
             </Wrapper>
-          </Wrapper>
-        </AppBody>
+          </OrderBody>
+        </div>
       </AppBody>
 
       {bestTrade && (

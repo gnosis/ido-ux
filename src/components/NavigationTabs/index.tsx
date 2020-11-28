@@ -142,7 +142,7 @@ function NavigationTabs({
         </Tabs>
       ) : (
         <Tabs style={{ marginBottom: "20px" }}>
-          {tabOrder.map(({ path, textKey, regex }) => (
+          {/* {tabOrder.map(({ path, textKey, regex }) => (
             <StyledNavLink
               id={`${textKey}-nav-link`}
               key={path}
@@ -151,7 +151,7 @@ function NavigationTabs({
             >
               {t(textKey)}
             </StyledNavLink>
-          ))}
+          ))} */}
         </Tabs>
       )}
     </>
