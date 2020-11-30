@@ -1,6 +1,6 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
-import { Trade, WETH, TokenAmount } from "@uniswap/sdk";
+import { Trade, TokenAmount } from "@uniswap/sdk";
 import { useCallback, useMemo } from "react";
 import { ROUTER_ADDRESS } from "../constants";
 import { useTokenAllowance } from "../data/Allowances";
@@ -40,9 +40,6 @@ export function useApproveCallback(
   // check the current approval status
   const approval = useMemo(() => {
     if (!amountToApprove) return ApprovalState.UNKNOWN;
-    // we treat WETH as ETH which requires no approvals
-    if (amountToApprove.token.equals(WETH[amountToApprove.token.chainId]))
-      return ApprovalState.APPROVED;
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;
     if (pendingApproval) return ApprovalState.PENDING;

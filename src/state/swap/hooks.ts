@@ -5,10 +5,10 @@ import { JSBI, Token, TokenAmount, Trade } from "@uniswap/sdk";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { EASY_AUCTIONO_NETWORKS } from "../../constants/";
+import { EASY_AUCTION_NETWORKS } from "../../constants/";
 import { useContract } from "../../hooks/useContract";
 import { useSingleCallResult } from "../../state/multicall/hooks";
-import EasyAuctionTruffle from "../../constants/abis/easyAuction/easyAuction.json";
+import easyAuctionABI from "../../constants/abis/easyAuction/easyAuction.json";
 
 import { useActiveWeb3React } from "../../hooks";
 import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
@@ -18,7 +18,7 @@ import { useTokenBalancesTreatWETHAsETH } from "../wallet/hooks";
 import {
   Field,
   setDefaultsFromURLSearch,
-  typeInput,
+  SellAmountInput,
   priceInput,
 } from "./actions";
 
@@ -46,14 +46,14 @@ export function useSwapState(): AppState["swap"] {
 }
 
 export function useSwapActionHandlers(): {
-  onUserBuyAmountInput: (buyAmount: string) => void;
+  onUserSellAmountInput: (sellAmount: string) => void;
   onUserPriceInput: (price: string) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
 
-  const onUserBuyAmountInput = useCallback(
-    (buyAmount: string) => {
-      dispatch(typeInput({ buyAmount }));
+  const onUserSellAmountInput = useCallback(
+    (sellAmount: string) => {
+      dispatch(SellAmountInput({ sellAmount }));
     },
     [dispatch],
   );
@@ -64,7 +64,7 @@ export function useSwapActionHandlers(): {
     [dispatch],
   );
 
-  return { onUserPriceInput, onUserBuyAmountInput };
+  return { onUserPriceInput, onUserSellAmountInput };
 }
 
 // try to parse a user entered amount for a given token
@@ -76,9 +76,9 @@ export function tryParseAmount(
     return;
   }
   try {
-    const buyAmountParsed = parseUnits(value, token.decimals).toString();
-    if (buyAmountParsed !== "0") {
-      return new TokenAmount(token, JSBI.BigInt(buyAmountParsed));
+    const sellAmountParsed = parseUnits(value, token.decimals).toString();
+    if (sellAmountParsed !== "0") {
+      return new TokenAmount(token, JSBI.BigInt(sellAmountParsed));
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
@@ -99,14 +99,14 @@ export function useDerivedSwapInfo(
   error?: string;
   sellToken?: Token | null;
   buyToken?: Token | null;
-  sellOrder?: SellOrder | null;
+  initialAuctionOrder?: SellOrder | null;
   auctionEndDate?: number | null;
 } {
   const { chainId, account } = useActiveWeb3React();
 
   const easyAuctionInstance: Contract | null = useContract(
-    EASY_AUCTIONO_NETWORKS[chainId as ChainId],
-    EasyAuctionTruffle.abi,
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    easyAuctionABI,
   );
 
   const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
@@ -115,20 +115,18 @@ export function useDerivedSwapInfo(
   const sellTokenAddress:
     | string
     | undefined = auctionInfo?.sellToken.toString();
-  const sellOrder: SellOrder | null = decodeOrder(
+  const initialAuctionOrder: SellOrder | null = decodeOrder(
     auctionInfo?.initialAuctionOrder,
   );
   const auctionEndDate = auctionInfo?.auctionEndDate;
 
   const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
 
-  //perspective of buy and sell amount switches between auctioneer and participant
-  const sellToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
-  const buyToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
-
+  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
+  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
   const {
     independentField,
-    buyAmount,
+    sellAmount,
     price,
     [Field.INPUT]: { address: tokenInAddress },
     [Field.OUTPUT]: { address: tokenOutAddress },
@@ -143,7 +141,7 @@ export function useDerivedSwapInfo(
   );
 
   const isExactIn: boolean = independentField === Field.INPUT;
-  const amount = tryParseAmount(buyAmount, isExactIn ? tokenIn : tokenOut);
+  const amount = tryParseAmount(sellAmount, isExactIn ? tokenIn : tokenOut);
 
   const bestTradeExactIn = useTradeExactIn(
     isExactIn ? amount : undefined,
@@ -176,8 +174,12 @@ export function useDerivedSwapInfo(
     error = "Connect Wallet";
   }
 
-  if (!buyAmount || !price) {
+  if (!sellAmount) {
     error = error ?? "Enter an amount";
+  }
+
+  if (!price) {
+    error = error ?? "Enter a price";
   }
 
   const [balanceIn, amountIn] = [
@@ -196,7 +198,7 @@ export function useDerivedSwapInfo(
     error,
     sellToken,
     buyToken,
-    sellOrder,
+    initialAuctionOrder,
     auctionEndDate,
   };
 }

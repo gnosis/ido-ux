@@ -7,8 +7,8 @@ import { BigNumber } from "@ethersproject/bignumber";
 
 import { abi as IUniswapV2PairABI } from "@uniswap/v2-core/build/IUniswapV2Pair.json";
 import { abi as IUniswapV2Router01ABI } from "@uniswap/v2-periphery/build/IUniswapV2Router01.json";
-import { ROUTER_ADDRESS } from "../constants";
-
+import { EASY_AUCTION_NETWORKS, ROUTER_ADDRESS } from "../constants";
+import easyAuctionABI from "../constants/abis/easyAuction/easyAuction.json";
 import ERC20_ABI from "../constants/abis/erc20.json";
 import ERC20_BYTES32_ABI from "../constants/abis/erc20_bytes32.json";
 import { ChainId, JSBI, Percent, TokenAmount } from "@uniswap/sdk";
@@ -118,6 +118,20 @@ export function getContract(
   }
 
   return new Contract(address, ABI, getProviderOrSigner(library, account));
+}
+
+// account is optional
+export function getEasyAuctionContract(
+  chainId: ChainId,
+  library: Web3Provider,
+  account?: string,
+) {
+  return getContract(
+    EASY_AUCTION_NETWORKS[chainId],
+    easyAuctionABI,
+    library,
+    account,
+  );
 }
 
 // account is optional

@@ -5,14 +5,14 @@ import {
   selectToken,
   setDefaultsFromURLSearch,
   switchTokens,
-  typeInput,
+  SellAmountInput,
   priceInput,
 } from "./actions";
 
 export interface SwapState {
   readonly independentField: Field;
   readonly price: string;
-  readonly buyAmount: string;
+  readonly sellAmount: string;
   readonly auctionId: number;
   readonly [Field.INPUT]: {
     readonly address: string | undefined;
@@ -26,7 +26,7 @@ const initialState: SwapState = {
   independentField: Field.INPUT,
   price: "1",
   auctionId: 1,
-  buyAmount: "",
+  sellAmount: "",
   [Field.INPUT]: {
     address: "",
   },
@@ -85,10 +85,10 @@ export default createReducer<SwapState>(initialState, (builder) =>
         [Field.OUTPUT]: { address: state[Field.INPUT].address },
       };
     })
-    .addCase(typeInput, (state, { payload: { buyAmount } }) => {
+    .addCase(SellAmountInput, (state, { payload: { sellAmount } }) => {
       return {
         ...state,
-        buyAmount,
+        sellAmount,
       };
     })
     .addCase(priceInput, (state, { payload: { price } }) => {

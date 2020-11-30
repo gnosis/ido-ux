@@ -1,6 +1,5 @@
-import { JSBI, TokenAmount, WETH } from "@uniswap/sdk";
+import { JSBI, TokenAmount, WETH, ChainId } from "@uniswap/sdk";
 import React, { useContext, useState } from "react";
-import ReactGA from "react-ga";
 import { RouteComponentProps } from "react-router-dom";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
@@ -25,11 +24,12 @@ import {
   MIN_ETH,
 } from "../../constants";
 import { useActiveWeb3React } from "../../hooks";
+import { EASY_AUCTION_NETWORKS } from "../../constants";
 import {
-  useApproveCallbackFromTrade,
+  useApproveCallback,
   ApprovalState,
 } from "../../hooks/useApproveCallback";
-import { useSwapCallback } from "../../hooks/useSwapCallback";
+import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import { Field } from "../../state/swap/actions";
 import {
@@ -59,7 +59,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const toggleWalletModal = useWalletModalToggle();
 
   // swap state
-  const { auctionId, independentField, buyAmount, price } = useSwapState();
+  const { auctionId, independentField, sellAmount, price } = useSwapState();
   const {
     bestTrade,
     tokenBalances,
@@ -68,10 +68,8 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     error,
     sellToken,
     buyToken,
-    auctionEndDate,
-    sellOrder,
   } = useDerivedSwapInfo(auctionId);
-  const { onUserBuyAmountInput } = useSwapActionHandlers();
+  const { onUserSellAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
 
   const isValid = !error;
@@ -92,7 +90,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   );
 
   const formattedAmounts = {
-    [independentField]: buyAmount,
+    [independentField]: sellAmount,
     [dependentField]: parsedAmounts[dependentField]
       ? parsedAmounts[dependentField].toSignificant(6)
       : "",
@@ -106,10 +104,14 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     parsedAmounts[independentField].greaterThan(JSBI.BigInt(0));
   const noRoute = !route;
 
+  const approvalTokenAmount: TokenAmount | undefined =
+    buyToken == undefined || sellAmount == undefined
+      ? undefined
+      : new TokenAmount(buyToken, sellAmount);
   // check whether the user has approved the router on the input token
-  const [approval, approveCallback] = useApproveCallbackFromTrade(
-    bestTrade,
-    allowedSlippage,
+  const [approval, approveCallback] = useApproveCallback(
+    approvalTokenAmount,
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
   );
 
   const maxAmountInput: TokenAmount =
@@ -137,7 +139,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   function resetModal() {
     // clear input if txn submitted
     if (!pendingConfirmation) {
-      onUserBuyAmountInput("");
+      onUserSellAmountInput("");
     }
     setPendingConfirmation(true);
     setAttemptingTxn(false);
@@ -145,26 +147,17 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   }
 
   // the callback to execute the swap
-  const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline);
+  const placeOrderCallback = usePlaceOrderCallback(sellToken, buyToken);
 
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(
     bestTrade,
   );
 
-  function onSwap() {
+  function onPlaceOrder() {
     setAttemptingTxn(true);
-    swapCallback().then((hash) => {
+    placeOrderCallback().then((hash) => {
       setTxHash(hash);
       setPendingConfirmation(false);
-
-      ReactGA.event({
-        category: "Swap",
-        action: "Swap w/o Send",
-        label: [
-          bestTrade.inputAmount.token.symbol,
-          bestTrade.outputAmount.token.symbol,
-        ].join("/"),
-      });
     });
   }
 
@@ -192,7 +185,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         showInverted={showInverted}
         severity={priceImpactSeverity}
         setShowInverted={setShowInverted}
-        onSwap={onSwap}
+        onPlaceOrder={onPlaceOrder}
         realizedLPFee={realizedLPFee}
         parsedAmounts={parsedAmounts}
         priceImpactWithoutFee={priceImpactWithoutFee}
@@ -202,11 +195,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   }
 
   // text to show while loading
-  const pendingText = `Swapping ${parsedAmounts[Field.INPUT]?.toSignificant(
-    6,
-  )} ${tokens[Field.INPUT]?.symbol} for ${parsedAmounts[
-    Field.OUTPUT
-  ]?.toSignificant(6)} ${tokens[Field.OUTPUT]?.symbol}`;
+  const pendingText = `Placing order`;
 
   return (
     <>
@@ -241,13 +230,13 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
                     <CurrencyInputPanel
                       field={Field.INPUT}
                       label={"Amount"}
-                      value={buyAmount}
+                      value={sellAmount}
                       showMaxButton={!atMaxAmountInput}
                       token={buyToken}
-                      onUserBuyAmountInput={onUserBuyAmountInput}
+                      onUserSellAmountInput={onUserSellAmountInput}
                       onMax={() => {
                         maxAmountInput &&
-                          onUserBuyAmountInput(maxAmountInput.toExact());
+                          onUserSellAmountInput(maxAmountInput.toExact());
                       }}
                       id="swap-currency-input"
                     />
@@ -328,9 +317,9 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
                       disabled={approval === ApprovalState.PENDING}
                     >
                       {approval === ApprovalState.PENDING ? (
-                        <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
+                        <Dots>Approving {buyToken?.symbol}</Dots>
                       ) : (
-                        "Approve " + tokens[Field.INPUT]?.symbol
+                        "Approve " + buyToken?.symbol
                       )}
                     </ButtonLight>
                   ) : (

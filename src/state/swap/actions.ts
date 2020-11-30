@@ -13,5 +13,7 @@ export const selectToken = createAction<{ field: Field; address: string }>(
   "selectToken",
 );
 export const switchTokens = createAction<void>("switchTokens");
-export const typeInput = createAction<{ buyAmount: string }>("typeInput");
+export const SellAmountInput = createAction<{ sellAmount: string }>(
+  "SellAmountInput",
+);
 export const priceInput = createAction<{ price: string }>("priceInput");

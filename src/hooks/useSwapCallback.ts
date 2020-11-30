@@ -85,9 +85,9 @@ export function useSwapCallback(
       return null;
     }
 
-    return async function onSwap() {
+    return async function onPlaceOrder() {
       if (!chainId || !library || !account) {
-        throw new Error("missing dependencies in onSwap callback");
+        throw new Error("missing dependencies in onPlaceOrder callback");
       }
 
       const routerContract: Contract = getRouterContract(

@@ -112,7 +112,7 @@ const StyledBalanceMax = styled.button`
 interface CurrencyInputPanelProps {
   value: string;
   field: string;
-  onUserBuyAmountInput: (val: string) => void;
+  onUserSellAmountInput: (val: string) => void;
   onMax?: () => void;
   showMaxButton: boolean;
   label?: string;
@@ -131,7 +131,7 @@ interface CurrencyInputPanelProps {
 export default function CurrencyInputPanel({
   value,
   field,
-  onUserBuyAmountInput,
+  onUserSellAmountInput,
   onMax,
   showMaxButton,
   label = "Input",
@@ -188,8 +188,8 @@ export default function CurrencyInputPanel({
               <NumericalInput
                 className="token-amount-input"
                 value={value}
-                onUserBuyAmountInput={(val) => {
-                  onUserBuyAmountInput(val);
+                onUserSellAmountInput={(val) => {
+                  onUserSellAmountInput(val);
                 }}
               />
               {account &&

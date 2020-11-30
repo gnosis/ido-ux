@@ -94,10 +94,7 @@ interface CurrencyInputPanelProps {
 
 export default function PriceInputPanel({
   value,
-  field,
   onUserPriceInput,
-  onMax,
-  showMaxButton,
   label = "Input",
   buyToken = null,
   sellToken = null,
@@ -128,7 +125,7 @@ export default function PriceInputPanel({
               <NumericalInput
                 className="price"
                 value={value}
-                onUserBuyAmountInput={(val) => {
+                onUserSellAmountInput={(val) => {
                   onUserPriceInput(val);
                 }}
               />

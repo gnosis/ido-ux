@@ -31,7 +31,7 @@ const BoxTitle = styled.div`
 `;
 
 export default function AuctionDetails() {
-  const { auctionId, independentField, buyAmount, price } = useSwapState();
+  const { auctionId, independentField, sellAmount, price } = useSwapState();
   const {
     bestTrade,
     tokenBalances,
@@ -41,7 +41,7 @@ export default function AuctionDetails() {
     sellToken,
     buyToken,
     auctionEndDate,
-    sellOrder,
+    initialAuctionOrder,
   } = useDerivedSwapInfo(auctionId);
 
   return (
@@ -52,8 +52,8 @@ export default function AuctionDetails() {
       <div style={{ float: "left", width: "80%" }}>
         <h1>Auction</h1>
         <h3>
-          Selling {sellOrder?.sellAmount} {sellToken?.symbol} for at least{" "}
-          {sellOrder?.buyAmount} {buyToken?.symbol}
+          Selling {initialAuctionOrder?.sellAmount} {sellToken?.symbol} for at
+          least {initialAuctionOrder?.buyAmount} {buyToken?.symbol}
         </h3>
         <br></br>
         <br></br>
