@@ -2,7 +2,7 @@ import { Pair, Token } from "@uniswap/sdk";
 import React, { useContext } from "react";
 import styled, { ThemeContext } from "styled-components";
 import { darken } from "polished";
-import { useTokenBalanceTreatingWETHasETH } from "../../state/wallet/hooks";
+import { useTokenBalance } from "../../state/wallet/hooks";
 import TokenLogo from "../TokenLogo";
 import DoubleLogo from "../DoubleLogo";
 import { RowBetween } from "../Row";
@@ -149,7 +149,7 @@ export default function CurrencyInputPanel({
   const { t } = useTranslation();
 
   const { account } = useActiveWeb3React();
-  const userTokenBalance = useTokenBalanceTreatingWETHasETH(account, token);
+  const userTokenBalance = useTokenBalance(account, token);
   const theme = useContext(ThemeContext);
 
   return (

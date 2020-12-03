@@ -203,6 +203,54 @@ export function useDerivedSwapInfo(
   };
 }
 
+// from the current swap inputs, compute the best trade and return it.
+export function useDerivedClaimInfo(
+  auctionId: number,
+): {
+  error?: string;
+  sellToken?: Token | null;
+  buyToken?: Token | null;
+  claimSellToken?: TokenAmount | null;
+  claimBuyToken?: TokenAmount | null;
+} {
+  const { chainId, account } = useActiveWeb3React();
+
+  const easyAuctionInstance: Contract | null = useContract(
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    easyAuctionABI,
+  );
+
+  const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
+    auctionId,
+  ]).result;
+  const sellTokenAddress:
+    | string
+    | undefined = auctionInfo?.sellToken.toString();
+
+  const auctionEndDate = auctionInfo?.auctionEndDate;
+  const clearingPriceOrder: SellOrder | null = decodeOrder(
+    auctionInfo?.clearingPriceOrder,
+  );
+  let error: string | undefined;
+  if (clearingPriceOrder?.buyAmount == 0) {
+    error = "Price not yet supplied to auction";
+  }
+  if (auctionEndDate >= new Date().getTime() / 1000) {
+    error = "auction has not yet ended";
+  }
+
+  const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
+
+  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
+  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
+
+  return {
+    error,
+    sellToken,
+    buyToken,
+  };
+}
+
 // updates the swap state to use the defaults for a given network whenever the query
 // string updates
 export function useDefaultsFromURLSearch(search?: string) {

@@ -6,20 +6,16 @@ import { ThemeContext } from "styled-components";
 import { ButtonError, ButtonLight } from "../../components/Button";
 import Card, { GreyCard } from "../../components/Card";
 import { AutoColumn } from "../../components/Column";
-import OrderPlacement from "../../components/OrderPlacement";
-import Claimer from "../../components/Claimer";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
 import PriceInputPanel from "../../components/PriceInputPanel";
 import QuestionHelper from "../../components/QuestionHelper";
 import { RowBetween, RowFixed } from "../../components/Row";
-import AdvancedSwapDetailsDropdown from "../../components/swap/AdvancedSwapDetailsDropdown";
 import FormattedPriceImpact from "../../components/swap/FormattedPriceImpact";
 import { BottomGrouping, Dots, Wrapper } from "../../components/swap/styleds";
 import SwapModalFooter from "../../components/swap/SwapModalFooter";
 import SwapModalHeader from "../../components/swap/SwapModalHeader";
 import TradePrice from "../../components/swap/TradePrice";
-import { TokenWarningCards } from "../../components/TokenWarningCard";
 import {
   DEFAULT_DEADLINE_FROM_NOW,
   INITIAL_ALLOWED_SLIPPAGE,
@@ -40,21 +36,16 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/swap/hooks";
+import { TYPE } from "../../theme";
 import {
   computeTradePriceBreakdown,
   warningSeverity,
 } from "../../utils/prices";
-import AppBody from "../AppBody";
-import OrderBody from "../OrderBody";
-import ClaimerBody from "../ClaimerBody";
-
 import { PriceSlippageWarningCard } from "../../components/swap/PriceSlippageWarningCard";
 import AuctionDetails from "../../components/AuctionDetails";
 import AuctionHeader from "../../components/AuctionHeader";
 
-export default function Swap({ location: { search } }: RouteComponentProps) {
-  useDefaultsFromURLSearch(search);
-
+export default function OrderPlacement() {
   const { chainId, account } = useActiveWeb3React();
   const theme = useContext(ThemeContext);
 
@@ -71,7 +62,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     error,
     sellToken,
     buyToken,
-    auctionEndDate,
   } = useDerivedSwapInfo(auctionId);
   const { onUserSellAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
@@ -82,16 +72,11 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false); // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true); // waiting for user confirmation
 
   // txn values
   const [txHash, setTxHash] = useState<string>("");
-  const [deadline, setDeadline] = useState<number>(DEFAULT_DEADLINE_FROM_NOW);
-  const [allowedSlippage, setAllowedSlippage] = useState<number>(
-    INITIAL_ALLOWED_SLIPPAGE,
-  );
 
   const formattedAmounts = {
     [independentField]: sellAmount,
@@ -147,7 +132,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     }
     setPendingConfirmation(true);
     setAttemptingTxn(false);
-    setShowAdvanced(false);
   }
 
   // the callback to execute the swap
@@ -203,48 +187,127 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   return (
     <>
-      <TokenWarningCards tokens={tokens} />
-      <AppBody>
-        <div>
-          <AuctionHeader></AuctionHeader>
-        </div>
-        <div style={{ width: "28%", float: "left", alignContent: "center" }}>
-          <AuctionDetails></AuctionDetails>
-        </div>
-        <div style={{ width: "70%", float: "right", alignContent: "right" }}>
-          {auctionEndDate >= new Date().getTime() / 1000 ? (
-            <OrderBody>
-              <Wrapper id="auction-page">
-                <OrderPlacement></OrderPlacement>
-              </Wrapper>
-            </OrderBody>
-          ) : (
-            <ClaimerBody>
-              <Wrapper id="auction-page">
-                <Claimer></Claimer>
-              </Wrapper>
-            </ClaimerBody>
-          )}
-        </div>
-      </AppBody>
-
-      {bestTrade && (
-        <AdvancedSwapDetailsDropdown
-          trade={bestTrade}
-          rawSlippage={allowedSlippage}
-          deadline={deadline}
-          showAdvanced={showAdvanced}
-          setShowAdvanced={setShowAdvanced}
-          setDeadline={setDeadline}
-          setRawSlippage={setAllowedSlippage}
+      <Wrapper id="swap-page">
+        <ConfirmationModal
+          isOpen={showConfirm}
+          title="Confirm Order"
+          onDismiss={() => {
+            resetModal();
+            setShowConfirm(false);
+          }}
+          attemptingTxn={attemptingTxn}
+          pendingConfirmation={pendingConfirmation}
+          hash={txHash}
+          topContent={modalHeader}
+          bottomContent={modalBottom}
+          pendingText={pendingText}
         />
-      )}
+        <AutoColumn gap={"md"}>
+          <>
+            <CurrencyInputPanel
+              field={Field.INPUT}
+              label={"Amount"}
+              value={sellAmount}
+              showMaxButton={!atMaxAmountInput}
+              token={buyToken}
+              onUserSellAmountInput={onUserSellAmountInput}
+              onMax={() => {
+                maxAmountInput &&
+                  onUserSellAmountInput(maxAmountInput.toExact());
+              }}
+              id="swap-currency-input"
+            />
 
-      {priceImpactWithoutFee && priceImpactSeverity > 2 && (
-        <AutoColumn gap="lg" style={{ marginTop: "1rem" }}>
-          <PriceSlippageWarningCard priceSlippage={priceImpactWithoutFee} />
+            <PriceInputPanel
+              field={Field.OUTPUT}
+              value={price}
+              onUserPriceInput={onUserPriceInput}
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              label={"Price"}
+              showMaxButton={false}
+              sellToken={sellToken}
+              buyToken={buyToken}
+              id="swap-currency-output"
+            />
+          </>
+
+          {!noRoute && (
+            <Card padding={".25rem 1.25rem 0 .75rem"} borderRadius={"20px"}>
+              <AutoColumn gap="4px">
+                <RowBetween align="center">
+                  <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                    Price
+                  </Text>
+                  <TradePrice
+                    trade={bestTrade}
+                    showInverted={showInverted}
+                    setShowInverted={setShowInverted}
+                  />
+                </RowBetween>
+
+                {bestTrade && priceImpactSeverity > 1 && (
+                  <RowBetween>
+                    <TYPE.main
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        display: "flex",
+                      }}
+                      fontSize={14}
+                    >
+                      Price Impact
+                    </TYPE.main>
+                    <RowFixed>
+                      <FormattedPriceImpact
+                        priceImpact={priceImpactWithoutFee}
+                      />
+                      <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
+                    </RowFixed>
+                  </RowBetween>
+                )}
+              </AutoColumn>
+            </Card>
+          )}
         </AutoColumn>
-      )}
+        <BottomGrouping>
+          {!account ? (
+            <ButtonLight onClick={toggleWalletModal}>
+              Connect Wallet
+            </ButtonLight>
+          ) : noRoute && userHasSpecifiedInputOutput ? (
+            <GreyCard style={{ textAlign: "center" }}>
+              <TYPE.main mb="4px">
+                Insufficient liquidity for this trade.
+              </TYPE.main>
+            </GreyCard>
+          ) : approval === ApprovalState.NOT_APPROVED ||
+            approval === ApprovalState.PENDING ? (
+            <ButtonLight
+              onClick={approveCallback}
+              disabled={approval === ApprovalState.PENDING}
+            >
+              {approval === ApprovalState.PENDING ? (
+                <Dots>Approving {buyToken?.symbol}</Dots>
+              ) : (
+                "Approve " + buyToken?.symbol
+              )}
+            </ButtonLight>
+          ) : (
+            <ButtonError
+              onClick={() => {
+                setShowConfirm(true);
+              }}
+              id="swap-button"
+              disabled={!isValid}
+              error={isValid}
+            >
+              <Text fontSize={20} fontWeight={500}>
+                {error ?? `Execute Order`}
+              </Text>
+            </ButtonError>
+          )}
+        </BottomGrouping>
+      </Wrapper>
     </>
   );
 }
