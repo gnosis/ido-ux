@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { useSwapState, useDerivedSwapInfo } from "../../state/swap/hooks";
+import {
+  useSwapState,
+  useDerivedSwapInfo,
+} from "../../state/orderplacement/hooks";
 import CountdownTimer from "../CountDown";
 import { Text } from "rebass";
 
@@ -33,11 +36,6 @@ const BoxTitle = styled.div`
 export default function AuctionDetails() {
   const { auctionId, independentField, sellAmount, price } = useSwapState();
   const {
-    bestTrade,
-    tokenBalances,
-    parsedAmounts,
-    tokens,
-    error,
     sellToken,
     buyToken,
     auctionEndDate,

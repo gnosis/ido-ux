@@ -2,9 +2,7 @@ import { parse } from "qs";
 import { createReducer } from "@reduxjs/toolkit";
 import {
   Field,
-  selectToken,
   setDefaultsFromURLSearch,
-  switchTokens,
   SellAmountInput,
   priceInput,
 } from "./actions";
@@ -59,30 +57,6 @@ export default createReducer<SwapState>(initialState, (builder) =>
       return {
         ...initialState,
         auctionId: 1,
-      };
-    })
-    .addCase(selectToken, (state, { payload: { address, field } }) => {
-      const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-      if (address === state[otherField].address) {
-        // the case where we have to swap the order
-        return {
-          ...state,
-          [field]: { address },
-          [otherField]: { address: state[field].address },
-        };
-      } else {
-        // the normal case
-        return {
-          ...state,
-          [field]: { address },
-        };
-      }
-    })
-    .addCase(switchTokens, (state) => {
-      return {
-        ...state,
-        [Field.INPUT]: { address: state[Field.OUTPUT].address },
-        [Field.OUTPUT]: { address: state[Field.INPUT].address },
       };
     })
     .addCase(SellAmountInput, (state, { payload: { sellAmount } }) => {

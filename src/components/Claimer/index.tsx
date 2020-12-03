@@ -8,7 +8,10 @@ import { BottomGrouping, Wrapper } from "../../components/swap/styleds";
 import { useActiveWeb3React } from "../../hooks";
 import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
-import { useDerivedClaimInfo, useSwapState } from "../../state/swap/hooks";
+import {
+  useDerivedClaimInfo,
+  useSwapState,
+} from "../../state/orderplacement/hooks";
 import { TYPE } from "../../theme";
 
 export default function Claimer() {

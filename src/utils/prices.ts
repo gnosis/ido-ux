@@ -4,7 +4,7 @@ import {
   ALLOWED_PRICE_IMPACT_LOW,
   ALLOWED_PRICE_IMPACT_MEDIUM,
 } from "../constants";
-import { Field } from "../state/swap/actions";
+import { Field } from "../state/orderplacement/actions";
 import { basisPointsToPercent } from "./index";
 
 const BASE_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000));

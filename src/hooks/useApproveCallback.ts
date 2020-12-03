@@ -4,7 +4,7 @@ import { Trade, TokenAmount } from "@uniswap/sdk";
 import { useCallback, useMemo } from "react";
 import { ROUTER_ADDRESS } from "../constants";
 import { useTokenAllowance } from "../data/Allowances";
-import { Field } from "../state/swap/actions";
+import { Field } from "../state/orderplacement/actions";
 import {
   useTransactionAdder,
   useHasPendingApproval,

@@ -5,9 +5,9 @@ import { JSBI, Token, TokenAmount, Trade } from "@uniswap/sdk";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { EASY_AUCTION_NETWORKS } from "../../constants/";
+import { EASY_AUCTION_NETWORKS } from "../../constants";
 import { useContract } from "../../hooks/useContract";
-import { useSingleCallResult } from "../../state/multicall/hooks";
+import { useSingleCallResult } from "../multicall/hooks";
 import easyAuctionABI from "../../constants/abis/easyAuction/easyAuction.json";
 
 import { useActiveWeb3React } from "../../hooks";

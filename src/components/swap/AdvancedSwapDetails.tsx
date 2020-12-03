@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { ChevronUp, ChevronRight } from "react-feather";
 import { Text, Flex } from "rebass";
 import { ThemeContext } from "styled-components";
-import { Field } from "../../state/swap/actions";
+import { Field } from "../../state/orderplacement/actions";
 import { CursorPointer, TYPE } from "../../theme";
 import {
   computeSlippageAdjustedAmounts,

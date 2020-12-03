@@ -6,7 +6,7 @@ import { ReactComponent as Close } from "../../assets/images/x.svg";
 import { ALL_TOKENS } from "../../constants/tokens";
 import { useActiveWeb3React } from "../../hooks";
 import { useAllTokens } from "../../hooks/Tokens";
-import { Field } from "../../state/swap/actions";
+import { Field } from "../../state/orderplacement/actions";
 import { useTokenWarningDismissal } from "../../state/user/hooks";
 import { ExternalLink, TYPE } from "../../theme";
 import { getEtherscanLink } from "../../utils";

@@ -3,7 +3,7 @@ import { Contract } from "@ethersproject/contracts";
 import { ChainId, Token } from "@uniswap/sdk";
 import { useMemo } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
-import { tryParseAmount, useSwapState } from "../state/swap/hooks";
+import { tryParseAmount, useSwapState } from "../state/orderplacement/hooks";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 import { useActiveWeb3React } from "./index";
 

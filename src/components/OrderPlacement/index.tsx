@@ -29,13 +29,13 @@ import {
 } from "../../hooks/useApproveCallback";
 import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
-import { Field } from "../../state/swap/actions";
+import { Field } from "../../state/orderplacement/actions";
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState,
-} from "../../state/swap/hooks";
+} from "../../state/orderplacement/hooks";
 import { TYPE } from "../../theme";
 import {
   computeTradePriceBreakdown,

@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { useSwapState, useDerivedSwapInfo } from "../../state/swap/hooks";
+import {
+  useSwapState,
+  useDerivedSwapInfo,
+} from "../../state/orderplacement/hooks";
 import { Text } from "rebass";
 
 const Body = styled.div`

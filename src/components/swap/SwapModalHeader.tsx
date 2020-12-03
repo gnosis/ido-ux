@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { ArrowDown } from "react-feather";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
-import { Field } from "../../state/swap/actions";
+import { Field } from "../../state/orderplacement/actions";
 import { TYPE } from "../../theme";
 import { AutoColumn } from "../Column";
 import { RowBetween, RowFixed } from "../Row";
