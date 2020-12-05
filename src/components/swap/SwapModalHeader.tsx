@@ -13,12 +13,10 @@ import { TruncatedText } from "./styleds";
 export default function SwapModalHeader({
   formattedAmounts,
   tokens,
-  priceImpactSeverity,
   independentField,
 }: {
   formattedAmounts?: { [field in Field]?: string };
   tokens?: { [field in Field]?: Token };
-  priceImpactSeverity: number;
   independentField: Field;
 }) {
   const theme = useContext(ThemeContext);

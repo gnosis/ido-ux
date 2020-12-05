@@ -1,24 +1,12 @@
 import { JSBI, TokenAmount, WETH, ChainId } from "@uniswap/sdk";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { Text } from "rebass";
-import { ThemeContext } from "styled-components";
-import { ButtonError, ButtonLight } from "../../components/Button";
-import Card, { GreyCard } from "../../components/Card";
-import { AutoColumn } from "../../components/Column";
 import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import CurrencyInputPanel from "../../components/CurrencyInputPanel";
-import PriceInputPanel from "../../components/PriceInputPanel";
-import QuestionHelper from "../../components/QuestionHelper";
-import { RowBetween, RowFixed } from "../../components/Row";
 import AdvancedSwapDetailsDropdown from "../../components/swap/AdvancedSwapDetailsDropdown";
-import FormattedPriceImpact from "../../components/swap/FormattedPriceImpact";
-import { BottomGrouping, Dots, Wrapper } from "../../components/swap/styleds";
+import { Wrapper } from "../../components/swap/styleds";
 import SwapModalFooter from "../../components/swap/SwapModalFooter";
 import SwapModalHeader from "../../components/swap/SwapModalHeader";
-import TradePrice from "../../components/swap/TradePrice";
 import { TokenWarningCards } from "../../components/TokenWarningCard";
 import {
   DEFAULT_DEADLINE_FROM_NOW,
@@ -27,12 +15,8 @@ import {
 } from "../../constants";
 import { useActiveWeb3React } from "../../hooks";
 import { EASY_AUCTION_NETWORKS } from "../../constants";
-import {
-  useApproveCallback,
-  ApprovalState,
-} from "../../hooks/useApproveCallback";
+import { useApproveCallback } from "../../hooks/useApproveCallback";
 import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
-import { useWalletModalToggle } from "../../state/application/hooks";
 import { Field } from "../../state/orderplacement/actions";
 import {
   useDefaultsFromURLSearch,
@@ -40,31 +24,21 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/orderplacement/hooks";
-import {
-  computeTradePriceBreakdown,
-  warningSeverity,
-} from "../../utils/prices";
 import AppBody from "../AppBody";
 import OrderBody from "../OrderBody";
 import ClaimerBody from "../ClaimerBody";
 
-import { PriceSlippageWarningCard } from "../../components/swap/PriceSlippageWarningCard";
 import AuctionDetails from "../../components/AuctionDetails";
 import AuctionHeader from "../../components/AuctionHeader";
 
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
 
-  const { chainId, account } = useActiveWeb3React();
-  const theme = useContext(ThemeContext);
-
-  // toggle wallet when disconnected
-  const toggleWalletModal = useWalletModalToggle();
+  const { chainId } = useActiveWeb3React();
 
   // swap state
-  const { auctionId, independentField, sellAmount, price } = useSwapState();
+  const { auctionId, independentField, sellAmount } = useSwapState();
   const {
-    bestTrade,
     tokenBalances,
     parsedAmounts,
     tokens,
@@ -100,13 +74,11 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
       : "",
   };
 
-  const route = bestTrade?.route;
   const userHasSpecifiedInputOutput =
     !!tokens[Field.INPUT] &&
     !!tokens[Field.OUTPUT] &&
     !!parsedAmounts[independentField] &&
     parsedAmounts[independentField].greaterThan(JSBI.BigInt(0));
-  const noRoute = !route;
 
   const approvalTokenAmount: TokenAmount | undefined =
     buyToken == undefined || sellAmount == undefined
@@ -153,10 +125,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   // the callback to execute the swap
   const placeOrderCallback = usePlaceOrderCallback(sellToken, buyToken);
 
-  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(
-    bestTrade,
-  );
-
   function onPlaceOrder() {
     setAttemptingTxn(true);
     placeOrderCallback().then((hash) => {
@@ -168,14 +136,10 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false);
 
-  // warnings on slippage
-  const priceImpactSeverity = warningSeverity(priceImpactWithoutFee);
-
   function modalHeader() {
     return (
       <SwapModalHeader
         independentField={independentField}
-        priceImpactSeverity={priceImpactSeverity}
         tokens={tokens}
         formattedAmounts={formattedAmounts}
       />
@@ -187,13 +151,9 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
       <SwapModalFooter
         confirmText={"Confirm Order"}
         showInverted={showInverted}
-        severity={priceImpactSeverity}
         setShowInverted={setShowInverted}
         onPlaceOrder={onPlaceOrder}
-        realizedLPFee={realizedLPFee}
         parsedAmounts={parsedAmounts}
-        priceImpactWithoutFee={priceImpactWithoutFee}
-        trade={bestTrade}
       />
     );
   }
@@ -228,9 +188,8 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         </div>
       </AppBody>
 
-      {bestTrade && (
+      {
         <AdvancedSwapDetailsDropdown
-          trade={bestTrade}
           rawSlippage={allowedSlippage}
           deadline={deadline}
           showAdvanced={showAdvanced}
@@ -238,13 +197,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           setDeadline={setDeadline}
           setRawSlippage={setAllowedSlippage}
         />
-      )}
-
-      {priceImpactWithoutFee && priceImpactSeverity > 2 && (
-        <AutoColumn gap="lg" style={{ marginTop: "1rem" }}>
-          <PriceSlippageWarningCard priceSlippage={priceImpactWithoutFee} />
-        </AutoColumn>
-      )}
+      }
     </>
   );
 }

@@ -55,7 +55,6 @@ export default function OrderPlacement() {
   // swap state
   const { auctionId, independentField, sellAmount, price } = useSwapState();
   const {
-    bestTrade,
     tokenBalances,
     parsedAmounts,
     tokens,
@@ -85,13 +84,11 @@ export default function OrderPlacement() {
       : "",
   };
 
-  const route = bestTrade?.route;
   const userHasSpecifiedInputOutput =
     !!tokens[Field.INPUT] &&
     !!tokens[Field.OUTPUT] &&
     !!parsedAmounts[independentField] &&
     parsedAmounts[independentField].greaterThan(JSBI.BigInt(0));
-  const noRoute = !route;
 
   const approvalTokenAmount: TokenAmount | undefined =
     buyToken == undefined || sellAmount == undefined
@@ -137,10 +134,6 @@ export default function OrderPlacement() {
   // the callback to execute the swap
   const placeOrderCallback = usePlaceOrderCallback(sellToken, buyToken);
 
-  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(
-    bestTrade,
-  );
-
   function onPlaceOrder() {
     setAttemptingTxn(true);
     placeOrderCallback().then((hash) => {
@@ -152,14 +145,10 @@ export default function OrderPlacement() {
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false);
 
-  // warnings on slippage
-  const priceImpactSeverity = warningSeverity(priceImpactWithoutFee);
-
   function modalHeader() {
     return (
       <SwapModalHeader
         independentField={independentField}
-        priceImpactSeverity={priceImpactSeverity}
         tokens={tokens}
         formattedAmounts={formattedAmounts}
       />
@@ -171,13 +160,9 @@ export default function OrderPlacement() {
       <SwapModalFooter
         confirmText={"Confirm Order"}
         showInverted={showInverted}
-        severity={priceImpactSeverity}
         setShowInverted={setShowInverted}
         onPlaceOrder={onPlaceOrder}
-        realizedLPFee={realizedLPFee}
         parsedAmounts={parsedAmounts}
-        priceImpactWithoutFee={priceImpactWithoutFee}
-        trade={bestTrade}
       />
     );
   }
@@ -230,51 +215,13 @@ export default function OrderPlacement() {
               id="swap-currency-output"
             />
           </>
-
-          {!noRoute && (
-            <Card padding={".25rem 1.25rem 0 .75rem"} borderRadius={"20px"}>
-              <AutoColumn gap="4px">
-                <RowBetween align="center">
-                  <Text fontWeight={500} fontSize={14} color={theme.text2}>
-                    Price
-                  </Text>
-                  <TradePrice
-                    trade={bestTrade}
-                    showInverted={showInverted}
-                    setShowInverted={setShowInverted}
-                  />
-                </RowBetween>
-
-                {bestTrade && priceImpactSeverity > 1 && (
-                  <RowBetween>
-                    <TYPE.main
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        display: "flex",
-                      }}
-                      fontSize={14}
-                    >
-                      Price Impact
-                    </TYPE.main>
-                    <RowFixed>
-                      <FormattedPriceImpact
-                        priceImpact={priceImpactWithoutFee}
-                      />
-                      <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
-                    </RowFixed>
-                  </RowBetween>
-                )}
-              </AutoColumn>
-            </Card>
-          )}
         </AutoColumn>
         <BottomGrouping>
           {!account ? (
             <ButtonLight onClick={toggleWalletModal}>
               Connect Wallet
             </ButtonLight>
-          ) : noRoute && userHasSpecifiedInputOutput ? (
+          ) : userHasSpecifiedInputOutput ? (
             <GreyCard style={{ textAlign: "center" }}>
               <TYPE.main mb="4px">
                 Insufficient liquidity for this trade.

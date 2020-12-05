@@ -17,17 +17,14 @@ export default function SwapModalFooter({
   trade,
   showInverted,
   setShowInverted,
-  severity,
   onPlaceOrder,
   parsedAmounts,
   realizedLPFee,
-  priceImpactWithoutFee,
   confirmText,
 }: {
   trade?: Trade;
   showInverted: boolean;
   setShowInverted: (inverted: boolean) => void;
-  severity: number;
   onPlaceOrder: () => any;
   parsedAmounts?: { [field in Field]?: TokenAmount };
   realizedLPFee?: TokenAmount;
@@ -40,7 +37,6 @@ export default function SwapModalFooter({
       <AutoRow>
         <ButtonError
           onClick={onPlaceOrder}
-          error={severity > 2}
           style={{ margin: "10px 0 0 0" }}
           id="confirm-swap-or-send"
         >

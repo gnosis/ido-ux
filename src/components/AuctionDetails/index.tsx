@@ -33,10 +33,8 @@ const BoxTitle = styled.div`
 `;
 
 export default function AuctionDetails() {
-  const { auctionId, independentField, sellAmount, price } = useSwapState();
-  const { error, sellToken, buyToken, auctionEndDate } = useDerivedSwapInfo(
-    auctionId,
-  );
+  const { auctionId } = useSwapState();
+  const { auctionEndDate } = useDerivedSwapInfo(auctionId);
 
   return (
     <>

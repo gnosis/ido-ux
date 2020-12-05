@@ -15,7 +15,7 @@ import { useActiveWeb3React } from "../../hooks";
 import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
 import { useTradeExactIn, useTradeExactOut } from "../../hooks/Trades";
 import { AppDispatch, AppState } from "../index";
-import { useTokenBalancesTreatWETHAsETH } from "../wallet/hooks";
+import { useTokenBalances } from "../wallet/hooks";
 import {
   Field,
   setDefaultsFromURLSearch,
@@ -96,7 +96,6 @@ export function useDerivedSwapInfo(
   tokens: { [field in Field]?: Token };
   tokenBalances: { [field in Field]?: TokenAmount };
   parsedAmounts: { [field in Field]?: TokenAmount };
-  bestTrade: Trade | null;
   error?: string;
   sellToken?: Token | null;
   buyToken?: Token | null;
@@ -140,10 +139,10 @@ export function useDerivedSwapInfo(
   const tokenIn = useTokenByAddressAndAutomaticallyAdd(tokenInAddress);
   const tokenOut = useTokenByAddressAndAutomaticallyAdd(tokenOutAddress);
 
-  const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(
-    account ?? undefined,
-    [buyToken, tokenOut],
-  );
+  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
+    buyToken,
+    tokenOut,
+  ]);
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const amount = tryParseAmount(sellAmount, isExactIn ? tokenIn : tokenOut);
@@ -199,7 +198,6 @@ export function useDerivedSwapInfo(
     tokens,
     tokenBalances,
     parsedAmounts,
-    bestTrade,
     error,
     sellToken,
     buyToken,
