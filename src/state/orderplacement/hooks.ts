@@ -1,5 +1,6 @@
 import { Contract } from "@ethersproject/contracts";
 import { parseUnits } from "@ethersproject/units";
+import { useState } from "react";
 import { ChainId } from "@uniswap/sdk";
 import { JSBI, Token, TokenAmount, Trade } from "@uniswap/sdk";
 import { useCallback, useEffect } from "react";
@@ -29,10 +30,10 @@ export interface SellOrder {
 
 function decodeOrder(orderBytes: string): SellOrder | null {
   return {
-    sellAmount:
+    buyAmount:
       parseInt(orderBytes?.substring(64 / 4 + 2, 64 / 4 + 96 / 4 + 2), 16) /
       10 ** 18,
-    buyAmount:
+    sellAmount:
       parseInt(
         orderBytes?.substring(64 / 4 + 96 / 4 - 2, 64 / 4 + 96 / 2 + 2),
         16,
@@ -99,6 +100,7 @@ export function useDerivedSwapInfo(
   error?: string;
   sellToken?: Token | null;
   buyToken?: Token | null;
+  clearingPriceOrder?: SellOrder | null;
   initialAuctionOrder?: SellOrder | null;
   auctionEndDate?: number | null;
 } {
@@ -117,6 +119,9 @@ export function useDerivedSwapInfo(
     | undefined = auctionInfo?.sellToken.toString();
   const initialAuctionOrder: SellOrder | null = decodeOrder(
     auctionInfo?.initialAuctionOrder,
+  );
+  const clearingPriceOrder: SellOrder | null = decodeOrder(
+    auctionInfo?.clearingPriceOrder,
   );
   const auctionEndDate = auctionInfo?.auctionEndDate;
 
@@ -198,6 +203,7 @@ export function useDerivedSwapInfo(
     error,
     sellToken,
     buyToken,
+    clearingPriceOrder,
     initialAuctionOrder,
     auctionEndDate,
   };
@@ -213,7 +219,7 @@ export function useDerivedClaimInfo(
   claimSellToken?: TokenAmount | null;
   claimBuyToken?: TokenAmount | null;
 } {
-  const { chainId, account } = useActiveWeb3React();
+  const { chainId } = useActiveWeb3React();
 
   const easyAuctionInstance: Contract | null = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -260,4 +266,56 @@ export function useDefaultsFromURLSearch(search?: string) {
     if (!chainId) return;
     dispatch(setDefaultsFromURLSearch({ chainId, queryString: search }));
   }, [dispatch, search, chainId]);
+}
+export function useDataFromEventLogs(auctionId: number) {
+  const { library } = useActiveWeb3React();
+  const [formattedEvents, setFormattedEvents] = useState<any>();
+  const { chainId } = useActiveWeb3React();
+  let { account } = useActiveWeb3React();
+  const easyAuctionInstance: Contract | null = useContract(
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    easyAuctionABI,
+  );
+  if (account == null) {
+    account = undefined;
+  }
+  // create filter for these specific events
+  const userId = useSingleCallResult(easyAuctionInstance, "getUserId", [
+    account,
+  ]).result;
+
+  useEffect(() => {
+    async function fetchData() {
+      const filter = {
+        ...easyAuctionInstance?.filters?.["NewSellOrder"](
+          auctionId,
+          userId,
+          null,
+          null,
+        ),
+        fromBlock: 0,
+        toBlock: "latest",
+      };
+      const pastEvents = await library?.getLogs(filter);
+      // reverse events to get them from newest to odlest
+      const formattedEventData = pastEvents
+        ?.map((event) => {
+          const eventParsed = easyAuctionInstance?.interface.parseLog(event);
+          return {
+            description: eventParsed?.topic,
+            details: {
+              sellAmount: eventParsed?.args[3],
+              buyAmount: eventParsed?.args[2],
+            },
+          };
+        })
+        .reverse();
+      setFormattedEvents(formattedEventData);
+    }
+    if (!formattedEvents) {
+      fetchData();
+    }
+  }, [userId, auctionId, easyAuctionInstance, library, formattedEvents]);
+
+  return formattedEvents;
 }

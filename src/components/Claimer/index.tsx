@@ -11,6 +11,7 @@ import { useWalletModalToggle } from "../../state/application/hooks";
 import {
   useDerivedClaimInfo,
   useSwapState,
+  useDataFromEventLogs,
 } from "../../state/orderplacement/hooks";
 import { TYPE } from "../../theme";
 
@@ -31,6 +32,7 @@ export default function Claimer() {
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false); // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true); // waiting for user confirmation
 
+  const sellOrderEventsForUser = useDataFromEventLogs(auctionId);
   // txn values
   const [txHash, setTxHash] = useState<string>("");
 

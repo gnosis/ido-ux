@@ -33,26 +33,39 @@ const BoxTitle = styled.div`
   font-size: 20px;
 `;
 
-export default function AuctionDetails() {
+export default function AuctionHeader() {
   const { auctionId, independentField, sellAmount, price } = useSwapState();
   const {
     sellToken,
     buyToken,
     auctionEndDate,
     initialAuctionOrder,
+    clearingPriceOrder,
   } = useDerivedSwapInfo(auctionId);
-
+  console.log(initialAuctionOrder.sellAmount);
   return (
     <>
       <div style={{ float: "right", width: "20%" }}>
         <CountdownTimer auctionEndDate={auctionEndDate} />
       </div>
       <div style={{ float: "left", width: "80%" }}>
-        <h1>Auction</h1>
-        <h3>
-          Selling {initialAuctionOrder?.sellAmount} {sellToken?.symbol} for at
-          least {initialAuctionOrder?.buyAmount} {buyToken?.symbol}
-        </h3>
+        {auctionEndDate >= new Date().getTime() / 1000 ? (
+          <div>
+            <h1>Auction</h1>
+            <h3>
+              Selling {initialAuctionOrder?.sellAmount} {sellToken?.symbol} for
+              at least {initialAuctionOrder?.buyAmount} {buyToken?.symbol}
+            </h3>
+          </div>
+        ) : (
+          <div>
+            <h1>Auction</h1>
+            <h3>
+              Auction settled with a price of{" "}
+              {clearingPriceOrder?.buyAmount / clearingPriceOrder.sellAmount}
+            </h3>
+          </div>
+        )}
         <br></br>
         <br></br>
       </div>
