@@ -25,8 +25,8 @@ export default function AuctionHeader() {
     clearingPrice = undefined;
   } else {
     clearingPrice = new Fraction(
-      clearingPriceOrder.buyAmount.raw.toString(),
       clearingPriceOrder.sellAmount.raw.toString(),
+      clearingPriceOrder.buyAmount.raw.toString(),
     );
   }
   return (
@@ -49,7 +49,8 @@ export default function AuctionHeader() {
           <div>
             <h1>Auction</h1>
             <h3>
-              Auction settled with a price of {clearingPrice?.toSignificant(2)}
+              Auction settled with a price of {clearingPrice?.toSignificant(4)}{" "}
+              [{sellToken?.symbol} /{buyToken?.symbol} ]
             </h3>
           </div>
         )}

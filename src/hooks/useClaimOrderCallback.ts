@@ -24,7 +24,6 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
 
   const { auctionId } = useSwapState();
   const sellOrderEventsForUser = useDataFromEventLogs(auctionId);
-  console.log(sellOrderEventsForUser);
   return useMemo(() => {
     return async function onClaimOrder() {
       if (!chainId || !library || !account) {

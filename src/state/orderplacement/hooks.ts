@@ -17,7 +17,7 @@ import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
 import { useTradeExactIn, useTradeExactOut } from "../../hooks/Trades";
 import { AppDispatch, AppState } from "../index";
 import { useTokenBalances } from "../wallet/hooks";
-import { Order } from "../../hooks/Order";
+import { encodeOrder, Order } from "../../hooks/Order";
 import {
   Field,
   setDefaultsFromURLSearch,
@@ -227,9 +227,6 @@ export function useDerivedSwapInfo(
     sellAmountScaled,
     buyAmountScaled,
   } = convertPriceIntoBuyAndSellAmount(sellToken, buyToken, price, sellAmount);
-  console.log(sellAmountScaled?.toString());
-  console.log(buyAmountScaled?.toString());
-
   let initialPrice: Fraction | undefined;
   if (initialAuctionOrder?.buyAmount == undefined) {
     initialPrice = undefined;
@@ -305,6 +302,7 @@ export function useDerivedClaimInfo(
     buyToken,
     sellToken,
   );
+
   let error: string | undefined;
   if (clearingPriceOrder?.buyAmount.raw.toString() == "0") {
     error = "Price not yet supplied to auction";
@@ -312,9 +310,28 @@ export function useDerivedClaimInfo(
   if (auctionEndDate >= new Date().getTime() / 1000) {
     error = "auction has not yet ended";
   }
-  const sellOrderEventsForUser = useDataFromEventLogs(auctionId);
+  const sellOrderEventsForUser:
+    | EventParsingOutput[]
+    | undefined = useDataFromEventLogs(auctionId);
   if (sellOrderEventsForUser?.length == 0) {
     error = "No participation";
+  }
+  const claimed = useSingleCallResult(easyAuctionInstance, "containsOrder", [
+    auctionId,
+    encodeOrder(
+      sellOrderEventsForUser == undefined ||
+        sellOrderEventsForUser[0] == undefined
+        ? {
+            sellAmount: BigNumber.from(0),
+            buyAmount: BigNumber.from(0),
+            userId: BigNumber.from(0),
+          }
+        : sellOrderEventsForUser[0].details,
+    ),
+  ]).result;
+
+  if (claimed) {
+    error = "Proceedings already claimed";
   }
 
   return {
@@ -334,7 +351,12 @@ export function useDefaultsFromURLSearch(search?: string) {
     dispatch(setDefaultsFromURLSearch({ chainId, queryString: search }));
   }, [dispatch, search, chainId]);
 }
-export function useDataFromEventLogs(auctionId: number) {
+
+interface EventParsingOutput {
+  description: string;
+  details: Order;
+}
+export function useDataFromEventLogs(auctionId: number): EventParsingOutput[] {
   const { library } = useActiveWeb3React();
   const [formattedEvents, setFormattedEvents] = useState<any>();
   const { chainId } = useActiveWeb3React();
