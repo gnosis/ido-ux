@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useContext } from "react";
+import styled, { ThemeContext } from "styled-components";
 import {
   useSwapState,
   useDerivedSwapInfo,
@@ -34,7 +34,13 @@ const BoxTitle = styled.div`
 
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
-  const { auctionEndDate } = useDerivedSwapInfo(auctionId);
+  const theme = useContext(ThemeContext);
+
+  const { auctionEndDate, sellToken, buyToken } = useDerivedSwapInfo(auctionId);
+  const hrefLinkSellToken =
+    "https://rinkeby.etherscan.io/token" + sellToken?.address;
+  const hrefLinkBuyToken =
+    "https://rinkeby.etherscan.io/token/" + buyToken?.address;
 
   return (
     <>
@@ -46,25 +52,52 @@ export default function AuctionDetails() {
             <br></br>
             Status:
             <br></br>
-            Price:
-            <br></br>
             End:
             <br></br>
             Legal:
             <br></br>
+            SellToken:
+            <br></br>
+            BuyToken:
           </div>
-          <div style={{ width: "50%", float: "right", textAlign: "right" }}>
+          <div
+            style={{
+              width: "50%",
+              float: "right",
+              textAlign: "right",
+              textDecoration: "none",
+            }}
+          >
             {auctionId}
             <br></br>
             {auctionEndDate <= new Date().getTime() / 1000
               ? "Ended"
               : "Ongoing"}
             <br></br>
-            1.45
-            <br></br>
-            2020/1/12
+            {new Date(auctionEndDate * 1000).toLocaleDateString()}
             <br></br>
             Utility
+            <br></br>
+            <a
+              href={hrefLinkSellToken}
+              style={{
+                textDecoration: "none",
+              }}
+            >
+              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
+                {sellToken?.symbol}
+              </Text>
+            </a>
+            <a
+              href={hrefLinkBuyToken}
+              style={{
+                textDecoration: "none",
+              }}
+            >
+              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
+                {buyToken?.symbol}
+              </Text>
+            </a>
           </div>
         </Text>
       </Body>
