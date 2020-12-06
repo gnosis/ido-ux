@@ -3,10 +3,11 @@ import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
 import { ButtonError, ButtonLight } from "../../components/Button";
 import { GreyCard } from "../../components/Card";
-import { BottomGrouping, Wrapper } from "../../components/swap/styleds";
+import { BottomGrouping, Wrapper } from "../swap/styleds";
+import ClaimConfirmationModal from "../ClaimConfirmationModal";
 
 import { useActiveWeb3React } from "../../hooks";
-import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
+import { useClaimOrderCallback } from "../../hooks/useClaimOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import {
   useDerivedClaimInfo,
@@ -43,11 +44,11 @@ export default function Claimer() {
   }
 
   // the callback to execute the swap
-  const placeOrderCallback = usePlaceOrderCallback(sellToken, buyToken);
+  const claimOrderCallback = useClaimOrderCallback();
 
-  function onPlaceOrder() {
+  function onClaimOrder() {
     setAttemptingTxn(true);
-    placeOrderCallback().then((hash) => {
+    claimOrderCallback().then((hash) => {
       setTxHash(hash);
       setPendingConfirmation(false);
     });
@@ -62,6 +63,16 @@ export default function Claimer() {
   return (
     <>
       <Wrapper id="swap-page">
+        <ClaimConfirmationModal
+          isOpen={showConfirm}
+          onDismiss={() => {
+            resetModal();
+            setShowConfirm(false);
+          }}
+          pendingConfirmation={pendingConfirmation}
+          hash={txHash}
+          pendingText={pendingText}
+        />
         <BottomGrouping>
           {!account ? (
             <ButtonLight onClick={toggleWalletModal}>
@@ -75,6 +86,7 @@ export default function Claimer() {
             <ButtonError
               onClick={() => {
                 setShowConfirm(true);
+                onClaimOrder();
               }}
               id="swap-button"
               disabled={!isValid}

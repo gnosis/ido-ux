@@ -16,6 +16,7 @@ import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
 import { useTradeExactIn, useTradeExactOut } from "../../hooks/Trades";
 import { AppDispatch, AppState } from "../index";
 import { useTokenBalances } from "../wallet/hooks";
+import { Order } from "../../hooks/Order";
 import {
   Field,
   setDefaultsFromURLSearch,
@@ -35,7 +36,7 @@ function decodeOrder(orderBytes: string): SellOrder | null {
       10 ** 18,
     sellAmount:
       parseInt(
-        orderBytes?.substring(64 / 4 + 96 / 4 - 2, 64 / 4 + 96 / 2 + 2),
+        orderBytes?.substring(64 / 4 + 96 / 4 + 2, 64 / 4 + 96 / 2 + 2),
         16,
       ) /
       10 ** 18,
@@ -242,6 +243,10 @@ export function useDerivedClaimInfo(
   if (auctionEndDate >= new Date().getTime() / 1000) {
     error = "auction has not yet ended";
   }
+  const sellOrderEventsForUser = useDataFromEventLogs(auctionId);
+  if (sellOrderEventsForUser?.length == 0) {
+    error = "No participation";
+  }
 
   const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
 
@@ -299,12 +304,14 @@ export function useDataFromEventLogs(auctionId: number) {
       const formattedEventData = pastEvents
         ?.map((event) => {
           const eventParsed = easyAuctionInstance?.interface.parseLog(event);
+          const order: Order = {
+            userId: eventParsed?.args[1],
+            sellAmount: eventParsed?.args[3],
+            buyAmount: eventParsed?.args[2],
+          };
           return {
             description: eventParsed?.topic,
-            details: {
-              sellAmount: eventParsed?.args[3],
-              buyAmount: eventParsed?.args[2],
-            },
+            details: order,
           };
         })
         .reverse();

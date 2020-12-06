@@ -42,7 +42,6 @@ export default function AuctionHeader() {
     initialAuctionOrder,
     clearingPriceOrder,
   } = useDerivedSwapInfo(auctionId);
-  console.log(initialAuctionOrder.sellAmount);
   return (
     <>
       <div style={{ float: "right", width: "20%" }}>
