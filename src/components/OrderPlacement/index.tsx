@@ -197,7 +197,9 @@ export default function OrderPlacement() {
               value={price}
               onUserPriceInput={onUserPriceInput}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              label={"Price"}
+              label={
+                "Price  [" + sellToken?.symbol + "/" + buyToken?.symbol + "]"
+              }
               showMaxButton={false}
               sellToken={sellToken}
               buyToken={buyToken}

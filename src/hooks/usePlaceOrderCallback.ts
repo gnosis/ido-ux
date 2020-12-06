@@ -2,10 +2,11 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
 import { ChainId, Token } from "@uniswap/sdk";
 import { useMemo } from "react";
+import { convertPriceIntoBuyAndSellAmount } from "../utils/prices";
 import { useTransactionAdder } from "../state/transactions/hooks";
-import { tryParseAmount, useSwapState } from "../state/orderplacement/hooks";
-import { calculateGasMargin, getEasyAuctionContract } from "../utils";
+import { useSwapState } from "../state/orderplacement/hooks";
 import { useActiveWeb3React } from "./index";
+import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 
 export const queueStartElement =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -29,22 +30,23 @@ export function usePlaceOrderCallback(
         throw new Error("missing dependencies in onPlaceOrder callback");
       }
 
-      const sellAmountScaled = tryParseAmount(sellAmount, buyToken);
+      const {
+        sellAmountScaled,
+        buyAmountScaled,
+      } = convertPriceIntoBuyAndSellAmount(
+        sellToken,
+        buyToken,
+        price,
+        sellAmount,
+      );
+      if (sellAmountScaled == undefined || buyAmountScaled == undefined) {
+        return "price was not correct";
+      }
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
         library,
         account,
       );
-      if (sellAmountScaled == undefined) {
-        return "not valid sellAmount";
-      }
-      const buyAmount = tryParseAmount(price, sellToken);
-      if (buyAmount == undefined) {
-        return "not valid price";
-      }
-      const buyAmountScaled = BigNumber.from(sellAmountScaled.raw.toString())
-        .mul(buyAmount.raw.toString())
-        .div(BigNumber.from(10).pow(buyToken.decimals));
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
@@ -55,7 +57,7 @@ export function usePlaceOrderCallback(
         args = [
           auctionId,
           [buyAmountScaled.toString()],
-          [sellAmountScaled.raw.toString()],
+          [sellAmountScaled.toString()],
           [queueStartElement],
         ];
         value = null;
@@ -76,7 +78,7 @@ export function usePlaceOrderCallback(
               " " +
               buyToken.symbol +
               " for " +
-              (parseFloat(sellAmount) * parseFloat(price)).toString() +
+              (parseFloat(sellAmount) / parseFloat(price)).toString() +
               " " +
               sellToken.symbol,
           });

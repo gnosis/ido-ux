@@ -1,4 +1,14 @@
-import { Fraction, JSBI, Percent, TokenAmount, Trade } from "@uniswap/sdk";
+import { BigNumber } from "@ethersproject/bignumber";
+import { tryParseAmount } from "../state/orderplacement/hooks";
+
+import {
+  Fraction,
+  JSBI,
+  Percent,
+  Token,
+  TokenAmount,
+  Trade,
+} from "@uniswap/sdk";
 import {
   ALLOWED_PRICE_IMPACT_HIGH,
   ALLOWED_PRICE_IMPACT_LOW,
@@ -87,4 +97,36 @@ export function formatExecutionPrice(
     : `${trade.executionPrice.toSignificant(6)} ${
         trade.outputAmount.token.symbol
       } / ${trade.inputAmount.token.symbol}`;
+}
+
+export function convertPriceIntoBuyAndSellAmount(
+  sellToken: Token | undefined,
+  buyToken: Token | undefined,
+  price: string,
+  sellAmount: string,
+): {
+  sellAmountScaled: BigNumber | undefined;
+  buyAmountScaled: BigNumber | undefined;
+} {
+  if (sellToken == undefined || buyToken == undefined) {
+    return {
+      sellAmountScaled: undefined,
+      buyAmountScaled: undefined,
+    };
+  }
+  const sellAmountScaled = tryParseAmount(sellAmount, buyToken);
+  if (sellAmountScaled == undefined) {
+    return { sellAmountScaled: undefined, buyAmountScaled: undefined };
+  }
+  const inversePriceAdjustedByBuyToken = tryParseAmount(price, buyToken);
+  if (inversePriceAdjustedByBuyToken == undefined) {
+    return { sellAmountScaled: undefined, buyAmountScaled: undefined };
+  }
+  const buyAmountScaled = BigNumber.from(sellAmountScaled.raw.toString())
+    .mul(BigNumber.from(10).pow(sellToken.decimals))
+    .div(inversePriceAdjustedByBuyToken.raw.toString());
+  return {
+    sellAmountScaled: BigNumber.from(sellAmountScaled.raw.toString()),
+    buyAmountScaled,
+  };
 }

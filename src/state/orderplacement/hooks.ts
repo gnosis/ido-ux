@@ -1,10 +1,11 @@
 import { Contract } from "@ethersproject/contracts";
 import { parseUnits } from "@ethersproject/units";
 import { useState } from "react";
-import { ChainId } from "@uniswap/sdk";
+import { ChainId, Fraction } from "@uniswap/sdk";
 import { JSBI, Token, TokenAmount } from "@uniswap/sdk";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { convertPriceIntoBuyAndSellAmount } from "../../utils/prices";
 
 import { EASY_AUCTION_NETWORKS } from "../../constants";
 import { useContract } from "../../hooks/useContract";
@@ -23,23 +24,32 @@ import {
   SellAmountInput,
   priceInput,
 } from "./actions";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export interface SellOrder {
-  sellAmount: number;
-  buyAmount: number;
+  sellAmount: TokenAmount;
+  buyAmount: TokenAmount;
 }
 
-function decodeOrder(orderBytes: string): SellOrder | null {
+function decodeOrder(
+  orderBytes: string,
+  soldToken: Token | undefined,
+  boughtToken: Token | undefined,
+): SellOrder | null {
+  if (soldToken == undefined || boughtToken == undefined) {
+    return null;
+  }
+  const sellAmount = new Fraction(
+    BigNumber.from("0x" + orderBytes.substring(43, 66)).toString(),
+    "1",
+  );
+  const buyAmount = new Fraction(
+    BigNumber.from("0x" + orderBytes.substring(19, 42)).toString(),
+    "1",
+  );
   return {
-    buyAmount:
-      parseInt(orderBytes?.substring(64 / 4 + 2, 64 / 4 + 96 / 4 + 2), 16) /
-      10 ** 18,
-    sellAmount:
-      parseInt(
-        orderBytes?.substring(64 / 4 + 96 / 4 + 2, 64 / 4 + 96 / 2 + 2),
-        16,
-      ) /
-      10 ** 18,
+    sellAmount: new TokenAmount(soldToken, sellAmount.toSignificant(6)),
+    buyAmount: new TokenAmount(boughtToken, buyAmount.toSignificant(6)),
   };
 }
 
@@ -90,6 +100,32 @@ export function tryParseAmount(
   return;
 }
 
+export function useDeriveSellAndBuyToken(
+  auctionId: number,
+): { sellToken: Token | undefined; buyToken: Token | undefined } {
+  const { chainId } = useActiveWeb3React();
+
+  const easyAuctionInstance: Contract | null = useContract(
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    easyAuctionABI,
+  );
+  const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
+    auctionId,
+  ]).result;
+  const sellTokenAddress:
+    | string
+    | undefined = auctionInfo?.sellToken.toString();
+
+  const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
+
+  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
+  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
+  return {
+    sellToken,
+    buyToken,
+  };
+}
+
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(
   auctionId: number,
@@ -106,29 +142,6 @@ export function useDerivedSwapInfo(
 } {
   const { chainId, account } = useActiveWeb3React();
 
-  const easyAuctionInstance: Contract | null = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    easyAuctionABI,
-  );
-
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
-    auctionId,
-  ]).result;
-  const sellTokenAddress:
-    | string
-    | undefined = auctionInfo?.sellToken.toString();
-  const initialAuctionOrder: SellOrder | null = decodeOrder(
-    auctionInfo?.initialAuctionOrder,
-  );
-  const clearingPriceOrder: SellOrder | null = decodeOrder(
-    auctionInfo?.clearingPriceOrder,
-  );
-  const auctionEndDate = auctionInfo?.auctionEndDate;
-
-  const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
-
-  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
-  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
   const {
     independentField,
     sellAmount,
@@ -140,6 +153,27 @@ export function useDerivedSwapInfo(
   const tokenIn = useTokenByAddressAndAutomaticallyAdd(tokenInAddress);
   const tokenOut = useTokenByAddressAndAutomaticallyAdd(tokenOutAddress);
 
+  const { sellToken, buyToken } = useDeriveSellAndBuyToken(auctionId);
+
+  const easyAuctionInstance: Contract | null = useContract(
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    easyAuctionABI,
+  );
+  const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
+    auctionId,
+  ]).result;
+
+  const initialAuctionOrder: SellOrder | null = decodeOrder(
+    auctionInfo?.initialAuctionOrder,
+    sellToken,
+    buyToken,
+  );
+  const clearingPriceOrder: SellOrder | null = decodeOrder(
+    auctionInfo?.clearingPriceOrder,
+    buyToken,
+    sellToken,
+  );
+  const auctionEndDate = auctionInfo?.auctionEndDate;
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
     buyToken,
     tokenOut,
@@ -185,6 +219,34 @@ export function useDerivedSwapInfo(
 
   if (!price) {
     error = error ?? "Enter a price";
+  }
+  if (sellToken == undefined || buyToken == undefined) {
+    error = "Please wait a sec";
+  }
+  const {
+    sellAmountScaled,
+    buyAmountScaled,
+  } = convertPriceIntoBuyAndSellAmount(sellToken, buyToken, price, sellAmount);
+  console.log(sellAmountScaled?.toString());
+  console.log(buyAmountScaled?.toString());
+
+  let initialPrice: Fraction | undefined;
+  if (initialAuctionOrder?.buyAmount == undefined) {
+    initialPrice = undefined;
+  } else {
+    initialPrice = new Fraction(
+      initialAuctionOrder?.buyAmount?.raw.toString(),
+      initialAuctionOrder?.sellAmount?.raw.toString(),
+    );
+  }
+  if (
+    initialAuctionOrder != null &&
+    buyAmountScaled &&
+    sellAmountScaled
+      ?.mul(initialAuctionOrder?.sellAmount.raw.toString())
+      .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
+  ) {
+    error = "Price must be higher than " + initialPrice?.toSignificant(2);
   }
 
   const [balanceIn, amountIn] = [
@@ -233,11 +295,18 @@ export function useDerivedClaimInfo(
     | undefined = auctionInfo?.sellToken.toString();
 
   const auctionEndDate = auctionInfo?.auctionEndDate;
+
+  const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
+
+  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
+  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
   const clearingPriceOrder: SellOrder | null = decodeOrder(
     auctionInfo?.clearingPriceOrder,
+    buyToken,
+    sellToken,
   );
   let error: string | undefined;
-  if (clearingPriceOrder?.buyAmount == 0) {
+  if (clearingPriceOrder?.buyAmount.raw.toString() == "0") {
     error = "Price not yet supplied to auction";
   }
   if (auctionEndDate >= new Date().getTime() / 1000) {
@@ -247,11 +316,6 @@ export function useDerivedClaimInfo(
   if (sellOrderEventsForUser?.length == 0) {
     error = "No participation";
   }
-
-  const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
-
-  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
-  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
 
   return {
     error,

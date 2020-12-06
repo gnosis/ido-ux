@@ -3,6 +3,7 @@ import {
   useSwapState,
   useDerivedSwapInfo,
 } from "../../state/orderplacement/hooks";
+import { Fraction } from "@uniswap/sdk";
 import CountdownTimer from "../CountDown";
 
 export default function AuctionHeader() {
@@ -14,6 +15,20 @@ export default function AuctionHeader() {
     initialAuctionOrder,
     clearingPriceOrder,
   } = useDerivedSwapInfo(auctionId);
+
+  let clearingPrice: Fraction | undefined;
+  if (
+    !clearingPriceOrder ||
+    clearingPriceOrder.buyAmount == undefined ||
+    clearingPriceOrder.sellAmount == undefined
+  ) {
+    clearingPrice = undefined;
+  } else {
+    clearingPrice = new Fraction(
+      clearingPriceOrder.buyAmount.raw.toString(),
+      clearingPriceOrder.sellAmount.raw.toString(),
+    );
+  }
   return (
     <>
       <div style={{ float: "right", width: "20%" }}>
@@ -24,16 +39,17 @@ export default function AuctionHeader() {
           <div>
             <h1>Auction</h1>
             <h3>
-              Selling {initialAuctionOrder?.sellAmount} {sellToken?.symbol} for
-              at least {initialAuctionOrder?.buyAmount} {buyToken?.symbol}
+              Selling {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
+              {sellToken?.symbol} for at least{" "}
+              {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
+              {buyToken?.symbol}
             </h3>
           </div>
         ) : (
           <div>
             <h1>Auction</h1>
             <h3>
-              Auction settled with a price of{" "}
-              {clearingPriceOrder?.buyAmount / clearingPriceOrder.sellAmount}
+              Auction settled with a price of {clearingPrice?.toSignificant(2)}
             </h3>
           </div>
         )}
