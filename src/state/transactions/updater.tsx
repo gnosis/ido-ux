@@ -15,13 +15,12 @@ export default function Updater() {
     (state) => state.transactions,
   );
 
-  const allTransactions = transactions[chainId ?? -1] ?? {};
-
   // show popup on confirm
   const addPopup = useAddPopup();
 
   useEffect(() => {
     if (!chainId || !library || !lastBlockNumber) return;
+    const allTransactions = transactions[chainId ?? -1] ?? {};
 
     Object.keys(allTransactions)
       .filter((hash) => !allTransactions[hash].receipt)
@@ -70,7 +69,7 @@ export default function Updater() {
             console.error(`failed to check transaction hash: ${hash}`, error);
           });
       });
-  }, [chainId, library, allTransactions, lastBlockNumber, dispatch, addPopup]);
+  }, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup]);
 
   return null;
 }

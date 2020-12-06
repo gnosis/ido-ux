@@ -1,6 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Text } from "rebass";
-import { ThemeContext } from "styled-components";
 import { ButtonError, ButtonLight } from "../../components/Button";
 import { GreyCard } from "../../components/Card";
 import { BottomGrouping, Wrapper } from "../swap/styleds";
@@ -12,50 +11,41 @@ import { useWalletModalToggle } from "../../state/application/hooks";
 import {
   useDerivedClaimInfo,
   useSwapState,
-  useDataFromEventLogs,
 } from "../../state/orderplacement/hooks";
 import { TYPE } from "../../theme";
 
 export default function Claimer() {
-  const { chainId, account } = useActiveWeb3React();
-  const theme = useContext(ThemeContext);
+  const { account } = useActiveWeb3React();
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle();
 
   // swap state
-  const { auctionId, independentField, sellAmount, price } = useSwapState();
-  const { error, sellToken, buyToken } = useDerivedClaimInfo(auctionId);
+  const { auctionId } = useSwapState();
+  const { error } = useDerivedClaimInfo(auctionId);
 
   const isValid = !error;
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false); // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true); // waiting for user confirmation
 
-  const sellOrderEventsForUser = useDataFromEventLogs(auctionId);
   // txn values
   const [txHash, setTxHash] = useState<string>("");
 
   // reset modal state when closed
   function resetModal() {
     setPendingConfirmation(true);
-    setAttemptingTxn(false);
   }
 
   // the callback to execute the swap
   const claimOrderCallback = useClaimOrderCallback();
 
   function onClaimOrder() {
-    setAttemptingTxn(true);
     claimOrderCallback().then((hash) => {
       setTxHash(hash);
       setPendingConfirmation(false);
     });
   }
-
-  // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false);
 
   // text to show while loading
   const pendingText = `Claiming Funds`;

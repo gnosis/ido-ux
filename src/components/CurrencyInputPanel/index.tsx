@@ -130,20 +130,16 @@ interface CurrencyInputPanelProps {
 
 export default function CurrencyInputPanel({
   value,
-  field,
   onUserSellAmountInput,
   onMax,
   showMaxButton,
   label = "Input",
-  onTokenSelection = null,
   token = null,
   disableTokenSelect = false,
   hideBalance = false,
   isExchange = false,
   pair = null, // used for double token logo
   hideInput = false,
-  showSendWithSwap = false,
-  otherSelectedTokenAddress = null,
   id,
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation();

@@ -20,12 +20,6 @@ const Section = styled(AutoColumn)`
   padding: 24px;
 `;
 
-const BottomSection = styled(Section)`
-  background-color: ${({ theme }) => theme.bg2};
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-`;
-
 const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
 `;

@@ -1,40 +1,12 @@
 import React from "react";
-import styled from "styled-components";
 import {
   useSwapState,
   useDerivedSwapInfo,
 } from "../../state/orderplacement/hooks";
 import CountdownTimer from "../CountDown";
-import { Text } from "rebass";
-
-const Body = styled.div`
-  align: center;
-  position: relative;
-  max-width: 420px;
-  width: 100%;
-  height: 330px;
-  background: ${({ theme }) => theme.bg2};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 30px;
-  padding: 1rem;
-`;
-
-const BoxTitle = styled.div`
-  align: center;
-  justify-content: center;
-  height: 3rem;
-  flex: 1 0 auto;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text1};
-  font-size: 20px;
-`;
 
 export default function AuctionHeader() {
-  const { auctionId, independentField, sellAmount, price } = useSwapState();
+  const { auctionId } = useSwapState();
   const {
     sellToken,
     buyToken,

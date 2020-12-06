@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import NavigationTabs from "../components/NavigationTabs";
 
 const Body = styled.div`
   position: relative;

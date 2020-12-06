@@ -2,7 +2,7 @@ import { Contract } from "@ethersproject/contracts";
 import { parseUnits } from "@ethersproject/units";
 import { useState } from "react";
 import { ChainId } from "@uniswap/sdk";
-import { JSBI, Token, TokenAmount, Trade } from "@uniswap/sdk";
+import { JSBI, Token, TokenAmount } from "@uniswap/sdk";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 

@@ -43,11 +43,9 @@ const StyledDialogOverlay = styled(({ mobile, ...rest }) => (
 
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogContent = styled(
-  ({ minHeight, maxHeight, mobile, isOpen, ...rest }) => (
-    <DialogContent aria-label="content" {...rest} />
-  ),
-)`
+const StyledDialogContent = styled(({ ...rest }) => (
+  <DialogContent aria-label="content" {...rest} />
+))`
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
     border: 1px solid ${({ theme }) => theme.bg1};

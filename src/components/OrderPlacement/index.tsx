@@ -1,26 +1,16 @@
 import { JSBI, TokenAmount, WETH, ChainId } from "@uniswap/sdk";
-import React, { useContext, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import { Text } from "rebass";
-import { ThemeContext } from "styled-components";
 import { ButtonError, ButtonLight } from "../../components/Button";
-import Card, { GreyCard } from "../../components/Card";
+import { GreyCard } from "../../components/Card";
 import { AutoColumn } from "../../components/Column";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
 import PriceInputPanel from "../../components/PriceInputPanel";
-import QuestionHelper from "../../components/QuestionHelper";
-import { RowBetween, RowFixed } from "../../components/Row";
-import FormattedPriceImpact from "../../components/swap/FormattedPriceImpact";
 import { BottomGrouping, Dots, Wrapper } from "../../components/swap/styleds";
 import SwapModalFooter from "../../components/swap/SwapModalFooter";
 import SwapModalHeader from "../../components/swap/SwapModalHeader";
-import TradePrice from "../../components/swap/TradePrice";
-import {
-  DEFAULT_DEADLINE_FROM_NOW,
-  INITIAL_ALLOWED_SLIPPAGE,
-  MIN_ETH,
-} from "../../constants";
+import { MIN_ETH } from "../../constants";
 import { useActiveWeb3React } from "../../hooks";
 import { EASY_AUCTION_NETWORKS } from "../../constants";
 import {
@@ -31,23 +21,14 @@ import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import { Field } from "../../state/orderplacement/actions";
 import {
-  useDefaultsFromURLSearch,
   useDerivedSwapInfo,
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/orderplacement/hooks";
 import { TYPE } from "../../theme";
-import {
-  computeTradePriceBreakdown,
-  warningSeverity,
-} from "../../utils/prices";
-import { PriceSlippageWarningCard } from "../../components/swap/PriceSlippageWarningCard";
-import AuctionDetails from "../../components/AuctionDetails";
-import AuctionHeader from "../../components/AuctionHeader";
 
 export default function OrderPlacement() {
   const { chainId, account } = useActiveWeb3React();
-  const theme = useContext(ThemeContext);
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle();
@@ -99,6 +80,13 @@ export default function OrderPlacement() {
     approvalTokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
   );
+  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (approval === ApprovalState.PENDING) {
+      setApprovalSubmitted(true);
+    }
+  }, [approval, approvalSubmitted]);
 
   const maxAmountInput: TokenAmount =
     !!tokenBalances[Field.INPUT] &&

@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
-import { ChainId, Token } from "@uniswap/sdk";
+import { ChainId } from "@uniswap/sdk";
 import { useMemo } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import {

@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
-import { BigNumber } from "@ethersproject/bignumber";
 import { Text } from "rebass";
 const CountDownStyled = styled.div`
   display: flex;
