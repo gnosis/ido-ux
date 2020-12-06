@@ -13,6 +13,7 @@ import SwapModalHeader from "../../components/swap/SwapModalHeader";
 import { MIN_ETH } from "../../constants";
 import { useActiveWeb3React } from "../../hooks";
 import { EASY_AUCTION_NETWORKS } from "../../constants";
+import { tryParseAmount } from "../../state/orderplacement/hooks";
 import {
   useApproveCallback,
   ApprovalState,
@@ -74,7 +75,7 @@ export default function OrderPlacement() {
   const approvalTokenAmount: TokenAmount | undefined =
     buyToken == undefined || sellAmount == undefined
       ? undefined
-      : new TokenAmount(buyToken, sellAmount);
+      : tryParseAmount(sellAmount, buyToken);
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,

@@ -30,14 +30,21 @@ export function usePlaceOrderCallback(
       }
 
       const sellAmountScaled = tryParseAmount(sellAmount, buyToken);
-      if (sellAmountScaled == undefined) {
-        return "not valid sellAmount";
-      }
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
         library,
         account,
       );
+      if (sellAmountScaled == undefined) {
+        return "not valid sellAmount";
+      }
+      const buyAmount = tryParseAmount(price, sellToken);
+      if (buyAmount == undefined) {
+        return "not valid price";
+      }
+      const buyAmountScaled = BigNumber.from(sellAmountScaled.raw.toString())
+        .mul(buyAmount.raw.toString())
+        .div(BigNumber.from(10).pow(buyToken.decimals));
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
@@ -47,11 +54,7 @@ export function usePlaceOrderCallback(
         method = easyAuctionContract.placeSellOrders;
         args = [
           auctionId,
-          [
-            (
-              parseFloat(sellAmountScaled.raw.toString()) * parseFloat(price)
-            ).toString(),
-          ],
+          [buyAmountScaled.toString()],
           [sellAmountScaled.raw.toString()],
           [queueStartElement],
         ];
