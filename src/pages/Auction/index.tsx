@@ -16,7 +16,7 @@ import ClaimerBody from "../ClaimerBody";
 import AuctionDetails from "../../components/AuctionDetails";
 import AuctionHeader from "../../components/AuctionHeader";
 
-export default function Swap({ location: { search } }: RouteComponentProps) {
+export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
 
   // swap state

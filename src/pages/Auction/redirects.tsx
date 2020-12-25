@@ -3,7 +3,7 @@ import React from "react";
 import { Redirect, RouteComponentProps } from "react-router-dom";
 
 export function RedirectPathToSwapOnly({ location }: RouteComponentProps) {
-  return <Redirect to={{ ...location, pathname: "/swap" }} />;
+  return <Redirect to={{ ...location, pathname: "/auction" }} />;
 }
 
 // Redirects from the /swap/:outputCurrency path to the /swap?outputCurrency=:outputCurrency format
@@ -21,7 +21,7 @@ export function RedirectToSwap(
     <Redirect
       to={{
         ...props.location,
-        pathname: "/swap",
+        pathname: "/auction",
         search:
           search && search.length > 1
             ? `${search}&outputCurrency=${outputCurrency}`

@@ -6,8 +6,8 @@ import Header from "../components/Header";
 import Popups from "../components/Popups";
 import Web3ReactManager from "../components/Web3ReactManager";
 import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
-import Swap from "./Swap";
-import { RedirectPathToSwapOnly } from "./Swap/redirects";
+import Auction from "./Auction";
+import { RedirectPathToSwapOnly } from "./Auction/redirects";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -84,7 +84,7 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/swap" component={Swap} />\
+                <Route exact strict path="/auction" component={Auction} />\
                 <Route component={RedirectPathToSwapOnly} />
               </Switch>
             </Web3ReactManager>
