@@ -1,9 +1,14 @@
 [
   {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "auctionId",
         "type": "uint256"
@@ -19,12 +24,6 @@
         "internalType": "uint96",
         "name": "priceDenominator",
         "type": "uint96"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "rewardFactor",
-        "type": "uint256"
       }
     ],
     "name": "AuctionCleared",
@@ -58,7 +57,7 @@
         "type": "uint96"
       }
     ],
-    "name": "CancellationSellOrders",
+    "name": "CancellationSellOrder",
     "type": "event"
   },
   {
@@ -96,21 +95,21 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
         "name": "auctionId",
         "type": "uint256"
       },
       {
         "indexed": true,
-        "internalType": "contract ERC20",
-        "name": "_sellToken",
+        "internalType": "contract IERC20",
+        "name": "_auctioningToken",
         "type": "address"
       },
       {
         "indexed": true,
-        "internalType": "contract ERC20",
-        "name": "_buyToken",
+        "internalType": "contract IERC20",
+        "name": "_biddingToken",
         "type": "address"
       }
     ],
@@ -152,7 +151,26 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "user",
         "type": "address"
@@ -166,6 +184,19 @@
     ],
     "name": "UserRegistration",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "FEE_DENOMINATOR",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [],
@@ -191,13 +222,13 @@
     "name": "auctionData",
     "outputs": [
       {
-        "internalType": "contract ERC20",
-        "name": "sellToken",
+        "internalType": "contract IERC20",
+        "name": "auctioningToken",
         "type": "address"
       },
       {
-        "internalType": "contract ERC20",
-        "name": "buyToken",
+        "internalType": "contract IERC20",
+        "name": "biddingToken",
         "type": "address"
       },
       {
@@ -211,6 +242,21 @@
         "type": "bytes32"
       },
       {
+        "internalType": "uint256",
+        "name": "minimumBiddingAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "interimSumBidAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "interimOrder",
+        "type": "bytes32"
+      },
+      {
         "internalType": "bytes32",
         "name": "clearingPriceOrder",
         "type": "bytes32"
@@ -219,6 +265,11 @@
         "internalType": "uint96",
         "name": "volumeClearingPriceOrder",
         "type": "uint96"
+      },
+      {
+        "internalType": "uint256",
+        "name": "feeNumerator",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -239,6 +290,11 @@
       {
         "internalType": "bytes32[]",
         "name": "_prevSellOrders",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_fallbackPrevSellOrders",
         "type": "bytes32[]"
       }
     ],
@@ -269,12 +325,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "sumSellTokenAmount",
+        "name": "sumAuctioningTokenAmount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "sumBuyTokenAmount",
+        "name": "sumBiddingTokenAmount",
         "type": "uint256"
       }
     ],
@@ -300,6 +356,32 @@
         "internalType": "bool",
         "name": "",
         "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeNumerator",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeReceiverUserId",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "",
+        "type": "uint64"
       }
     ],
     "stateMutability": "view",
@@ -346,13 +428,13 @@
   {
     "inputs": [
       {
-        "internalType": "contract ERC20",
-        "name": "_sellToken",
+        "internalType": "contract IERC20",
+        "name": "_auctioningToken",
         "type": "address"
       },
       {
-        "internalType": "contract ERC20",
-        "name": "_buyToken",
+        "internalType": "contract IERC20",
+        "name": "_biddingToken",
         "type": "address"
       },
       {
@@ -362,13 +444,18 @@
       },
       {
         "internalType": "uint96",
-        "name": "_sellAmount",
+        "name": "_auctionedSellAmount",
         "type": "uint96"
       },
       {
         "internalType": "uint96",
         "name": "_minBuyAmount",
         "type": "uint96"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minimumBiddingAmount",
+        "type": "uint256"
       }
     ],
     "name": "initiateAuction",
@@ -396,6 +483,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -416,9 +516,38 @@
         "internalType": "bytes32[]",
         "name": "_prevSellOrders",
         "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_fallbackPrevSellOrders",
+        "type": "bytes32[]"
       }
     ],
     "name": "placeSellOrders",
+    "outputs": [
+      {
+        "internalType": "uint64",
+        "name": "userId",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "iterationSteps",
+        "type": "uint256"
+      }
+    ],
+    "name": "precalculateSellAmountSum",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -443,6 +572,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -459,6 +595,37 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "newFeeNumerator",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "newfeeReceiverAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setFeeParameters",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

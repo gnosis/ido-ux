@@ -36,11 +36,13 @@ export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const theme = useContext(ThemeContext);
 
-  const { auctionEndDate, sellToken, buyToken } = useDerivedSwapInfo(auctionId);
-  const hrefLinkSellToken =
-    "https://rinkeby.etherscan.io/token" + sellToken?.address;
-  const hrefLinkBuyToken =
-    "https://rinkeby.etherscan.io/token/" + buyToken?.address;
+  const { auctionEndDate, auctioningToken, biddingToken } = useDerivedSwapInfo(
+    auctionId,
+  );
+  const hrefLinkauctioningToken =
+    "https://rinkeby.etherscan.io/token" + auctioningToken?.address;
+  const hrefLinkbiddingToken =
+    "https://rinkeby.etherscan.io/token/" + biddingToken?.address;
 
   return (
     <>
@@ -56,9 +58,9 @@ export default function AuctionDetails() {
             <br></br>
             Legal:
             <br></br>
-            SellToken:
+            Sold:
             <br></br>
-            BuyToken:
+            Bought:
           </div>
           <div
             style={{
@@ -79,23 +81,23 @@ export default function AuctionDetails() {
             Utility
             <br></br>
             <a
-              href={hrefLinkSellToken}
+              href={hrefLinkauctioningToken}
               style={{
                 textDecoration: "none",
               }}
             >
               <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-                {sellToken?.symbol}
+                {auctioningToken?.symbol}
               </Text>
             </a>
             <a
-              href={hrefLinkBuyToken}
+              href={hrefLinkbiddingToken}
               style={{
                 textDecoration: "none",
               }}
             >
               <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-                {buyToken?.symbol}
+                {biddingToken?.symbol}
               </Text>
             </a>
           </div>

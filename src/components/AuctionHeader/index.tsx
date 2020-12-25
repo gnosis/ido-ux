@@ -9,8 +9,8 @@ import CountdownTimer from "../CountDown";
 export default function AuctionHeader() {
   const { auctionId } = useSwapState();
   const {
-    sellToken,
-    buyToken,
+    auctioningToken,
+    biddingToken,
     auctionEndDate,
     initialAuctionOrder,
     clearingPriceOrder,
@@ -40,9 +40,9 @@ export default function AuctionHeader() {
             <h1>Auction</h1>
             <h3>
               Selling {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-              {sellToken?.symbol} for at least{" "}
+              {auctioningToken?.symbol} for at least{" "}
               {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
-              {buyToken?.symbol}
+              {biddingToken?.symbol}
             </h3>
           </div>
         ) : (
@@ -50,7 +50,7 @@ export default function AuctionHeader() {
             <h1>Auction</h1>
             <h3>
               Auction settled with a price of {clearingPrice?.toSignificant(4)}{" "}
-              [{sellToken?.symbol} /{buyToken?.symbol} ]
+              [{auctioningToken?.symbol} /{biddingToken?.symbol} ]
             </h3>
           </div>
         )}

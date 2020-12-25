@@ -100,9 +100,9 @@ export function tryParseAmount(
   return;
 }
 
-export function useDeriveSellAndBuyToken(
+export function useDeriveAuctioningAndBiddingToken(
   auctionId: number,
-): { sellToken: Token | undefined; buyToken: Token | undefined } {
+): { auctioningToken: Token | undefined; biddingToken: Token | undefined } {
   const { chainId } = useActiveWeb3React();
 
   const easyAuctionInstance: Contract | null = useContract(
@@ -112,17 +112,23 @@ export function useDeriveSellAndBuyToken(
   const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
     auctionId,
   ]).result;
-  const sellTokenAddress:
+  const auctioningTokenAddress:
     | string
-    | undefined = auctionInfo?.sellToken.toString();
+    | undefined = auctionInfo?.auctioningToken.toString();
 
-  const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
+  const biddingTokenAddress:
+    | string
+    | undefined = auctionInfo?.biddingToken.toString();
 
-  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
-  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
+  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(
+    auctioningTokenAddress,
+  );
+  const biddingToken = useTokenByAddressAndAutomaticallyAdd(
+    biddingTokenAddress,
+  );
   return {
-    sellToken,
-    buyToken,
+    auctioningToken,
+    biddingToken,
   };
 }
 
@@ -134,8 +140,8 @@ export function useDerivedSwapInfo(
   tokenBalances: { [field in Field]?: TokenAmount };
   parsedAmounts: { [field in Field]?: TokenAmount };
   error?: string;
-  sellToken?: Token | null;
-  buyToken?: Token | null;
+  auctioningToken?: Token | null;
+  biddingToken?: Token | null;
   clearingPriceOrder?: SellOrder | null;
   initialAuctionOrder?: SellOrder | null;
   auctionEndDate?: number | null;
@@ -153,7 +159,9 @@ export function useDerivedSwapInfo(
   const tokenIn = useTokenByAddressAndAutomaticallyAdd(tokenInAddress);
   const tokenOut = useTokenByAddressAndAutomaticallyAdd(tokenOutAddress);
 
-  const { sellToken, buyToken } = useDeriveSellAndBuyToken(auctionId);
+  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
+    auctionId,
+  );
 
   const easyAuctionInstance: Contract | null = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -165,17 +173,17 @@ export function useDerivedSwapInfo(
 
   const initialAuctionOrder: SellOrder | null = decodeOrder(
     auctionInfo?.initialAuctionOrder,
-    sellToken,
-    buyToken,
+    auctioningToken,
+    biddingToken,
   );
   const clearingPriceOrder: SellOrder | null = decodeOrder(
     auctionInfo?.clearingPriceOrder,
-    buyToken,
-    sellToken,
+    biddingToken,
+    auctioningToken,
   );
   const auctionEndDate = auctionInfo?.auctionEndDate;
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
-    buyToken,
+    biddingToken,
     tokenOut,
   ]);
 
@@ -220,13 +228,18 @@ export function useDerivedSwapInfo(
   if (!price) {
     error = error ?? "Enter a price";
   }
-  if (sellToken == undefined || buyToken == undefined) {
+  if (auctioningToken == undefined || biddingToken == undefined) {
     error = "Please wait a sec";
   }
   const {
     sellAmountScaled,
     buyAmountScaled,
-  } = convertPriceIntoBuyAndSellAmount(sellToken, buyToken, price, sellAmount);
+  } = convertPriceIntoBuyAndSellAmount(
+    auctioningToken,
+    biddingToken,
+    price,
+    sellAmount,
+  );
   let initialPrice: Fraction | undefined;
   if (initialAuctionOrder?.buyAmount == undefined) {
     initialPrice = undefined;
@@ -259,8 +272,8 @@ export function useDerivedSwapInfo(
     tokenBalances,
     parsedAmounts,
     error,
-    sellToken,
-    buyToken,
+    auctioningToken,
+    biddingToken,
     clearingPriceOrder,
     initialAuctionOrder,
     auctionEndDate,
@@ -272,10 +285,10 @@ export function useDerivedClaimInfo(
   auctionId: number,
 ): {
   error?: string;
-  sellToken?: Token | null;
-  buyToken?: Token | null;
-  claimSellToken?: TokenAmount | null;
-  claimBuyToken?: TokenAmount | null;
+  auctioningToken?: Token | null;
+  biddingToken?: Token | null;
+  claimauctioningToken?: TokenAmount | null;
+  claimbiddingToken?: TokenAmount | null;
 } {
   const { chainId } = useActiveWeb3React();
 
@@ -287,20 +300,26 @@ export function useDerivedClaimInfo(
   const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
     auctionId,
   ]).result;
-  const sellTokenAddress:
+  const auctioningTokenAddress:
     | string
-    | undefined = auctionInfo?.sellToken.toString();
+    | undefined = auctionInfo?.auctioningToken.toString();
 
   const auctionEndDate = auctionInfo?.auctionEndDate;
 
-  const buyTokenAddress: string | undefined = auctionInfo?.buyToken.toString();
+  const biddingTokenAddress:
+    | string
+    | undefined = auctionInfo?.biddingToken.toString();
 
-  const sellToken = useTokenByAddressAndAutomaticallyAdd(sellTokenAddress);
-  const buyToken = useTokenByAddressAndAutomaticallyAdd(buyTokenAddress);
+  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(
+    auctioningTokenAddress,
+  );
+  const biddingToken = useTokenByAddressAndAutomaticallyAdd(
+    biddingTokenAddress,
+  );
   const clearingPriceOrder: SellOrder | null = decodeOrder(
     auctionInfo?.clearingPriceOrder,
-    buyToken,
-    sellToken,
+    biddingToken,
+    auctioningToken,
   );
 
   let error: string | undefined;
@@ -313,9 +332,6 @@ export function useDerivedClaimInfo(
   const sellOrderEventsForUser:
     | EventParsingOutput[]
     | undefined = useDataFromEventLogs(auctionId);
-  if (sellOrderEventsForUser?.length == 0) {
-    error = "No participation";
-  }
   const claimed = useSingleCallResult(easyAuctionInstance, "containsOrder", [
     auctionId,
     encodeOrder(
@@ -329,15 +345,18 @@ export function useDerivedClaimInfo(
         : sellOrderEventsForUser[0].details,
     ),
   ]).result;
-
-  if (claimed) {
+  if (claimed == undefined || !claimed[0]) {
     error = "Proceedings already claimed";
+  }
+
+  if (sellOrderEventsForUser?.length == 0) {
+    error = "No participation";
   }
 
   return {
     error,
-    sellToken,
-    buyToken,
+    auctioningToken,
+    biddingToken,
   };
 }
 

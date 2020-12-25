@@ -80,8 +80,8 @@ interface CurrencyInputPanelProps {
   showMaxButton: boolean;
   label?: string;
   onTokenSelection?: (tokenAddress: string) => void;
-  buyToken: Token | null;
-  sellToken: Token | null;
+  biddingToken: Token | null;
+  auctioningToken: Token | null;
   disableTokenSelect?: boolean;
   hideBalance?: boolean;
   isExchange?: boolean;
@@ -96,8 +96,8 @@ export default function PriceInputPanel({
   value,
   onUserPriceInput,
   label = "Input",
-  buyToken = null,
-  sellToken = null,
+  biddingToken = null,
+  auctioningToken = null,
   disableTokenSelect = false,
   hideInput = false,
   id,
@@ -132,14 +132,14 @@ export default function PriceInputPanel({
             </>
           )}
           <CurrencySelect
-            selected={!!sellToken}
+            selected={!!auctioningToken}
             className="open-currency-select-button"
           >
             <Aligner>
               {
                 <DoubleLogo
-                  a0={buyToken?.address}
-                  a1={sellToken?.address}
+                  a0={biddingToken?.address}
+                  a1={auctioningToken?.address}
                   size={24}
                   margin={true}
                 />

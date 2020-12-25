@@ -100,31 +100,34 @@ export function formatExecutionPrice(
 }
 
 export function convertPriceIntoBuyAndSellAmount(
-  sellToken: Token | undefined,
-  buyToken: Token | undefined,
+  auctioningToken: Token | undefined,
+  biddingToken: Token | undefined,
   price: string,
   sellAmount: string,
 ): {
   sellAmountScaled: BigNumber | undefined;
   buyAmountScaled: BigNumber | undefined;
 } {
-  if (sellToken == undefined || buyToken == undefined) {
+  if (auctioningToken == undefined || biddingToken == undefined) {
     return {
       sellAmountScaled: undefined,
       buyAmountScaled: undefined,
     };
   }
-  const sellAmountScaled = tryParseAmount(sellAmount, buyToken);
+  const sellAmountScaled = tryParseAmount(sellAmount, biddingToken);
   if (sellAmountScaled == undefined) {
     return { sellAmountScaled: undefined, buyAmountScaled: undefined };
   }
-  const inversePriceAdjustedByBuyToken = tryParseAmount(price, buyToken);
-  if (inversePriceAdjustedByBuyToken == undefined) {
+  const inversePriceAdjustedBybiddingToken = tryParseAmount(
+    price,
+    biddingToken,
+  );
+  if (inversePriceAdjustedBybiddingToken == undefined) {
     return { sellAmountScaled: undefined, buyAmountScaled: undefined };
   }
   const buyAmountScaled = BigNumber.from(sellAmountScaled.raw.toString())
-    .mul(BigNumber.from(10).pow(sellToken.decimals))
-    .div(inversePriceAdjustedByBuyToken.raw.toString());
+    .mul(BigNumber.from(10).pow(auctioningToken.decimals))
+    .div(inversePriceAdjustedBybiddingToken.raw.toString());
   return {
     sellAmountScaled: BigNumber.from(sellAmountScaled.raw.toString()),
     buyAmountScaled,

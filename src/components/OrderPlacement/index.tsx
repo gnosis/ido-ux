@@ -41,8 +41,8 @@ export default function OrderPlacement() {
     parsedAmounts,
     tokens,
     error,
-    sellToken,
-    buyToken,
+    auctioningToken,
+    biddingToken,
   } = useDerivedSwapInfo(auctionId);
   const { onUserSellAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
@@ -73,9 +73,9 @@ export default function OrderPlacement() {
     parsedAmounts[independentField].greaterThan(JSBI.BigInt(0));
 
   const approvalTokenAmount: TokenAmount | undefined =
-    buyToken == undefined || sellAmount == undefined
+    biddingToken == undefined || sellAmount == undefined
       ? undefined
-      : tryParseAmount(sellAmount, buyToken);
+      : tryParseAmount(sellAmount, biddingToken);
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -121,7 +121,10 @@ export default function OrderPlacement() {
   }
 
   // the callback to execute the swap
-  const placeOrderCallback = usePlaceOrderCallback(sellToken, buyToken);
+  const placeOrderCallback = usePlaceOrderCallback(
+    auctioningToken,
+    biddingToken,
+  );
 
   function onPlaceOrder() {
     setAttemptingTxn(true);
@@ -183,7 +186,7 @@ export default function OrderPlacement() {
               label={"Amount"}
               value={sellAmount}
               showMaxButton={!atMaxAmountInput}
-              token={buyToken}
+              token={biddingToken}
               onUserSellAmountInput={onUserSellAmountInput}
               onMax={() => {
                 maxAmountInput &&
@@ -198,11 +201,15 @@ export default function OrderPlacement() {
               onUserPriceInput={onUserPriceInput}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
               label={
-                "Price  [" + sellToken?.symbol + "/" + buyToken?.symbol + "]"
+                "Price  [" +
+                auctioningToken?.symbol +
+                "/" +
+                biddingToken?.symbol +
+                "]"
               }
               showMaxButton={false}
-              sellToken={sellToken}
-              buyToken={buyToken}
+              auctioningToken={auctioningToken}
+              biddingToken={biddingToken}
               id="swap-currency-output"
             />
           </>
@@ -225,9 +232,9 @@ export default function OrderPlacement() {
               disabled={approval === ApprovalState.PENDING}
             >
               {approval === ApprovalState.PENDING ? (
-                <Dots>Approving {buyToken?.symbol}</Dots>
+                <Dots>Approving {biddingToken?.symbol}</Dots>
               ) : (
-                "Approve " + buyToken?.symbol
+                "Approve " + biddingToken?.symbol
               )}
             </ButtonLight>
           ) : (

@@ -16,8 +16,8 @@ export const queueLastElement =
 // returns a function that will place an order, if the parameters are all valid
 // and the user has approved the transfer of tokens
 export function usePlaceOrderCallback(
-  sellToken: Token,
-  buyToken: Token,
+  auctioningToken: Token,
+  biddingToken: Token,
 ): null | (() => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React();
   const addTransaction = useTransactionAdder();
@@ -34,8 +34,8 @@ export function usePlaceOrderCallback(
         sellAmountScaled,
         buyAmountScaled,
       } = convertPriceIntoBuyAndSellAmount(
-        sellToken,
-        buyToken,
+        auctioningToken,
+        biddingToken,
         price,
         sellAmount,
       );
@@ -59,6 +59,7 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [queueStartElement],
+          [queueStartElement],
         ];
         value = null;
       }
@@ -76,11 +77,11 @@ export function usePlaceOrderCallback(
               "Sell " +
               sellAmount +
               " " +
-              buyToken.symbol +
+              biddingToken.symbol +
               " for " +
               (parseFloat(sellAmount) / parseFloat(price)).toString() +
               " " +
-              sellToken.symbol,
+              auctioningToken.symbol,
           });
 
           return response.hash;
@@ -96,9 +97,9 @@ export function usePlaceOrderCallback(
     chainId,
     library,
     auctionId,
-    buyToken,
+    biddingToken,
     price,
-    sellToken,
+    auctioningToken,
     sellAmount,
   ]);
 }
