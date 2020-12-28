@@ -108,6 +108,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@gnosis.pm/dex-js": "^0.8.1-rc.0",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "isexe": "^2.0.0"
   }
