@@ -76,7 +76,14 @@
     "start-server-and-test": "^1.11.0",
     "styled-components": "^4.2.0",
     "typescript": "^3.8.3",
-    "use-media": "^1.4.0"
+    "use-media": "^1.4.0",
+    "isexe": "^2.0.0",
+    "modali": "^1.2.0",
+    "@amcharts/amcharts4": "^4.10.13",
+    "@fortawesome/fontawesome-svg-core": "^1.2.32",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@typescript-eslint/eslint-plugin": "^4.8.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -108,8 +115,5 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "@gnosis.pm/dex-js": "^0.8.1-rc.0",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "isexe": "^2.0.0"
   }
 }

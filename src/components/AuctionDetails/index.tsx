@@ -5,6 +5,7 @@ import {
   useDerivedSwapInfo,
 } from "../../state/orderplacement/hooks";
 import { Text } from "rebass";
+import { OrderBookBtn } from "../OrderbookBtn";
 
 const Body = styled.div`
   align: center;
@@ -102,6 +103,15 @@ export default function AuctionDetails() {
             </a>
           </div>
         </Text>
+        <br></br>
+        <div
+          //TODO: get a proper design here
+          style={{
+            marginTop: "170px",
+          }}
+        >
+          <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
+        </div>
       </Body>
     </>
   );

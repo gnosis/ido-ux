@@ -1,6 +1,3 @@
-import BigNumber from "bignumber.js";
-import { assert } from "@gnosis.pm/dex-js";
-
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string;
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
@@ -14,10 +11,8 @@ interface OrderBookParams {
 /**
  * Price point as defined in the API
  * Both price and volume are numbers (floats)
- *
- * The price and volume are expressed in atoms
  */
-export interface RawPricePoint {
+export interface PricePoint {
   price: number;
   volume: number;
 }
@@ -26,13 +21,8 @@ export interface RawPricePoint {
  * DATA returned from api as JSON
  */
 export interface OrderBookData {
-  asks: RawPricePoint[];
-  bids: RawPricePoint[];
-}
-
-interface Token {
-  id: number;
-  decimals?: number;
+  asks: PricePoint[];
+  bids: PricePoint[];
 }
 export interface AdditionalServicesEndpoint {
   networkId: number;
@@ -62,7 +52,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
     const baseUrl = this._getBaseUrl(networkId);
 
-    const url = `${baseUrl}/get_order_book_display_data/${auctionId}`;
+    const url = `${baseUrl}get_order_book_display_data/${auctionId}`;
     return url;
   }
 
@@ -115,10 +105,11 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
   private _getBaseUrl(networkId: number): string {
     const baseUrl = this.urlsByNetwork[networkId];
-    assert(
-      baseUrl,
-      `Dex-price-estimator not available for network id ${networkId}`,
-    );
+    if (typeof baseUrl === "undefined") {
+      throw new Error(
+        `REACT_APP_ADDITIONAL_SERVICES_API_URL must be a defined environment variable`,
+      );
+    }
 
     return baseUrl;
   }

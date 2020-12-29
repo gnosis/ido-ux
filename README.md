@@ -22,6 +22,16 @@ To have the frontend default to a different network, make a copy of `.env` named
 change `REACT_APP_NETWORK_ID` to `"{yourNetworkId}"`, and change `REACT_APP_NETWORK_URL` to e.g.
 `"https://{yourNetwork}.infura.io/v3/{yourKey}"`.
 
+## Connect to additional - services api
+
+Set the env variable:
+
+```
+REACT_APP_ADDITIONAL_SERVICES_API_URL
+```
+
+in the .env or .env.local file to the externally hosted apis
+
 ## Contributions
 
 **Please open all pull requests against the `v2` branch.**
