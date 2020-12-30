@@ -7,6 +7,7 @@ import { useTransactionAdder } from "../state/transactions/hooks";
 import { useSwapState } from "../state/orderplacement/hooks";
 import { useActiveWeb3React } from "./index";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
+import { additionalServiceApi } from "./../api";
 
 export const queueStartElement =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -47,6 +48,15 @@ export function usePlaceOrderCallback(
         library,
         account,
       );
+      const previousOrder = await additionalServiceApi.getPreviousOrder({
+        networkId: chainId,
+        auctionId,
+        order: {
+          buyAmount: buyAmountScaled,
+          sellAmount: sellAmountScaled,
+          userId: BigNumber.from(0), // Todo: This could be optimized
+        },
+      });
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
@@ -58,7 +68,7 @@ export function usePlaceOrderCallback(
           auctionId,
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
-          [queueStartElement],
+          [previousOrder],
           [queueStartElement],
         ];
         value = null;

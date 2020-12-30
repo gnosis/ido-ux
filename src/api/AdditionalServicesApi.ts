@@ -1,11 +1,20 @@
+import { encodeOrder, Order } from "../hooks/Order";
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string;
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
+  getPreviousOrderUrl(params: PreviousOrderParams): string;
+  getPreviousOrder(params: PreviousOrderParams): Promise<string>;
 }
 
 interface OrderBookParams {
   networkId: number;
   auctionId: number;
+}
+
+interface PreviousOrderParams {
+  networkId: number;
+  auctionId: number;
+  order: Order;
 }
 
 /**
@@ -54,6 +63,41 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
     const url = `${baseUrl}get_order_book_display_data/${auctionId}`;
     return url;
+  }
+
+  public getPreviousOrderUrl(params: PreviousOrderParams): string {
+    const { networkId, auctionId, order } = params;
+
+    const baseUrl = this._getBaseUrl(networkId);
+
+    const url = `${baseUrl}get_previous_order/${auctionId}/${encodeOrder(
+      order,
+    )}`;
+    return url;
+  }
+
+  public async getPreviousOrder(params: PreviousOrderParams): Promise<string> {
+    try {
+      const url = await this.getPreviousOrderUrl(params);
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json();
+      }
+      return await res.json();
+    } catch (error) {
+      console.error(error);
+
+      const { auctionId, order } = params;
+
+      throw new Error(
+        `Failed to query previous order for auction id ${auctionId} and order ${encodeOrder(
+          order,
+        )}: ${error.message}`,
+      );
+    }
   }
 
   public async getOrderBookData(
