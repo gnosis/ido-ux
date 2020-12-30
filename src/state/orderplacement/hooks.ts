@@ -251,12 +251,22 @@ export function useDerivedSwapInfo(
   }
   if (
     initialAuctionOrder != null &&
+    auctioningToken != undefined &&
+    biddingToken != undefined &&
     buyAmountScaled &&
     sellAmountScaled
       ?.mul(initialAuctionOrder?.sellAmount.raw.toString())
       .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
   ) {
-    error = "Price must be higher than " + initialPrice?.toSignificant(2);
+    error =
+      "Price must be higher than " +
+      initialPrice
+        ?.multiply(
+          BigNumber.from(10)
+            .pow(auctioningToken.decimals - biddingToken.decimals)
+            .toString(),
+        )
+        .toSignificant(2);
   }
 
   const [balanceIn, amountIn] = [
