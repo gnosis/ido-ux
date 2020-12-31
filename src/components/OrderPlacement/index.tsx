@@ -1,8 +1,7 @@
-import { JSBI, TokenAmount, WETH, ChainId } from "@uniswap/sdk";
+import { TokenAmount, WETH, ChainId } from "@uniswap/sdk";
 import React, { useState, useEffect } from "react";
 import { Text } from "rebass";
 import { ButtonError, ButtonLight } from "../../components/Button";
-import { GreyCard } from "../../components/Card";
 import { AutoColumn } from "../../components/Column";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
@@ -26,7 +25,6 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/orderplacement/hooks";
-import { TYPE } from "../../theme";
 
 export default function OrderPlacement() {
   const { chainId, account } = useActiveWeb3React();
@@ -65,12 +63,6 @@ export default function OrderPlacement() {
       ? parsedAmounts[dependentField].toSignificant(6)
       : "",
   };
-
-  const userHasSpecifiedInputOutput =
-    !!tokens[Field.INPUT] &&
-    !!tokens[Field.OUTPUT] &&
-    !!parsedAmounts[independentField] &&
-    parsedAmounts[independentField].greaterThan(JSBI.BigInt(0));
 
   const approvalTokenAmount: TokenAmount | undefined =
     biddingToken == undefined || sellAmount == undefined
@@ -219,12 +211,6 @@ export default function OrderPlacement() {
             <ButtonLight onClick={toggleWalletModal}>
               Connect Wallet
             </ButtonLight>
-          ) : userHasSpecifiedInputOutput ? (
-            <GreyCard style={{ textAlign: "center" }}>
-              <TYPE.main mb="4px">
-                Insufficient liquidity for this trade.
-              </TYPE.main>
-            </GreyCard>
           ) : approval === ApprovalState.NOT_APPROVED ||
             approval === ApprovalState.PENDING ? (
             <ButtonLight

@@ -12,7 +12,11 @@ export function useTokenAllowance(
   const contract = useTokenContract(token?.address, false);
 
   const inputs = useMemo(() => [owner, spender], [owner, spender]);
-  const allowance = useSingleCallResult(contract, "allowance", inputs).result;
+  // Todo: research why this hack of allowance reload for each block
+  // is needed to update the allowance after approving.
+  const allowance = useSingleCallResult(contract, "allowance", inputs, {
+    blocksPerFetch: 1,
+  }).result;
   return useMemo(
     () =>
       token && allowance
