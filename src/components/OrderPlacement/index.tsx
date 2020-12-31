@@ -146,7 +146,10 @@ export default function OrderPlacement() {
         showInverted={showInverted}
         setShowInverted={setShowInverted}
         onPlaceOrder={onPlaceOrder}
-        parsedAmounts={parsedAmounts}
+        biddingToken={biddingToken}
+        auctioningToken={auctioningToken}
+        price={price}
+        sellAmount={sellAmount}
       />
     );
   }
