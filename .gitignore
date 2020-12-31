@@ -27,6 +27,8 @@ notes.txt
 
 .vscode/
 
+.eslintcache
+
 package-lock.json
 
 cypress/videos
