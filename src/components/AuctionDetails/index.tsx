@@ -1,11 +1,14 @@
-import React, { useContext } from "react";
-import styled, { ThemeContext } from "styled-components";
+import React from "react";
+import styled from "styled-components";
+import { ExternalLink } from "../../theme";
 import {
   useSwapState,
   useDerivedSwapInfo,
 } from "../../state/orderplacement/hooks";
 import { Text } from "rebass";
 import { OrderBookBtn } from "../OrderbookBtn";
+import { getEtherscanLink } from "../../utils";
+import { useActiveWeb3React } from "../../hooks";
 
 const Body = styled.div`
   align: center;
@@ -35,15 +38,11 @@ const BoxTitle = styled.div`
 
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
-  const theme = useContext(ThemeContext);
+  const { chainId } = useActiveWeb3React();
 
   const { auctionEndDate, auctioningToken, biddingToken } = useDerivedSwapInfo(
     auctionId,
   );
-  const hrefLinkauctioningToken =
-    "https://rinkeby.etherscan.io/token" + auctioningToken?.address;
-  const hrefLinkbiddingToken =
-    "https://rinkeby.etherscan.io/token/" + biddingToken?.address;
 
   return (
     <>
@@ -56,8 +55,6 @@ export default function AuctionDetails() {
             Status:
             <br></br>
             End:
-            <br></br>
-            Legal:
             <br></br>
             Sold:
             <br></br>
@@ -79,28 +76,24 @@ export default function AuctionDetails() {
             <br></br>
             {new Date(auctionEndDate * 1000).toLocaleDateString()}
             <br></br>
-            Utility
+            <ExternalLink
+              href={getEtherscanLink(
+                chainId,
+                auctioningToken?.address,
+                "address",
+              )}
+              style={{ fontSize: "14px" }}
+            >
+              {auctioningToken?.symbol}
+            </ExternalLink>
             <br></br>
-            <a
-              href={hrefLinkauctioningToken}
-              style={{
-                textDecoration: "none",
-              }}
+            <ExternalLink
+              href={getEtherscanLink(chainId, biddingToken?.address, "address")}
+              style={{ fontSize: "14px" }}
             >
-              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-                {auctioningToken?.symbol}
-              </Text>
-            </a>
-            <a
-              href={hrefLinkbiddingToken}
-              style={{
-                textDecoration: "none",
-              }}
-            >
-              <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-                {biddingToken?.symbol}
-              </Text>
-            </a>
+              {biddingToken?.symbol}
+            </ExternalLink>
+            <br></br>
           </div>
         </Text>
         <br></br>
