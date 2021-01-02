@@ -50,6 +50,10 @@ export default function AuctionHeader() {
               {biddingToken?.symbol}
             </h3>
           </div>
+        ) : clearingPrice?.toSignificant(1) == "0" ? (
+          <div>
+            <h3>Auction ready for price submission tx.</h3>
+          </div>
         ) : (
           <div>
             <h3>
