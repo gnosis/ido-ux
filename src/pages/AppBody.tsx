@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Body = styled.div`
   position: relative;
-  max-width: 680px;
+  max-width: 720px;
   width: 100%;
   background: ${({ theme }) => theme.bg1};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),

@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Text } from "rebass";
 const CountDownStyled = styled.div`
   display: flex;
+  float: right;
   order: 2;
   font-family: var(--font-mono);
   text-align: left;
   font-size: 0.6rem;
   color: var(--color-text-primary);
-  width: 16rem;
   letter-spacing: 0;
   > strong {
     color: var(--color-text-active);

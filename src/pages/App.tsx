@@ -12,7 +12,7 @@ import { RedirectPathToSwapOnly } from "./Auction/redirects";
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
-  align-items: flex-start;
+  align-items: center;
   overflow-x: hidden;
 `;
 

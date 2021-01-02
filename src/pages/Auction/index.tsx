@@ -25,13 +25,27 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
   return (
     <>
       <AppBody>
-        <div>
+        <div style={{ padding: "1rem" }}>
           <AuctionHeader></AuctionHeader>
         </div>
-        <div style={{ width: "28%", float: "left", alignContent: "center" }}>
+        <div
+          style={{
+            width: "35%",
+            float: "left",
+            alignContent: "center",
+            padding: "0.5rem",
+          }}
+        >
           <AuctionDetails></AuctionDetails>
         </div>
-        <div style={{ width: "70%", float: "right", alignContent: "right" }}>
+        <div
+          style={{
+            width: "65%",
+            float: "right",
+            alignContent: "right",
+            padding: "0.5rem",
+          }}
+        >
           {auctionEndDate >= new Date().getTime() / 1000 ? (
             <OrderBody>
               <Wrapper id="auction-page">
