@@ -3,7 +3,6 @@ import { RouteComponentProps } from "react-router-dom";
 import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
 import { Wrapper } from "../../components/swap/styleds";
-import { TokenWarningCards } from "../../components/TokenWarningCard";
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
@@ -21,11 +20,10 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
 
   // swap state
   const { auctionId } = useSwapState();
-  const { tokens, auctionEndDate } = useDerivedSwapInfo(auctionId);
+  const { auctionEndDate } = useDerivedSwapInfo(auctionId);
 
   return (
     <>
-      <TokenWarningCards tokens={tokens} />
       <AppBody>
         <div>
           <AuctionHeader></AuctionHeader>
