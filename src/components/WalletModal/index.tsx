@@ -303,7 +303,11 @@ export default function WalletModal({
             link={option.href}
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
-            icon={require("../../assets/images/" + option.iconName)}
+            icon={
+              option.iconName == "metamask.png"
+                ? MetamaskIcon //can not handle dynamically generated requires, hence we use hardcorded. Need to find different solution for others wallets
+                : require("../../assets/images/" + option.iconName)
+            }
           />
         )
       );
