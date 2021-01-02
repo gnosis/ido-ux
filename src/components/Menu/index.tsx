@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { Info, BookOpen, Code, PieChart, MessageCircle } from "react-feather";
+import { Info, Code, MessageCircle } from "react-feather";
 import styled from "styled-components";
 import { ReactComponent as MenuIcon } from "../../assets/images/menu.svg";
 import useToggle from "../../hooks/useToggle";
@@ -78,8 +78,8 @@ const MenuItem = styled(ExternalLink)`
 `;
 
 const CODE_LINK = !!process.env.REACT_APP_GIT_COMMIT_HASH
-  ? `https://github.com/Uniswap/uniswap-frontend/tree/${process.env.REACT_APP_GIT_COMMIT_HASH}`
-  : "https://github.com/Uniswap/uniswap-frontend";
+  ? `https://github.com/gnosis/ido-contracts/tree/${process.env.REACT_APP_GIT_COMMIT_HASH}`
+  : "https://github.com/gnosis/ido-contracts";
 
 export default function Menu() {
   const node = useRef<HTMLDivElement>();
@@ -111,25 +111,20 @@ export default function Menu() {
       </StyledMenuButton>
       {open && (
         <MenuFlyout>
-          <MenuItem id="link" href="https://uniswap.org/">
+          <MenuItem
+            id="link"
+            href="https://forum.gnosis.io/t/should-gnosisdao-build-an-ido-specific-dapp/895"
+          >
             <Info size={14} />
             About
-          </MenuItem>
-          <MenuItem id="link" href="https://uniswap.org/docs/v2">
-            <BookOpen size={14} />
-            Docs
           </MenuItem>
           <MenuItem id="link" href={CODE_LINK}>
             <Code size={14} />
             Code
           </MenuItem>
-          <MenuItem id="link" href="https://discord.gg/vXCdddD">
+          <MenuItem id="link" href="https://discord.gg/xUHSDkRB">
             <MessageCircle size={14} />
             Discord
-          </MenuItem>
-          <MenuItem id="link" href="https://uniswap.info/">
-            <PieChart size={14} />
-            Analytics
           </MenuItem>
         </MenuFlyout>
       )}
