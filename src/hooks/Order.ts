@@ -14,8 +14,8 @@ export interface Order {
 export function decodeOrder(bytes: string): Order {
   return {
     userId: BigNumber.from("0x" + bytes.substring(2, 18)),
-    sellAmount: BigNumber.from("0x" + bytes.substring(19, 42)),
-    buyAmount: BigNumber.from("0x" + bytes.substring(43, 66)),
+    buyAmount: BigNumber.from("0x" + bytes.substring(19, 42)),
+    sellAmount: BigNumber.from("0x" + bytes.substring(43, 66)),
   };
 }
 

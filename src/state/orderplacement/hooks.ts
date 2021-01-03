@@ -6,6 +6,7 @@ import { JSBI, Token, TokenAmount } from "@uniswap/sdk";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { convertPriceIntoBuyAndSellAmount } from "../../utils/prices";
+import { additionalServiceApi } from "../../api";
 
 import { EASY_AUCTION_NETWORKS } from "../../constants";
 import { useContract } from "../../hooks/useContract";
@@ -17,7 +18,7 @@ import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
 import { useTradeExactIn, useTradeExactOut } from "../../hooks/Trades";
 import { AppDispatch, AppState } from "../index";
 import { useTokenBalances } from "../wallet/hooks";
-import { encodeOrder, Order } from "../../hooks/Order";
+import { encodeOrder } from "../../hooks/Order";
 import {
   Field,
   setDefaultsFromURLSearch,
@@ -339,27 +340,25 @@ export function useDerivedClaimInfo(
   if (auctionEndDate >= new Date().getTime() / 1000) {
     error = "auction has not yet ended";
   }
-  const sellOrderEventsForUser:
-    | EventParsingOutput[]
-    | undefined = useDataFromEventLogs(auctionId);
+  const claimableOrders: string[] | null = useOrdersForClaiming(auctionId);
+  console.log(claimableOrders);
   const claimed = useSingleCallResult(easyAuctionInstance, "containsOrder", [
     auctionId,
-    encodeOrder(
-      sellOrderEventsForUser == undefined ||
-        sellOrderEventsForUser[0] == undefined
-        ? {
-            sellAmount: BigNumber.from(0),
-            buyAmount: BigNumber.from(0),
-            userId: BigNumber.from(0),
-          }
-        : sellOrderEventsForUser[0].details,
-    ),
+    claimableOrders == undefined || claimableOrders[0] == undefined
+      ? encodeOrder({
+          sellAmount: BigNumber.from(0),
+          buyAmount: BigNumber.from(0),
+          userId: BigNumber.from(0),
+        })
+      : claimableOrders[0],
   ]).result;
-  if (claimed == undefined || !claimed[0]) {
-    error = "Proceedings already claimed";
+  if (claimableOrders?.length > 0) {
+    if (claimed == undefined || !claimed[0]) {
+      error = "Proceedings already claimed";
+    }
   }
 
-  if (sellOrderEventsForUser?.length == 0) {
+  if (claimableOrders?.length == 0) {
     error = "No participation";
   }
 
@@ -381,61 +380,26 @@ export function useDefaultsFromURLSearch(search?: string) {
   }, [dispatch, search, chainId]);
 }
 
-interface EventParsingOutput {
-  description: string;
-  details: Order;
-}
-export function useDataFromEventLogs(auctionId: number): EventParsingOutput[] {
-  const { library } = useActiveWeb3React();
-  const [formattedEvents, setFormattedEvents] = useState<any>();
-  const { chainId } = useActiveWeb3React();
-  let { account } = useActiveWeb3React();
-  const easyAuctionInstance: Contract | null = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    easyAuctionABI,
-  );
-  if (account == null) {
-    account = undefined;
-  }
-  // create filter for these specific events
-  const userId = useSingleCallResult(easyAuctionInstance, "getUserId", [
-    account,
-  ]).result;
+export function useOrdersForClaiming(auctionId: number): string[] {
+  const { account, chainId } = useActiveWeb3React();
+  const [userOrders, setUserOrders] = useState<any>();
 
   useEffect(() => {
     async function fetchData() {
-      const filter = {
-        ...easyAuctionInstance?.filters?.["NewSellOrder"](
-          auctionId,
-          userId,
-          null,
-          null,
-        ),
-        fromBlock: 0,
-        toBlock: "latest",
-      };
-      const pastEvents = await library?.getLogs(filter);
-      // reverse events to get them from newest to odlest
-      const formattedEventData = pastEvents
-        ?.map((event) => {
-          const eventParsed = easyAuctionInstance?.interface.parseLog(event);
-          const order: Order = {
-            userId: eventParsed?.args[1],
-            sellAmount: eventParsed?.args[3],
-            buyAmount: eventParsed?.args[2],
-          };
-          return {
-            description: eventParsed?.topic,
-            details: order,
-          };
-        })
-        .reverse();
-      setFormattedEvents(formattedEventData);
+      if (chainId == undefined || account == undefined) {
+        return [];
+      }
+      const sellOrdersFormUser = await additionalServiceApi.getUserOrders({
+        networkId: chainId,
+        auctionId,
+        user: account,
+      });
+      setUserOrders(sellOrdersFormUser);
     }
-    if (!formattedEvents) {
+    if (!userOrders) {
       fetchData();
     }
-  }, [userId, auctionId, easyAuctionInstance, library, formattedEvents]);
+  }, [chainId, account, auctionId, userOrders]);
 
-  return formattedEvents;
+  return userOrders;
 }

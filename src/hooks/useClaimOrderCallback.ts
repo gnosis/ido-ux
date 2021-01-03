@@ -3,13 +3,11 @@ import { Contract } from "@ethersproject/contracts";
 import { ChainId } from "@uniswap/sdk";
 import { useMemo } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
-import {
-  useSwapState,
-  useDataFromEventLogs,
-} from "../state/orderplacement/hooks";
+import { useSwapState } from "../state/orderplacement/hooks";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 import { useActiveWeb3React } from "./index";
-import { encodeOrder } from "./Order";
+import { decodeOrder } from "./Order";
+import { additionalServiceApi } from "./../api";
 
 export const queueStartElement =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -23,11 +21,24 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
   const addTransaction = useTransactionAdder();
 
   const { auctionId } = useSwapState();
-  const sellOrderEventsForUser = useDataFromEventLogs(auctionId);
   return useMemo(() => {
     return async function onClaimOrder() {
       if (!chainId || !library || !account) {
         throw new Error("missing dependencies in onPlaceOrder callback");
+      }
+      const sellOrdersFormUser = await additionalServiceApi.getUserOrders({
+        networkId: chainId,
+        auctionId,
+        user: account,
+      });
+      const previousOrders: string[] = [];
+      for (const order of sellOrdersFormUser) {
+        const previousOrder = await additionalServiceApi.getPreviousOrder({
+          networkId: chainId,
+          auctionId,
+          order: decodeOrder(order),
+        });
+        previousOrders.push(previousOrder);
       }
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
@@ -41,13 +52,7 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
       {
         estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder;
         method = easyAuctionContract.claimFromParticipantOrder;
-        args = [
-          auctionId,
-          sellOrderEventsForUser.map((sellOrderObject: any) =>
-            encodeOrder(sellOrderObject.details),
-          ),
-          new Array(sellOrderEventsForUser.length).fill(queueStartElement),
-        ];
+        args = [auctionId, sellOrdersFormUser, previousOrders];
         value = null;
       }
 
@@ -70,12 +75,5 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
           throw error;
         });
     };
-  }, [
-    account,
-    addTransaction,
-    sellOrderEventsForUser,
-    chainId,
-    library,
-    auctionId,
-  ]);
+  }, [account, addTransaction, chainId, library, auctionId]);
 }
