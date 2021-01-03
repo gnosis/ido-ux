@@ -4,6 +4,8 @@ export interface AdditionalServicesApi {
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
   getPreviousOrderUrl(params: PreviousOrderParams): string;
   getPreviousOrder(params: PreviousOrderParams): Promise<string>;
+  getUserOrdersUrl(params: UserOrderParams): string;
+  getUserOrders(params: UserOrderParams): Promise<string[]>;
 }
 
 interface OrderBookParams {
@@ -15,6 +17,12 @@ interface PreviousOrderParams {
   networkId: number;
   auctionId: number;
   order: Order;
+}
+
+interface UserOrderParams {
+  networkId: number;
+  auctionId: number;
+  user: string;
 }
 
 /**
@@ -76,6 +84,15 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url;
   }
 
+  public getUserOrdersUrl(params: UserOrderParams): string {
+    const { networkId, auctionId, user } = params;
+
+    const baseUrl = this._getBaseUrl(networkId);
+
+    const url = `${baseUrl}get_user_orders/${auctionId}/${user}`;
+    return url;
+  }
+
   public async getPreviousOrder(params: PreviousOrderParams): Promise<string> {
     try {
       const url = await this.getPreviousOrderUrl(params);
@@ -96,6 +113,28 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
         `Failed to query previous order for auction id ${auctionId} and order ${encodeOrder(
           order,
         )}: ${error.message}`,
+      );
+    }
+  }
+
+  public async getUserOrders(params: UserOrderParams): Promise<string[]> {
+    try {
+      const url = await this.getUserOrdersUrl(params);
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json();
+      }
+      return await res.json();
+    } catch (error) {
+      console.error(error);
+
+      const { auctionId, user } = params;
+
+      throw new Error(
+        `Failed to query previous order for auction id ${auctionId} and order ${user}: ${error.message}`,
       );
     }
   }
