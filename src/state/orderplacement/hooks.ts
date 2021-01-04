@@ -12,7 +12,7 @@ import { EASY_AUCTION_NETWORKS } from "../../constants";
 import { useContract } from "../../hooks/useContract";
 import { useSingleCallResult } from "../multicall/hooks";
 import easyAuctionABI from "../../constants/abis/easyAuction/easyAuction.json";
-
+import { useGetClaimInfo } from "../../hooks/useClaimOrderCallback";
 import { useActiveWeb3React } from "../../hooks";
 import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
 import { useTradeExactIn, useTradeExactOut } from "../../hooks/Trades";
@@ -340,7 +340,7 @@ export function useDerivedClaimInfo(
   if (auctionEndDate >= new Date().getTime() / 1000) {
     error = "auction has not yet ended";
   }
-  const claimableOrders: string[] | null = useOrdersForClaiming(auctionId);
+  const claimableOrders = useGetClaimInfo()?.sellOrdersFormUser;
   const claimed = useSingleCallResult(easyAuctionInstance, "containsOrder", [
     auctionId,
     claimableOrders == undefined || claimableOrders[0] == undefined
@@ -351,7 +351,7 @@ export function useDerivedClaimInfo(
         })
       : claimableOrders[0],
   ]).result;
-  if (claimableOrders?.length > 0) {
+  if (claimableOrders == undefined || claimableOrders?.length > 0) {
     if (claimed == undefined || !claimed[0]) {
       error = "Proceedings already claimed";
     }

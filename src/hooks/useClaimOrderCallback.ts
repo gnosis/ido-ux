@@ -1,9 +1,12 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
-import { ChainId } from "@uniswap/sdk";
-import { useMemo } from "react";
+import { ChainId, TokenAmount } from "@uniswap/sdk";
+import { useMemo, useState } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
-import { useSwapState } from "../state/orderplacement/hooks";
+import {
+  useDerivedSwapInfo,
+  useSwapState,
+} from "../state/orderplacement/hooks";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 import { useActiveWeb3React } from "./index";
 import { decodeOrder } from "./Order";
@@ -14,31 +17,137 @@ export const queueStartElement =
 export const queueLastElement =
   "0xffffffffffffffffffffffffffffffffffffffff000000000000000000000001";
 
-// returns a function that will place an order, if the parameters are all valid
-// and the user has approved the transfer of tokens
+export interface AuctionProceedings {
+  claimableBiddingToken: TokenAmount | null;
+  claimableAuctioningToken: TokenAmount | null;
+}
+
+export interface ClaimInformation {
+  sellOrdersFormUser: string[];
+  previousOrders: string[];
+}
+export function useGetClaimInfo(): ClaimInformation | null {
+  const { account, chainId, library } = useActiveWeb3React();
+  const [claimInfo, setClaimInfo] = useState<ClaimInformation | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const { auctionId } = useSwapState();
+
+  useMemo(() => {
+    setClaimInfo(null);
+    setError(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auctionId, chainId]);
+  useMemo(() => {
+    let cancelled = false;
+
+    const fetchApiData = async (): Promise<void> => {
+      try {
+        if (!chainId || !library || !account || !additionalServiceApi) {
+          throw new Error("missing dependencies in useGetClaimInfo callback");
+        }
+        const sellOrdersFormUser = await additionalServiceApi.getUserOrders({
+          networkId: chainId,
+          auctionId,
+          user: account,
+        });
+        sellOrdersFormUser.reverse();
+        const previousOrders: string[] = [];
+        for (const order of sellOrdersFormUser) {
+          const previousOrder = await additionalServiceApi.getPreviousOrder({
+            networkId: chainId,
+            auctionId,
+            order: decodeOrder(order),
+          });
+          previousOrders.push(previousOrder);
+        }
+        setClaimInfo({ sellOrdersFormUser, previousOrders });
+      } catch (error) {
+        if (cancelled) return;
+        console.error("Error getting withdraw info", error);
+        setError(error);
+      }
+    };
+    fetchApiData();
+
+    return (): void => {
+      cancelled = true;
+    };
+  }, [account, chainId, library, auctionId, setClaimInfo]);
+
+  if (error) {
+    console.error("error while fetching claimInfo", error);
+    return null;
+  }
+
+  return claimInfo;
+}
+export function useGetAuctionProceeds(): AuctionProceedings {
+  const claimInfo = useGetClaimInfo();
+  const { auctionId } = useSwapState();
+  const {
+    biddingToken,
+    auctioningToken,
+    clearingPriceOrder,
+  } = useDerivedSwapInfo(auctionId);
+
+  if (!claimInfo || !biddingToken || !auctioningToken || !clearingPriceOrder) {
+    return {
+      claimableBiddingToken: null,
+      claimableAuctioningToken: null,
+    };
+  }
+  let claimableAuctioningToken = new TokenAmount(auctioningToken, "0");
+  let claimableBiddingToken = new TokenAmount(biddingToken, "0");
+  for (const order of claimInfo.sellOrdersFormUser) {
+    const decodedOrder = decodeOrder(order);
+    //Todo: consider fractionally filled volumes
+    if (
+      BigNumber.from(clearingPriceOrder.buyAmount.raw.toString())
+        .mul(decodedOrder.sellAmount)
+        .lt(
+          decodedOrder.buyAmount.mul(
+            BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()),
+          ),
+        )
+    ) {
+      claimableBiddingToken = claimableBiddingToken.add(
+        new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
+      );
+    } else {
+      if (
+        BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()).gt(
+          BigNumber.from("0"),
+        )
+      ) {
+        claimableAuctioningToken = claimableAuctioningToken.add(
+          new TokenAmount(
+            auctioningToken,
+            decodedOrder.sellAmount
+              .mul(BigNumber.from(clearingPriceOrder.buyAmount.raw.toString()))
+              .div(BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()))
+              .toString(),
+          ),
+        );
+      }
+    }
+  }
+  return {
+    claimableBiddingToken,
+    claimableAuctioningToken,
+  };
+}
+
 export function useClaimOrderCallback(): null | (() => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React();
   const addTransaction = useTransactionAdder();
 
   const { auctionId } = useSwapState();
+  const claimInfo = useGetClaimInfo();
+
   return useMemo(() => {
     return async function onClaimOrder() {
-      if (!chainId || !library || !account) {
+      if (!chainId || !library || !account || !claimInfo) {
         throw new Error("missing dependencies in onPlaceOrder callback");
-      }
-      const sellOrdersFormUser = await additionalServiceApi.getUserOrders({
-        networkId: chainId,
-        auctionId,
-        user: account,
-      });
-      const previousOrders: string[] = [];
-      for (const order of sellOrdersFormUser) {
-        const previousOrder = await additionalServiceApi.getPreviousOrder({
-          networkId: chainId,
-          auctionId,
-          order: decodeOrder(order),
-        });
-        previousOrders.push(previousOrder);
       }
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
@@ -52,7 +161,11 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
       {
         estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder;
         method = easyAuctionContract.claimFromParticipantOrder;
-        args = [auctionId, sellOrdersFormUser, previousOrders];
+        args = [
+          auctionId,
+          claimInfo?.sellOrdersFormUser,
+          claimInfo?.previousOrders,
+        ];
         value = null;
       }
 
@@ -75,5 +188,5 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
           throw error;
         });
     };
-  }, [account, addTransaction, chainId, library, auctionId]);
+  }, [account, addTransaction, chainId, library, auctionId, claimInfo]);
 }

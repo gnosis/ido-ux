@@ -6,13 +6,18 @@ import { BottomGrouping, Wrapper } from "../swap/styleds";
 import ClaimConfirmationModal from "../ClaimConfirmationModal";
 
 import { useActiveWeb3React } from "../../hooks";
-import { useClaimOrderCallback } from "../../hooks/useClaimOrderCallback";
+import {
+  useClaimOrderCallback,
+  useGetAuctionProceeds,
+} from "../../hooks/useClaimOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import {
   useDerivedClaimInfo,
+  useDerivedSwapInfo,
   useSwapState,
 } from "../../state/orderplacement/hooks";
 import { TYPE } from "../../theme";
+import TokenLogo from "../TokenLogo";
 
 export default function Claimer() {
   const { account } = useActiveWeb3React();
@@ -22,12 +27,18 @@ export default function Claimer() {
 
   // swap state
   const { auctionId } = useSwapState();
+  const { biddingToken, auctioningToken } = useDerivedSwapInfo(auctionId);
   const { error } = useDerivedClaimInfo(auctionId);
 
   const isValid = !error;
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true); // waiting for user confirmation
+
+  const {
+    claimableBiddingToken,
+    claimableAuctioningToken,
+  } = useGetAuctionProceeds();
 
   // txn values
   const [txHash, setTxHash] = useState<string>("");
@@ -53,6 +64,22 @@ export default function Claimer() {
   return (
     <>
       <Wrapper id="swap-page">
+        <div style={{ padding: "5.4rem" }}>
+          <div style={{ width: "50%", float: "left", textAlign: "center" }}>
+            <TokenLogo address={biddingToken?.address} size={"35px"} />
+            <br></br>
+            <Text fontSize={16} fontWeight={"bold"}>
+              {claimableBiddingToken?.toSignificant(2)}
+            </Text>
+          </div>
+          <div style={{ width: "50%", float: "right", textAlign: "center" }}>
+            <TokenLogo address={auctioningToken?.address} size={"35px"} />
+            <br></br>
+            <Text fontSize={16} fontWeight={"bold"}>
+              {claimableAuctioningToken?.toSignificant(2)}
+            </Text>
+          </div>
+        </div>
         <ClaimConfirmationModal
           isOpen={showConfirm}
           onDismiss={() => {
