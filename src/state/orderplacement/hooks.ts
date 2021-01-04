@@ -341,7 +341,6 @@ export function useDerivedClaimInfo(
     error = "auction has not yet ended";
   }
   const claimableOrders: string[] | null = useOrdersForClaiming(auctionId);
-  console.log(claimableOrders);
   const claimed = useSingleCallResult(easyAuctionInstance, "containsOrder", [
     auctionId,
     claimableOrders == undefined || claimableOrders[0] == undefined
