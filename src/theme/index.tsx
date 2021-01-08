@@ -190,10 +190,15 @@ export const TYPE = {
 };
 
 export const FixedGlobalStyle = createGlobalStyle`
-@import url('https://rsms.me/inter/inter.css');
-html { font-family: 'Inter', sans-serif; letter-spacing: -0.018em;}
+
+html, input, textarea, button {
+  font-family: 'Inter', sans-serif;
+  font-display: fallback;
+}
 @supports (font-variation-settings: normal) {
-  html { font-family: 'Inter var', sans-serif; }
+  html, input, textarea, button {
+    font-family: 'Inter var', sans-serif;
+  }
 }
 
 html,

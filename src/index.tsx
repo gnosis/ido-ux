@@ -1,5 +1,6 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
+import "inter-ui";
 import React from "react";
 import { isMobile } from "react-device-detect";
 import ReactDOM from "react-dom";
