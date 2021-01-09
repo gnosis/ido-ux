@@ -179,7 +179,7 @@ export function useDerivedAuctionInfo(): {
   );
   const auctionEndDate = auctionInfo?.auctionEndDate;
   const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate;
-
+  const minBiddingAmountPerOrder = auctionInfo?.minimumBiddingAmountPerOrder;
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
     biddingToken,
   ]);
@@ -213,21 +213,6 @@ export function useDerivedAuctionInfo(): {
     }
   }
 
-  let error: string | undefined;
-  if (!account) {
-    error = "Connect Wallet";
-  }
-
-  if (!sellAmount) {
-    error = error ?? "Enter an amount";
-  }
-
-  if (!price) {
-    error = error ?? "Enter a price";
-  }
-  if (auctioningToken == undefined || biddingToken == undefined) {
-    error = "Please wait a sec";
-  }
   const {
     sellAmountScaled,
     buyAmountScaled,
@@ -237,6 +222,37 @@ export function useDerivedAuctionInfo(): {
     price,
     sellAmount,
   );
+  let error: string | undefined;
+  if (!account) {
+    error = "Connect Wallet";
+  }
+
+  if (!sellAmount) {
+    error = error ?? "Enter an amount";
+  }
+  if (
+    minBiddingAmountPerOrder &&
+    biddingToken &&
+    sellAmount &&
+    ((sellAmountScaled &&
+      BigNumber.from(minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
+      parseFloat(sellAmount) == 0)
+  ) {
+    const errorMsg =
+      "Amount must be bigger than " +
+      new Fraction(
+        minBiddingAmountPerOrder,
+        BigNumber.from(10).pow(biddingToken.decimals).toString(),
+      ).toSignificant(2);
+    error = error ?? errorMsg;
+  }
+
+  if (!price) {
+    error = error ?? "Enter a price";
+  }
+  if (auctioningToken == undefined || biddingToken == undefined) {
+    error = "Please wait a sec";
+  }
   let initialPrice: Fraction | undefined;
   if (initialAuctionOrder?.buyAmount == undefined) {
     initialPrice = undefined;
@@ -256,14 +272,15 @@ export function useDerivedAuctionInfo(): {
       .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
   ) {
     error =
+      error ??
       "Price must be higher than " +
-      initialPrice
-        ?.multiply(
-          BigNumber.from(10)
-            .pow(auctioningToken.decimals - biddingToken.decimals)
-            .toString(),
-        )
-        .toSignificant(2);
+        initialPrice
+          ?.multiply(
+            BigNumber.from(10)
+              .pow(auctioningToken.decimals - biddingToken.decimals)
+              .toString(),
+          )
+          .toSignificant(2);
   }
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount];
