@@ -7,6 +7,8 @@ import { AutoRow, RowBetween } from "../Row";
 import { Field } from "../../state/orderplacement/actions";
 import { ButtonError } from "../Button";
 import { AutoColumn } from "../Column";
+import { convertPriceIntoBuyAndSellAmount } from "../../utils/prices";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export default function SwapModalFooter({
   onPlaceOrder,
@@ -22,18 +24,25 @@ export default function SwapModalFooter({
   onPlaceOrder: () => any;
   parsedAmounts?: { [field in Field]?: TokenAmount };
   realizedLPFee?: TokenAmount;
-  price?: string;
-  sellAmount?: string;
+  price: string;
+  sellAmount: string;
   auctioningToken?: Token;
   biddingToken?: Token;
   priceImpactWithoutFee?: Percent;
   confirmText: string;
 }) {
   const theme = useContext(ThemeContext);
-  let minimumReceived = new Fraction("0", "1");
-  if (sellAmount != undefined || price != undefined) {
-    minimumReceived = new Fraction(sellAmount, "1").multiply(
-      new Fraction("1", price),
+  let minimumReceived = undefined;
+  const { buyAmountScaled } = convertPriceIntoBuyAndSellAmount(
+    auctioningToken,
+    biddingToken,
+    price,
+    sellAmount,
+  );
+  if (sellAmount != undefined || buyAmountScaled != undefined) {
+    minimumReceived = new Fraction(
+      buyAmountScaled.toString(),
+      BigNumber.from(10).pow(biddingToken.decimals).toString(),
     );
   }
   return (

@@ -7,7 +7,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
 import PriceInputPanel from "../../components/PriceInputPanel";
 import { BottomGrouping, Dots, Wrapper } from "../../components/swap/styleds";
-import SwapModalFooter from "../../components/swap/SwapModalFooter";
+import SwapModalFooter from "../swap/PlaceOrderModalFooter";
 import SwapModalHeader from "../../components/swap/SwapModalHeader";
 import { MIN_ETH } from "../../constants";
 import { useActiveWeb3React } from "../../hooks";
@@ -68,7 +68,7 @@ export default function OrderPlacement() {
     biddingToken == undefined || sellAmount == undefined
       ? undefined
       : tryParseAmount(sellAmount, biddingToken);
-  // check whether the user has approved the router on the input token
+  // check whether the user has approved the EasyAuction Contract
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
