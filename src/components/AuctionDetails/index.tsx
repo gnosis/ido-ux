@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { ExternalLink } from "../../theme";
 import {
   useSwapState,
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
 } from "../../state/orderplacement/hooks";
 import { Text } from "rebass";
 import { OrderBookBtn } from "../OrderbookBtn";
@@ -40,9 +40,11 @@ export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
 
-  const { auctionEndDate, auctioningToken, biddingToken } = useDerivedSwapInfo(
-    auctionId,
-  );
+  const {
+    auctionEndDate,
+    auctioningToken,
+    biddingToken,
+  } = useDerivedAuctionInfo(auctionId);
 
   return (
     <>

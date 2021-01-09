@@ -2,7 +2,7 @@ import React from "react";
 import { Text } from "rebass";
 import {
   useSwapState,
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
 } from "../../state/orderplacement/hooks";
 import { Fraction } from "@uniswap/sdk";
 import CountdownTimer from "../CountDown";
@@ -15,7 +15,7 @@ export default function AuctionHeader() {
     auctionEndDate,
     initialAuctionOrder,
     clearingPriceOrder,
-  } = useDerivedSwapInfo(auctionId);
+  } = useDerivedAuctionInfo(auctionId);
 
   let clearingPrice: Fraction | undefined;
   if (

@@ -1,4 +1,4 @@
-import { TokenAmount, WETH, ChainId } from "@uniswap/sdk";
+import { TokenAmount, ChainId } from "@uniswap/sdk";
 import React, { useState, useEffect } from "react";
 import { Text } from "rebass";
 import { ButtonError, ButtonLight } from "../../components/Button";
@@ -9,10 +9,8 @@ import PriceInputPanel from "../../components/PriceInputPanel";
 import { BottomGrouping, Dots, Wrapper } from "../../components/swap/styleds";
 import SwapModalFooter from "../swap/PlaceOrderModalFooter";
 import SwapModalHeader from "../../components/swap/SwapModalHeader";
-import { MIN_ETH } from "../../constants";
 import { useActiveWeb3React } from "../../hooks";
 import { EASY_AUCTION_NETWORKS } from "../../constants";
-import { tryParseAmount } from "../../state/orderplacement/hooks";
 import {
   useApproveCallback,
   ApprovalState,
@@ -21,7 +19,7 @@ import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import { Field } from "../../state/orderplacement/actions";
 import {
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/orderplacement/hooks";
@@ -33,21 +31,18 @@ export default function OrderPlacement() {
   const toggleWalletModal = useWalletModalToggle();
 
   // swap state
-  const { auctionId, independentField, sellAmount, price } = useSwapState();
+  const { auctionId, price, sellAmount } = useSwapState();
   const {
-    tokenBalances,
-    parsedAmounts,
-    tokens,
+    biddingTokenBalance,
+    parsedBiddingAmount,
     error,
     auctioningToken,
     biddingToken,
-  } = useDerivedSwapInfo(auctionId);
+  } = useDerivedAuctionInfo(auctionId);
   const { onUserSellAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
 
   const isValid = !error;
-  const dependentField: Field =
-    independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
@@ -57,17 +52,7 @@ export default function OrderPlacement() {
   // txn values
   const [txHash, setTxHash] = useState<string>("");
 
-  const formattedAmounts = {
-    [independentField]: sellAmount,
-    [dependentField]: parsedAmounts[dependentField]
-      ? parsedAmounts[dependentField].toSignificant(6)
-      : "",
-  };
-
-  const approvalTokenAmount: TokenAmount | undefined =
-    biddingToken == undefined || sellAmount == undefined
-      ? undefined
-      : tryParseAmount(sellAmount, biddingToken);
+  const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount;
   // check whether the user has approved the EasyAuction Contract
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -81,25 +66,12 @@ export default function OrderPlacement() {
     }
   }, [approval, approvalSubmitted]);
 
-  const maxAmountInput: TokenAmount =
-    !!tokenBalances[Field.INPUT] &&
-    !!tokens[Field.INPUT] &&
-    !!WETH[chainId] &&
-    tokenBalances[Field.INPUT].greaterThan(
-      new TokenAmount(
-        tokens[Field.INPUT],
-        tokens[Field.INPUT].equals(WETH[chainId]) ? MIN_ETH : "0",
-      ),
-    )
-      ? tokens[Field.INPUT].equals(WETH[chainId])
-        ? tokenBalances[Field.INPUT].subtract(
-            new TokenAmount(WETH[chainId], MIN_ETH),
-          )
-        : tokenBalances[Field.INPUT]
-      : undefined;
+  const maxAmountInput: TokenAmount = !!biddingTokenBalance
+    ? biddingTokenBalance
+    : undefined;
   const atMaxAmountInput: boolean =
-    maxAmountInput && parsedAmounts[Field.INPUT]
-      ? maxAmountInput.equalTo(parsedAmounts[Field.INPUT])
+    maxAmountInput && parsedBiddingAmount
+      ? maxAmountInput.equalTo(parsedBiddingAmount)
       : undefined;
 
   // reset modal state when closed
@@ -130,13 +102,7 @@ export default function OrderPlacement() {
   const [showInverted, setShowInverted] = useState<boolean>(false);
 
   function modalHeader() {
-    return (
-      <SwapModalHeader
-        independentField={independentField}
-        tokens={tokens}
-        formattedAmounts={formattedAmounts}
-      />
-    );
+    return <SwapModalHeader />;
   }
 
   function modalBottom() {

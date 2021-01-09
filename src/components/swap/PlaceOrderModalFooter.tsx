@@ -4,7 +4,6 @@ import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
 
 import { AutoRow, RowBetween } from "../Row";
-import { Field } from "../../state/orderplacement/actions";
 import { ButtonError } from "../Button";
 import { AutoColumn } from "../Column";
 import { convertPriceIntoBuyAndSellAmount } from "../../utils/prices";
@@ -22,7 +21,6 @@ export default function SwapModalFooter({
   showInverted: boolean;
   setShowInverted: (inverted: boolean) => void;
   onPlaceOrder: () => any;
-  parsedAmounts?: { [field in Field]?: TokenAmount };
   realizedLPFee?: TokenAmount;
   price: string;
   sellAmount: string;
@@ -39,7 +37,7 @@ export default function SwapModalFooter({
     price,
     sellAmount,
   );
-  if (sellAmount != undefined || buyAmountScaled != undefined) {
+  if (sellAmount != undefined && buyAmountScaled != undefined) {
     minimumReceived = new Fraction(
       buyAmountScaled.toString(),
       BigNumber.from(10).pow(biddingToken.decimals).toString(),
@@ -84,7 +82,7 @@ export default function SwapModalFooter({
               paddingLeft: "10px",
             }}
           >
-            {minimumReceived.toSignificant(2)}
+            {minimumReceived?.toSignificant(2)}
           </Text>
         </RowBetween>
         <br></br>

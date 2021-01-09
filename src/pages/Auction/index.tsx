@@ -5,7 +5,7 @@ import Claimer from "../../components/Claimer";
 import { Wrapper } from "../../components/swap/styleds";
 import {
   useDefaultsFromURLSearch,
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
   useSwapState,
 } from "../../state/orderplacement/hooks";
 import AppBody from "../AppBody";
@@ -25,7 +25,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
 
   // swap state
   const { auctionId } = useSwapState();
-  const { auctionEndDate } = useDerivedSwapInfo(auctionId);
+  const { auctionEndDate } = useDerivedAuctionInfo(auctionId);
 
   return (
     <>

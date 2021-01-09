@@ -4,7 +4,7 @@ import { ChainId, TokenAmount } from "@uniswap/sdk";
 import { useMemo, useState } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import {
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
   useSwapState,
 } from "../state/orderplacement/hooks";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
@@ -77,7 +77,7 @@ export function useGetAuctionProceeds(): AuctionProceedings {
     biddingToken,
     auctioningToken,
     clearingPriceOrder,
-  } = useDerivedSwapInfo(auctionId);
+  } = useDerivedAuctionInfo(auctionId);
 
   if (!claimInfo || !biddingToken || !auctioningToken || !clearingPriceOrder) {
     return {

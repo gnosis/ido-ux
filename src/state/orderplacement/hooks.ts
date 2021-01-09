@@ -15,12 +15,10 @@ import easyAuctionABI from "../../constants/abis/easyAuction/easyAuction.json";
 import { useGetClaimInfo } from "../../hooks/useClaimOrderCallback";
 import { useActiveWeb3React } from "../../hooks";
 import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
-import { useTradeExactIn, useTradeExactOut } from "../../hooks/Trades";
 import { AppDispatch, AppState } from "../index";
 import { useTokenBalances } from "../wallet/hooks";
 import { encodeOrder } from "../../hooks/Order";
 import {
-  Field,
   setDefaultsFromURLSearch,
   SellAmountInput,
   priceInput,
@@ -134,12 +132,11 @@ export function useDeriveAuctioningAndBiddingToken(
 }
 
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(
+export function useDerivedAuctionInfo(
   auctionId: number,
 ): {
-  tokens: { [field in Field]?: Token };
-  tokenBalances: { [field in Field]?: TokenAmount };
-  parsedAmounts: { [field in Field]?: TokenAmount };
+  biddingTokenBalance: TokenAmount | undefined;
+  parsedBiddingAmount: TokenAmount | undefined;
   error?: string;
   auctioningToken?: Token | null;
   biddingToken?: Token | null;
@@ -149,16 +146,7 @@ export function useDerivedSwapInfo(
 } {
   const { chainId, account } = useActiveWeb3React();
 
-  const {
-    independentField,
-    sellAmount,
-    price,
-    [Field.INPUT]: { address: tokenInAddress },
-    [Field.OUTPUT]: { address: tokenOutAddress },
-  } = useSwapState();
-
-  const tokenIn = useTokenByAddressAndAutomaticallyAdd(tokenInAddress);
-  const tokenOut = useTokenByAddressAndAutomaticallyAdd(tokenOutAddress);
+  const { sellAmount, price } = useSwapState();
 
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
     auctionId,
@@ -185,37 +173,10 @@ export function useDerivedSwapInfo(
   const auctionEndDate = auctionInfo?.auctionEndDate;
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
     biddingToken,
-    tokenOut,
   ]);
-
-  const isExactIn: boolean = independentField === Field.INPUT;
-  const amount = tryParseAmount(sellAmount, isExactIn ? tokenIn : tokenOut);
-
-  const bestTradeExactIn = useTradeExactIn(
-    isExactIn ? amount : undefined,
-    tokenOut,
-  );
-  const bestTradeExactOut = useTradeExactOut(
-    tokenIn,
-    !isExactIn ? amount : undefined,
-  );
-
-  const bestTrade = isExactIn ? bestTradeExactIn : bestTradeExactOut;
-
-  const parsedAmounts = {
-    [Field.INPUT]: isExactIn ? amount : bestTrade?.inputAmount,
-    [Field.OUTPUT]: isExactIn ? bestTrade?.outputAmount : amount,
-  };
-
-  const tokenBalances = {
-    [Field.INPUT]: relevantTokenBalances?.[tokenIn?.address ?? ""],
-    [Field.OUTPUT]: relevantTokenBalances?.[tokenOut?.address ?? ""],
-  };
-
-  const tokens: { [field in Field]?: Token } = {
-    [Field.INPUT]: tokenIn,
-    [Field.OUTPUT]: tokenOut,
-  };
+  const biddingTokenBalance =
+    relevantTokenBalances?.[biddingToken?.address ?? ""];
+  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken);
 
   let error: string | undefined;
   if (!account) {
@@ -270,18 +231,14 @@ export function useDerivedSwapInfo(
         .toSignificant(2);
   }
 
-  const [balanceIn, amountIn] = [
-    tokenBalances[Field.INPUT],
-    parsedAmounts[Field.INPUT],
-  ];
+  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount];
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
     error = "Insufficient " + amountIn.token.symbol + " balance";
   }
 
   return {
-    tokens,
-    tokenBalances,
-    parsedAmounts,
+    biddingTokenBalance,
+    parsedBiddingAmount,
     error,
     auctioningToken,
     biddingToken,
