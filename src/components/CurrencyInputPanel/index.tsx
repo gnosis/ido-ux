@@ -111,7 +111,6 @@ const StyledBalanceMax = styled.button`
 
 interface CurrencyInputPanelProps {
   value: string;
-  field: string;
   onUserSellAmountInput: (val: string) => void;
   onMax?: () => void;
   showMaxButton: boolean;

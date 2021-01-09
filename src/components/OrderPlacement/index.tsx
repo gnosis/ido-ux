@@ -17,7 +17,6 @@ import {
 } from "../../hooks/useApproveCallback";
 import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
-import { Field } from "../../state/orderplacement/actions";
 import {
   useDerivedAuctionInfo,
   useSwapActionHandlers,
@@ -143,7 +142,6 @@ export default function OrderPlacement() {
         <AutoColumn gap={"md"}>
           <>
             <CurrencyInputPanel
-              field={Field.INPUT}
               label={"Amount"}
               value={sellAmount}
               showMaxButton={!atMaxAmountInput}
@@ -153,11 +151,10 @@ export default function OrderPlacement() {
                 maxAmountInput &&
                   onUserSellAmountInput(maxAmountInput.toExact());
               }}
-              id="swap-currency-input"
+              id="auction-input"
             />
 
             <PriceInputPanel
-              field={Field.OUTPUT}
               value={price}
               onUserPriceInput={onUserPriceInput}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -171,7 +168,7 @@ export default function OrderPlacement() {
               showMaxButton={false}
               auctioningToken={auctioningToken}
               biddingToken={biddingToken}
-              id="swap-currency-output"
+              id="price-input"
             />
           </>
         </AutoColumn>
