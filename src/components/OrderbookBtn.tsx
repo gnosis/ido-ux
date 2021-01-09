@@ -18,7 +18,7 @@ import { useActiveWeb3React } from "../hooks";
 import {
   useDerivedAuctionInfo,
   useSwapState,
-} from "../state/orderplacement/hooks";
+} from "../state/orderPlacement/hooks";
 
 const ViewOrderBookBtn = styled.button`
   margin: 40px auto 40px auto;

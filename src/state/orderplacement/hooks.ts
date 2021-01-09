@@ -20,7 +20,7 @@ import { useTokenBalances } from "../wallet/hooks";
 import { encodeOrder } from "../../hooks/Order";
 import {
   setDefaultsFromURLSearch,
-  SellAmountInput,
+  sellAmountInput,
   priceInput,
 } from "./actions";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -71,7 +71,7 @@ export function useSwapActionHandlers(): {
 
   const onUserSellAmountInput = useCallback(
     (sellAmount: string) => {
-      dispatch(SellAmountInput({ sellAmount }));
+      dispatch(sellAmountInput({ sellAmount }));
     },
     [dispatch],
   );

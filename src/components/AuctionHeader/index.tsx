@@ -3,7 +3,7 @@ import { Text } from "rebass";
 import {
   AuctionState,
   useDerivedAuctionInfo,
-} from "../../state/orderplacement/hooks";
+} from "../../state/orderPlacement/hooks";
 import CountdownTimer from "../CountDown";
 
 export default function AuctionHeader() {
