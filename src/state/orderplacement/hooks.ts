@@ -386,7 +386,7 @@ export function useOrdersForClaiming(auctionId: number): string[] {
   useEffect(() => {
     async function fetchData() {
       if (chainId == undefined || account == undefined) {
-        return [];
+        return;
       }
       const sellOrdersFormUser = await additionalServiceApi.getUserOrders({
         networkId: chainId,
