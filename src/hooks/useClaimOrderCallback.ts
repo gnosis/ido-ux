@@ -24,7 +24,6 @@ export interface AuctionProceedings {
 
 export interface ClaimInformation {
   sellOrdersFormUser: string[];
-  previousOrders: string[];
 }
 export function useGetClaimInfo(): ClaimInformation | null {
   const { account, chainId, library } = useActiveWeb3React();
@@ -50,17 +49,7 @@ export function useGetClaimInfo(): ClaimInformation | null {
           auctionId,
           user: account,
         });
-        sellOrdersFormUser.reverse();
-        const previousOrders: string[] = [];
-        for (const order of sellOrdersFormUser) {
-          const previousOrder = await additionalServiceApi.getPreviousOrder({
-            networkId: chainId,
-            auctionId,
-            order: decodeOrder(order),
-          });
-          previousOrders.push(previousOrder);
-        }
-        setClaimInfo({ sellOrdersFormUser, previousOrders });
+        setClaimInfo({ sellOrdersFormUser });
       } catch (error) {
         if (cancelled) return;
         console.error("Error getting withdraw info", error);
@@ -161,11 +150,7 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
       {
         estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder;
         method = easyAuctionContract.claimFromParticipantOrder;
-        args = [
-          auctionId,
-          claimInfo?.sellOrdersFormUser,
-          claimInfo?.previousOrders,
-        ];
+        args = [auctionId, claimInfo?.sellOrdersFormUser];
         value = null;
       }
 
