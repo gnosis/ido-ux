@@ -76,8 +76,10 @@ export default function AuctionDetails() {
             <br></br>
             {auctionState == AuctionState.ORDER_PLACING ||
             auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
-              ? "Ended"
-              : "Ongoing"}
+              ? "Ongoing"
+              : auctionState == AuctionState.PRICE_SUBMISSION
+              ? "Clearing"
+              : "Ended"}
             <br></br>
             {new Date(auctionEndDate * 1000).toLocaleDateString()}
             <br></br>
