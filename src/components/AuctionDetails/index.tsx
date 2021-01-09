@@ -4,6 +4,7 @@ import { ExternalLink } from "../../theme";
 import {
   useSwapState,
   useDerivedAuctionInfo,
+  AuctionState,
 } from "../../state/orderplacement/hooks";
 import { Text } from "rebass";
 import { OrderBookBtn } from "../OrderbookBtn";
@@ -41,10 +42,11 @@ export default function AuctionDetails() {
   const { chainId } = useActiveWeb3React();
 
   const {
+    auctionState,
     auctionEndDate,
     auctioningToken,
     biddingToken,
-  } = useDerivedAuctionInfo(auctionId);
+  } = useDerivedAuctionInfo();
 
   return (
     <>
@@ -72,7 +74,8 @@ export default function AuctionDetails() {
           >
             {auctionId}
             <br></br>
-            {auctionEndDate <= new Date().getTime() / 1000
+            {auctionState == AuctionState.ORDER_PLACING ||
+            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
               ? "Ended"
               : "Ongoing"}
             <br></br>

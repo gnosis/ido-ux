@@ -27,7 +27,7 @@ export default function Claimer() {
 
   // swap state
   const { auctionId } = useSwapState();
-  const { biddingToken, auctioningToken } = useDerivedAuctionInfo(auctionId);
+  const { biddingToken, auctioningToken } = useDerivedAuctionInfo();
   const { error } = useDerivedClaimInfo(auctionId);
 
   const isValid = !error;

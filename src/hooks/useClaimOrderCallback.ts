@@ -72,12 +72,11 @@ export function useGetClaimInfo(): ClaimInformation | null {
 }
 export function useGetAuctionProceeds(): AuctionProceedings {
   const claimInfo = useGetClaimInfo();
-  const { auctionId } = useSwapState();
   const {
     biddingToken,
     auctioningToken,
     clearingPriceOrder,
-  } = useDerivedAuctionInfo(auctionId);
+  } = useDerivedAuctionInfo();
 
   if (!claimInfo || !biddingToken || !auctioningToken || !clearingPriceOrder) {
     return {

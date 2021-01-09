@@ -1,35 +1,21 @@
 import React from "react";
 import { Text } from "rebass";
 import {
-  useSwapState,
+  AuctionState,
   useDerivedAuctionInfo,
 } from "../../state/orderplacement/hooks";
-import { Fraction } from "@uniswap/sdk";
 import CountdownTimer from "../CountDown";
 
 export default function AuctionHeader() {
-  const { auctionId } = useSwapState();
   const {
+    auctionState,
     auctioningToken,
     biddingToken,
     auctionEndDate,
     initialAuctionOrder,
-    clearingPriceOrder,
-  } = useDerivedAuctionInfo(auctionId);
+    clearingPrice,
+  } = useDerivedAuctionInfo();
 
-  let clearingPrice: Fraction | undefined;
-  if (
-    !clearingPriceOrder ||
-    clearingPriceOrder.buyAmount == undefined ||
-    clearingPriceOrder.sellAmount == undefined
-  ) {
-    clearingPrice = undefined;
-  } else {
-    clearingPrice = new Fraction(
-      clearingPriceOrder.sellAmount.raw.toString(),
-      clearingPriceOrder.buyAmount.raw.toString(),
-    );
-  }
   return (
     <>
       <div style={{ float: "right", width: "20%" }}>
@@ -41,7 +27,8 @@ export default function AuctionHeader() {
             Auction
           </Text>
         </div>
-        {auctionEndDate >= new Date().getTime() / 1000 ? (
+        {auctionState == AuctionState.ORDER_PLACING ||
+        auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
           <div>
             <h3>
               Selling {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
@@ -50,7 +37,7 @@ export default function AuctionHeader() {
               {biddingToken?.symbol}
             </h3>
           </div>
-        ) : clearingPrice?.toSignificant(1) == "0" ? (
+        ) : auctionState == AuctionState.PRICE_SUBMISSION ? (
           <div>
             <h3>Auction ready for price submission tx.</h3>
           </div>

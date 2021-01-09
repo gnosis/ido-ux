@@ -30,14 +30,14 @@ export default function OrderPlacement() {
   const toggleWalletModal = useWalletModalToggle();
 
   // swap state
-  const { auctionId, price, sellAmount } = useSwapState();
+  const { price, sellAmount } = useSwapState();
   const {
     biddingTokenBalance,
     parsedBiddingAmount,
     error,
     auctioningToken,
     biddingToken,
-  } = useDerivedAuctionInfo(auctionId);
+  } = useDerivedAuctionInfo();
   const { onUserSellAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
 

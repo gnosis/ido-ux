@@ -30,6 +30,13 @@ export interface SellOrder {
   buyAmount: TokenAmount;
 }
 
+export enum AuctionState {
+  ORDER_PLACING_AND_CANCELING,
+  ORDER_PLACING,
+  PRICE_SUBMISSION,
+  CLAIMING,
+}
+
 function decodeOrder(
   orderBytes: string,
   soldToken: Token | undefined,
@@ -132,21 +139,21 @@ export function useDeriveAuctioningAndBiddingToken(
 }
 
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedAuctionInfo(
-  auctionId: number,
-): {
+export function useDerivedAuctionInfo(): {
   biddingTokenBalance: TokenAmount | undefined;
   parsedBiddingAmount: TokenAmount | undefined;
   error?: string;
   auctioningToken?: Token | null;
   biddingToken?: Token | null;
   clearingPriceOrder?: SellOrder | null;
+  clearingPrice: Fraction | undefined;
   initialAuctionOrder?: SellOrder | null;
   auctionEndDate?: number | null;
+  auctionState: AuctionState | null;
 } {
   const { chainId, account } = useActiveWeb3React();
 
-  const { sellAmount, price } = useSwapState();
+  const { auctionId, sellAmount, price } = useSwapState();
 
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
     auctionId,
@@ -171,12 +178,40 @@ export function useDerivedAuctionInfo(
     auctioningToken,
   );
   const auctionEndDate = auctionInfo?.auctionEndDate;
+  const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate;
+
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
     biddingToken,
   ]);
   const biddingTokenBalance =
     relevantTokenBalances?.[biddingToken?.address ?? ""];
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken);
+
+  let clearingPrice: Fraction | undefined;
+  if (
+    !clearingPriceOrder ||
+    clearingPriceOrder.buyAmount == undefined ||
+    clearingPriceOrder.sellAmount == undefined
+  ) {
+    clearingPrice = undefined;
+  } else {
+    clearingPrice = new Fraction(
+      clearingPriceOrder.sellAmount.raw.toString(),
+      clearingPriceOrder.buyAmount.raw.toString(),
+    );
+  }
+
+  let auctionState = AuctionState.CLAIMING;
+  if (auctionEndDate > new Date().getTime() / 1000) {
+    auctionState = AuctionState.ORDER_PLACING;
+    if (orderCancellationEndDate >= new Date().getTime() / 1000) {
+      auctionState = AuctionState.ORDER_PLACING_AND_CANCELING;
+    }
+  } else {
+    if (clearingPrice?.toSignificant(1) == "0") {
+      auctionState = AuctionState.PRICE_SUBMISSION;
+    }
+  }
 
   let error: string | undefined;
   if (!account) {
@@ -243,8 +278,10 @@ export function useDerivedAuctionInfo(
     auctioningToken,
     biddingToken,
     clearingPriceOrder,
+    clearingPrice,
     initialAuctionOrder,
     auctionEndDate,
+    auctionState,
   };
 }
 
