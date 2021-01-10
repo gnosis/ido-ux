@@ -17,7 +17,7 @@ import { useActiveWeb3React } from "../../hooks";
 import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
 import { AppDispatch, AppState } from "../index";
 import { useTokenBalances } from "../wallet/hooks";
-import { encodeOrder } from "../../hooks/Order";
+import { encodeOrder, decodeOrder, Order } from "../../hooks/Order";
 import {
   setDefaultsFromURLSearch,
   sellAmountInput,
@@ -37,7 +37,7 @@ export enum AuctionState {
   CLAIMING,
 }
 
-function decodeOrder(
+function decodeSellOrder(
   orderBytes: string,
   soldToken: Token | undefined,
   boughtToken: Token | undefined,
@@ -145,11 +145,13 @@ export function useDerivedAuctionInfo(): {
   error?: string;
   auctioningToken?: Token | null;
   biddingToken?: Token | null;
-  clearingPriceOrder?: SellOrder | null;
+  clearingPriceSellOrder?: SellOrder | null;
+  clearingPriceOrder?: Order | null;
   clearingPrice: Fraction | undefined;
   initialAuctionOrder?: SellOrder | null;
   auctionEndDate?: number | null;
   auctionState: AuctionState | null;
+  clearingPriceVolume: BigNumber | null;
 } {
   const { chainId, account } = useActiveWeb3React();
 
@@ -167,16 +169,21 @@ export function useDerivedAuctionInfo(): {
     auctionId,
   ]).result;
 
-  const initialAuctionOrder: SellOrder | null = decodeOrder(
+  const initialAuctionOrder: SellOrder | null = decodeSellOrder(
     auctionInfo?.initialAuctionOrder,
     auctioningToken,
     biddingToken,
   );
-  const clearingPriceOrder: SellOrder | null = decodeOrder(
+  const clearingPriceSellOrder: SellOrder | null = decodeSellOrder(
     auctionInfo?.clearingPriceOrder,
     biddingToken,
     auctioningToken,
   );
+  let clearingPriceOrder: Order | null = null;
+  if (auctionInfo?.clearingPriceOrder) {
+    clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder);
+  }
+  const clearingPriceVolume = auctionInfo?.volumeClearingPriceOrder;
   const auctionEndDate = auctionInfo?.auctionEndDate;
   const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate;
   const minBiddingAmountPerOrder = auctionInfo?.minimumBiddingAmountPerOrder;
@@ -189,15 +196,15 @@ export function useDerivedAuctionInfo(): {
 
   let clearingPrice: Fraction | undefined;
   if (
-    !clearingPriceOrder ||
-    clearingPriceOrder.buyAmount == undefined ||
-    clearingPriceOrder.sellAmount == undefined
+    !clearingPriceSellOrder ||
+    clearingPriceSellOrder.buyAmount == undefined ||
+    clearingPriceSellOrder.sellAmount == undefined
   ) {
     clearingPrice = undefined;
   } else {
     clearingPrice = new Fraction(
-      clearingPriceOrder.sellAmount.raw.toString(),
-      clearingPriceOrder.buyAmount.raw.toString(),
+      clearingPriceSellOrder.sellAmount.raw.toString(),
+      clearingPriceSellOrder.buyAmount.raw.toString(),
     );
   }
 
@@ -294,11 +301,13 @@ export function useDerivedAuctionInfo(): {
     error,
     auctioningToken,
     biddingToken,
+    clearingPriceSellOrder,
     clearingPriceOrder,
     clearingPrice,
     initialAuctionOrder,
     auctionEndDate,
     auctionState,
+    clearingPriceVolume,
   };
 }
 
@@ -338,14 +347,14 @@ export function useDerivedClaimInfo(
   const biddingToken = useTokenByAddressAndAutomaticallyAdd(
     biddingTokenAddress,
   );
-  const clearingPriceOrder: SellOrder | null = decodeOrder(
+  const clearingPriceSellOrder: SellOrder | null = decodeSellOrder(
     auctionInfo?.clearingPriceOrder,
     biddingToken,
     auctioningToken,
   );
 
   let error: string | undefined;
-  if (clearingPriceOrder?.buyAmount.raw.toString() == "0") {
+  if (clearingPriceSellOrder?.buyAmount.raw.toString() == "0") {
     error = "Price not yet supplied to auction";
   }
   if (auctionEndDate >= new Date().getTime() / 1000) {

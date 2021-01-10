@@ -76,9 +76,18 @@ export function useGetAuctionProceeds(): AuctionProceedings {
     biddingToken,
     auctioningToken,
     clearingPriceOrder,
+    clearingPriceSellOrder,
+    clearingPriceVolume,
   } = useDerivedAuctionInfo();
 
-  if (!claimInfo || !biddingToken || !auctioningToken || !clearingPriceOrder) {
+  if (
+    !claimInfo ||
+    !biddingToken ||
+    !auctioningToken ||
+    !clearingPriceSellOrder ||
+    !clearingPriceOrder ||
+    !clearingPriceVolume
+  ) {
     return {
       claimableBiddingToken: null,
       claimableAuctioningToken: null,
@@ -88,31 +97,38 @@ export function useGetAuctionProceeds(): AuctionProceedings {
   let claimableBiddingToken = new TokenAmount(biddingToken, "0");
   for (const order of claimInfo.sellOrdersFormUser) {
     const decodedOrder = decodeOrder(order);
-    //Todo: consider fractionally filled volumes
-    if (
-      BigNumber.from(clearingPriceOrder.buyAmount.raw.toString())
+    if (decodedOrder == clearingPriceOrder) {
+      claimableBiddingToken = claimableBiddingToken.add(
+        new TokenAmount(
+          biddingToken,
+          decodedOrder.sellAmount.sub(clearingPriceVolume).toString(),
+        ),
+      );
+      claimableAuctioningToken = claimableAuctioningToken.add(
+        new TokenAmount(
+          auctioningToken,
+          clearingPriceVolume
+            .mul(clearingPriceOrder.buyAmount)
+            .div(clearingPriceOrder.sellAmount)
+            .toString(),
+        ),
+      );
+    } else if (
+      clearingPriceOrder.buyAmount
         .mul(decodedOrder.sellAmount)
-        .lt(
-          decodedOrder.buyAmount.mul(
-            BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()),
-          ),
-        )
+        .lt(decodedOrder.buyAmount.mul(clearingPriceOrder.sellAmount))
     ) {
       claimableBiddingToken = claimableBiddingToken.add(
         new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
       );
     } else {
-      if (
-        BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()).gt(
-          BigNumber.from("0"),
-        )
-      ) {
+      if (clearingPriceOrder.sellAmount.gt(BigNumber.from("0"))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
             auctioningToken,
             decodedOrder.sellAmount
-              .mul(BigNumber.from(clearingPriceOrder.buyAmount.raw.toString()))
-              .div(BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()))
+              .mul(clearingPriceOrder.buyAmount)
+              .div(clearingPriceOrder.sellAmount)
               .toString(),
           ),
         );
