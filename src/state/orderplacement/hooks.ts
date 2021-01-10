@@ -165,9 +165,14 @@ export function useDerivedAuctionInfo(): {
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
   );
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
-    auctionId,
-  ]).result;
+  const auctionInfo = useSingleCallResult(
+    easyAuctionInstance,
+    "auctionData",
+    [auctionId],
+    {
+      blocksPerFetch: 1,
+    },
+  ).result;
 
   const initialAuctionOrder: SellOrder | null = decodeSellOrder(
     auctionInfo?.initialAuctionOrder,
