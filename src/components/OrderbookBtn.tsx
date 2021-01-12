@@ -22,7 +22,6 @@ import {
 } from "../state/orderplacement/hooks";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
-  font-size: 14px;
   margin: auto 0 0;
 
   > svg {

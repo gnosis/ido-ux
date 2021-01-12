@@ -49,10 +49,35 @@ export const ButtonPrimary = styled(Base)`
     background-color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
   &:disabled {
+    background-color: ${({ theme }) => theme.bg2};
+    color: ${({ theme }) => theme.text3};
+    cursor: auto;
+    box-shadow: none;
+  }
+`;
+
+export const ButtonGradient = styled(Base)`
+  background-image: ${({ theme }) =>
+    `linear-gradient(270deg, ${theme.buttonGradient1} 0%, ${theme.buttonGradient2} 100%)`};
+  color: white;
+  transition: 0.1s opacity ease-in-out;
+  &:focus {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
+    opacity: 0.9;
+  }
+  &:hover {
+    opacity: 0.9;
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.primary1)};
+  }
+  &:disabled {
+    background-image: none;
     background-color: ${({ theme }) => theme.bg3};
     color: ${({ theme }) => theme.text3};
     cursor: auto;
     box-shadow: none;
+    border: 1px solid ${({ theme }) => theme.bg2};
   }
 `;
 

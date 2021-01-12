@@ -59,19 +59,19 @@ export function colors(darkMode: boolean): Colors {
     buttonGradient2: "#3F77FF",
 
     //primary colors
-    primary1: darkMode ? "#3F77FF" : "#8958FF",
+    primary1: darkMode ? "#3F77FF" : "#3F77FF",
     primary2: darkMode ? "#3680E7" : "#FF8CC3",
     primary3: darkMode ? "#4D8FEA" : "#FF99C9",
     primary4: darkMode ? "#376bad70" : "#F6DDE8",
-    primary5: darkMode ? "#153d6f70" : "rgba(137,88,255,0.6)",
+    primary5: darkMode ? "rgba(69,104,255,0.25)" : "rgba(69,104,255,0.25)",
 
     // color text
-    primaryText1: darkMode ? "#6da8ff" : "#8958FF",
+    primaryText1: darkMode ? "#6F9DFF" : "#3F77FF",
 
     // secondary colors
-    secondary1: darkMode ? "#2172E5" : "#8958FF",
+    secondary1: darkMode ? "#2172E5" : "#3F77FF",
     secondary2: darkMode ? "#17000b26" : "#F6DDE8",
-    secondary3: darkMode ? "#17000b26" : "rgba(137,88,255,0.6)",
+    secondary3: darkMode ? "#17000b26" : "rgba(69,104,255,0.25)",
 
     // other
     red1: "#FF6871",

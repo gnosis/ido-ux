@@ -353,7 +353,7 @@ export function useDerivedClaimInfo(
   ]).result;
   if (claimableOrders == undefined || claimableOrders?.length > 0) {
     if (claimed == undefined || !claimed[0]) {
-      error = "Proceedings already claimed";
+      error = "Already claimed";
     }
   }
 

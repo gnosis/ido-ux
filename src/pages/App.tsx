@@ -45,12 +45,11 @@ const BackgroundGradient = styled.div`
   height: 200vh;
   background: ${({ theme }) =>
     `radial-gradient(50% 50% at 50% 50%, ${theme.primary1} 0%, ${theme.bg1} 100%)`};
-  position: absolute;
+  position: fixed;
   top: 0px;
   left: 0px;
   opacity: 0.1;
   z-index: -1;
-
   transform: translateY(-70vh);
 
   @media (max-width: 960px) {

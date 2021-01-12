@@ -14,16 +14,11 @@ const Wrapper = styled.div`
   align-content: center;
   text-align: center;
 
-  > div {
-    display: flex;
-    width: 100%;
-    text-align: center;
-  }
-
-  > div > h3 {
+  > h3 {
     width: 100%;
     display: flex;
     text-align: center;
+    margin: 16px auto 26px;
   }
 `;
 
@@ -61,11 +56,11 @@ export default function AuctionHeader() {
           {biddingToken?.symbol}
         </h3>
       ) : clearingPrice?.toSignificant(1) == "0" ? (
-        <h3>Auction ready for price submission transaction</h3>
+        <h3>👍 Auction ready for price submission transaction</h3>
       ) : (
         <h3>
-          Auction settled with a price of {clearingPrice?.toSignificant(4)} [
-          {auctioningToken?.symbol} /{biddingToken?.symbol} ]
+          ✅ Auction settled with a price of {clearingPrice?.toSignificant(4)} [
+          {auctioningToken?.symbol}/{biddingToken?.symbol} ]
         </h3>
       )}
     </Wrapper>

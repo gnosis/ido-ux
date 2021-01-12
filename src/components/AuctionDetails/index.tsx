@@ -11,7 +11,7 @@ import { useActiveWeb3React } from "../../hooks";
 
 const Wrapper = styled.div`
   position: relative;
-  width: calc(40% - 8px);
+  width: calc(50% - 8px);
   background: none;
   border: ${({ theme }) => `1px solid ${theme.bg2}`};
   box-shadow: none;
@@ -31,11 +31,12 @@ const Title = styled.div`
 
 const Details = styled.div`
   color: ${({ theme }) => theme.text1};
-  font-size: 13px;
+  font-size: 15px;
   font-weight: normal;
   width: 100%;
   display: flex;
   flex-flow: column wrap;
+  margin: 0 0 16px;
 `;
 
 const Row = styled.span`

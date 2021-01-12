@@ -41,7 +41,15 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
     <>
       <AppBody>
         {!account ? (
-          <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+          <div>
+            <h3>
+              EasyAuction is a platform designed for fair price finding of
+              one-time events.
+            </h3>
+            <ButtonLight onClick={toggleWalletModal}>
+              Connect Wallet
+            </ButtonLight>
+          </div>
         ) : (
           <Wrapper>
             <AuctionHeader />
