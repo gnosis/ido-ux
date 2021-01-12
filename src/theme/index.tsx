@@ -40,46 +40,48 @@ export function colors(darkMode: boolean): Colors {
 
     // text
     text1: darkMode ? "#FFFFFF" : "#000000",
-    text2: darkMode ? "#C3C5CB" : "#565A69",
+    text2: darkMode ? "#DCDCDC" : "#565A69",
     text3: darkMode ? "#6C7284" : "#888D9B",
     text4: darkMode ? "#565A69" : "#C3C5CB",
     text5: darkMode ? "#2C2F36" : "#EDEEF2",
 
     // backgrounds / greys
-    bg1: darkMode ? "#212429" : "#FFFFFF",
-    bg2: darkMode ? "#2C2F36" : "#F7F8FA",
-    bg3: darkMode ? "#40444F" : "#EDEEF2",
+    bg1: darkMode ? "#1E1F2C" : "#FFFFFF",
+    bg2: darkMode ? "#2C2D3F" : "#F7F8FA",
+    bg3: darkMode ? "#1E1F2C" : "#EDEEF2",
     bg4: darkMode ? "#565A69" : "#CED0D9",
     bg5: darkMode ? "#565A69" : "#888D9B",
 
     //specialty colors
     modalBG: darkMode ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.6)",
-    advancedBG: darkMode ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.6)",
+    advancedBG: darkMode ? "#2B2D3F" : "rgb(247 248 250)",
+    buttonGradient1: "#8958FF",
+    buttonGradient2: "#3F77FF",
 
     //primary colors
-    primary1: darkMode ? "#2172E5" : "#ff007a",
+    primary1: darkMode ? "#3F77FF" : "#8958FF",
     primary2: darkMode ? "#3680E7" : "#FF8CC3",
     primary3: darkMode ? "#4D8FEA" : "#FF99C9",
     primary4: darkMode ? "#376bad70" : "#F6DDE8",
-    primary5: darkMode ? "#153d6f70" : "#FDEAF1",
+    primary5: darkMode ? "#153d6f70" : "rgba(137,88,255,0.6)",
 
     // color text
-    primaryText1: darkMode ? "#6da8ff" : "#ff007a",
+    primaryText1: darkMode ? "#6da8ff" : "#8958FF",
 
     // secondary colors
-    secondary1: darkMode ? "#2172E5" : "#ff007a",
+    secondary1: darkMode ? "#2172E5" : "#8958FF",
     secondary2: darkMode ? "#17000b26" : "#F6DDE8",
-    secondary3: darkMode ? "#17000b26" : "#FDEAF1",
+    secondary3: darkMode ? "#17000b26" : "rgba(137,88,255,0.6)",
 
     // other
     red1: "#FF6871",
     green1: "#27AE60",
     yellow1: "#FFE270",
     yellow2: "#F3841E",
-
-    // dont wanna forget these blue yet
-    // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
-    // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
+    blue1: "#3F77FF",
+    purple: "#8958FF",
+    border: darkMode ? "#3a3b5a" : "rgb(58 59 90 / 10%)",
+    disabled: darkMode ? "#31323e" : "rgb(237, 238, 242)",
   };
 }
 

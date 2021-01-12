@@ -1,15 +1,19 @@
 import React from "react";
 import styled from "styled-components";
 
-const Body = styled.div`
+const Wrapper = styled.div`
   position: relative;
   max-width: 720px;
   width: 100%;
+  height: auto;
+  box-sizing: border-box;
   background: ${({ theme }) => theme.bg1};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
     0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 30px;
-  padding: 1rem;
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-flow: row wrap;
 `;
 
 /**
@@ -17,8 +21,8 @@ const Body = styled.div`
  */
 export default function AppBody({ children }: { children: React.ReactNode }) {
   return (
-    <Body>
+    <Wrapper>
       <>{children}</>
-    </Body>
+    </Wrapper>
   );
 }

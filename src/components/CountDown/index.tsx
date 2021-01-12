@@ -58,7 +58,8 @@ export default function CountdownTimer({
     setTimeout(() => {
       setTimeLeft(calculateTimeLeft(auctionEndDate));
     }, 1000);
-  });
+  }),
+    [auctionEndDate];
 
   return (
     <CountDownStyled>

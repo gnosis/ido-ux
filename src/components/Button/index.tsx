@@ -50,7 +50,7 @@ export const ButtonPrimary = styled(Base)`
   }
   &:disabled {
     background-color: ${({ theme }) => theme.bg3};
-    color: ${({ theme }) => theme.text3}
+    color: ${({ theme }) => theme.text3};
     cursor: auto;
     box-shadow: none;
   }
@@ -194,7 +194,6 @@ export const ButtonEmpty = styled(Base)`
 export const ButtonWhite = styled(Base)`
   border: 1px solid #edeef2;
   background-color: ${({ theme }) => theme.bg1};
-  };
   color: black;
 
   &:focus {

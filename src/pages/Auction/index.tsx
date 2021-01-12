@@ -2,7 +2,8 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
-import { Wrapper } from "../../components/swap/styleds";
+// import { Wrapper } from "../../components/swap/styleds";
+import styled from "styled-components";
 import {
   useDefaultsFromURLSearch,
   useDerivedSwapInfo,
@@ -27,49 +28,34 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
   const { auctionId } = useSwapState();
   const { auctionEndDate } = useDerivedSwapInfo(auctionId);
 
+  const Wrapper = styled.div`
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
+    align-items: stretch;
+  `;
+
   return (
     <>
       <AppBody>
         {!account ? (
           <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
         ) : (
-          <div>
-            <div style={{ padding: "1rem" }}>
-              <AuctionHeader></AuctionHeader>
-            </div>
-            <div
-              style={{
-                width: "35%",
-                float: "left",
-                alignContent: "center",
-                padding: "0.5rem",
-              }}
-            >
-              <AuctionDetails></AuctionDetails>
-            </div>
-            <div
-              style={{
-                width: "65%",
-                float: "right",
-                alignContent: "right",
-                padding: "0.5rem",
-              }}
-            >
-              {auctionEndDate >= new Date().getTime() / 1000 ? (
-                <OrderBody>
-                  <Wrapper id="auction-page">
-                    <OrderPlacement></OrderPlacement>
-                  </Wrapper>
-                </OrderBody>
-              ) : (
-                <ClaimerBody>
-                  <Wrapper id="auction-page">
-                    <Claimer></Claimer>
-                  </Wrapper>
-                </ClaimerBody>
-              )}
-            </div>
-          </div>
+          <Wrapper>
+            <AuctionHeader />
+            <AuctionDetails />
+            {auctionEndDate >= new Date().getTime() / 1000 ? (
+              <OrderBody>
+                <OrderPlacement />
+              </OrderBody>
+            ) : (
+              <ClaimerBody>
+                <Claimer />
+              </ClaimerBody>
+            )}
+          </Wrapper>
         )}
       </AppBody>
     </>

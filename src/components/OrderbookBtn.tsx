@@ -11,6 +11,7 @@ import { Token } from "@uniswap/sdk";
 
 // components
 import { DEFAULT_MODAL_OPTIONS } from "./Modal";
+import { ButtonLight } from "./Button";
 import OrderBookWidget from "./OrderbookWidget";
 
 // hooks
@@ -20,17 +21,12 @@ import {
   useSwapState,
 } from "../state/orderplacement/hooks";
 
-const ViewOrderBookBtn = styled.button`
-  margin: 40px auto 40px auto;
-  text-align: right;
-  display: flex;
-  align-items: center;
-  background: ${({ theme }) => theme.bg2};
+const ViewOrderBookBtn = styled(ButtonLight)`
+  font-size: 14px;
+  margin: auto 0 0;
 
-  svg {
-    font-size: 2.7rem;
-    fill: var(--color-text-active);
-    margin: 0px 40px 0px 40px;
+  > svg {
+    margin: 0 0 0 5px;
   }
 `;
 
@@ -103,7 +99,6 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
   //   const theme = useContext(ThemeContext);
   const { chainId } = useActiveWeb3React();
   const { auctionId } = useSwapState();
-
   const { auctioningToken, biddingToken } = useDerivedSwapInfo(auctionId);
 
   const [modalHook, toggleModal] = useModal({
@@ -138,7 +133,7 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
         onClick={toggleModal}
         type="button"
       >
-        {/* {label || "View Order Book"}{" "} */}
+        {"View Order Book"}{" "}
         <FontAwesomeIcon className="chart-icon" icon={faChartLine} />
       </ViewOrderBookBtn>
       <Modal.Modal {...modalHook} />
