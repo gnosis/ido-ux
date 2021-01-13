@@ -13,7 +13,7 @@ import { useActiveWeb3React } from "../../hooks";
 
 const Wrapper = styled.div`
   position: relative;
-  width: calc(50% - 8px);
+  width: calc(40% - 8px);
   background: none;
   border: ${({ theme }) => `1px solid ${theme.bg2}`};
   box-shadow: none;
@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
     margin: 0 0 16px;
+    order: 1;
   `};
 `;
 
@@ -38,7 +39,7 @@ const Title = styled.div`
 
 const Details = styled.div`
   color: ${({ theme }) => theme.text1};
-  font-size: 15px;
+  font-size: 13px;
   font-weight: normal;
   width: 100%;
   display: flex;
@@ -136,7 +137,7 @@ export default function AuctionDetails() {
             </ExternalLink>
           </Row>
           <Row>
-            <i>Price</i>
+            <i>Closing price</i>
             <p>
               {clearingPriceNumber > 0
                 ? `${clearingPriceNumber} 

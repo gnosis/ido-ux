@@ -42,7 +42,7 @@ export function formatSeconds(seconds: number): string {
 }
 
 const calculateTimeLeft = (auctionEndDate) => {
-  const diff = auctionEndDate?.toNumber() - new Date().getTime() / 1000;
+  const diff = auctionEndDate?.toNumber() - Date.now() / 1000;
   if (diff < 0) return 0;
   return diff;
 };

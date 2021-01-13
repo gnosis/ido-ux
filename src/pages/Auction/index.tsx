@@ -34,6 +34,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
     height: 100%;
     justify-content: space-between;
     align-items: stretch;
+    ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
   `;
 
   return (
