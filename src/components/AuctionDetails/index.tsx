@@ -5,6 +5,7 @@ import {
   useSwapState,
   useDerivedSwapInfo,
 } from "../../state/orderplacement/hooks";
+import { Fraction } from "@uniswap/sdk";
 import { OrderBookBtn } from "../OrderbookBtn";
 import { getEtherscanLink } from "../../utils";
 import { useActiveWeb3React } from "../../hooks";
@@ -21,6 +22,11 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-flow: column wrap;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    margin: 0 0 16px;
+  `};
 `;
 
 const Title = styled.div`
@@ -64,9 +70,12 @@ export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
 
-  const { auctionEndDate, auctioningToken, biddingToken } = useDerivedSwapInfo(
-    auctionId,
-  );
+  const {
+    auctionEndDate,
+    auctioningToken,
+    biddingToken,
+    clearingPriceOrder,
+  } = useDerivedSwapInfo(auctionId);
 
   const auctionEnded = auctionEndDate <= new Date().getTime() / 1000;
 
@@ -85,6 +94,20 @@ export default function AuctionDetails() {
     biddingToken?.address,
     "address",
   );
+
+  let clearingPrice: Fraction | undefined;
+  if (
+    !clearingPriceOrder ||
+    clearingPriceOrder.buyAmount == undefined ||
+    clearingPriceOrder.sellAmount == undefined
+  ) {
+    clearingPrice = undefined;
+  } else {
+    clearingPrice = new Fraction(
+      clearingPriceOrder.sellAmount.raw.toString(),
+      clearingPriceOrder.buyAmount.raw.toString(),
+    );
+  }
 
   return (
     <>
@@ -113,6 +136,13 @@ export default function AuctionDetails() {
             <ExternalLink href={biddingTokenAddress}>
               {biddingToken?.symbol} ↗
             </ExternalLink>
+          </Row>
+          <Row>
+            <i>Price</i>
+            <p>
+              {clearingPrice?.toSignificant(4)}&nbsp;
+              {auctioningToken?.symbol} per {biddingToken?.symbol}
+            </p>
           </Row>
         </Details>
 

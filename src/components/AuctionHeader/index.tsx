@@ -19,6 +19,7 @@ const Wrapper = styled.div`
     display: flex;
     text-align: center;
     margin: 16px auto 26px;
+    flex-flow: column wrap;
   }
 `;
 
@@ -58,10 +59,7 @@ export default function AuctionHeader() {
       ) : clearingPrice?.toSignificant(1) == "0" ? (
         <h3>🗓️ This auction is scheduled</h3>
       ) : (
-        <h3>
-          ✅ Auction settled with a price of {clearingPrice?.toSignificant(4)} [
-          {auctioningToken?.symbol} per {biddingToken?.symbol} ]
-        </h3>
+        <h3>🏁 Auction settled</h3>
       )}
     </Wrapper>
   );

@@ -24,12 +24,10 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: absolute;
-
   pointer-events: none;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 12px 0 0 0;
-    width: calc(100%);
     position: relative;
   `};
   z-index: 2;

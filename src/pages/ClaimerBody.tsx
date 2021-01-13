@@ -11,6 +11,10 @@ const Body = styled.div`
   border-radius: 20px;
   padding: 16px;
   flex: 0 1 auto;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+  `};
 `;
 
 /**
