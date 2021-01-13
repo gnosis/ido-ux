@@ -3,7 +3,7 @@ import React from "react";
 import {
   AuctionState,
   useDerivedAuctionInfo,
-} from "../../state/orderplacement/hooks";
+} from "../../state/orderPlacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
 
