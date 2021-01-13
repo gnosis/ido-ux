@@ -73,7 +73,7 @@ export default function AuctionDetails() {
     biddingToken,
   } = useDerivedAuctionInfo();
 
-  // const auctionEnded = auctionEndDate <= new Date().getTime() / 1000;
+  // const auctionEnded = auctionEndDate <= Date.now() / 1000;
 
   const auctionEndDateString = new Date(
     auctionEndDate * 1000,
