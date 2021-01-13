@@ -105,13 +105,13 @@ export default function AuctionDetails() {
           <Row>
             <i>Selling</i>
             <ExternalLink href={auctionTokenAddress}>
-              {auctioningToken?.symbol}
+              {auctioningToken?.symbol} ↗
             </ExternalLink>
           </Row>
           <Row>
             <i>Buying</i>
             <ExternalLink href={biddingTokenAddress}>
-              {biddingToken?.symbol}
+              {biddingToken?.symbol} ↗
             </ExternalLink>
           </Row>
         </Details>

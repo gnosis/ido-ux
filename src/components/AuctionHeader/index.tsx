@@ -56,11 +56,11 @@ export default function AuctionHeader() {
           {biddingToken?.symbol}
         </h3>
       ) : clearingPrice?.toSignificant(1) == "0" ? (
-        <h3>👍 Auction ready for price submission transaction</h3>
+        <h3>🗓️ This auction is scheduled</h3>
       ) : (
         <h3>
           ✅ Auction settled with a price of {clearingPrice?.toSignificant(4)} [
-          {auctioningToken?.symbol}/{biddingToken?.symbol} ]
+          {auctioningToken?.symbol} per {biddingToken?.symbol} ]
         </h3>
       )}
     </Wrapper>
