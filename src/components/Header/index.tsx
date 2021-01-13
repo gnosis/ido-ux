@@ -52,10 +52,16 @@ const Title = styled.div`
 
 const TitleText = styled(Row)`
   width: fit-content;
+  font-size: 1rem;
   white-space: nowrap;
+  color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
   `};
+  > a {
+    color: inherit;
+    text-decoration: none;
+  }
 `;
 
 const AccountElement = styled.div<{ active: boolean }>`
