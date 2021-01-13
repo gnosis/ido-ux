@@ -28,7 +28,6 @@ export default function AuctionHeader() {
     biddingToken,
     auctionEndDate,
     initialAuctionOrder,
-    clearingPrice,
   } = useDerivedAuctionInfo();
 
   return (
@@ -44,12 +43,9 @@ export default function AuctionHeader() {
           {biddingToken?.symbol}
         </h3>
       ) : auctionState == AuctionState.PRICE_SUBMISSION ? (
-        <h3>This auction is scheduled</h3>
+        <h3>🗓️ Auction is scheduled</h3>
       ) : (
-        <h3>
-          ✅ Auction settled with a price of {clearingPrice?.toSignificant(4)} [
-          {auctioningToken?.symbol}/{biddingToken?.symbol} ]
-        </h3>
+        <h3>🏁 Auction is settled</h3>
       )}
     </Wrapper>
   );

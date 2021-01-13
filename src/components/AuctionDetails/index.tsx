@@ -23,6 +23,11 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-flow: column wrap;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    margin: 0 0 16px;
+  `};
 `;
 
 const Title = styled.div`
@@ -71,6 +76,7 @@ export default function AuctionDetails() {
     auctionEndDate,
     auctioningToken,
     biddingToken,
+    clearingPrice,
   } = useDerivedAuctionInfo();
 
   // const auctionEnded = auctionEndDate <= Date.now() / 1000;
@@ -90,6 +96,8 @@ export default function AuctionDetails() {
     biddingToken?.address,
     "address",
   );
+
+  const clearingPriceNumber = Number(clearingPrice?.toSignificant(4));
 
   return (
     <>
@@ -118,14 +126,23 @@ export default function AuctionDetails() {
           <Row>
             <i>Selling</i>
             <ExternalLink href={auctionTokenAddress}>
-              {auctioningToken?.symbol}
+              {auctioningToken?.symbol} ↗
             </ExternalLink>
           </Row>
           <Row>
             <i>Buying</i>
             <ExternalLink href={biddingTokenAddress}>
-              {biddingToken?.symbol}
+              {biddingToken?.symbol} ↗
             </ExternalLink>
+          </Row>
+          <Row>
+            <i>Price</i>
+            <p>
+              {clearingPriceNumber > 0
+                ? `${clearingPriceNumber} 
+              ${auctioningToken?.symbol} per ${biddingToken?.symbol}`
+                : "-"}
+            </p>
           </Row>
         </Details>
 
