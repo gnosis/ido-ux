@@ -1,11 +1,10 @@
 import React from "react";
 // import { Text } from "rebass";
 import {
-  useSwapState,
-  useDerivedSwapInfo,
+  AuctionState,
+  useDerivedAuctionInfo,
 } from "../../state/orderplacement/hooks";
 import styled from "styled-components";
-import { Fraction } from "@uniswap/sdk";
 import CountdownTimer from "../CountDown";
 
 const Wrapper = styled.div`
@@ -23,40 +22,29 @@ const Wrapper = styled.div`
 `;
 
 export default function AuctionHeader() {
-  const { auctionId } = useSwapState();
   const {
+    auctionState,
     auctioningToken,
     biddingToken,
     auctionEndDate,
     initialAuctionOrder,
-    clearingPriceOrder,
-  } = useDerivedSwapInfo(auctionId);
+    clearingPrice,
+  } = useDerivedAuctionInfo();
 
-  let clearingPrice: Fraction | undefined;
-  if (
-    !clearingPriceOrder ||
-    clearingPriceOrder.buyAmount == undefined ||
-    clearingPriceOrder.sellAmount == undefined
-  ) {
-    clearingPrice = undefined;
-  } else {
-    clearingPrice = new Fraction(
-      clearingPriceOrder.sellAmount.raw.toString(),
-      clearingPriceOrder.buyAmount.raw.toString(),
-    );
-  }
   return (
     <Wrapper>
-      {auctionEndDate && <CountdownTimer auctionEndDate={auctionEndDate} />}
-      {auctionEndDate >= new Date().getTime() / 1000 ? (
+      <CountdownTimer auctionEndDate={auctionEndDate} />
+
+      {auctionState == AuctionState.ORDER_PLACING ||
+      auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
         <h3>
           Selling {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
           {auctioningToken?.symbol} for at least{" "}
           {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
           {biddingToken?.symbol}
         </h3>
-      ) : clearingPrice?.toSignificant(1) == "0" ? (
-        <h3>👍 Auction ready for price submission transaction</h3>
+      ) : auctionState == AuctionState.PRICE_SUBMISSION ? (
+        <h3>This auction is scheduled</h3>
       ) : (
         <h3>
           ✅ Auction settled with a price of {clearingPrice?.toSignificant(4)} [

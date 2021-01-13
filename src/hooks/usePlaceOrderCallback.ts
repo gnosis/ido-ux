@@ -69,7 +69,6 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [previousOrder],
-          [queueStartElement],
         ];
         value = null;
       }

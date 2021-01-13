@@ -1,36 +1,21 @@
 import { parse } from "qs";
 import { createReducer } from "@reduxjs/toolkit";
 import {
-  Field,
   setDefaultsFromURLSearch,
-  SellAmountInput,
+  sellAmountInput,
   priceInput,
 } from "./actions";
 
 export interface SwapState {
-  readonly independentField: Field;
   readonly price: string;
   readonly sellAmount: string;
   readonly auctionId: number;
-  readonly [Field.INPUT]: {
-    readonly address: string | undefined;
-  };
-  readonly [Field.OUTPUT]: {
-    readonly address: string | undefined;
-  };
 }
 
 const initialState: SwapState = {
-  independentField: Field.INPUT,
   price: "1",
   auctionId: 1,
   sellAmount: "",
-  [Field.INPUT]: {
-    address: "",
-  },
-  [Field.OUTPUT]: {
-    address: "",
-  },
 };
 
 function parseAuctionIdParameter(urlParam: any): number {
@@ -59,7 +44,7 @@ export default createReducer<SwapState>(initialState, (builder) =>
         auctionId: 1,
       };
     })
-    .addCase(SellAmountInput, (state, { payload: { sellAmount } }) => {
+    .addCase(sellAmountInput, (state, { payload: { sellAmount } }) => {
       return {
         ...state,
         sellAmount,

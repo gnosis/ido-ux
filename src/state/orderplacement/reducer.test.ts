@@ -1,69 +1,67 @@
-import { ChainId, WETH } from "@uniswap/sdk";
 import { createStore, Store } from "redux";
-import { Field, setDefaultsFromURLSearch } from "./actions";
+import {
+  priceInput,
+  sellAmountInput,
+  setDefaultsFromURLSearch,
+} from "./actions";
 import reducer, { SwapState } from "./reducer";
 
-describe("swap reducer", () => {
+describe("orderplacement reducer", () => {
   let store: Store<SwapState>;
 
   beforeEach(() => {
     store = createStore(reducer, {
-      [Field.OUTPUT]: { address: "" },
-      [Field.INPUT]: { address: "" },
-      typedValue: "",
-      independentField: Field.INPUT,
+      price: "1",
+      auctionId: 1,
+      sellAmount: "",
     });
   });
 
   describe("setDefaultsFromURL", () => {
-    test("ETH to DAI", () => {
+    test("get auctionId", () => {
       store.dispatch(
         setDefaultsFromURLSearch({
-          chainId: ChainId.MAINNET,
-          queryString:
-            "?inputCurrency=ETH&outputCurrency=0x6b175474e89094c44da98b954eedeac495271d0f&exactAmount=20.5&exactField=outPUT",
+          chainId: 1,
+          queryString: "?auctionId=2",
         }),
       );
 
       expect(store.getState()).toEqual({
-        [Field.OUTPUT]: {
-          address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-        },
-        [Field.INPUT]: { address: WETH[ChainId.MAINNET].address },
-        typedValue: "20.5",
-        independentField: Field.OUTPUT,
+        price: "1",
+        auctionId: 2,
+        sellAmount: "",
       });
     });
+  });
 
-    test("does not duplicate eth for invalid output token", () => {
+  describe("sellAmountInput", () => {
+    test("change on new input", () => {
       store.dispatch(
-        setDefaultsFromURLSearch({
-          chainId: ChainId.MAINNET,
-          queryString: "?outputCurrency=invalid",
+        sellAmountInput({
+          sellAmount: "2",
         }),
       );
 
       expect(store.getState()).toEqual({
-        [Field.INPUT]: { address: "" },
-        [Field.OUTPUT]: { address: WETH[ChainId.MAINNET].address },
-        typedValue: "",
-        independentField: Field.INPUT,
+        price: "1",
+        auctionId: 1,
+        sellAmount: "2",
       });
     });
+  });
 
-    test("output ETH only", () => {
+  describe("priceInput", () => {
+    test("change on new input", () => {
       store.dispatch(
-        setDefaultsFromURLSearch({
-          chainId: ChainId.MAINNET,
-          queryString: "?outputCurrency=eth&exactAmount=20.5",
+        priceInput({
+          price: "2",
         }),
       );
 
       expect(store.getState()).toEqual({
-        [Field.OUTPUT]: { address: WETH[ChainId.MAINNET].address },
-        [Field.INPUT]: { address: "" },
-        typedValue: "20.5",
-        independentField: Field.INPUT,
+        price: "2",
+        auctionId: 1,
+        sellAmount: "",
       });
     });
   });

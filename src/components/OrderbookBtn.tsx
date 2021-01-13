@@ -17,7 +17,7 @@ import OrderBookWidget from "./OrderbookWidget";
 // hooks
 import { useActiveWeb3React } from "../hooks";
 import {
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
   useSwapState,
 } from "../state/orderplacement/hooks";
 
@@ -98,7 +98,8 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
   //   const theme = useContext(ThemeContext);
   const { chainId } = useActiveWeb3React();
   const { auctionId } = useSwapState();
-  const { auctioningToken, biddingToken } = useDerivedSwapInfo(auctionId);
+
+  const { auctioningToken, biddingToken } = useDerivedAuctionInfo();
 
   const [modalHook, toggleModal] = useModal({
     ...DEFAULT_MODAL_OPTIONS,

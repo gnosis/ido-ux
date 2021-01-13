@@ -3,8 +3,10 @@ import styled from "styled-components";
 import { ExternalLink } from "../../theme";
 import {
   useSwapState,
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
+  AuctionState,
 } from "../../state/orderplacement/hooks";
+// import { Text } from "rebass";
 import { OrderBookBtn } from "../OrderbookBtn";
 import { getEtherscanLink } from "../../utils";
 import { useActiveWeb3React } from "../../hooks";
@@ -64,11 +66,14 @@ export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
 
-  const { auctionEndDate, auctioningToken, biddingToken } = useDerivedSwapInfo(
-    auctionId,
-  );
+  const {
+    auctionState,
+    auctionEndDate,
+    auctioningToken,
+    biddingToken,
+  } = useDerivedAuctionInfo();
 
-  const auctionEnded = auctionEndDate <= new Date().getTime() / 1000;
+  // const auctionEnded = auctionEndDate <= new Date().getTime() / 1000;
 
   const auctionEndDateString = new Date(
     auctionEndDate * 1000,
@@ -96,10 +101,18 @@ export default function AuctionDetails() {
           </Row>
           <Row>
             <i>Status</i>
-            <p>{auctionEnded ? "Ended" : "Ongoing"}</p>
+            <p>
+              {" "}
+              {auctionState == AuctionState.ORDER_PLACING ||
+              auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
+                ? "Ongoing"
+                : auctionState == AuctionState.PRICE_SUBMISSION
+                ? "Clearing"
+                : "Ended"}
+            </p>
           </Row>
           <Row>
-            <i> {auctionEnded ? "End date" : "Ends"}</i>
+            <i>Ends</i>
             <p>{auctionEndDateString}</p>
           </Row>
           <Row>

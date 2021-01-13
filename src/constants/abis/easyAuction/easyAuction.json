@@ -47,13 +47,13 @@
       {
         "indexed": false,
         "internalType": "uint96",
-        "name": "sellAmount",
+        "name": "buyAmount",
         "type": "uint96"
       },
       {
         "indexed": false,
         "internalType": "uint96",
-        "name": "buyAmount",
+        "name": "sellAmount",
         "type": "uint96"
       }
     ],
@@ -111,6 +111,42 @@
         "internalType": "contract IERC20",
         "name": "_biddingToken",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "orderCancellationEndDate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "auctionEndDate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "_auctionedSellAmount",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint96",
+        "name": "_minBuyAmount",
+        "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "minimumBiddingAmountPerOrder",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "minFundingThreshold",
+        "type": "uint256"
       }
     ],
     "name": "NewAuction",
@@ -267,7 +303,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "minimumBiddingAmount",
+        "name": "minimumBiddingAmountPerOrder",
         "type": "uint256"
       },
       {
@@ -294,6 +330,16 @@
         "internalType": "uint256",
         "name": "feeNumerator",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minFundingThreshold",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "minFundingThresholdNotReached",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -309,16 +355,6 @@
       {
         "internalType": "bytes32[]",
         "name": "_sellOrders",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "_prevSellOrders",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "_fallbackPrevSellOrders",
         "type": "bytes32[]"
       }
     ],
@@ -337,11 +373,6 @@
       {
         "internalType": "bytes32[]",
         "name": "orders",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "previousOrders",
         "type": "bytes32[]"
       }
     ],
@@ -483,7 +514,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "minimumBiddingAmount",
+        "name": "minimumBiddingAmountPerOrder",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minFundingThreshold",
         "type": "uint256"
       }
     ],
@@ -545,11 +581,6 @@
         "internalType": "bytes32[]",
         "name": "_prevSellOrders",
         "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "_fallbackPrevSellOrders",
-        "type": "bytes32[]"
       }
     ],
     "name": "placeSellOrders",
@@ -605,25 +636,6 @@
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "sellOrders",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "size",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
