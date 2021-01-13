@@ -4,13 +4,18 @@ import { BoxTitle } from "../components/BoxTitle";
 
 const Body = styled.div`
   position: relative;
-  width: calc(50% - 8px);
+  width: calc(60% - 8px);
   background: none;
   border: ${({ theme }) => `1px solid ${theme.bg2}`};
   box-shadow: none;
   border-radius: 20px;
   padding: 16px;
   flex: 0 1 auto;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    order: 2;
+  `};
 `;
 
 /**
