@@ -13,9 +13,9 @@ import {
 import { useWalletModalToggle } from "../../state/application/hooks";
 import {
   useDerivedClaimInfo,
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
   useSwapState,
-} from "../../state/orderplacement/hooks";
+} from "../../state/orderPlacement/hooks";
 import { TYPE } from "../../theme";
 import TokenLogo from "../TokenLogo";
 
@@ -27,7 +27,7 @@ export default function Claimer() {
 
   // swap state
   const { auctionId } = useSwapState();
-  const { biddingToken, auctioningToken } = useDerivedSwapInfo(auctionId);
+  const { biddingToken, auctioningToken } = useDerivedAuctionInfo();
   const { error } = useDerivedClaimInfo(auctionId);
 
   const isValid = !error;

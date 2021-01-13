@@ -4,10 +4,10 @@ import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
 import { Wrapper } from "../../components/swap/styleds";
 import {
+  AuctionState,
   useDefaultsFromURLSearch,
-  useDerivedSwapInfo,
-  useSwapState,
-} from "../../state/orderplacement/hooks";
+  useDerivedAuctionInfo,
+} from "../../state/orderPlacement/hooks";
 import AppBody from "../AppBody";
 import OrderBody from "../OrderBody";
 import ClaimerBody from "../ClaimerBody";
@@ -24,8 +24,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
   const toggleWalletModal = useWalletModalToggle();
 
   // swap state
-  const { auctionId } = useSwapState();
-  const { auctionEndDate } = useDerivedSwapInfo(auctionId);
+  const { auctionState } = useDerivedAuctionInfo();
 
   return (
     <>
@@ -55,7 +54,8 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
                 padding: "0.5rem",
               }}
             >
-              {auctionEndDate >= new Date().getTime() / 1000 ? (
+              {auctionState == AuctionState.ORDER_PLACING ||
+              auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
                 <OrderBody>
                   <Wrapper id="auction-page">
                     <OrderPlacement></OrderPlacement>

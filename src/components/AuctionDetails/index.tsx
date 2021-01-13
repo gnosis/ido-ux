@@ -3,8 +3,9 @@ import styled from "styled-components";
 import { ExternalLink } from "../../theme";
 import {
   useSwapState,
-  useDerivedSwapInfo,
-} from "../../state/orderplacement/hooks";
+  useDerivedAuctionInfo,
+  AuctionState,
+} from "../../state/orderPlacement/hooks";
 import { Text } from "rebass";
 import { OrderBookBtn } from "../OrderbookBtn";
 import { getEtherscanLink } from "../../utils";
@@ -40,9 +41,12 @@ export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
 
-  const { auctionEndDate, auctioningToken, biddingToken } = useDerivedSwapInfo(
-    auctionId,
-  );
+  const {
+    auctionState,
+    auctionEndDate,
+    auctioningToken,
+    biddingToken,
+  } = useDerivedAuctionInfo();
 
   return (
     <>
@@ -70,9 +74,12 @@ export default function AuctionDetails() {
           >
             {auctionId}
             <br></br>
-            {auctionEndDate <= new Date().getTime() / 1000
-              ? "Ended"
-              : "Ongoing"}
+            {auctionState == AuctionState.ORDER_PLACING ||
+            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
+              ? "Ongoing"
+              : auctionState == AuctionState.PRICE_SUBMISSION
+              ? "Clearing"
+              : "Ended"}
             <br></br>
             {new Date(auctionEndDate * 1000).toLocaleDateString()}
             <br></br>

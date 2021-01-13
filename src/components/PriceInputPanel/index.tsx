@@ -74,7 +74,6 @@ const Container = styled.div<{ hideInput: boolean }>`
 
 interface CurrencyInputPanelProps {
   value: string;
-  field: string;
   onUserPriceInput: (val: string) => void;
   onMax?: () => void;
   showMaxButton: boolean;

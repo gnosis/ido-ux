@@ -1,10 +1,7 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import { darken } from "polished";
-import { useTranslation } from "react-i18next";
 import {
   withRouter,
-  NavLink,
   Link as HistoryLink,
   RouteComponentProps,
 } from "react-router-dom";
@@ -29,35 +26,6 @@ const Tabs = styled.div`
   border-radius: 3rem;
 `;
 
-const activeClassName = "ACTIVE";
-
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName,
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  justify-content: center;
-  height: 3rem;
-  flex: 1 0 auto;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text3};
-  font-size: 20px;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-`;
-
 const ActiveText = styled.div`
   font-weight: 500;
   font-size: 20px;
@@ -71,8 +39,6 @@ function NavigationTabs({
   location: { pathname },
   history,
 }: RouteComponentProps<unknown>) {
-  const { t } = useTranslation();
-
   const navigate = useCallback(
     (direction) => {
       const tabIndex = tabOrder.findIndex(({ regex }) => pathname.match(regex));

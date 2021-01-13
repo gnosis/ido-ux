@@ -4,9 +4,9 @@ import { ChainId, TokenAmount } from "@uniswap/sdk";
 import { useMemo, useState } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import {
-  useDerivedSwapInfo,
+  useDerivedAuctionInfo,
   useSwapState,
-} from "../state/orderplacement/hooks";
+} from "../state/orderPlacement/hooks";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 import { useActiveWeb3React } from "./index";
 import { decodeOrder } from "./Order";
@@ -24,7 +24,6 @@ export interface AuctionProceedings {
 
 export interface ClaimInformation {
   sellOrdersFormUser: string[];
-  previousOrders: string[];
 }
 export function useGetClaimInfo(): ClaimInformation | null {
   const { account, chainId, library } = useActiveWeb3React();
@@ -50,17 +49,7 @@ export function useGetClaimInfo(): ClaimInformation | null {
           auctionId,
           user: account,
         });
-        sellOrdersFormUser.reverse();
-        const previousOrders: string[] = [];
-        for (const order of sellOrdersFormUser) {
-          const previousOrder = await additionalServiceApi.getPreviousOrder({
-            networkId: chainId,
-            auctionId,
-            order: decodeOrder(order),
-          });
-          previousOrders.push(previousOrder);
-        }
-        setClaimInfo({ sellOrdersFormUser, previousOrders });
+        setClaimInfo({ sellOrdersFormUser });
       } catch (error) {
         if (cancelled) return;
         console.error("Error getting withdraw info", error);
@@ -83,14 +72,22 @@ export function useGetClaimInfo(): ClaimInformation | null {
 }
 export function useGetAuctionProceeds(): AuctionProceedings {
   const claimInfo = useGetClaimInfo();
-  const { auctionId } = useSwapState();
   const {
     biddingToken,
     auctioningToken,
     clearingPriceOrder,
-  } = useDerivedSwapInfo(auctionId);
+    clearingPriceSellOrder,
+    clearingPriceVolume,
+  } = useDerivedAuctionInfo();
 
-  if (!claimInfo || !biddingToken || !auctioningToken || !clearingPriceOrder) {
+  if (
+    !claimInfo ||
+    !biddingToken ||
+    !auctioningToken ||
+    !clearingPriceSellOrder ||
+    !clearingPriceOrder ||
+    !clearingPriceVolume
+  ) {
     return {
       claimableBiddingToken: null,
       claimableAuctioningToken: null,
@@ -100,31 +97,38 @@ export function useGetAuctionProceeds(): AuctionProceedings {
   let claimableBiddingToken = new TokenAmount(biddingToken, "0");
   for (const order of claimInfo.sellOrdersFormUser) {
     const decodedOrder = decodeOrder(order);
-    //Todo: consider fractionally filled volumes
-    if (
-      BigNumber.from(clearingPriceOrder.buyAmount.raw.toString())
+    if (decodedOrder == clearingPriceOrder) {
+      claimableBiddingToken = claimableBiddingToken.add(
+        new TokenAmount(
+          biddingToken,
+          decodedOrder.sellAmount.sub(clearingPriceVolume).toString(),
+        ),
+      );
+      claimableAuctioningToken = claimableAuctioningToken.add(
+        new TokenAmount(
+          auctioningToken,
+          clearingPriceVolume
+            .mul(clearingPriceOrder.buyAmount)
+            .div(clearingPriceOrder.sellAmount)
+            .toString(),
+        ),
+      );
+    } else if (
+      clearingPriceOrder.buyAmount
         .mul(decodedOrder.sellAmount)
-        .lt(
-          decodedOrder.buyAmount.mul(
-            BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()),
-          ),
-        )
+        .lt(decodedOrder.buyAmount.mul(clearingPriceOrder.sellAmount))
     ) {
       claimableBiddingToken = claimableBiddingToken.add(
         new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
       );
     } else {
-      if (
-        BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()).gt(
-          BigNumber.from("0"),
-        )
-      ) {
+      if (clearingPriceOrder.sellAmount.gt(BigNumber.from("0"))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
             auctioningToken,
             decodedOrder.sellAmount
-              .mul(BigNumber.from(clearingPriceOrder.buyAmount.raw.toString()))
-              .div(BigNumber.from(clearingPriceOrder.sellAmount.raw.toString()))
+              .mul(clearingPriceOrder.buyAmount)
+              .div(clearingPriceOrder.sellAmount)
               .toString(),
           ),
         );
@@ -161,11 +165,7 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
       {
         estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder;
         method = easyAuctionContract.claimFromParticipantOrder;
-        args = [
-          auctionId,
-          claimInfo?.sellOrdersFormUser,
-          claimInfo?.previousOrders,
-        ];
+        args = [auctionId, claimInfo?.sellOrdersFormUser];
         value = null;
       }
 

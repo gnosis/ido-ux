@@ -1,15 +1,12 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
-import { Trade, TokenAmount } from "@uniswap/sdk";
+import { TokenAmount } from "@uniswap/sdk";
 import { useCallback, useMemo } from "react";
-import { ROUTER_ADDRESS } from "../constants";
 import { useTokenAllowance } from "../data/Allowances";
-import { Field } from "../state/orderplacement/actions";
 import {
   useTransactionAdder,
   useHasPendingApproval,
 } from "../state/transactions/hooks";
-import { computeSlippageAdjustedAmounts } from "../utils/prices";
 import { calculateGasMargin } from "../utils";
 import { useTokenContract } from "./useContract";
 import { useActiveWeb3React } from "./index";
@@ -107,19 +104,4 @@ export function useApproveCallback(
   ]);
 
   return [approval, approve];
-}
-
-// wraps useApproveCallback in the context of a swap
-export function useApproveCallbackFromTrade(
-  trade?: Trade,
-  allowedSlippage = 0,
-) {
-  const amountToApprove = useMemo(
-    () =>
-      trade
-        ? computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT]
-        : undefined,
-    [trade, allowedSlippage],
-  );
-  return useApproveCallback(amountToApprove, ROUTER_ADDRESS);
 }
