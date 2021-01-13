@@ -137,7 +137,7 @@ export default function AuctionDetails() {
             </ExternalLink>
           </Row>
           <Row>
-            <i>Price</i>
+            <i>Closing price</i>
             <p>
               {clearingPriceNumber > 0
                 ? `${clearingPriceNumber} 
