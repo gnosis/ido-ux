@@ -5,7 +5,7 @@ import {
   useSwapState,
   useDerivedAuctionInfo,
   AuctionState,
-} from "../../state/orderPlacement/hooks";
+} from "../../state/orderplacement/hooks";
 // import { Text } from "rebass";
 import { OrderBookBtn } from "../OrderbookBtn";
 import { getEtherscanLink } from "../../utils";

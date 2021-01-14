@@ -8,7 +8,7 @@ import {
   AuctionState,
   useDefaultsFromURLSearch,
   useDerivedAuctionInfo,
-} from "../../state/orderPlacement/hooks";
+} from "../../state/orderplacement/hooks";
 import AppBody from "../AppBody";
 import OrderBody from "../OrderBody";
 import ClaimerBody from "../ClaimerBody";

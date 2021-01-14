@@ -4,7 +4,7 @@ import { save, load } from "redux-localstorage-simple";
 import application from "./application/reducer";
 import user from "./user/reducer";
 import transactions from "./transactions/reducer";
-import swap from "./orderPlacement/reducer";
+import swap from "./orderplacement/reducer";
 import multicall from "./multicall/reducer";
 
 import { updateVersion } from "./user/actions";

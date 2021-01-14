@@ -2,7 +2,7 @@ import React from "react";
 import {
   AuctionState,
   useDerivedAuctionInfo,
-} from "../../state/orderPlacement/hooks";
+} from "../../state/orderplacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
 
@@ -44,7 +44,10 @@ const renderAuctionStatus = ({
   biddingToken,
   auctionState,
   initialAuctionOrder,
-}) => {
+}: Pick<
+  ReturnType<typeof useDerivedAuctionInfo>,
+  "auctioningToken" | "biddingToken" | "auctionState" | "initialAuctionOrder"
+>) => {
   switch (auctionState) {
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:
@@ -74,10 +77,10 @@ const renderAuctionStatus = ({
 export default function AuctionHeader() {
   const {
     auctioningToken,
-    auctionEndDate,
     biddingToken,
     auctionState,
     initialAuctionOrder,
+    auctionEndDate,
   } = useDerivedAuctionInfo();
 
   return (
