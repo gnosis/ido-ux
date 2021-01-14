@@ -52,11 +52,11 @@ const BackgroundGradient = styled.div`
   z-index: -1;
   transform: translateY(-70vh);
 
-  @media (max-width: 960px) {
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     height: 300px;
     width: 100%;
     transform: translateY(-150px);
-  }
+  `};
 `;
 
 const Marginer = styled.div`

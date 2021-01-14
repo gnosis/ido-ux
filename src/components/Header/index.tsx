@@ -29,7 +29,6 @@ const HeaderFrame = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 12px 0 0 0;
-    width: calc(100%);
     position: relative;
   `};
   z-index: 2;
