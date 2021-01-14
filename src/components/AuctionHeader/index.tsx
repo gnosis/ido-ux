@@ -1,5 +1,4 @@
 import React from "react";
-// import { Text } from "rebass";
 import {
   AuctionState,
   useDerivedAuctionInfo,
@@ -21,32 +20,50 @@ const Wrapper = styled.div`
   }
 `;
 
-export default function AuctionHeader() {
-  const {
-    auctionState,
-    auctioningToken,
-    biddingToken,
-    auctionEndDate,
-    initialAuctionOrder,
-  } = useDerivedAuctionInfo();
-
-  return (
-    <Wrapper>
-      <CountdownTimer auctionEndDate={auctionEndDate} />
-
-      {auctionState == AuctionState.ORDER_PLACING ||
-      auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
+const renderAuctionStatus = ({
+  auctioningToken,
+  biddingToken,
+  auctionState,
+  initialAuctionOrder,
+}) => {
+  switch (auctionState) {
+    case AuctionState.ORDER_PLACING:
+    case AuctionState.ORDER_PLACING_AND_CANCELING:
+      return (
         <h3>
           Selling {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
           {auctioningToken?.symbol} for at least{" "}
           {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
           {biddingToken?.symbol}
         </h3>
-      ) : auctionState == AuctionState.PRICE_SUBMISSION ? (
-        <h3>🗓️ Auction is scheduled</h3>
-      ) : (
-        <h3>🏁 Auction is settled</h3>
-      )}
+      );
+
+    case AuctionState.PRICE_SUBMISSION:
+      return <h3>🗓️ Auction is scheduled</h3>;
+
+    default:
+      return <h3>🏁 Auction is settled</h3>;
+  }
+};
+
+export default function AuctionHeader() {
+  const {
+    auctioningToken,
+    auctionEndDate,
+    biddingToken,
+    auctionState,
+    initialAuctionOrder,
+  } = useDerivedAuctionInfo();
+
+  return (
+    <Wrapper>
+      <CountdownTimer auctionEndDate={auctionEndDate} />
+      {renderAuctionStatus({
+        auctioningToken,
+        biddingToken,
+        auctionState,
+        initialAuctionOrder,
+      })}
     </Wrapper>
   );
 }
