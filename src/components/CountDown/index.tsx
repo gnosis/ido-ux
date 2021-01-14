@@ -14,7 +14,7 @@ const CountDownStyled = styled.div`
   align-items: center;
   border-radius: 1rem;
   background: ${({ theme }) => `${theme.bg2}`};
-  padding: 10px;
+  padding: 10px 15px;
   box-sizing: border-box;
   position: relative;
 
