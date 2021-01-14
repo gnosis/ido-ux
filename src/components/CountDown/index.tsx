@@ -1,17 +1,29 @@
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
-import { Text } from "rebass";
+
 const CountDownStyled = styled.div`
   display: flex;
-  float: right;
-  order: 2;
+  flex: 0 1 auto;
   font-family: var(--font-mono);
   text-align: left;
-  font-size: 0.6rem;
-  color: var(--color-text-primary);
+  font-size: 13px;
+  color: ${({ theme }) => `1px solid ${theme.text2}`};
   letter-spacing: 0;
+  justify-content: center;
+  flex-flow: row wrap;
+  align-items: center;
+  border-radius: 1rem;
+  background: ${({ theme }) => `${theme.bg2}`};
+  padding: 10px;
+  box-sizing: border-box;
+  position: relative;
+
+  > p {
+    margin: 0 5px 0 0;
+  }
+
   > strong {
-    color: var(--color-text-active);
+    color: ${({ theme }) => `1px solid ${theme.text1}`};
   }
 `;
 
@@ -61,16 +73,11 @@ export default function CountdownTimer({
   }),
     [auctionEndDate];
 
-  return (
+  return timeLeft && timeLeft > 0 ? (
     <CountDownStyled>
-      {timeLeft > 0 ? (
-        <Text fontSize={16} fontWeight={500} textAlign={"right"}>
-          {" "}
-          Auction ends: <br></br> <strong>{formatSeconds(timeLeft)}</strong>
-        </Text>
-      ) : (
-        ""
-      )}
+      {" "}
+      <p>Auction ends in</p>
+      <strong>{formatSeconds(timeLeft)}</strong>
     </CountDownStyled>
-  );
+  ) : null;
 }

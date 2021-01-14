@@ -11,12 +11,22 @@ const Wrapper = styled.div`
   width: 100%;
   align-content: center;
   text-align: center;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  margin: 0 0 16px;
 
   > h3 {
-    width: 100%;
+    flex: 1 1 auto;
     display: flex;
     text-align: center;
-    margin: 16px auto 26px;
+    align-items: center;
+    margin: 0 auto;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  > h3 > b {
+    margin: 0 5px;
   }
 `;
 
@@ -31,10 +41,16 @@ const renderAuctionStatus = ({
     case AuctionState.ORDER_PLACING_AND_CANCELING:
       return (
         <h3>
-          Selling {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-          {auctioningToken?.symbol} for at least{" "}
-          {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
-          {biddingToken?.symbol}
+          Selling{" "}
+          <b>
+            {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
+            {auctioningToken?.symbol}
+          </b>{" "}
+          for at least{" "}
+          <b>
+            {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
+            {biddingToken?.symbol}
+          </b>
         </h3>
       );
 
@@ -57,13 +73,13 @@ export default function AuctionHeader() {
 
   return (
     <Wrapper>
-      <CountdownTimer auctionEndDate={auctionEndDate} />
       {renderAuctionStatus({
         auctioningToken,
         biddingToken,
         auctionState,
         initialAuctionOrder,
       })}
+      <CountdownTimer auctionEndDate={auctionEndDate} />
     </Wrapper>
   );
 }
