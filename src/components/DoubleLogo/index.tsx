@@ -2,13 +2,11 @@ import React from "react";
 import styled from "styled-components";
 import TokenLogo from "../TokenLogo";
 
-const TokenWrapper = styled.div<{ margin: boolean; sizeraw: number }>`
+const TokenWrapper = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* margin-right: ${({ sizeraw, margin }) =>
-    margin && (sizeraw / 3 + 8).toString() + "px"}; */ */
 `;
 
 interface DoubleTokenLogoProps {
@@ -21,11 +19,8 @@ interface DoubleTokenLogoProps {
 const HigherLogo = styled(TokenLogo)`
   z-index: 2;
 `;
-const CoveredLogo = styled(TokenLogo)<{ sizeraw: number }>`
-  /* position: absolute;
-  left: ${({ sizeraw }) => (sizeraw / 2).toString() + "px"};
-  right: 0;
-  left: 0; */
+
+const CoveredLogo = styled(TokenLogo)`
   margin-left: -5px;
 `;
 
@@ -33,12 +28,11 @@ export default function DoubleTokenLogo({
   a0,
   a1,
   size = 28,
-  margin = false,
 }: DoubleTokenLogoProps) {
   return (
-    <TokenWrapper sizeraw={size} margin={margin}>
+    <TokenWrapper>
       <HigherLogo address={a0} size={size.toString() + "px"} />
-      <CoveredLogo address={a1} size={size.toString() + "px"} sizeraw={size} />
+      <CoveredLogo address={a1} size={size.toString() + "px"} />
     </TokenWrapper>
   );
 }

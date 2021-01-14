@@ -4,7 +4,7 @@ import { ChainId, Token } from "@uniswap/sdk";
 import { useMemo } from "react";
 import { convertPriceIntoBuyAndSellAmount } from "../utils/prices";
 import { useTransactionAdder } from "../state/transactions/hooks";
-import { useSwapState } from "../state/orderplacement/hooks";
+import { useSwapState } from "../state/orderPlacement/hooks";
 import { useActiveWeb3React } from "./index";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 import { additionalServiceApi } from "./../api";

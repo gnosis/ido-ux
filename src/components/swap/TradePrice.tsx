@@ -18,8 +18,8 @@ export default function TradePrice({
   setShowInverted,
 }: TradePriceProps) {
   const theme = useContext(ThemeContext);
-  const inputToken = trade?.inputAmount?.currency;
-  const outputToken = trade?.outputAmount?.currency;
+  const inputToken = trade?.inputAmount?.token;
+  const outputToken = trade?.outputAmount?.token;
 
   const price = showInverted
     ? trade?.executionPrice?.toSignificant(6)
