@@ -18,25 +18,21 @@ import AuctionHeader from "../../components/AuctionHeader";
 import { ButtonLight } from "../../components/Button";
 import { useActiveWeb3React } from "../../hooks";
 import { useWalletModalToggle } from "../../state/application/hooks";
+const Wrapper = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  align-items: stretch;
+  ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
+`;
 
 export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
   const { account } = useActiveWeb3React();
   const toggleWalletModal = useWalletModalToggle();
-
-  // swap state
   const { auctionState } = useDerivedAuctionInfo();
-
-  const Wrapper = styled.div`
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-    height: 100%;
-    justify-content: space-between;
-    align-items: stretch;
-    ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
-  `;
-
   return (
     <>
       <AppBody>
