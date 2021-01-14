@@ -21,11 +21,20 @@ const Wrapper = styled.div`
     text-align: center;
     align-items: center;
     margin: 0 auto;
+    font-weight: normal;
+  }
+
+  > h4 {
+    flex: 1 1 auto;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    margin: 0 auto;
     font-size: 16px;
     font-weight: normal;
   }
 
-  > h3 > b {
+  > h4 > b {
     margin: 0 5px;
   }
 `;
@@ -40,7 +49,7 @@ const renderAuctionStatus = ({
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:
       return (
-        <h3>
+        <h4>
           Selling{" "}
           <b>
             {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
@@ -51,7 +60,7 @@ const renderAuctionStatus = ({
             {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
             {biddingToken?.symbol}
           </b>
-        </h3>
+        </h4>
       );
 
     case AuctionState.PRICE_SUBMISSION:
