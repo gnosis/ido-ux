@@ -1,7 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
 import { ChainId, TokenAmount } from "@uniswap/sdk";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import {
   useDerivedAuctionInfo,
@@ -36,7 +36,7 @@ export function useGetClaimInfo(): ClaimInformation | null {
     setError(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auctionId, chainId]);
-  useMemo(() => {
+  useEffect(() => {
     let cancelled = false;
 
     const fetchApiData = async (): Promise<void> => {
@@ -49,6 +49,7 @@ export function useGetClaimInfo(): ClaimInformation | null {
           auctionId,
           user: account,
         });
+        if (cancelled) return;
         setClaimInfo({ sellOrdersFormUser });
       } catch (error) {
         if (cancelled) return;
