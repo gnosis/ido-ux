@@ -55,11 +55,13 @@ export default function CountdownTimer({
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(auctionEndDate));
 
   useEffect(() => {
+    let mounted = true;
     setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(auctionEndDate));
+      if (mounted) setTimeLeft(calculateTimeLeft(auctionEndDate));
     }, 1000);
-  }),
-    [auctionEndDate];
+
+    return () => (mounted = false);
+  });
 
   return (
     <CountDownStyled>
