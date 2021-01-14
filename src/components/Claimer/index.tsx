@@ -19,7 +19,7 @@ import {
   useDerivedClaimInfo,
   useDerivedAuctionInfo,
   useSwapState,
-} from "../../state/orderPlacement/hooks";
+} from "../../state/orderplacement/hooks";
 // import { TYPE } from "../../theme";
 import TokenLogo from "../TokenLogo";
 

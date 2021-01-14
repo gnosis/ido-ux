@@ -6,7 +6,7 @@ import { useTransactionAdder } from "../state/transactions/hooks";
 import {
   useDerivedAuctionInfo,
   useSwapState,
-} from "../state/orderPlacement/hooks";
+} from "../state/orderplacement/hooks";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 import { useActiveWeb3React } from "./index";
 import { decodeOrder } from "./Order";

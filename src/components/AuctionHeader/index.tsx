@@ -2,7 +2,7 @@ import React from "react";
 import {
   AuctionState,
   useDerivedAuctionInfo,
-} from "../../state/orderPlacement/hooks";
+} from "../../state/orderplacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
 

@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import { tryParseAmount } from "../state/orderPlacement/hooks";
+import { tryParseAmount } from "../state/orderplacement/hooks";
 
 import { Token } from "@uniswap/sdk";
 

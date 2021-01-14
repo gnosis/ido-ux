@@ -25,7 +25,7 @@ import {
   useDerivedAuctionInfo,
   useSwapActionHandlers,
   useSwapState,
-} from "../../state/orderPlacement/hooks";
+} from "../../state/orderplacement/hooks";
 
 export default function OrderPlacement() {
   const { chainId, account } = useActiveWeb3React();
