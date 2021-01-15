@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
+import { Token } from "@uniswap/sdk";
 import {
   useSwapState,
   useDerivedAuctionInfo,
   AuctionState,
 } from "../../state/orderPlacement/hooks";
-// import { Text } from "rebass";
+
 import { OrderBookBtn } from "../OrderbookBtn";
 import { getEtherscanLink } from "../../utils";
 import { useActiveWeb3React } from "../../hooks";
@@ -68,6 +69,10 @@ const Row = styled.span`
   }
 `;
 
+function getTokenDisplay(token: Token): string {
+  return token?.symbol || token?.name || token.address;
+}
+
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
@@ -80,25 +85,22 @@ export default function AuctionDetails() {
     clearingPrice,
   } = useDerivedAuctionInfo();
 
-  // const auctionEnded = auctionEndDate <= Date.now() / 1000;
+  const auctionTokenAddress = useMemo(
+    () => getEtherscanLink(chainId, auctioningToken?.address, "address"),
+    [chainId, auctioningToken],
+  );
+
+  const biddingTokenAddress = useMemo(
+    () => getEtherscanLink(chainId, biddingToken?.address, "address"),
+    [chainId, biddingToken],
+  );
 
   const auctionEndDateString = new Date(
     auctionEndDate * 1000,
   ).toLocaleDateString();
 
-  const auctionTokenAddress = getEtherscanLink(
-    chainId,
-    auctioningToken?.address,
-    "address",
-  );
-
-  const biddingTokenAddress = getEtherscanLink(
-    chainId,
-    biddingToken?.address,
-    "address",
-  );
-
-  const clearingPriceNumber = Number(clearingPrice?.toSignificant(4));
+  const clearingPriceNumber =
+    clearingPrice && Number(clearingPrice.toSignificant(4));
 
   return (
     <>
@@ -139,9 +141,10 @@ export default function AuctionDetails() {
           <Row>
             <i>Closing price</i>
             <p>
-              {clearingPriceNumber > 0
-                ? `${clearingPriceNumber} 
-              ${auctioningToken?.symbol} per ${biddingToken?.symbol}`
+              {!!clearingPriceNumber
+                ? `${clearingPriceNumber} ${getTokenDisplay(
+                    auctioningToken,
+                  )} per ${getTokenDisplay(biddingToken)}`
                 : "-"}
             </p>
           </Row>
