@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
 import {
@@ -80,25 +80,24 @@ export default function AuctionDetails() {
     clearingPrice,
   } = useDerivedAuctionInfo();
 
-  const auctionEndDateString = useMemo(
-    () => new Date(auctionEndDate * 1000).toLocaleDateString(),
-    [auctionEndDate],
-  );
-
-  const auctionTokenAddress = useMemo(
+  const auctionTokenAddress = useCallback(
     () => getEtherscanLink(chainId, auctioningToken?.address, "address"),
     [chainId, auctioningToken],
   );
 
-  const biddingTokenAddress = useMemo(
+  const biddingTokenAddress = useCallback(
     () => getEtherscanLink(chainId, biddingToken?.address, "address"),
     [chainId, biddingToken],
   );
 
-  const clearingPriceNumber = useMemo(
-    () => Number(clearingPrice?.toSignificant(4)),
-    [clearingPrice],
-  );
+  const auctionEndDateString = new Date(
+    auctionEndDate * 1000,
+  ).toLocaleDateString();
+
+  const clearingPriceNumber = useCallback(() => {
+    const p = clearingPrice?.toSignificant(4);
+    return p && !Number.isNaN(Number(p)) ? Number(p) : 0;
+  }, [clearingPrice]);
 
   return (
     <>
@@ -126,21 +125,21 @@ export default function AuctionDetails() {
           </Row>
           <Row>
             <i>Selling</i>
-            <ExternalLink href={auctionTokenAddress}>
+            <ExternalLink href={auctionTokenAddress()}>
               {auctioningToken?.symbol} ↗
             </ExternalLink>
           </Row>
           <Row>
             <i>Buying</i>
-            <ExternalLink href={biddingTokenAddress}>
+            <ExternalLink href={biddingTokenAddress()}>
               {biddingToken?.symbol} ↗
             </ExternalLink>
           </Row>
           <Row>
             <i>Closing price</i>
             <p>
-              {clearingPriceNumber > 0
-                ? `${clearingPriceNumber} 
+              {clearingPriceNumber() > 0
+                ? `${clearingPriceNumber()} 
               ${auctioningToken?.symbol} per ${biddingToken?.symbol}`
                 : "-"}
             </p>
