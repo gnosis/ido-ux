@@ -1,15 +1,22 @@
 import React from "react";
 import styled from "styled-components";
 import { BoxTitle } from "../components/BoxTitle";
-const Body = styled.div`
+
+const Wrapper = styled.div`
   position: relative;
-  max-width: 420px;
-  width: 100%;
-  background: ${({ theme }) => theme.bg2};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 30px;
-  padding: 1rem;
+  width: calc(60% - 8px);
+  background: none;
+  border: ${({ theme }) => `1px solid ${theme.bg2}`};
+  box-shadow: none;
+  border-radius: 20px;
+  padding: 16px;
+  flex: 0 1 auto;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    margin: 0 0 16px;
+    order: 0;
+  `};
 `;
 
 /**
@@ -21,9 +28,9 @@ export default function ParticipationBody({
   children: React.ReactNode;
 }) {
   return (
-    <Body>
+    <Wrapper>
       <BoxTitle>Place Order</BoxTitle>
       <>{children}</>
-    </Body>
+    </Wrapper>
   );
 }
