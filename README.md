@@ -19,8 +19,8 @@ yarn start
 ```
 
 To have the frontend default to a different network, make a copy of `.env` named `.env.local`,
-change `REACT_APP_NETWORK_ID` to `"{yourNetworkId}"`, and change `REACT_APP_NETWORK_URL` to e.g.
-`"https://{yourNetwork}.infura.io/v3/{yourKey}"`.
+change `REACT_APP_NETWORK_ID` to `{yourNetworkId}`, and change `REACT_APP_NETWORK_URL` to e.g.
+`https://{yourNetwork}.infura.io/v3/{yourKey}`.
 
 ## Connect to additional - local services api
 
@@ -33,7 +33,7 @@ cargo run --bin orderbook.
 This will start the necessary backend end points for a smooth development. Then set the env variable:
 
 ```
-REACT_APP_ADDITIONAL_SERVICES_API_URL="http://127.0.0.1:8080/"
+REACT_APP_ADDITIONAL_SERVICES_API_URL=http://127.0.0.1:8080/
 ```
 
 in the .env or .env.local file to the connect to the local api
