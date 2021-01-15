@@ -76,7 +76,7 @@ jobs:
         run: aws s3 sync dist s3://${{ secrets.AWS_DEV_BUCKET_NAME }} --delete
 
       - name: "Deploy to S3: Staging"
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: aws s3 sync dist s3://${{ secrets.AWS_STAGING_BUCKET_NAME }} --delete
 
       
