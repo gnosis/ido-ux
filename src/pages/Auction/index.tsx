@@ -2,7 +2,6 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
-// import { Wrapper } from "../../components/swap/styleds";
 import styled from "styled-components";
 import {
   AuctionState,
@@ -18,6 +17,7 @@ import AuctionHeader from "../../components/AuctionHeader";
 import { ButtonLight } from "../../components/Button";
 import { useActiveWeb3React } from "../../hooks";
 import { useWalletModalToggle } from "../../state/application/hooks";
+
 const Wrapper = styled.div`
   display: flex;
   flex-flow: row wrap;
@@ -33,36 +33,33 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
   const { account } = useActiveWeb3React();
   const toggleWalletModal = useWalletModalToggle();
   const { auctionState } = useDerivedAuctionInfo();
+
   return (
-    <>
-      <AppBody>
-        {!account ? (
-          <div>
-            <h3>
-              EasyAuction is a platform designed for fair price finding of
-              one-time events.
-            </h3>
-            <ButtonLight onClick={toggleWalletModal}>
-              Connect Wallet
-            </ButtonLight>
-          </div>
-        ) : (
-          <Wrapper>
-            <AuctionHeader />
-            <AuctionDetails />
-            {auctionState == AuctionState.ORDER_PLACING ||
-            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
-              <OrderBody>
-                <OrderPlacement />
-              </OrderBody>
-            ) : (
-              <ClaimerBody>
-                <Claimer />
-              </ClaimerBody>
-            )}
-          </Wrapper>
-        )}
-      </AppBody>
-    </>
+    <AppBody>
+      {!account ? (
+        <div>
+          <h3>
+            EasyAuction is a platform designed for fair price finding of
+            one-time events.
+          </h3>
+          <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+        </div>
+      ) : (
+        <Wrapper>
+          <AuctionHeader />
+          <AuctionDetails />
+          {auctionState == AuctionState.ORDER_PLACING ||
+          auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
+            <OrderBody>
+              <OrderPlacement />
+            </OrderBody>
+          ) : (
+            <ClaimerBody>
+              <Claimer />
+            </ClaimerBody>
+          )}
+        </Wrapper>
+      )}
+    </AppBody>
   );
 }
