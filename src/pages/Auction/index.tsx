@@ -2,7 +2,7 @@ import React from "react";
 import { RouteComponentProps } from "react-router-dom";
 import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
-import { Wrapper } from "../../components/swap/styleds";
+import styled from "styled-components";
 import {
   AuctionState,
   useDefaultsFromURLSearch,
@@ -18,60 +18,48 @@ import { ButtonLight } from "../../components/Button";
 import { useActiveWeb3React } from "../../hooks";
 import { useWalletModalToggle } from "../../state/application/hooks";
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+  align-items: stretch;
+  ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
+`;
+
 export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
   const { account } = useActiveWeb3React();
   const toggleWalletModal = useWalletModalToggle();
-
-  // swap state
   const { auctionState } = useDerivedAuctionInfo();
 
   return (
-    <>
-      <AppBody>
-        {!account ? (
+    <AppBody>
+      {!account ? (
+        <div>
+          <h3>
+            EasyAuction is a platform designed for fair price finding of
+            one-time events.
+          </h3>
           <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-        ) : (
-          <div>
-            <div style={{ padding: "1rem" }}>
-              <AuctionHeader></AuctionHeader>
-            </div>
-            <div
-              style={{
-                width: "35%",
-                float: "left",
-                alignContent: "center",
-                padding: "0.5rem",
-              }}
-            >
-              <AuctionDetails></AuctionDetails>
-            </div>
-            <div
-              style={{
-                width: "65%",
-                float: "right",
-                alignContent: "right",
-                padding: "0.5rem",
-              }}
-            >
-              {auctionState == AuctionState.ORDER_PLACING ||
-              auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
-                <OrderBody>
-                  <Wrapper id="auction-page">
-                    <OrderPlacement></OrderPlacement>
-                  </Wrapper>
-                </OrderBody>
-              ) : (
-                <ClaimerBody>
-                  <Wrapper id="auction-page">
-                    <Claimer></Claimer>
-                  </Wrapper>
-                </ClaimerBody>
-              )}
-            </div>
-          </div>
-        )}
-      </AppBody>
-    </>
+        </div>
+      ) : (
+        <Wrapper>
+          <AuctionHeader />
+          <AuctionDetails />
+          {auctionState == AuctionState.ORDER_PLACING ||
+          auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
+            <OrderBody>
+              <OrderPlacement />
+            </OrderBody>
+          ) : (
+            <ClaimerBody>
+              <Claimer />
+            </ClaimerBody>
+          )}
+        </Wrapper>
+      )}
+    </AppBody>
   );
 }

@@ -1,7 +1,11 @@
 import { TokenAmount, ChainId } from "@uniswap/sdk";
 import React, { useState, useEffect } from "react";
 import { Text } from "rebass";
-import { ButtonError, ButtonLight } from "../../components/Button";
+import {
+  ButtonError,
+  ButtonLight,
+  ButtonPrimary,
+} from "../../components/Button";
 import { AutoColumn } from "../../components/Column";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
@@ -179,7 +183,7 @@ export default function OrderPlacement() {
             </ButtonLight>
           ) : approval === ApprovalState.NOT_APPROVED ||
             approval === ApprovalState.PENDING ? (
-            <ButtonLight
+            <ButtonPrimary
               onClick={approveCallback}
               disabled={approval === ApprovalState.PENDING}
             >
@@ -188,7 +192,7 @@ export default function OrderPlacement() {
               ) : (
                 "Approve " + biddingToken?.symbol
               )}
-            </ButtonLight>
+            </ButtonPrimary>
           ) : (
             <ButtonError
               onClick={() => {

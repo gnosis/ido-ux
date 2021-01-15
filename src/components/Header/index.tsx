@@ -29,7 +29,6 @@ const HeaderFrame = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     padding: 12px 0 0 0;
-    width: calc(100%);
     position: relative;
   `};
   z-index: 2;
@@ -52,7 +51,8 @@ const Title = styled.div`
 
 const TitleText = styled(Row)`
   width: fit-content;
-  font-size: 1rem;
+  font-size: 18px;
+  font-weight: 700;
   white-space: nowrap;
   color: ${({ theme }) => theme.text1};
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -110,7 +110,7 @@ export default function Header() {
             {!isMobile && (
               <TitleText>
                 <HistoryLink id="link" to="/">
-                  EasyAuction
+                  🏁 EasyAuction
                 </HistoryLink>
               </TitleText>
             )}

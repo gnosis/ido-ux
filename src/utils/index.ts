@@ -1,7 +1,11 @@
 import { Contract } from "@ethersproject/contracts";
 import { getAddress } from "@ethersproject/address";
 import { AddressZero } from "@ethersproject/constants";
-import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
+import {
+  JsonRpcSigner,
+  Provider,
+  Web3Provider,
+} from "@ethersproject/providers";
 import { parseBytes32String } from "@ethersproject/strings";
 import { BigNumber } from "@ethersproject/bignumber";
 
@@ -117,7 +121,11 @@ export function getContract(
     throw Error(`Invalid 'address' parameter '${address}'.`);
   }
 
-  return new Contract(address, ABI, getProviderOrSigner(library, account));
+  return new Contract(
+    address,
+    ABI,
+    getProviderOrSigner(library, account) as Provider,
+  );
 }
 
 // account is optional
