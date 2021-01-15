@@ -1,6 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
+import { Token } from "@uniswap/sdk";
 import {
   useSwapState,
   useDerivedAuctionInfo,
@@ -68,6 +69,10 @@ const Row = styled.span`
   }
 `;
 
+function getTokenDisplay(token: Token): string {
+  return token?.symbol || token?.name || token.address;
+}
+
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
@@ -80,12 +85,12 @@ export default function AuctionDetails() {
     clearingPrice,
   } = useDerivedAuctionInfo();
 
-  const auctionTokenAddress = useCallback(
+  const auctionTokenAddress = useMemo(
     () => getEtherscanLink(chainId, auctioningToken?.address, "address"),
     [chainId, auctioningToken],
   );
 
-  const biddingTokenAddress = useCallback(
+  const biddingTokenAddress = useMemo(
     () => getEtherscanLink(chainId, biddingToken?.address, "address"),
     [chainId, biddingToken],
   );
@@ -94,10 +99,8 @@ export default function AuctionDetails() {
     auctionEndDate * 1000,
   ).toLocaleDateString();
 
-  const clearingPriceNumber = useCallback(() => {
-    const p = clearingPrice?.toSignificant(4);
-    return p && !Number.isNaN(Number(p)) ? Number(p) : 0;
-  }, [clearingPrice]);
+  const clearingPriceNumber =
+    clearingPrice && Number(clearingPrice.toSignificant(4));
 
   return (
     <>
@@ -125,22 +128,23 @@ export default function AuctionDetails() {
           </Row>
           <Row>
             <i>Selling</i>
-            <ExternalLink href={auctionTokenAddress()}>
+            <ExternalLink href={auctionTokenAddress}>
               {auctioningToken?.symbol} ↗
             </ExternalLink>
           </Row>
           <Row>
             <i>Buying</i>
-            <ExternalLink href={biddingTokenAddress()}>
+            <ExternalLink href={biddingTokenAddress}>
               {biddingToken?.symbol} ↗
             </ExternalLink>
           </Row>
           <Row>
             <i>Closing price</i>
             <p>
-              {clearingPriceNumber() > 0
-                ? `${clearingPriceNumber()} 
-              ${auctioningToken?.symbol} per ${biddingToken?.symbol}`
+              {!!clearingPriceNumber
+                ? `${clearingPriceNumber} ${getTokenDisplay(
+                    auctioningToken,
+                  )} per ${getTokenDisplay(biddingToken)}`
                 : "-"}
             </p>
           </Row>
