@@ -1,41 +1,77 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
+import { Token } from "@uniswap/sdk";
 import {
   useSwapState,
   useDerivedAuctionInfo,
   AuctionState,
 } from "../../state/orderPlacement/hooks";
-import { Text } from "rebass";
+
 import { OrderBookBtn } from "../OrderbookBtn";
 import { getEtherscanLink } from "../../utils";
 import { useActiveWeb3React } from "../../hooks";
 
-const Body = styled.div`
-  align: center;
+const Wrapper = styled.div`
   position: relative;
-  max-width: 420px;
-  width: 100%;
-  height: 330px;
-  background: ${({ theme }) => theme.bg2};
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-    0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 30px;
-  padding: 1rem;
+  width: calc(40% - 8px);
+  background: none;
+  border: ${({ theme }) => `1px solid ${theme.bg2}`};
+  box-shadow: none;
+  border-radius: 20px;
+  padding: 16px;
+  flex: 0 1 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column wrap;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    width: 100%;
+    margin: 0 0 16px;
+    order: 1;
+  `};
 `;
 
-const BoxTitle = styled.div`
-  align: center;
-  justify-content: center;
-  height: 3rem;
-  flex: 1 0 auto;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
+const Title = styled.div`
   color: ${({ theme }) => theme.text1};
-  font-size: 20px;
+  font-size: 18px;
+  margin: 0 0 16px;
 `;
+
+const Details = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 13px;
+  font-weight: normal;
+  width: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  margin: 0 0 16px;
+`;
+
+const Row = styled.span`
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0 0 3px;
+  font-weight: 700;
+
+  > i {
+    color: ${({ theme }) => theme.text2};
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  > p {
+    margin: 0;
+    padding: 0;
+  }
+`;
+
+function getTokenDisplay(token: Token): string {
+  return token?.symbol || token?.name || token.address;
+}
 
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
@@ -46,73 +82,74 @@ export default function AuctionDetails() {
     auctionEndDate,
     auctioningToken,
     biddingToken,
+    clearingPrice,
   } = useDerivedAuctionInfo();
 
+  const auctionTokenAddress = useMemo(
+    () => getEtherscanLink(chainId, auctioningToken?.address, "address"),
+    [chainId, auctioningToken],
+  );
+
+  const biddingTokenAddress = useMemo(
+    () => getEtherscanLink(chainId, biddingToken?.address, "address"),
+    [chainId, biddingToken],
+  );
+
+  const auctionEndDateString = new Date(
+    auctionEndDate * 1000,
+  ).toLocaleDateString();
+
+  const clearingPriceNumber =
+    clearingPrice && Number(clearingPrice.toSignificant(4));
+
   return (
-    <>
-      <Body>
-        <BoxTitle> Details </BoxTitle>
-        <Text fontWeight={500} color="grey">
-          <div style={{ width: "50%", float: "left", textAlign: "left" }}>
-            Id:
-            <br></br>
-            Status:
-            <br></br>
-            End:
-            <br></br>
-            Sold:
-            <br></br>
-            Bought:
-          </div>
-          <div
-            style={{
-              width: "50%",
-              float: "right",
-              textAlign: "right",
-              textDecoration: "none",
-            }}
-          >
-            {auctionId}
-            <br></br>
+    <Wrapper>
+      <Title>Auction Details</Title>
+      <Details>
+        <Row>
+          <i>Id</i> <p>{auctionId}</p>
+        </Row>
+        <Row>
+          <i>Status</i>
+          <p>
+            {" "}
             {auctionState == AuctionState.ORDER_PLACING ||
             auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
               ? "Ongoing"
               : auctionState == AuctionState.PRICE_SUBMISSION
               ? "Clearing"
               : "Ended"}
-            <br></br>
-            {new Date(auctionEndDate * 1000).toLocaleDateString()}
-            <br></br>
-            <ExternalLink
-              href={getEtherscanLink(
-                chainId,
-                auctioningToken?.address,
-                "address",
-              )}
-              style={{ fontSize: "14px" }}
-            >
-              {auctioningToken?.symbol}
-            </ExternalLink>
-            <br></br>
-            <ExternalLink
-              href={getEtherscanLink(chainId, biddingToken?.address, "address")}
-              style={{ fontSize: "14px" }}
-            >
-              {biddingToken?.symbol}
-            </ExternalLink>
-            <br></br>
-          </div>
-        </Text>
-        <br></br>
-        <div
-          //TODO: get a proper design here
-          style={{
-            marginTop: "170px",
-          }}
-        >
-          <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
-        </div>
-      </Body>
-    </>
+          </p>
+        </Row>
+        <Row>
+          <i>Ends</i>
+          <p>{auctionEndDateString}</p>
+        </Row>
+        <Row>
+          <i>Selling</i>
+          <ExternalLink href={auctionTokenAddress}>
+            {auctioningToken?.symbol} ↗
+          </ExternalLink>
+        </Row>
+        <Row>
+          <i>Buying</i>
+          <ExternalLink href={biddingTokenAddress}>
+            {biddingToken?.symbol} ↗
+          </ExternalLink>
+        </Row>
+        <Row>
+          <i>Closing price</i>
+          <p>
+            {!!clearingPriceNumber
+              ? `${clearingPriceNumber} ${getTokenDisplay(
+                  auctioningToken,
+                )} per ${getTokenDisplay(biddingToken)}`
+              : "-"}
+          </p>
+        </Row>
+      </Details>
+
+      <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
+    </Wrapper>
   );
 }

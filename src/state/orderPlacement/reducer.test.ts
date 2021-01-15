@@ -6,7 +6,7 @@ import {
 } from "./actions";
 import reducer, { SwapState } from "./reducer";
 
-describe("orderPlacement reducer", () => {
+describe("orderplacement reducer", () => {
   let store: Store<SwapState>;
 
   beforeEach(() => {

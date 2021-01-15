@@ -8,7 +8,6 @@ export const BoxTitle = styled.div`
   flex: 1 0 auto;
   border-radius: 3rem;
   outline: none;
-  cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text1};
   font-size: 20px;

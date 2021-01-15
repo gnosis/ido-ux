@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { Text } from "rebass";
-import { ButtonError, ButtonLight } from "../../components/Button";
-import { GreyCard } from "../../components/Card";
+import {
+  ButtonPrimary,
+  ButtonError,
+  ButtonLight,
+} from "../../components/Button";
 import { BottomGrouping, Wrapper } from "../swap/styleds";
 import ClaimConfirmationModal from "../ClaimConfirmationModal";
+import styled from "styled-components";
 
 import { useActiveWeb3React } from "../../hooks";
 import {
@@ -16,8 +20,29 @@ import {
   useDerivedAuctionInfo,
   useSwapState,
 } from "../../state/orderPlacement/hooks";
-import { TYPE } from "../../theme";
+// import { TYPE } from "../../theme";
 import TokenLogo from "../TokenLogo";
+
+export const AuctionTokenWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 0 0 16px;
+`;
+
+export const AuctionToken = styled.div`
+  display: flex;
+  padding: 0;
+  margin: 0 0 10px;
+  box-sizing: border-box;
+  align-items: center;
+
+  > img {
+    margin: 0 10px 0 0;
+  }
+`;
 
 export default function Claimer() {
   const { account } = useActiveWeb3React();
@@ -64,22 +89,26 @@ export default function Claimer() {
   return (
     <>
       <Wrapper id="swap-page">
-        <div style={{ padding: "5.4rem" }}>
-          <div style={{ width: "50%", float: "left", textAlign: "center" }}>
-            <TokenLogo address={biddingToken?.address} size={"35px"} />
-            <br></br>
-            <Text fontSize={16} fontWeight={"bold"}>
-              {claimableBiddingToken?.toSignificant(2)}
+        <AuctionTokenWrapper>
+          <AuctionToken>
+            <TokenLogo address={biddingToken?.address} size={"42px"} />
+            <Text fontSize={15} fontWeight={"bold"}>
+              {claimableBiddingToken
+                ? claimableBiddingToken.toSignificant(2)
+                : `0 ${biddingToken?.symbol}`}
             </Text>
-          </div>
-          <div style={{ width: "50%", float: "right", textAlign: "center" }}>
-            <TokenLogo address={auctioningToken?.address} size={"35px"} />
-            <br></br>
-            <Text fontSize={16} fontWeight={"bold"}>
-              {claimableAuctioningToken?.toSignificant(2)}
+          </AuctionToken>
+
+          <AuctionToken>
+            <TokenLogo address={auctioningToken?.address} size={"42px"} />
+            <Text fontSize={15} fontWeight={"bold"}>
+              {claimableAuctioningToken
+                ? claimableAuctioningToken.toSignificant(2)
+                : `0 ${auctioningToken?.symbol}`}
             </Text>
-          </div>
-        </div>
+          </AuctionToken>
+        </AuctionTokenWrapper>
+
         <ClaimConfirmationModal
           isOpen={showConfirm}
           onDismiss={() => {
@@ -96,9 +125,7 @@ export default function Claimer() {
               Connect Wallet
             </ButtonLight>
           ) : error ? (
-            <GreyCard style={{ textAlign: "center" }}>
-              <TYPE.main mb="4px">{error} </TYPE.main>
-            </GreyCard>
+            <ButtonPrimary disabled>{error}</ButtonPrimary>
           ) : (
             <ButtonError
               onClick={() => {

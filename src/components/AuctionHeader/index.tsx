@@ -1,55 +1,97 @@
 import React from "react";
-import { Text } from "rebass";
 import {
   AuctionState,
   useDerivedAuctionInfo,
 } from "../../state/orderPlacement/hooks";
+import styled from "styled-components";
 import CountdownTimer from "../CountDown";
+
+const Wrapper = styled.div`
+  display: flex;
+  width: 100%;
+  align-content: center;
+  text-align: center;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  margin: 0 0 16px;
+
+  > h3 {
+    flex: 1 1 auto;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-weight: normal;
+  }
+
+  > h4 {
+    flex: 1 1 auto;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  > h4 > b {
+    margin: 0 5px;
+  }
+`;
+
+const renderAuctionStatus = ({
+  auctioningToken,
+  biddingToken,
+  auctionState,
+  initialAuctionOrder,
+}: Pick<
+  ReturnType<typeof useDerivedAuctionInfo>,
+  "auctioningToken" | "biddingToken" | "auctionState" | "initialAuctionOrder"
+>) => {
+  switch (auctionState) {
+    case AuctionState.ORDER_PLACING:
+    case AuctionState.ORDER_PLACING_AND_CANCELING:
+      return (
+        <h4>
+          Selling{" "}
+          <b>
+            {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
+            {auctioningToken?.symbol}
+          </b>{" "}
+          for at least{" "}
+          <b>
+            {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
+            {biddingToken?.symbol}
+          </b>
+        </h4>
+      );
+
+    case AuctionState.PRICE_SUBMISSION:
+      return <h3>🗓️ Auction is scheduled</h3>;
+
+    default:
+      return <h3>🏁 Auction is settled</h3>;
+  }
+};
 
 export default function AuctionHeader() {
   const {
-    auctionState,
     auctioningToken,
     biddingToken,
-    auctionEndDate,
+    auctionState,
     initialAuctionOrder,
-    clearingPrice,
+    auctionEndDate,
   } = useDerivedAuctionInfo();
 
   return (
-    <>
-      <div style={{ float: "right", width: "20%" }}>
-        <CountdownTimer auctionEndDate={auctionEndDate} />
-      </div>
-      <div style={{ float: "left", width: "80%", paddingBottom: "30px" }}>
-        <div>
-          <Text fontSize={30} fontWeight={"bold"}>
-            Auction
-          </Text>
-        </div>
-        {auctionState == AuctionState.ORDER_PLACING ||
-        auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
-          <div>
-            <h3>
-              Selling {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-              {auctioningToken?.symbol} for at least{" "}
-              {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
-              {biddingToken?.symbol}
-            </h3>
-          </div>
-        ) : auctionState == AuctionState.PRICE_SUBMISSION ? (
-          <div>
-            <h3>Auction ready for price submission tx.</h3>
-          </div>
-        ) : (
-          <div>
-            <h3>
-              Auction settled with a price of {clearingPrice?.toSignificant(4)}{" "}
-              [{auctioningToken?.symbol} /{biddingToken?.symbol} ]
-            </h3>
-          </div>
-        )}
-      </div>
-    </>
+    <Wrapper>
+      {renderAuctionStatus({
+        auctioningToken,
+        biddingToken,
+        auctionState,
+        initialAuctionOrder,
+      })}
+      <CountdownTimer auctionEndDate={auctionEndDate} />
+    </Wrapper>
   );
 }

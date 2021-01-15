@@ -35,24 +35,27 @@ const Base = styled(RebassButton)<{
 `;
 
 export const ButtonPrimary = styled(Base)`
-  background-color: ${({ theme }) => theme.primary1};
+  background-image: ${({ theme }) =>
+    `linear-gradient(270deg, ${theme.buttonGradient1} 0%, ${theme.buttonGradient2} 100%)`};
   color: white;
+  transition: 0.1s opacity ease-in-out;
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
+    opacity: 0.9;
   }
   &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
+    opacity: 0.9;
   }
   &:active {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
   &:disabled {
+    background-image: none;
     background-color: ${({ theme }) => theme.bg3};
-    color: ${({ theme }) => theme.text3}
+    color: ${({ theme }) => theme.text3};
     cursor: auto;
     box-shadow: none;
+    border: 1px solid ${({ theme }) => theme.bg2};
   }
 `;
 
@@ -194,7 +197,6 @@ export const ButtonEmpty = styled(Base)`
 export const ButtonWhite = styled(Base)`
   border: 1px solid #edeef2;
   background-color: ${({ theme }) => theme.bg1};
-  };
   color: black;
 
   &:focus {

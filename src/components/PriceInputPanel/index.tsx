@@ -26,16 +26,15 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   box-shadow: ${({ selected }) =>
     selected ? "none" : "0px 6px 10px rgba(0, 0, 0, 0.075)"};
   outline: none;
-  cursor: pointer;
   user-select: none;
   border: none;
   padding: 0 0.5rem;
 
-  :focus,
+  /* :focus,
   :hover {
     background-color: ${({ selected, theme }) =>
-      selected ? theme.bg2 : darken(0.05, theme.primary1)};
-  }
+    selected ? theme.bg2 : darken(0.05, theme.primary1)};
+  } */
 `;
 
 const LabelRow = styled.div`
