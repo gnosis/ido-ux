@@ -103,55 +103,53 @@ export default function AuctionDetails() {
     clearingPrice && Number(clearingPrice.toSignificant(4));
 
   return (
-    <>
-      <Wrapper>
-        <Title>Auction Details</Title>
-        <Details>
-          <Row>
-            <i>Id</i> <p>{auctionId}</p>
-          </Row>
-          <Row>
-            <i>Status</i>
-            <p>
-              {" "}
-              {auctionState == AuctionState.ORDER_PLACING ||
-              auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
-                ? "Ongoing"
-                : auctionState == AuctionState.PRICE_SUBMISSION
-                ? "Clearing"
-                : "Ended"}
-            </p>
-          </Row>
-          <Row>
-            <i>Ends</i>
-            <p>{auctionEndDateString}</p>
-          </Row>
-          <Row>
-            <i>Selling</i>
-            <ExternalLink href={auctionTokenAddress}>
-              {auctioningToken?.symbol} ↗
-            </ExternalLink>
-          </Row>
-          <Row>
-            <i>Buying</i>
-            <ExternalLink href={biddingTokenAddress}>
-              {biddingToken?.symbol} ↗
-            </ExternalLink>
-          </Row>
-          <Row>
-            <i>Closing price</i>
-            <p>
-              {!!clearingPriceNumber
-                ? `${clearingPriceNumber} ${getTokenDisplay(
-                    auctioningToken,
-                  )} per ${getTokenDisplay(biddingToken)}`
-                : "-"}
-            </p>
-          </Row>
-        </Details>
+    <Wrapper>
+      <Title>Auction Details</Title>
+      <Details>
+        <Row>
+          <i>Id</i> <p>{auctionId}</p>
+        </Row>
+        <Row>
+          <i>Status</i>
+          <p>
+            {" "}
+            {auctionState == AuctionState.ORDER_PLACING ||
+            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
+              ? "Ongoing"
+              : auctionState == AuctionState.PRICE_SUBMISSION
+              ? "Clearing"
+              : "Ended"}
+          </p>
+        </Row>
+        <Row>
+          <i>Ends</i>
+          <p>{auctionEndDateString}</p>
+        </Row>
+        <Row>
+          <i>Selling</i>
+          <ExternalLink href={auctionTokenAddress}>
+            {auctioningToken?.symbol} ↗
+          </ExternalLink>
+        </Row>
+        <Row>
+          <i>Buying</i>
+          <ExternalLink href={biddingTokenAddress}>
+            {biddingToken?.symbol} ↗
+          </ExternalLink>
+        </Row>
+        <Row>
+          <i>Closing price</i>
+          <p>
+            {!!clearingPriceNumber
+              ? `${clearingPriceNumber} ${getTokenDisplay(
+                  auctioningToken,
+                )} per ${getTokenDisplay(biddingToken)}`
+              : "-"}
+          </p>
+        </Row>
+      </Details>
 
-        <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
-      </Wrapper>
-    </>
+      <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
+    </Wrapper>
   );
 }
