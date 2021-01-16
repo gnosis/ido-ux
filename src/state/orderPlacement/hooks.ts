@@ -377,8 +377,8 @@ export function useDerivedClaimInfo(
       : claimableOrders[0],
   ]).result;
   if (claimableOrders == undefined || claimableOrders?.length > 0) {
-    if (claimed == undefined || !claimed[0]) {
-      error = "Proceedings already claimed";
+    if (!claimed || !claimed[0]) {
+      error = "Already claimed";
     }
   }
 
