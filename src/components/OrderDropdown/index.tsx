@@ -1,0 +1,83 @@
+import React, { useContext } from "react";
+import { ChevronDown } from "react-feather";
+import { ThemeContext } from "styled-components";
+import { OrderDisplay } from "../OrderTable";
+import { RowBetween } from "../Row";
+import { AdvancedDropdown, SectionBreak } from "../swap/styleds";
+
+import { ChevronUp } from "react-feather";
+import { Text, Flex } from "rebass";
+import { CursorPointer } from "../../theme";
+import { AutoColumn } from "../Column";
+import OrderTable from "../OrderTable";
+
+export interface OrderTableDetailsProps {
+  orders: OrderDisplay[];
+}
+
+export default function OrderDisplayDropdown({
+  showAdvanced,
+  setShowAdvanced,
+  ...rest
+}: Omit<OrderTableDetailsProps, "onDismiss"> & {
+  showAdvanced: boolean;
+  setShowAdvanced: (showAdvanced: boolean) => void;
+}) {
+  const theme = useContext(ThemeContext);
+  return (
+    <AdvancedDropdown>
+      {showAdvanced ? (
+        <AdvancedOrderDetails
+          {...rest}
+          onDismiss={() => setShowAdvanced(false)}
+        />
+      ) : (
+        <CursorPointer>
+          <RowBetween
+            onClick={() => setShowAdvanced(true)}
+            padding={"8px 20px"}
+            id="show-advanced"
+          >
+            <Text fontSize={16} fontWeight={500} style={{ userSelect: "none" }}>
+              Show My Orders
+            </Text>
+            <ChevronDown color={theme.text2} />
+          </RowBetween>
+        </CursorPointer>
+      )}
+    </AdvancedDropdown>
+  );
+}
+
+export interface AdvancedOrderDetailsProps extends OrderTableDetailsProps {
+  onDismiss: () => void;
+}
+
+export function AdvancedOrderDetails({
+  orders,
+  onDismiss,
+}: AdvancedOrderDetailsProps) {
+  const theme = useContext(ThemeContext);
+
+  return (
+    <AutoColumn gap="md">
+      <CursorPointer>
+        <RowBetween onClick={onDismiss} padding={"8px 20px"}>
+          <Text
+            fontSize={16}
+            color={theme.text2}
+            fontWeight={500}
+            style={{ userSelect: "none" }}
+          >
+            Hide My Orders
+          </Text>
+          <ChevronUp color={theme.text2} />
+        </RowBetween>
+      </CursorPointer>
+
+      <SectionBreak />
+
+      <OrderTable {...orders} />
+    </AutoColumn>
+  );
+}
