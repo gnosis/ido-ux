@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
@@ -17,14 +17,28 @@ import AuctionHeader from "../../components/AuctionHeader";
 import { ButtonLight } from "../../components/Button";
 import { useActiveWeb3React } from "../../hooks";
 import { useWalletModalToggle } from "../../state/application/hooks";
+import OrderDisplayDropdown from "../../components/OrderDropdown";
+import { OrderDisplay, OrderStatus } from "../../components/OrderTable";
+import { Fraction, TokenAmount } from "@uniswap/sdk";
 
 export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
   const { account } = useActiveWeb3React();
   const toggleWalletModal = useWalletModalToggle();
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
   // swap state
-  const { auctionState } = useDerivedAuctionInfo();
+  const { auctionState, biddingToken } = useDerivedAuctionInfo();
+  let orders: OrderDisplay[] | undefined;
+  if (biddingToken != undefined) {
+    orders = [
+      {
+        sellAmount: new TokenAmount(biddingToken, "10"),
+        price: new Fraction("10", "1"),
+        status: OrderStatus.PLACED,
+      },
+    ];
+  }
 
   return (
     <>
@@ -71,6 +85,11 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
             </div>
           </div>
         )}
+        <OrderDisplayDropdown
+          showAdvanced={showAdvanced}
+          setShowAdvanced={setShowAdvanced}
+          orders={orders}
+        />
       </AppBody>
     </>
   );
