@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { ChevronDown } from "react-feather";
 import { ThemeContext } from "styled-components";
-import { OrderDisplay } from "../OrderTable";
 import { RowBetween } from "../Row";
 import { AdvancedDropdown, SectionBreak } from "../swap/styleds";
 
 import { ChevronUp } from "react-feather";
-import { Text, Flex } from "rebass";
+import { Text } from "rebass";
 import { CursorPointer } from "../../theme";
 import { AutoColumn } from "../Column";
 import OrderTable from "../OrderTable";
+import { OrderDisplay } from "../../state/orders/reducer";
 
 export interface OrderTableDetailsProps {
   orders: OrderDisplay[];
@@ -35,10 +35,10 @@ export default function OrderDisplayDropdown({
         <CursorPointer>
           <RowBetween
             onClick={() => setShowAdvanced(true)}
-            padding={"8px 20px"}
+            padding={"4px 20px"}
             id="show-advanced"
           >
-            <Text fontSize={16} fontWeight={500} style={{ userSelect: "none" }}>
+            <Text fontSize={14} fontWeight={500} style={{ userSelect: "none" }}>
               Show My Orders
             </Text>
             <ChevronDown color={theme.text2} />
@@ -62,9 +62,9 @@ export function AdvancedOrderDetails({
   return (
     <AutoColumn gap="md">
       <CursorPointer>
-        <RowBetween onClick={onDismiss} padding={"8px 20px"}>
+        <RowBetween onClick={onDismiss} padding={"4px 20px"}>
           <Text
-            fontSize={16}
+            fontSize={14}
             color={theme.text2}
             fontWeight={500}
             style={{ userSelect: "none" }}

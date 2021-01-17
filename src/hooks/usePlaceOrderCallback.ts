@@ -8,6 +8,9 @@ import { useSwapState } from "../state/orderPlacement/hooks";
 import { useActiveWeb3React } from "./index";
 import { calculateGasMargin, getEasyAuctionContract } from "../utils";
 import { additionalServiceApi } from "./../api";
+import { useOrderActionHandlers } from "../state/orders/hooks";
+import { encodeOrder } from "./Order";
+import { OrderStatus } from "../state/orders/reducer";
 
 export const queueStartElement =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -22,7 +25,7 @@ export function usePlaceOrderCallback(
 ): null | (() => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React();
   const addTransaction = useTransactionAdder();
-
+  const { onNewOrder } = useOrderActionHandlers();
   const { auctionId, sellAmount, price } = useSwapState();
 
   return useMemo(() => {
@@ -92,6 +95,19 @@ export function usePlaceOrderCallback(
               " " +
               auctioningToken.symbol,
           });
+          const order = {
+            buyAmount: buyAmountScaled,
+            sellAmount: sellAmountScaled,
+            userId: BigNumber.from(0), // Todo: Needs to be set correctly for canceling orders
+          };
+          onNewOrder([
+            {
+              id: encodeOrder(order),
+              sellAmount: parseFloat(sellAmount).toString(),
+              price: price.toString(),
+              status: OrderStatus.PENDING,
+            },
+          ]);
 
           return response.hash;
         })

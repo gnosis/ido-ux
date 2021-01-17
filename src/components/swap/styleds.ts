@@ -22,16 +22,17 @@ export const ArrowWrapper = styled.div`
 `;
 
 export const AdvancedDropdown = styled.div`
-  padding-top: calc(10px + 2rem);
-  padding-bottom: 10px;
-  margin-top: -2rem;
+  padding-top: calc(3px + 1rem);
+  padding-bottom: 3px;
+  margin-top: -1rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 1000px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   color: ${({ theme }) => theme.text2};
-  background-color: ${({ theme }) => theme.advancedBG};
-  z-index: -1;
+  background: none;
+  border: ${({ theme }) => `1px solid ${theme.bg2}`};
+  border-top: ${({ theme }) => `0px solid ${theme.bg2}`};
 `;
 
 export const SectionBreak = styled.div`

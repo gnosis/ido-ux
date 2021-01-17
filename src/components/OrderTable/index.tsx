@@ -1,17 +1,23 @@
 import React from "react";
 import styled from "styled-components";
-import { Fraction, TokenAmount } from "@uniswap/sdk";
-import { useDerivedAuctionInfo } from "../../state/orderPlacement/hooks";
+import { OrderDisplay, OrderStatus } from "../../state/orders/reducer";
 
 const Styles = styled.div`
-  padding: 1rem;
+  align-items: center
+  width: 100%;
+  padding: 0.1rem;
   table {
-    border-spacing: 0;
-    border: 1px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    border-spacing: 0.5;
     tr {
+
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
       :last-child {
         td {
-          border-bottom: 0;
+          border-bottom: 1;
         }
       }
     }
@@ -19,45 +25,42 @@ const Styles = styled.div`
     td {
       margin: 0;
       padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
       :last-child {
         border-right: 0;
       }
     }
   }
 `;
-export enum OrderStatus {
-  PENDING,
-  PLACED,
-}
 
-export interface OrderDisplay {
-  sellAmount: TokenAmount;
-  price: Fraction;
-  status: OrderStatus;
-}
-
-function Table() {
+function Table(orders: OrderDisplay[]) {
   // Render the UI for your table
+  console.log(Object.entries(orders));
   return (
-    <table>
-      <tr>
-        <th>Investment</th>
-        <th>Price</th>
-        <th>Status</th>
-        <th>Cancellation</th>
-      </tr>
-      <tr>
-        <td>10</td>
-        <td>15</td>
-        <td>Place</td>
-      </tr>
-      <tr>
-        <td>11</td>
-        <td>15</td>
-        <td>Place</td>
-      </tr>
+    <table style={{ alignSelf: "center" }}>
+      <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Price</th>
+          <th>Estimated Fill</th>
+          <th>Status</th>
+          <th>Cancellation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.entries(orders).map((order, index) => {
+          return (
+            <tr key={index}>
+              <td>{order[1].sellAmount}</td>
+              <td>{order[1].price}</td>
+              <td>100</td>
+              <td>
+                {order[1].status == OrderStatus.PLACED ? "Placed" : "Pending"}
+              </td>
+              <td>x</td>
+            </tr>
+          );
+        })}
+      </tbody>
     </table>
   );
 }
@@ -65,7 +68,7 @@ function Table() {
 export default function OrderTable(orders: OrderDisplay[]) {
   return (
     <Styles>
-      <Table />
+      <Table {...orders} />
     </Styles>
   );
 }

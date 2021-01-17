@@ -4,7 +4,6 @@ import { BoxTitle } from "../components/BoxTitle";
 
 const Wrapper = styled.div`
   position: relative;
-  width: calc(60% - 8px);
   background: none;
   border: ${({ theme }) => `1px solid ${theme.bg2}`};
   box-shadow: none;
