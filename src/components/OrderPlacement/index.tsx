@@ -26,7 +26,6 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/orderPlacement/hooks";
-import { useOrderActionHandlers } from "../../state/orders/hooks";
 
 export default function OrderPlacement() {
   const { chainId, account } = useActiveWeb3React();
@@ -45,7 +44,6 @@ export default function OrderPlacement() {
   } = useDerivedAuctionInfo();
   const { onUserSellAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
-  const { onNewOrder } = useOrderActionHandlers();
 
   const isValid = !error;
 

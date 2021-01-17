@@ -126,5 +126,6 @@ export function usePlaceOrderCallback(
     price,
     auctioningToken,
     sellAmount,
+    onNewOrder,
   ]);
 }

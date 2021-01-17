@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { AutoColumn } from "../Column";
 import { Text } from "rebass";
 
 import NumericalInput from "../NumericalInput";
@@ -56,11 +55,6 @@ export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 }>`
       ? theme.text1
       : theme.green1};
 `;
-
-// export const InputGroup = styled(AutoColumn: any)`
-//   position: relative;
-//   padding: 40px 0 20px 0;
-// `;
 
 export const StyledNumerical = styled(NumericalInput)`
   text-align: center;
