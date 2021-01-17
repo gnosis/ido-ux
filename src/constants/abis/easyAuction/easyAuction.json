@@ -327,6 +327,16 @@
         "type": "uint96"
       },
       {
+        "internalType": "bool",
+        "name": "minFundingThresholdNotReached",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "isAtomicClosureAllowed",
+        "type": "bool"
+      },
+      {
         "internalType": "uint256",
         "name": "feeNumerator",
         "type": "uint256"
@@ -335,11 +345,6 @@
         "internalType": "uint256",
         "name": "minFundingThreshold",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "minFundingThresholdNotReached",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -521,6 +526,11 @@
         "internalType": "uint256",
         "name": "minFundingThreshold",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isAtomicClosureAllowed",
+        "type": "bool"
       }
     ],
     "name": "initiateAuction",
@@ -659,13 +669,19 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "auctionId",
+        "type": "uint256"
       }
     ],
-    "name": "transferOwnership",
-    "outputs": [],
+    "name": "settleAuction",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "clearingOrder",
+        "type": "bytes32"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -677,12 +693,35 @@
         "type": "uint256"
       },
       {
-        "internalType": "bytes32",
-        "name": "price",
-        "type": "bytes32"
+        "internalType": "uint96[]",
+        "name": "_minBuyAmount",
+        "type": "uint96[]"
+      },
+      {
+        "internalType": "uint96[]",
+        "name": "_sellAmount",
+        "type": "uint96[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_prevSellOrder",
+        "type": "bytes32[]"
       }
     ],
-    "name": "verifyPrice",
+    "name": "settleAuctionAtomically",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
