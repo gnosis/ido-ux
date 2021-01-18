@@ -81,6 +81,6 @@ jobs:
 
       - name: "Deploy to S3: Staging"
         if: github.ref == 'refs/heads/main'
-        run: aws s3 sync build s3://${{ secrets.AWS_STAGING_BUCKET_NAME }} --delete
+        run: aws s3 sync build s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/current --delete
 
       
