@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { appendOrders, finalizeOrderPlacement } from "./actions";
+import { appendOrders, finalizeOrderPlacement, removeOrders } from "./actions";
 
 export enum OrderStatus {
   PENDING,
@@ -28,6 +28,15 @@ export default createReducer<OrderState>(initialState, (builder) =>
       return {
         ...state,
         orders,
+      };
+    })
+    .addCase(removeOrders, (state: OrderState, { payload: { orderId } }) => {
+      const newOrders = [...new Set(state.orders)].filter(
+        (order) => !(orderId === order.id),
+      );
+      return {
+        ...state,
+        orders: newOrders,
       };
     })
     .addCase(finalizeOrderPlacement, (state: OrderState) => {

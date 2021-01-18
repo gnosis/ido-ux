@@ -68,11 +68,13 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
       ) {
         return;
       }
-      const sellOrdersFromUser = await additionalServiceApi.getUserOrders({
-        networkId: chainId,
-        auctionId,
-        user: account,
-      });
+      const sellOrdersFromUser = await additionalServiceApi.getCurrentUserOrders(
+        {
+          networkId: chainId,
+          auctionId,
+          user: account,
+        },
+      );
       const sellOrderDisplays: OrderDisplay[] = [];
       for (const orderString of sellOrdersFromUser) {
         const order = decodeOrder(orderString);
