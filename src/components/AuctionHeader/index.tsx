@@ -15,6 +15,10 @@ const Wrapper = styled.div`
   justify-content: space-between;
   margin: 0 0 16px;
 
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    flex-flow: column wrap;
+  `};
+
   > h3 {
     flex: 1 1 auto;
     display: flex;
@@ -30,8 +34,14 @@ const Wrapper = styled.div`
     text-align: center;
     align-items: center;
     margin: 0 auto;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: normal;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      margin: 0 0 16px;
+      text-align: center;
+      justify-content: center;
+    `};
   }
 
   > h4 > b {
@@ -41,7 +51,6 @@ const Wrapper = styled.div`
 
 const renderAuctionStatus = ({
   auctioningToken,
-  biddingToken,
   auctionState,
   initialAuctionOrder,
 }: Pick<
@@ -53,15 +62,10 @@ const renderAuctionStatus = ({
     case AuctionState.ORDER_PLACING_AND_CANCELING:
       return (
         <h4>
-          Selling{" "}
+          <span>Selling</span>
           <b>
             {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
             {auctioningToken?.symbol}
-          </b>{" "}
-          for at least{" "}
-          <b>
-            {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
-            {biddingToken?.symbol}
           </b>
         </h4>
       );

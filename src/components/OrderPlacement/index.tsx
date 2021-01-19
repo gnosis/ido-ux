@@ -1,11 +1,7 @@
 import { TokenAmount, ChainId } from "@uniswap/sdk";
 import React, { useState, useEffect } from "react";
 import { Text } from "rebass";
-import {
-  ButtonError,
-  ButtonLight,
-  ButtonPrimary,
-} from "../../components/Button";
+import { ButtonLight, ButtonPrimary } from "../../components/Button";
 import { AutoColumn } from "../../components/Column";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
@@ -195,18 +191,18 @@ export default function OrderPlacement() {
               )}
             </ButtonPrimary>
           ) : (
-            <ButtonError
+            <ButtonPrimary
               onClick={() => {
                 setShowConfirm(true);
               }}
               id="swap-button"
               disabled={!isValid}
-              error={isValid}
+              // error={isValid}
             >
               <Text fontSize={20} fontWeight={500}>
-                {error ?? `Execute Order`}
+                {error ?? `Place Order`}
               </Text>
-            </ButtonError>
+            </ButtonPrimary>
           )}
         </BottomGrouping>
       </Wrapper>

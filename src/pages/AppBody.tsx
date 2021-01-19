@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   position: relative;
-  max-width: 650px;
+  max-width: 700px;
   width: 100%;
   height: auto;
   box-sizing: border-box;
@@ -14,6 +14,10 @@ const Wrapper = styled.div`
   padding: 16px;
   display: flex;
   flex-flow: row wrap;
+
+  > div {
+    width: 100%;
+  }
 `;
 
 /**
