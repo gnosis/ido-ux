@@ -285,7 +285,7 @@ export function useDerivedAuctionInfo(): {
   ) {
     error =
       error ??
-      "Price must be higher than " +
+      "Price must be at least " +
         initialPrice
           ?.multiply(
             BigNumber.from(10)
