@@ -138,14 +138,14 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
                 </ClaimerBody>
               )}
             </Wrapper>
-            {orders != undefined && orders.orders.length > 0 ? (
+            {orders && orders != undefined && orders.orders.length > 0 ? (
               <OrderDisplayDropdown
                 showAdvanced={showAdvanced}
                 setShowAdvanced={setShowAdvanced}
                 orders={orders.orders}
               />
             ) : (
-              <div></div>
+              ""
             )}
           </Wrapper>
         </div>

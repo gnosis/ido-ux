@@ -104,11 +104,24 @@ export default function AuctionDetails() {
 
   return (
     <Wrapper>
-      <Title>Auction Details</Title>
+      {/* <Title>Auction Details</Title> */}
       <Details>
-        <Row>
-          <i>Id</i> <p>{auctionId}</p>
-        </Row>
+        <div>
+          <Row>
+            <i>Selling</i>
+            100
+            <ExternalLink href={auctionTokenAddress}>
+              {auctioningToken?.symbol} ↗
+            </ExternalLink>
+          </Row>
+          <Row>
+            <i>Buying</i>
+            100
+            <ExternalLink href={biddingTokenAddress}>
+              {biddingToken?.symbol} ↗
+            </ExternalLink>
+          </Row>
+        </div>
         <Row>
           <i>Status</i>
           <p>
@@ -122,20 +135,11 @@ export default function AuctionDetails() {
           </p>
         </Row>
         <Row>
+          <i>Id</i> <p>{auctionId}</p>
+        </Row>
+        <Row>
           <i>Ends</i>
           <p>{auctionEndDateString}</p>
-        </Row>
-        <Row>
-          <i>Selling</i>
-          <ExternalLink href={auctionTokenAddress}>
-            {auctioningToken?.symbol} ↗
-          </ExternalLink>
-        </Row>
-        <Row>
-          <i>Buying</i>
-          <ExternalLink href={biddingTokenAddress}>
-            {biddingToken?.symbol} ↗
-          </ExternalLink>
         </Row>
         <Row>
           <i>Closing price</i>
