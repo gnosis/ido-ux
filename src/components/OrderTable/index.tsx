@@ -45,7 +45,6 @@ const Wrapper = styled.div`
 
 function Table(orders: OrderDisplay[]) {
   // Render the UI for your table
-  console.log(Object.entries(orders));
   return (
     <>
       <StyledHeader>
@@ -56,9 +55,9 @@ function Table(orders: OrderDisplay[]) {
         <div>Actions</div>
       </StyledHeader>
 
-      {Object.entries(orders).map((order, index) => {
+      {Object.entries(orders).map((order) => {
         return (
-          <StyledRow key={index}>
+          <StyledRow key={order[1].id}>
             <div>{order[1].sellAmount}</div>
             <div>{order[1].price}</div>
             <div>100</div>

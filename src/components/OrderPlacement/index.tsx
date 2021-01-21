@@ -158,7 +158,6 @@ export default function OrderPlacement() {
             <PriceInputPanel
               value={price}
               onUserPriceInput={onUserPriceInput}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
               label={`Price — ${biddingToken?.symbol} per ${auctioningToken?.symbol}`}
               showMaxButton={false}
               auctioningToken={auctioningToken}
