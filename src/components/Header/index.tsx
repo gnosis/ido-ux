@@ -59,6 +59,10 @@ const Title = styled.div`
   align-items: center;
   pointer-events: auto;
 
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: 0 auto;
+  `};
+
   :hover {
     cursor: pointer;
   }
@@ -67,12 +71,10 @@ const Title = styled.div`
 const TitleText = styled(Row)`
   width: fit-content;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
   white-space: nowrap;
   color: ${({ theme }) => theme.text1};
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
+
   > a {
     color: inherit;
     text-decoration: none;
@@ -128,6 +130,12 @@ const NetworkCard = styled(YellowCard)`
   padding: 8px 12px;
 `;
 
+const MenuWrapper = styled.div`
+  pointer-events: auto;
+  display: flex;
+  position: relative;
+`;
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React();
 
@@ -139,16 +147,14 @@ export default function Header() {
   return (
     <HeaderFrame>
       <RowBetween padding="1rem">
+        <Title>
+          <TitleText>
+            <HistoryLink id="link" to="/">
+              🏁 EasyAuction
+            </HistoryLink>
+          </TitleText>
+        </Title>
         <HeaderElement>
-          <Title>
-            {!isMobile && (
-              <TitleText>
-                <HistoryLink id="link" to="/">
-                  🏁 EasyAuction
-                </HistoryLink>
-              </TitleText>
-            )}
-          </Title>
           <TestnetWrapper style={{ pointerEvents: "auto" }}></TestnetWrapper>
         </HeaderElement>
         <HeaderElement>
@@ -172,11 +178,11 @@ export default function Header() {
             ) : null}
             <Web3Status />
           </AccountElement>
-          <div style={{ pointerEvents: "auto" }}>
+          <MenuWrapper>
+            <DarkModeSwitch />
             <Menu />
-          </div>
+          </MenuWrapper>
         </HeaderElement>
-        <DarkModeSwitch />
       </RowBetween>
     </HeaderFrame>
   );
