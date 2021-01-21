@@ -55,19 +55,17 @@ function Table(orders: OrderDisplay[]) {
         <div>Actions</div>
       </StyledHeader>
 
-      {Object.entries(orders).map((order) => {
-        return (
-          <StyledRow key={order[1].id}>
-            <div>{order[1].sellAmount}</div>
-            <div>{order[1].price}</div>
-            <div>100</div>
-            <div>
-              {order[1].status == OrderStatus.PLACED ? "Placed" : "Pending"}
-            </div>
-            <div>x</div>
-          </StyledRow>
-        );
-      })}
+      {Object.entries(orders).map((order) => (
+        <StyledRow key={order[1].id}>
+          <div>{order[1].sellAmount}</div>
+          <div>{order[1].price}</div>
+          <div>100</div>
+          <div>
+            {order[1].status == OrderStatus.PLACED ? "Placed" : "Pending"}
+          </div>
+          <div>x</div>
+        </StyledRow>
+      ))}
     </>
   );
 }
