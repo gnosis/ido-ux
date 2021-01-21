@@ -73,7 +73,7 @@ export function AdvancedOrderDetails({
             fontWeight={500}
             style={{ userSelect: "none" }}
           >
-            Hide {orders && orders.length} orders
+            {!!orders && `${orders.length} orders`}
           </Text>
           <ChevronUp color={theme.text2} />
         </RowBetween>
