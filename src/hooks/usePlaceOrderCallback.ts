@@ -11,6 +11,7 @@ import { additionalServiceApi } from "./../api";
 import { useOrderActionHandlers } from "../state/orders/hooks";
 import { encodeOrder } from "./Order";
 import { OrderStatus } from "../state/orders/reducer";
+import { getTokenDisplay } from "../utils";
 
 export const queueStartElement =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -76,6 +77,10 @@ export function usePlaceOrderCallback(
         value = null;
       }
 
+      const biddingTokenDisplay = getTokenDisplay(biddingToken);
+
+      const auctioningTokenDisplay = getTokenDisplay(auctioningToken);
+
       return estimate(...args, value ? { value } : {})
         .then((estimatedGasLimit) =>
           method(...args, {
@@ -89,11 +94,11 @@ export function usePlaceOrderCallback(
               "Sell " +
               sellAmount +
               " " +
-              biddingToken.symbol +
+              biddingTokenDisplay +
               " for " +
               (parseFloat(sellAmount) / parseFloat(price)).toString() +
               " " +
-              auctioningToken.symbol,
+              auctioningTokenDisplay,
           });
           const order = {
             buyAmount: buyAmountScaled,
