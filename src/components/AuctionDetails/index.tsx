@@ -96,6 +96,12 @@ export default function AuctionDetails() {
   const clearingPriceNumber =
     clearingPrice && Number(clearingPrice.toSignificant(4));
 
+  const clearingPriceDisplay = !!clearingPriceNumber
+    ? `${clearingPriceNumber} ${getTokenDisplay(
+        auctioningToken,
+      )} per ${getTokenDisplay(biddingToken)}`
+    : "-";
+
   return (
     <Wrapper>
       <Details>
@@ -111,13 +117,7 @@ export default function AuctionDetails() {
                 : "Closing"}{" "}
               price
             </i>
-            <p>
-              {!!clearingPriceNumber
-                ? `${clearingPriceNumber} ${getTokenDisplay(
-                    auctioningToken,
-                  )} per ${getTokenDisplay(biddingToken)}`
-                : "-"}
-            </p>
+            <p>{clearingPriceDisplay}</p>
           </Row>
           <Row>
             <i>Bidding with</i>

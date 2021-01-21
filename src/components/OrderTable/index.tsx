@@ -34,7 +34,6 @@ const Styles = styled.div`
 
 function Table(orders: OrderDisplay[]) {
   // Render the UI for your table
-  console.log(Object.entries(orders));
   return (
     <table style={{ alignSelf: "center" }}>
       <thead>
