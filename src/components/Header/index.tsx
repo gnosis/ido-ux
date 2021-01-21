@@ -7,6 +7,7 @@ import { useTokenBalanceTreatingWETHasETH } from "../../state/wallet/hooks";
 import Row from "../Row";
 import Menu from "../Menu";
 import Web3Status from "../Web3Status";
+import DarkModeSwitch from "../DarkModeSwitch";
 
 import { WETH, ChainId } from "@uniswap/sdk";
 import { isMobile } from "react-device-detect";
@@ -175,6 +176,7 @@ export default function Header() {
             <Menu />
           </div>
         </HeaderElement>
+        <DarkModeSwitch />
       </RowBetween>
     </HeaderFrame>
   );
