@@ -27,7 +27,7 @@ export default function OrderDisplayDropdown({
   const theme = useContext(ThemeContext);
   return (
     <AdvancedDropdown>
-      {showAdvanced ? (
+      {showAdvanced && !!orders ? (
         <AdvancedOrderDetails
           {...rest}
           onDismiss={() => setShowAdvanced(false)}
@@ -41,7 +41,7 @@ export default function OrderDisplayDropdown({
             id="show-advanced"
           >
             <Text fontSize={14} fontWeight={500} style={{ userSelect: "none" }}>
-              {orders && orders.length === 0
+              {!orders || orders.length === 0
                 ? "You have no orders yet"
                 : `Show ${orders.length} orders`}
             </Text>
@@ -73,7 +73,7 @@ export function AdvancedOrderDetails({
             fontWeight={500}
             style={{ userSelect: "none" }}
           >
-            Hide {orders && orders.length} orders
+            Hide {orders.length} orders
           </Text>
           <ChevronUp color={theme.text2} />
         </RowBetween>
