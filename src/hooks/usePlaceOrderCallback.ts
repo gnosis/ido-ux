@@ -78,7 +78,6 @@ export function usePlaceOrderCallback(
       }
 
       const biddingTokenDisplay = getTokenDisplay(biddingToken);
-
       const auctioningTokenDisplay = getTokenDisplay(auctioningToken);
 
       return estimate(...args, value ? { value } : {})
