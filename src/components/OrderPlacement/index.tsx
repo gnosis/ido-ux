@@ -197,7 +197,6 @@ export default function OrderPlacement() {
               }}
               id="swap-button"
               disabled={!isValid}
-              // error={isValid}
             >
               <Text fontSize={20} fontWeight={500}>
                 {error ?? `Place Order`}

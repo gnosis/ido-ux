@@ -137,7 +137,8 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
               )}
             </Wrapper>
           </Wrapper>
-          {orders && orders != undefined && orders.orders.length > 0 && (
+
+          {orders && orders.orders.length > 0 && (
             <OrderDisplayDropdown
               showAdvanced={showAdvanced}
               setShowAdvanced={setShowAdvanced}
