@@ -41,7 +41,7 @@ export default function OrderDisplayDropdown({
             id="show-advanced"
           >
             <Text fontSize={14} fontWeight={500} style={{ userSelect: "none" }}>
-              {orders && orders.length === 0
+              {!orders || orders.length === 0
                 ? "You have no orders yet"
                 : `Show ${orders.length} orders`}
             </Text>
