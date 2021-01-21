@@ -9,6 +9,11 @@ const StyledRow = styled.div`
   font-weight: normal;
   font-size: 13px;
   padding: 8px 0;
+  transition: background-color 0.1s ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.advancedBG};
+  }
 
   &:not(:last-child) {
     border-bottom: 1px solid rgba(43, 43, 43, 0.435);
@@ -25,8 +30,11 @@ const StyledRow = styled.div`
 `;
 
 const StyledHeader = styled(StyledRow)`
+  &:hover {
+    background: none;
+  }
   > div {
-    font-weight: 500;
+    font-weight: 700;
   }
 `;
 
