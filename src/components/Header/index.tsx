@@ -8,7 +8,6 @@ import Row from "../Row";
 import Menu from "../Menu";
 import Web3Status from "../Web3Status";
 
-import { Text } from "rebass";
 import { WETH, ChainId } from "@uniswap/sdk";
 import { isMobile } from "react-device-detect";
 import { YellowCard } from "../Card";
@@ -24,7 +23,6 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: absolute;
-
   pointer-events: none;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -37,6 +35,22 @@ const HeaderFrame = styled.div`
 const HeaderElement = styled.div`
   display: flex;
   align-items: center;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    flex-direction: row;
+    justify-content: space-between;
+    justify-self: center;
+    padding: 0 10px;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 99;
+    height: 72px;
+    border-radius: 12px 12px 0px 0px;
+    background-color: ${({ theme }) => theme.bg3};
+    box-sizing: border-box;
+  `};
 `;
 
 const Title = styled.div`
@@ -64,6 +78,21 @@ const TitleText = styled(Row)`
   }
 `;
 
+const EthBalance = styled.div`
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+  padding: 0 10px;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    background-color: ${({ theme }) => theme.bg3};
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`;
+
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
@@ -75,6 +104,10 @@ const AccountElement = styled.div<{ active: boolean }>`
   :focus {
     border: 1px solid blue;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: 0 auto 0 0;
+  `}
 `;
 
 const TestnetWrapper = styled.div`
@@ -134,9 +167,7 @@ export default function Header() {
           </TestnetWrapper>
           <AccountElement active={!!account} style={{ pointerEvents: "auto" }}>
             {account && userEthBalance ? (
-              <Text style={{ flexShrink: 0 }} px="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} ETH
-              </Text>
+              <EthBalance>{userEthBalance?.toSignificant(4)} ETH</EthBalance>
             ) : null}
             <Web3Status />
           </AccountElement>

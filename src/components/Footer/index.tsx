@@ -12,7 +12,7 @@ const FooterFrame = styled.div`
   position: fixed;
   right: 1rem;
   bottom: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `};
 `;
@@ -22,11 +22,6 @@ export default function Footer() {
 
   return (
     <FooterFrame>
-      <form action="https://forms.gle/ZtGG6VSYB9sy8ZDcA" target="_blank">
-        <ButtonSecondary p="8px 12px">
-          <Send size={16} style={{ marginRight: "8px" }} /> Feedback
-        </ButtonSecondary>
-      </form>
       <ButtonSecondary
         onClick={toggleDarkMode}
         p="8px 12px"
