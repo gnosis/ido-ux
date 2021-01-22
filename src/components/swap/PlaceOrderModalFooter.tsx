@@ -1,11 +1,12 @@
 import { Fraction, Percent, Token, TokenAmount, Trade } from "@uniswap/sdk";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";
 
 import { AutoRow, RowBetween } from "../Row";
 import { ButtonError } from "../Button";
 import { AutoColumn } from "../Column";
+import { getTokenDisplay } from "../../utils";
 import { convertPriceIntoBuyAndSellAmount } from "../../utils/prices";
 import { BigNumber } from "@ethersproject/bignumber";
 
@@ -43,12 +44,22 @@ export default function SwapModalFooter({
       BigNumber.from(10).pow(biddingToken.decimals).toString(),
     );
   }
+
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
+    biddingToken,
+  ]);
+
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(auctioningToken),
+    [auctioningToken],
+  );
+
   return (
     <>
       <AutoColumn gap="0px">
         <RowBetween align="center">
           <Text fontWeight={400} fontSize={16} color={theme.text2}>
-            Tokens sold [{biddingToken?.symbol}]:
+            Tokens sold [{biddingTokenDisplay}]:
           </Text>
           <Text
             fontWeight={500}
@@ -68,7 +79,7 @@ export default function SwapModalFooter({
 
         <RowBetween align="center">
           <Text fontWeight={400} fontSize={16} color={theme.text2}>
-            Minimum received [{auctioningToken?.symbol}]:
+            Minimum received [{auctioningTokenDisplay}]:
           </Text>
           <Text
             fontWeight={500}
@@ -88,7 +99,7 @@ export default function SwapModalFooter({
         <br></br>
         <RowBetween align="center">
           <Text fontWeight={400} fontSize={16} color={theme.text2}>
-            Max price paid [{auctioningToken?.symbol}/{biddingToken?.symbol}]:
+            Max price paid [{auctioningTokenDisplay}/{biddingTokenDisplay}]:
           </Text>
           <Text
             fontWeight={500}

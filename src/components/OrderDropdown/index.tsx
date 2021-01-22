@@ -37,7 +37,7 @@ export default function OrderDisplayDropdown({
         <CursorPointer>
           <RowBetween
             onClick={() => setShowAdvanced(true)}
-            padding={"4px 20px"}
+            padding="4px 4px"
             id="show-advanced"
           >
             <Text fontSize={14} fontWeight={500} style={{ userSelect: "none" }}>
@@ -66,7 +66,7 @@ export function AdvancedOrderDetails({
   return (
     <AutoColumn gap="md">
       <CursorPointer>
-        <RowBetween onClick={onDismiss} padding={"4px 20px"}>
+        <RowBetween onClick={onDismiss} padding="4px 4px">
           <Text
             fontSize={14}
             color={theme.text2}

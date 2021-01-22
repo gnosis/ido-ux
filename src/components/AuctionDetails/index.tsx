@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
-import { Token } from "@uniswap/sdk";
 import {
   useSwapState,
   useDerivedAuctionInfo,
@@ -9,7 +8,7 @@ import {
 } from "../../state/orderPlacement/hooks";
 
 import { OrderBookBtn } from "../OrderbookBtn";
-import { getEtherscanLink } from "../../utils";
+import { getEtherscanLink, getTokenDisplay } from "../../utils";
 import { useActiveWeb3React } from "../../hooks";
 
 const Wrapper = styled.div`
@@ -62,10 +61,6 @@ const Row = styled.span`
   }
 `;
 
-function getTokenDisplay(token: Token): string {
-  return token?.symbol || token?.name || token.address;
-}
-
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
@@ -96,6 +91,15 @@ export default function AuctionDetails() {
   const clearingPriceNumber =
     clearingPrice && Number(clearingPrice.toSignificant(4));
 
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
+    biddingToken,
+  ]);
+
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(auctioningToken),
+    [auctioningToken],
+  );
+
   const clearingPriceDisplay = !!clearingPriceNumber
     ? `${clearingPriceNumber} ${getTokenDisplay(
         auctioningToken,
@@ -122,7 +126,7 @@ export default function AuctionDetails() {
           <Row>
             <i>Bidding with</i>
             <ExternalLink href={biddingTokenAddress}>
-              {biddingToken?.symbol} ↗
+              {biddingTokenDisplay} ↗
             </ExternalLink>
           </Row>
 
@@ -131,7 +135,7 @@ export default function AuctionDetails() {
             <p>
               {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
               <ExternalLink href={auctionTokenAddress}>
-                {auctioningToken?.symbol} ↗
+                {auctioningTokenDisplay} ↗
               </ExternalLink>
             </p>
           </Row>
@@ -140,7 +144,7 @@ export default function AuctionDetails() {
             <i>Min. price</i>
             <p>
               {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
-              {biddingToken?.symbol} per {auctioningToken?.symbol}
+              {biddingTokenDisplay} per {auctioningTokenDisplay}
             </p>
           </Row>
         </div>

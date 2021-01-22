@@ -5,6 +5,7 @@ import {
 } from "../../state/orderPlacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
+import { getTokenDisplay } from "../../utils";
 
 const Wrapper = styled.div`
   display: flex;
@@ -65,7 +66,7 @@ const renderAuctionStatus = ({
           <span>Selling</span>
           <b>
             {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-            {auctioningToken?.symbol}
+            {getTokenDisplay(auctioningToken)}
           </b>
         </h4>
       );
