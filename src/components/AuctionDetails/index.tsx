@@ -42,22 +42,31 @@ const Details = styled.div`
 `;
 
 const Row = styled.span`
-  display: flex;
   flex-flow: row wrap;
   width: 100%;
   justify-content: space-between;
   align-items: flex-start;
   margin: 0 0 3px;
   font-weight: normal;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "label value";
 
   > i {
     color: ${({ theme }) => theme.text3};
     font-style: normal;
+    text-align: left;
+  }
+
+  > a {
+    text-align: right;
   }
 
   > p {
     margin: 0;
     padding: 0;
+    text-align: right;
+    white-space: normal;
   }
 `;
 
@@ -110,46 +119,44 @@ export default function AuctionDetails() {
   return (
     <Wrapper>
       <Details>
-        <div>
-          <Row>
-            <i>
-              {" "}
-              {auctionState == AuctionState.ORDER_PLACING ||
-              auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
-                ? "Current"
-                : auctionState == AuctionState.PRICE_SUBMISSION
-                ? "Clearing"
-                : "Closing"}{" "}
-              price
-            </i>
-            <p>{clearingPriceDisplay}</p>
-          </Row>
-          <Row>
-            <i>Bidding with</i>
-            <ExternalLink href={biddingTokenAddress}>
-              {biddingTokenDisplay} ↗
+        <Row>
+          <i>
+            {" "}
+            {auctionState == AuctionState.ORDER_PLACING ||
+            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
+              ? "Current"
+              : auctionState == AuctionState.PRICE_SUBMISSION
+              ? "Clearing"
+              : "Closing"}{" "}
+            price
+          </i>
+          <p>{clearingPriceDisplay}</p>
+        </Row>
+        <Row>
+          <i>Bidding with</i>
+          <ExternalLink href={biddingTokenAddress}>
+            {biddingTokenDisplay} ↗
+          </ExternalLink>
+        </Row>
+
+        <Row>
+          <i>Total auctioned</i>
+          <p>
+            {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
+            <ExternalLink href={auctionTokenAddress}>
+              {auctioningTokenDisplay} ↗
             </ExternalLink>
-          </Row>
+          </p>
+        </Row>
 
-          <Row>
-            <i>Total auctioned</i>
-            <p>
-              {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-              <ExternalLink href={auctionTokenAddress}>
-                {auctioningTokenDisplay} ↗
-              </ExternalLink>
-            </p>
-          </Row>
+        <Row>
+          <i>Min. price</i>
+          <p>
+            {initialPrice ? `${initialPrice?.toSignificant(2)} ` : " - "}
+            {biddingTokenDisplay} per {auctioningTokenDisplay}
+          </p>
+        </Row>
 
-          <Row>
-            <i>Min. price</i>
-            <p>
-              {initialPrice ? initialPrice?.toSignificant(2) : " - "}
-              {"  "}
-              {biddingTokenDisplay} per {auctioningTokenDisplay}
-            </p>
-          </Row>
-        </div>
         <Row>
           <i>Status</i>
           <p>
