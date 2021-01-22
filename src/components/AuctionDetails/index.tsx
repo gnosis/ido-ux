@@ -72,6 +72,7 @@ export default function AuctionDetails() {
     biddingToken,
     clearingPrice,
     initialAuctionOrder,
+    initialPrice,
   } = useDerivedAuctionInfo();
 
   const auctionTokenAddress = useMemo(
@@ -143,7 +144,8 @@ export default function AuctionDetails() {
           <Row>
             <i>Min. price</i>
             <p>
-              {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
+              {initialPrice ? initialPrice?.toSignificant(2) : " - "}
+              {"  "}
               {biddingTokenDisplay} per {auctioningTokenDisplay}
             </p>
           </Row>

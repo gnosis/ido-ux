@@ -152,6 +152,7 @@ export function useDerivedAuctionInfo(): {
   auctionEndDate?: number | null;
   auctionState: AuctionState | null;
   clearingPriceVolume: BigNumber | null;
+  initialPrice: Fraction | undefined;
 } {
   const { chainId, account } = useActiveWeb3React();
 
@@ -304,6 +305,7 @@ export function useDerivedAuctionInfo(): {
     auctionEndDate,
     auctionState,
     clearingPriceVolume,
+    initialPrice,
   };
 }
 
