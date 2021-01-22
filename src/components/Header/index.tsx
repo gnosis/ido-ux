@@ -7,8 +7,8 @@ import { useTokenBalanceTreatingWETHasETH } from "../../state/wallet/hooks";
 import Row from "../Row";
 import Menu from "../Menu";
 import Web3Status from "../Web3Status";
+import DarkModeSwitch from "../DarkModeSwitch";
 
-import { Text } from "rebass";
 import { WETH, ChainId } from "@uniswap/sdk";
 import { isMobile } from "react-device-detect";
 import { YellowCard } from "../Card";
@@ -24,7 +24,6 @@ const HeaderFrame = styled.div`
   width: 100%;
   top: 0;
   position: absolute;
-
   pointer-events: none;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
@@ -37,12 +36,32 @@ const HeaderFrame = styled.div`
 const HeaderElement = styled.div`
   display: flex;
   align-items: center;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    flex-direction: row;
+    justify-content: space-between;
+    justify-self: center;
+    padding: 0 10px;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 99;
+    height: 72px;
+    border-radius: 12px 12px 0px 0px;
+    background-color: ${({ theme }) => theme.bg3};
+    box-sizing: border-box;
+  `};
 `;
 
 const Title = styled.div`
   display: flex;
   align-items: center;
   pointer-events: auto;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: 0 auto;
+  `};
 
   :hover {
     cursor: pointer;
@@ -52,16 +71,29 @@ const Title = styled.div`
 const TitleText = styled(Row)`
   width: fit-content;
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 500;
   white-space: nowrap;
   color: ${({ theme }) => theme.text1};
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
+
   > a {
     color: inherit;
     text-decoration: none;
   }
+`;
+
+const EthBalance = styled.div`
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+  padding: 0 10px;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    background-color: ${({ theme }) => theme.bg3};
+  `};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
 `;
 
 const AccountElement = styled.div<{ active: boolean }>`
@@ -75,6 +107,10 @@ const AccountElement = styled.div<{ active: boolean }>`
   :focus {
     border: 1px solid blue;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: 0 auto 0 0;
+  `}
 `;
 
 const TestnetWrapper = styled.div`
@@ -94,6 +130,12 @@ const NetworkCard = styled(YellowCard)`
   padding: 8px 12px;
 `;
 
+const MenuWrapper = styled.div`
+  pointer-events: auto;
+  display: flex;
+  position: relative;
+`;
+
 export default function Header() {
   const { account, chainId } = useActiveWeb3React();
 
@@ -105,16 +147,14 @@ export default function Header() {
   return (
     <HeaderFrame>
       <RowBetween padding="1rem">
+        <Title>
+          <TitleText>
+            <HistoryLink id="link" to="/">
+              🏁 EasyAuction
+            </HistoryLink>
+          </TitleText>
+        </Title>
         <HeaderElement>
-          <Title>
-            {!isMobile && (
-              <TitleText>
-                <HistoryLink id="link" to="/">
-                  🏁 EasyAuction
-                </HistoryLink>
-              </TitleText>
-            )}
-          </Title>
           <TestnetWrapper style={{ pointerEvents: "auto" }}></TestnetWrapper>
         </HeaderElement>
         <HeaderElement>
@@ -134,15 +174,14 @@ export default function Header() {
           </TestnetWrapper>
           <AccountElement active={!!account} style={{ pointerEvents: "auto" }}>
             {account && userEthBalance ? (
-              <Text style={{ flexShrink: 0 }} px="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} ETH
-              </Text>
+              <EthBalance>{userEthBalance?.toSignificant(4)} ETH</EthBalance>
             ) : null}
             <Web3Status />
           </AccountElement>
-          <div style={{ pointerEvents: "auto" }}>
+          <MenuWrapper>
+            <DarkModeSwitch />
             <Menu />
-          </div>
+          </MenuWrapper>
         </HeaderElement>
       </RowBetween>
     </HeaderFrame>
