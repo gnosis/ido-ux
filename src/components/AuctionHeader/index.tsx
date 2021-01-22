@@ -40,6 +40,9 @@ const Wrapper = styled.div`
   > h5 {
     width: 100%;
     margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 16px;
     min-height: 150px;
   }
