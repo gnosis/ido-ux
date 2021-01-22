@@ -6,48 +6,59 @@ import { useCancelOrderCallback } from "../../hooks/useCancelOrderCallback";
 import {
   AuctionState,
   useDerivedAuctionInfo,
+  useDerivedAuctionState,
 } from "../../state/orderPlacement/hooks";
-import { OrderDisplay, OrderStatus } from "../../state/orders/reducer";
 import { ButtonCancel } from "../Button";
 import ConfirmationModal from "../ConfirmationModal";
 import CancelModalFooter from "../swap/CancelOrderModealFooter";
 import SwapModalHeader from "../swap/SwapModalHeader";
-import { Wrapper } from "../swap/styleds";
-import { AutoColumn } from "../Column";
 import { useOrderActionHandlers } from "../../state/orders/hooks";
+import { OrderDisplay, OrderStatus } from "../../state/orders/reducer";
 
-const Styles = styled.div`
-  align-items: center
-  width: 100%;
-  padding: 0.1rem;
-  table {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    border-spacing: 0.5;
-    tr {
+const StyledRow = styled.div`
+  display: grid;
+  grid-template-columns: 1.5fr 0.6fr 1fr 1fr 1fr;
+  grid-template-areas: "amount price fill status action";
+  font-weight: normal;
+  font-size: 13px;
+  padding: 8px 0;
+  transition: background-color 0.1s ease-in-out;
 
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-      :last-child {
-        td {
-          border-bottom: 1;
-        }
-      }
-    }
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      :last-child {
-        border-right: 0;
-      }
-    }
+  &:hover {
+    background-color: ${({ theme }) => theme.advancedBG};
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba(43, 43, 43, 0.435);
+  }
+
+  > div {
+    display: flex;
+    align-items: center;
+  }
+
+  > div:last-of-type {
+    margin: 0 0 0 auto;
   }
 `;
 
+const StyledHeader = styled(StyledRow)`
+  &:hover {
+    background: none;
+  }
+  > div {
+    font-weight: 700;
+  }
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  padding: 0;
+`;
+
 function Table(orders: OrderDisplay[]) {
-  const { biddingToken, auctionState } = useDerivedAuctionInfo();
+  const { auctionState } = useDerivedAuctionState();
+  const { biddingToken } = useDerivedAuctionInfo();
   const cancelOrderCallback = useCancelOrderCallback(biddingToken);
   const { onDeleteOrder } = useOrderActionHandlers();
 
@@ -97,80 +108,64 @@ function Table(orders: OrderDisplay[]) {
   }
   return (
     <>
-      <Wrapper id="orders-page">
-        <ConfirmationModal
-          isOpen={showConfirm}
-          title="Confirm Order Cancellation"
-          onDismiss={() => {
-            resetModal();
-            setShowConfirm(false);
-          }}
-          attemptingTxn={attemptingTxn}
-          pendingConfirmation={pendingConfirmation}
-          hash={txHash}
-          topContent={modalHeader}
-          bottomContent={modalBottom}
-          pendingText={pendingText}
-        />
-        <AutoColumn gap={"md"}>
-          <>
-            <table style={{ alignSelf: "center" }}>
-              <thead>
-                <tr key="header">
-                  <th>Amount</th>
-                  <th>Price</th>
-                  <th>Estimated Fill</th>
-                  <th>Status</th>
-                  <th>Cancellation</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(orders).map((order) => {
-                  return (
-                    <tr key={order[1].id}>
-                      <td>{order[1].sellAmount}</td>
-                      <td>{order[1].price}</td>
-                      <td>100</td>
-                      <td>
-                        {order[1].status == OrderStatus.PLACED
-                          ? "Placed"
-                          : "Pending"}
-                      </td>
-                      <td>
-                        {order[1].status == OrderStatus.PENDING ? (
-                          <div></div>
-                        ) : (
-                          <ButtonCancel
-                            onClick={() => {
-                              if (!error) {
-                                setOrderId(order[1].id);
-                                setShowConfirm(true);
-                              }
-                            }}
-                            id="cancel-button"
-                          >
-                            <Text fontSize={10} fontWeight={500}>
-                              {error ?? `Cancel Order`}
-                            </Text>
-                          </ButtonCancel>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </>
-        </AutoColumn>
-      </Wrapper>
+      <ConfirmationModal
+        isOpen={showConfirm}
+        title="Confirm Order Cancellation"
+        onDismiss={() => {
+          resetModal();
+          setShowConfirm(false);
+        }}
+        attemptingTxn={attemptingTxn}
+        pendingConfirmation={pendingConfirmation}
+        hash={txHash}
+        topContent={modalHeader}
+        bottomContent={modalBottom}
+        pendingText={pendingText}
+      />
+      <StyledHeader>
+        <div>Amount</div>
+        <div>Price</div>
+        <div>Est. Fill</div>
+        <div>Status</div>
+        <div>Actions</div>
+      </StyledHeader>
+      {Object.entries(orders).map((order) => (
+        <StyledRow key={order[1].id}>
+          <div>{order[1].sellAmount}</div>
+          <div>{order[1].price}</div>
+          <div>100</div>
+          <div>
+            {order[1].status == OrderStatus.PLACED ? "Placed" : "Pending"}
+          </div>
+          <div>
+            {order[1].status == OrderStatus.PENDING ? (
+              <div></div>
+            ) : (
+              <ButtonCancel
+                onClick={() => {
+                  if (!error) {
+                    setOrderId(order[1].id);
+                    setShowConfirm(true);
+                  }
+                }}
+                id="cancel-button"
+              >
+                <Text fontSize={10} fontWeight={500}>
+                  {error ?? `Cancel Order`}
+                </Text>
+              </ButtonCancel>
+            )}
+          </div>
+        </StyledRow>
+      ))}
     </>
   );
 }
 
 export default function OrderTable(orders: OrderDisplay[]) {
   return (
-    <Styles>
+    <Wrapper>
       <Table {...orders} />
-    </Styles>
+    </Wrapper>
   );
 }

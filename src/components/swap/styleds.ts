@@ -21,17 +21,11 @@ export const ArrowWrapper = styled.div`
 `;
 
 export const AdvancedDropdown = styled.div`
-  padding-top: calc(3px + 1rem);
-  padding-bottom: 3px;
-  margin-top: -1rem;
+  padding: 10px 0 0;
   width: 100%;
-  max-width: 1000px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
   color: ${({ theme }) => theme.text2};
   background: none;
-  border: ${({ theme }) => `1px solid ${theme.bg2}`};
-  border-top: ${({ theme }) => `0px solid ${theme.bg2}`};
+  border: 0;
 `;
 
 export const SectionBreak = styled.div`
@@ -59,7 +53,7 @@ export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 }>`
 export const StyledNumerical = styled(NumericalInput)`
   text-align: center;
   font-size: 48px;
-  font-weight: 500px;
+  font-weight: 500;
   width: 100%;
 
   ::placeholder {

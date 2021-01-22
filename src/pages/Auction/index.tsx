@@ -6,8 +6,9 @@ import styled from "styled-components";
 import {
   AuctionState,
   useDefaultsFromURLSearch,
-  useDerivedAuctionInfo,
   useSwapState,
+  useDerivedAuctionState,
+  useDeriveAuctioningAndBiddingToken,
 } from "../../state/orderPlacement/hooks";
 import AppBody from "../AppBody";
 import OrderBody from "../OrderBody";
@@ -41,18 +42,50 @@ const Wrapper = styled.div`
   align-items: stretch;
   ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
 `;
+function renderAuctionElements({
+  auctionState,
+}: {
+  auctionState: AuctionState;
+}) {
+  switch (auctionState) {
+    case AuctionState.NOT_YET_STARTED:
+      return <></>;
+    case AuctionState.ORDER_PLACING:
+    case AuctionState.ORDER_PLACING_AND_CANCELING:
+      return (
+        <>
+          <AuctionDetails />
+          <OrderBody>
+            <OrderPlacement />
+          </OrderBody>
+        </>
+      );
+
+    case AuctionState.CLAIMING:
+      return (
+        <>
+          <AuctionDetails />
+          <ClaimerBody>
+            <Claimer />
+          </ClaimerBody>
+        </>
+      );
+
+    default:
+      return <div></div>;
+  }
+}
 
 export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
   const { account, chainId } = useActiveWeb3React();
   const toggleWalletModal = useWalletModalToggle();
+  const { auctionState } = useDerivedAuctionState();
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const { auctionId } = useSwapState();
-  const {
-    auctionState,
-    biddingToken,
-    auctioningToken,
-  } = useDerivedAuctionInfo();
+  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
+    auctionId,
+  );
   const orders: OrderState | undefined = useOrderState();
   const { onNewOrder } = useOrderActionHandlers();
   const [userOrders, setUserOrders] = useState<boolean>();
@@ -61,6 +94,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
   useEffect(() => {
     async function fetchData() {
       if (
+        auctionState == AuctionState.NOT_YET_STARTED ||
         chainId == undefined ||
         account == undefined ||
         biddingToken == undefined ||
@@ -75,6 +109,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
           user: account,
         },
       );
+
       const sellOrderDisplays: OrderDisplay[] = [];
       for (const orderString of sellOrdersFromUser) {
         const order = decodeOrder(orderString);
@@ -102,6 +137,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
       fetchData();
     }
   }, [
+    auctionState,
     account,
     auctionId,
     chainId,
@@ -122,35 +158,21 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
           <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
         </div>
       ) : (
-        <div>
+        <>
           <Wrapper>
             <AuctionHeader />
-            <Wrapper>
-              <AuctionDetails />
-              {auctionState == AuctionState.ORDER_PLACING ||
-              auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
-                <div style={{ width: "60%" }}>
-                  <OrderBody>
-                    <OrderPlacement />
-                  </OrderBody>
-                </div>
-              ) : (
-                <ClaimerBody>
-                  <Claimer />
-                </ClaimerBody>
-              )}
-            </Wrapper>
-            {orders != undefined && orders.orders.length > 0 ? (
-              <OrderDisplayDropdown
-                showAdvanced={showAdvanced}
-                setShowAdvanced={setShowAdvanced}
-                orders={orders.orders}
-              />
-            ) : (
-              <div></div>
-            )}
+            {renderAuctionElements({
+              auctionState,
+            })}
           </Wrapper>
-        </div>
+          {orders && orders.orders.length > 0 && (
+            <OrderDisplayDropdown
+              showAdvanced={showAdvanced}
+              setShowAdvanced={setShowAdvanced}
+              orders={orders.orders}
+            />
+          )}
+        </>
       )}
     </AppBody>
   );

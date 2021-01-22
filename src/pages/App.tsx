@@ -33,8 +33,12 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   z-index: 10;
 
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+      padding-top: 68px;
+  `};
+
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      padding: 16px;
+      padding: 20px 16px;
   `};
 
   z-index: 1;

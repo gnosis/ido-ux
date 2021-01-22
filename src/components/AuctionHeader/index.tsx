@@ -1,10 +1,14 @@
 import React from "react";
 import {
   AuctionState,
+  SellOrder,
   useDerivedAuctionInfo,
+  useDerivedAuctionState,
 } from "../../state/orderPlacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
+import { Token } from "@uniswap/sdk";
+import { getTokenDisplay } from "../../utils";
 
 const Wrapper = styled.div`
   display: flex;
@@ -14,6 +18,13 @@ const Wrapper = styled.div`
   flex-flow: row nowrap;
   justify-content: space-between;
   margin: 0 0 16px;
+  background: ${({ theme }) => theme.bg2};
+  border-radius: 20px;
+  padding: 16px;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    flex-flow: column wrap;
+  `};
 
   > h3 {
     flex: 1 1 auto;
@@ -30,8 +41,24 @@ const Wrapper = styled.div`
     text-align: center;
     align-items: center;
     margin: 0 auto;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: normal;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      margin: 0 0 16px;
+      text-align: center;
+      justify-content: center;
+    `};
+  }
+
+  > h5 {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    min-height: 150px;
   }
 
   > h4 > b {
@@ -40,28 +67,23 @@ const Wrapper = styled.div`
 `;
 
 const renderAuctionStatus = ({
-  auctioningToken,
-  biddingToken,
   auctionState,
+  auctioningToken,
   initialAuctionOrder,
-}: Pick<
-  ReturnType<typeof useDerivedAuctionInfo>,
-  "auctioningToken" | "biddingToken" | "auctionState" | "initialAuctionOrder"
->) => {
+}: {
+  auctionState: AuctionState;
+  auctioningToken: Token | null;
+  initialAuctionOrder: SellOrder | null;
+}) => {
   switch (auctionState) {
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:
       return (
         <h4>
-          Selling{" "}
+          <span>Selling</span>
           <b>
             {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-            {auctioningToken?.symbol}
-          </b>{" "}
-          for at least{" "}
-          <b>
-            {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
-            {biddingToken?.symbol}
+            {getTokenDisplay(auctioningToken)}
           </b>
         </h4>
       );
@@ -74,24 +96,35 @@ const renderAuctionStatus = ({
   }
 };
 
-export default function AuctionHeader() {
+export function AuctionHeaderForScheduledAuction() {
   const {
     auctioningToken,
-    biddingToken,
-    auctionState,
     initialAuctionOrder,
     auctionEndDate,
   } = useDerivedAuctionInfo();
+  const { auctionState } = useDerivedAuctionState();
 
   return (
     <Wrapper>
       {renderAuctionStatus({
         auctioningToken,
-        biddingToken,
         auctionState,
         initialAuctionOrder,
       })}
       <CountdownTimer auctionEndDate={auctionEndDate} />
+    </Wrapper>
+  );
+}
+
+export default function AuctionHeader() {
+  const { auctionState } = useDerivedAuctionState();
+  return (
+    <Wrapper>
+      {auctionState == AuctionState.NOT_YET_STARTED ? (
+        <h5>⌛ Auction not yet started</h5>
+      ) : (
+        <AuctionHeaderForScheduledAuction />
+      )}
     </Wrapper>
   );
 }

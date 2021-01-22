@@ -90,8 +90,8 @@ export const StyledInternalLink = styled(Link)`
 const StyledLink = styled.a`
   text-decoration: none;
   cursor: pointer;
-  color: ${({ theme }) => theme.primary1};
-  font-weight: 500;
+  color: ${({ theme }) => theme.text1};
+  font-weight: normal;
 
   :hover {
     text-decoration: underline;

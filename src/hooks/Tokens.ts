@@ -59,11 +59,15 @@ export function useTokenByAddressAndAutomaticallyAdd(
   const { chainId } = useActiveWeb3React();
 
   useEffect(() => {
-    if (!chainId || !isAddress(tokenAddress)) return;
+    if (!chainId || !tokenAddress || !isAddress(tokenAddress)) return;
     const weth = WETH[chainId as ChainId];
     if (weth && weth.address === isAddress(tokenAddress)) return;
 
-    if (tokenAddress && !token) {
+    if (
+      tokenAddress &&
+      tokenAddress != "0x0000000000000000000000000000000000000000" &&
+      !token
+    ) {
       fetchTokenByAddress(tokenAddress).then((token) => {
         if (token !== null) {
           addToken(token);

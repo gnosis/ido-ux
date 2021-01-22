@@ -10,11 +10,14 @@ const Wrapper = styled.div`
   border-radius: 20px;
   padding: 16px;
   flex: 0 1 auto;
+  width: calc(60% - 8px);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
     margin: 0 0 16px;
     order: 0;
+    border: 0;
+    padding: 16px 0;
   `};
 `;
 
