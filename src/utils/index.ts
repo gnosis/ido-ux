@@ -15,7 +15,7 @@ import { EASY_AUCTION_NETWORKS, ROUTER_ADDRESS } from "../constants";
 import easyAuctionABI from "../constants/abis/easyAuction/easyAuction.json";
 import ERC20_ABI from "../constants/abis/erc20.json";
 import ERC20_BYTES32_ABI from "../constants/abis/erc20_bytes32.json";
-import { ChainId, JSBI, Percent, TokenAmount } from "@uniswap/sdk";
+import { ChainId, JSBI, Percent, TokenAmount, Token } from "@uniswap/sdk";
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -225,4 +225,9 @@ export async function getTokenInfoWithFallback(
 
 export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+// Always return a non-undefined token display
+export function getTokenDisplay(token: Token): string {
+  return token?.symbol || token?.name || token?.address || "🤔";
 }

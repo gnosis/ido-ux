@@ -4,6 +4,7 @@ import { useActiveWeb3React } from "../../hooks";
 import { useAddPopup, useBlockNumber } from "../application/hooks";
 import { AppDispatch, AppState } from "../index";
 import { finalizeTransaction } from "./actions";
+import { finalizeOrderPlacement } from "../orders/actions";
 
 export default function Updater() {
   const { chainId, library } = useActiveWeb3React();
@@ -45,6 +46,7 @@ export default function Updater() {
                   },
                 }),
               );
+              dispatch(finalizeOrderPlacement());
               // add success or failure popup
               if (receipt.status === 1) {
                 addPopup({

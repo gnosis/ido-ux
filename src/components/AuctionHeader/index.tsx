@@ -8,6 +8,7 @@ import {
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
 import { Token } from "@uniswap/sdk";
+import { getTokenDisplay } from "../../utils";
 
 const Wrapper = styled.div`
   display: flex;
@@ -17,6 +18,13 @@ const Wrapper = styled.div`
   flex-flow: row nowrap;
   justify-content: space-between;
   margin: 0 0 16px;
+  background: ${({ theme }) => theme.bg2};
+  border-radius: 20px;
+  padding: 16px;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    flex-flow: column wrap;
+  `};
 
   > h3 {
     flex: 1 1 auto;
@@ -33,8 +41,14 @@ const Wrapper = styled.div`
     text-align: center;
     align-items: center;
     margin: 0 auto;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: normal;
+
+    ${({ theme }) => theme.mediaWidth.upToMedium`
+      margin: 0 0 16px;
+      text-align: center;
+      justify-content: center;
+    `};
   }
 
   > h5 {
@@ -55,28 +69,21 @@ const Wrapper = styled.div`
 const renderAuctionStatus = ({
   auctionState,
   auctioningToken,
-  biddingToken,
   initialAuctionOrder,
 }: {
   auctionState: AuctionState;
-  auctioningToken: Pick<Token, "symbol">;
-  biddingToken: Pick<Token, "symbol">;
-  initialAuctionOrder: Pick<SellOrder, "sellAmount" | "buyAmount">;
+  auctioningToken: Token | null;
+  initialAuctionOrder: SellOrder | null;
 }) => {
   switch (auctionState) {
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:
       return (
         <h4>
-          Selling{" "}
+          <span>Selling</span>
           <b>
             {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-            {auctioningToken?.symbol}
-          </b>{" "}
-          for at least{" "}
-          <b>
-            {initialAuctionOrder?.buyAmount.toSignificant(2)}{" "}
-            {biddingToken?.symbol}
+            {getTokenDisplay(auctioningToken)}
           </b>
         </h4>
       );
@@ -92,7 +99,6 @@ const renderAuctionStatus = ({
 export function AuctionHeaderForScheduledAuction() {
   const {
     auctioningToken,
-    biddingToken,
     initialAuctionOrder,
     auctionEndDate,
   } = useDerivedAuctionInfo();
@@ -102,7 +108,6 @@ export function AuctionHeaderForScheduledAuction() {
     <Wrapper>
       {renderAuctionStatus({
         auctioningToken,
-        biddingToken,
         auctionState,
         initialAuctionOrder,
       })}

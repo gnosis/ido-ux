@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
-import { Token } from "@uniswap/sdk";
 import {
   useSwapState,
   useDerivedAuctionInfo,
@@ -10,7 +9,7 @@ import {
 } from "../../state/orderPlacement/hooks";
 
 import { OrderBookBtn } from "../OrderbookBtn";
-import { getEtherscanLink } from "../../utils";
+import { getEtherscanLink, getTokenDisplay } from "../../utils";
 import { useActiveWeb3React } from "../../hooks";
 
 const Wrapper = styled.div`
@@ -33,12 +32,6 @@ const Wrapper = styled.div`
   `};
 `;
 
-const Title = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 18px;
-  margin: 0 0 16px;
-`;
-
 const Details = styled.div`
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
@@ -50,29 +43,33 @@ const Details = styled.div`
 `;
 
 const Row = styled.span`
-  display: flex;
   flex-flow: row wrap;
   width: 100%;
   justify-content: space-between;
   align-items: flex-start;
   margin: 0 0 3px;
-  font-weight: 700;
+  font-weight: normal;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "label value";
 
   > i {
-    color: ${({ theme }) => theme.text2};
-    font-weight: normal;
+    color: ${({ theme }) => theme.text3};
     font-style: normal;
+    text-align: left;
+  }
+
+  > a {
+    text-align: right;
   }
 
   > p {
     margin: 0;
     padding: 0;
+    text-align: right;
+    white-space: normal;
   }
 `;
-
-function getTokenDisplay(token: Token): string {
-  return token?.symbol || token?.name || token.address;
-}
 
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
@@ -83,6 +80,8 @@ export default function AuctionDetails() {
     auctioningToken,
     biddingToken,
     clearingPrice,
+    initialAuctionOrder,
+    initialPrice,
   } = useDerivedAuctionInfo();
   const { auctionState } = useDerivedAuctionState();
 
@@ -103,13 +102,62 @@ export default function AuctionDetails() {
   const clearingPriceNumber =
     clearingPrice && Number(clearingPrice.toSignificant(4));
 
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
+    biddingToken,
+  ]);
+
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(auctioningToken),
+    [auctioningToken],
+  );
+
+  const clearingPriceDisplay = !!clearingPriceNumber
+    ? `${clearingPriceNumber} ${getTokenDisplay(
+        auctioningToken,
+      )} per ${getTokenDisplay(biddingToken)}`
+    : "-";
+
   return (
     <Wrapper>
-      <Title>Auction Details</Title>
       <Details>
         <Row>
-          <i>Id</i> <p>{auctionId}</p>
+          <i>
+            {" "}
+            {auctionState == AuctionState.ORDER_PLACING ||
+            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
+              ? "Current"
+              : auctionState == AuctionState.PRICE_SUBMISSION
+              ? "Clearing"
+              : "Closing"}{" "}
+            price
+          </i>
+          <p>{clearingPriceDisplay}</p>
         </Row>
+        <Row>
+          <i>Bidding with</i>
+          <ExternalLink href={biddingTokenAddress}>
+            {biddingTokenDisplay} ↗
+          </ExternalLink>
+        </Row>
+
+        <Row>
+          <i>Total auctioned</i>
+          <p>
+            {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
+            <ExternalLink href={auctionTokenAddress}>
+              {auctioningTokenDisplay} ↗
+            </ExternalLink>
+          </p>
+        </Row>
+
+        <Row>
+          <i>Min. price</i>
+          <p>
+            {initialPrice ? `${initialPrice?.toSignificant(2)} ` : " - "}
+            {biddingTokenDisplay} per {auctioningTokenDisplay}
+          </p>
+        </Row>
+
         <Row>
           <i>Status</i>
           <p>
@@ -123,30 +171,11 @@ export default function AuctionDetails() {
           </p>
         </Row>
         <Row>
+          <i>Id</i> <p>{auctionId}</p>
+        </Row>
+        <Row>
           <i>Ends</i>
           <p>{auctionEndDateString}</p>
-        </Row>
-        <Row>
-          <i>Selling</i>
-          <ExternalLink href={auctionTokenAddress}>
-            {auctioningToken?.symbol} ↗
-          </ExternalLink>
-        </Row>
-        <Row>
-          <i>Buying</i>
-          <ExternalLink href={biddingTokenAddress}>
-            {biddingToken?.symbol} ↗
-          </ExternalLink>
-        </Row>
-        <Row>
-          <i>Closing price</i>
-          <p>
-            {!!clearingPriceNumber
-              ? `${clearingPriceNumber} ${getTokenDisplay(
-                  auctioningToken,
-                )} per ${getTokenDisplay(biddingToken)}`
-              : "-"}
-          </p>
         </Row>
       </Details>
 

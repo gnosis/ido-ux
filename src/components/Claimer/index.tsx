@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Text } from "rebass";
 import {
   ButtonPrimary,
@@ -20,8 +20,8 @@ import {
   useDerivedAuctionInfo,
   useSwapState,
 } from "../../state/orderPlacement/hooks";
-// import { TYPE } from "../../theme";
 import TokenLogo from "../TokenLogo";
+import { getTokenDisplay } from "../../utils";
 
 export const AuctionTokenWrapper = styled.div`
   width: 100%;
@@ -86,6 +86,15 @@ export default function Claimer() {
   // text to show while loading
   const pendingText = `Claiming Funds`;
 
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
+    biddingToken,
+  ]);
+
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(auctioningToken),
+    [auctioningToken],
+  );
+
   return (
     <>
       <Wrapper id="swap-page">
@@ -95,7 +104,7 @@ export default function Claimer() {
             <Text fontSize={15} fontWeight={"bold"}>
               {claimableBiddingToken
                 ? claimableBiddingToken.toSignificant(2)
-                : `0 ${biddingToken?.symbol}`}
+                : `0 ${biddingTokenDisplay}`}
             </Text>
           </AuctionToken>
 
@@ -104,7 +113,7 @@ export default function Claimer() {
             <Text fontSize={15} fontWeight={"bold"}>
               {claimableAuctioningToken
                 ? claimableAuctioningToken.toSignificant(2)
-                : `0 ${auctioningToken?.symbol}`}
+                : `0 ${auctioningTokenDisplay}`}
             </Text>
           </AuctionToken>
         </AuctionTokenWrapper>

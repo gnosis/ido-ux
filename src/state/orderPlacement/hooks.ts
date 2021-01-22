@@ -151,6 +151,7 @@ export function useDerivedAuctionInfo(): {
   initialAuctionOrder?: SellOrder | null;
   auctionEndDate?: number | null;
   clearingPriceVolume: BigNumber | null;
+  initialPrice: Fraction | undefined;
 } {
   const { chainId, account } = useActiveWeb3React();
 
@@ -269,16 +270,7 @@ export function useDerivedAuctionInfo(): {
       ?.mul(initialAuctionOrder?.sellAmount.raw.toString())
       .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
   ) {
-    error =
-      error ??
-      "Price must be higher than " +
-        initialPrice
-          ?.multiply(
-            BigNumber.from(10)
-              .pow(auctioningToken.decimals - biddingToken.decimals)
-              .toString(),
-          )
-          .toSignificant(2);
+    error = error ?? "Price must be at least " + initialPrice?.toSignificant(2);
   }
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount];
@@ -298,6 +290,7 @@ export function useDerivedAuctionInfo(): {
     initialAuctionOrder,
     auctionEndDate,
     clearingPriceVolume,
+    initialPrice,
   };
 }
 
