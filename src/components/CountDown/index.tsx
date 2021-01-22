@@ -12,9 +12,7 @@ const CountDownStyled = styled.div`
   justify-content: center;
   flex-flow: row wrap;
   align-items: center;
-  border-radius: 1rem;
-  background: ${({ theme }) => `${theme.bg2}`};
-  padding: 10px 15px;
+  background: none;
   box-sizing: border-box;
   position: relative;
 
