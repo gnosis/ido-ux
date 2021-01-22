@@ -6,7 +6,7 @@ import styled from "styled-components";
 import {
   AuctionState,
   useDefaultsFromURLSearch,
-  useDerivedAuctionInfo,
+  useDerivedAuctionState,
 } from "../../state/orderPlacement/hooks";
 import AppBody from "../AppBody";
 import OrderBody from "../OrderBody";
@@ -27,12 +27,45 @@ const Wrapper = styled.div`
   align-items: stretch;
   ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
 `;
+function renderAuctionElements({
+  auctionState,
+}: {
+  auctionState: AuctionState;
+}) {
+  switch (auctionState) {
+    case AuctionState.NOT_YET_STARTED:
+      return <></>;
+    case AuctionState.ORDER_PLACING:
+    case AuctionState.ORDER_PLACING_AND_CANCELING:
+      return (
+        <>
+          <AuctionDetails />
+          <OrderBody>
+            <OrderPlacement />
+          </OrderBody>
+        </>
+      );
+
+    case AuctionState.CLAIMING:
+      return (
+        <>
+          <AuctionDetails />
+          <ClaimerBody>
+            <Claimer />
+          </ClaimerBody>
+        </>
+      );
+
+    default:
+      return <div></div>;
+  }
+}
 
 export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search);
   const { account } = useActiveWeb3React();
   const toggleWalletModal = useWalletModalToggle();
-  const { auctionState } = useDerivedAuctionInfo();
+  const { auctionState } = useDerivedAuctionState();
 
   return (
     <AppBody>
@@ -47,17 +80,9 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
       ) : (
         <Wrapper>
           <AuctionHeader />
-          <AuctionDetails />
-          {auctionState == AuctionState.ORDER_PLACING ||
-          auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
-            <OrderBody>
-              <OrderPlacement />
-            </OrderBody>
-          ) : (
-            <ClaimerBody>
-              <Claimer />
-            </ClaimerBody>
-          )}
+          {renderAuctionElements({
+            auctionState,
+          })}
         </Wrapper>
       )}
     </AppBody>

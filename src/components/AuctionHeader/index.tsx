@@ -1,10 +1,13 @@
 import React from "react";
 import {
   AuctionState,
+  SellOrder,
   useDerivedAuctionInfo,
+  useDerivedAuctionState,
 } from "../../state/orderPlacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
+import { Token } from "@uniswap/sdk";
 
 const Wrapper = styled.div`
   display: flex;
@@ -40,14 +43,16 @@ const Wrapper = styled.div`
 `;
 
 const renderAuctionStatus = ({
+  auctionState,
   auctioningToken,
   biddingToken,
-  auctionState,
   initialAuctionOrder,
-}: Pick<
-  ReturnType<typeof useDerivedAuctionInfo>,
-  "auctioningToken" | "biddingToken" | "auctionState" | "initialAuctionOrder"
->) => {
+}: {
+  auctionState: AuctionState;
+  auctioningToken: Token | null;
+  biddingToken: Token | null;
+  initialAuctionOrder: SellOrder | null;
+}) => {
   switch (auctionState) {
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:
@@ -74,14 +79,14 @@ const renderAuctionStatus = ({
   }
 };
 
-export default function AuctionHeader() {
+export function AuctionHeaderForScheduledAuction() {
   const {
     auctioningToken,
     biddingToken,
-    auctionState,
     initialAuctionOrder,
     auctionEndDate,
   } = useDerivedAuctionInfo();
+  const { auctionState } = useDerivedAuctionState();
 
   return (
     <Wrapper>
@@ -92,6 +97,19 @@ export default function AuctionHeader() {
         initialAuctionOrder,
       })}
       <CountdownTimer auctionEndDate={auctionEndDate} />
+    </Wrapper>
+  );
+}
+
+export default function AuctionHeader() {
+  const { auctionState } = useDerivedAuctionState();
+  return (
+    <Wrapper>
+      {auctionState == AuctionState.NOT_YET_STARTED ? (
+        <h4>Auction not yet started</h4>
+      ) : (
+        <AuctionHeaderForScheduledAuction />
+      )}
     </Wrapper>
   );
 }

@@ -31,6 +31,7 @@ export interface SellOrder {
 }
 
 export enum AuctionState {
+  NOT_YET_STARTED,
   ORDER_PLACING_AND_CANCELING,
   ORDER_PLACING,
   PRICE_SUBMISSION,
@@ -138,7 +139,6 @@ export function useDeriveAuctioningAndBiddingToken(
   };
 }
 
-// from the current swap inputs, compute the best trade and return it.
 export function useDerivedAuctionInfo(): {
   biddingTokenBalance: TokenAmount | undefined;
   parsedBiddingAmount: TokenAmount | undefined;
@@ -150,7 +150,6 @@ export function useDerivedAuctionInfo(): {
   clearingPrice: Fraction | undefined;
   initialAuctionOrder?: SellOrder | null;
   auctionEndDate?: number | null;
-  auctionState: AuctionState | null;
   clearingPriceVolume: BigNumber | null;
 } {
   const { chainId, account } = useActiveWeb3React();
@@ -190,7 +189,6 @@ export function useDerivedAuctionInfo(): {
   }
   const clearingPriceVolume = auctionInfo?.volumeClearingPriceOrder;
   const auctionEndDate = auctionInfo?.auctionEndDate;
-  const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate;
   const minBiddingAmountPerOrder = auctionInfo?.minimumBiddingAmountPerOrder;
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
     biddingToken,
@@ -211,18 +209,6 @@ export function useDerivedAuctionInfo(): {
       clearingPriceSellOrder.sellAmount.raw.toString(),
       clearingPriceSellOrder.buyAmount.raw.toString(),
     );
-  }
-
-  let auctionState = AuctionState.CLAIMING;
-  if (auctionEndDate > new Date().getTime() / 1000) {
-    auctionState = AuctionState.ORDER_PLACING;
-    if (orderCancellationEndDate >= new Date().getTime() / 1000) {
-      auctionState = AuctionState.ORDER_PLACING_AND_CANCELING;
-    }
-  } else {
-    if (clearingPrice?.toSignificant(1) == "0") {
-      auctionState = AuctionState.PRICE_SUBMISSION;
-    }
   }
 
   const {
@@ -311,12 +297,74 @@ export function useDerivedAuctionInfo(): {
     clearingPrice,
     initialAuctionOrder,
     auctionEndDate,
-    auctionState,
     clearingPriceVolume,
   };
 }
 
-// from the current swap inputs, compute the best trade and return it.
+export function useDerivedAuctionState(): {
+  auctionState: AuctionState;
+} {
+  const { chainId } = useActiveWeb3React();
+
+  const { auctionId } = useSwapState();
+
+  const easyAuctionInstance: Contract | null = useContract(
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    easyAuctionABI,
+  );
+  const auctionInfo = useSingleCallResult(
+    easyAuctionInstance,
+    "auctionData",
+    [auctionId],
+    {
+      blocksPerFetch: 1,
+    },
+  ).result;
+  const auctioningTokenAddress:
+    | string
+    | undefined = auctionInfo?.auctioningToken.toString();
+
+  if (auctioningTokenAddress == "0x0000000000000000000000000000000000000000") {
+    return { auctionState: AuctionState.NOT_YET_STARTED };
+  }
+
+  let clearingPriceOrder: Order | null = null;
+  if (auctionInfo?.clearingPriceOrder) {
+    clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder);
+  }
+  const auctionEndDate = auctionInfo?.auctionEndDate;
+  const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate;
+
+  let clearingPrice: Fraction | undefined;
+  if (
+    !clearingPriceOrder ||
+    clearingPriceOrder.buyAmount == undefined ||
+    clearingPriceOrder.sellAmount == undefined
+  ) {
+    clearingPrice = undefined;
+  } else {
+    clearingPrice = new Fraction(
+      clearingPriceOrder.sellAmount.toString(),
+      clearingPriceOrder.buyAmount.toString(),
+    );
+  }
+
+  let auctionState = AuctionState.CLAIMING;
+  if (auctionEndDate > new Date().getTime() / 1000) {
+    auctionState = AuctionState.ORDER_PLACING;
+    if (orderCancellationEndDate >= new Date().getTime() / 1000) {
+      auctionState = AuctionState.ORDER_PLACING_AND_CANCELING;
+    }
+  } else {
+    if (clearingPrice?.toSignificant(1) == "0") {
+      auctionState = AuctionState.PRICE_SUBMISSION;
+    }
+  }
+  return {
+    auctionState,
+  };
+}
+
 export function useDerivedClaimInfo(
   auctionId: number,
 ): {
