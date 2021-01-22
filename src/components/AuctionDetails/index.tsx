@@ -5,6 +5,7 @@ import {
   useSwapState,
   useDerivedAuctionInfo,
   AuctionState,
+  useDerivedAuctionState,
 } from "../../state/orderPlacement/hooks";
 
 import { OrderBookBtn } from "../OrderbookBtn";
@@ -75,7 +76,6 @@ export default function AuctionDetails() {
   const { chainId } = useActiveWeb3React();
 
   const {
-    auctionState,
     auctionEndDate,
     auctioningToken,
     biddingToken,
@@ -83,6 +83,7 @@ export default function AuctionDetails() {
     initialAuctionOrder,
     initialPrice,
   } = useDerivedAuctionInfo();
+  const { auctionState } = useDerivedAuctionState();
 
   const auctionTokenAddress = useMemo(
     () => getEtherscanLink(chainId, auctioningToken?.address, "address"),

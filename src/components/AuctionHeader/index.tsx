@@ -1,10 +1,13 @@
 import React from "react";
 import {
   AuctionState,
+  SellOrder,
   useDerivedAuctionInfo,
+  useDerivedAuctionState,
 } from "../../state/orderPlacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
+import { Token } from "@uniswap/sdk";
 import { getTokenDisplay } from "../../utils";
 
 const Wrapper = styled.div`
@@ -48,19 +51,30 @@ const Wrapper = styled.div`
     `};
   }
 
+  > h5 {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    min-height: 150px;
+  }
+
   > h4 > b {
     margin: 0 5px;
   }
 `;
 
 const renderAuctionStatus = ({
-  auctioningToken,
   auctionState,
+  auctioningToken,
   initialAuctionOrder,
-}: Pick<
-  ReturnType<typeof useDerivedAuctionInfo>,
-  "auctioningToken" | "biddingToken" | "auctionState" | "initialAuctionOrder"
->) => {
+}: {
+  auctionState: AuctionState;
+  auctioningToken: Token | null;
+  initialAuctionOrder: SellOrder | null;
+}) => {
   switch (auctionState) {
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:
@@ -82,24 +96,35 @@ const renderAuctionStatus = ({
   }
 };
 
-export default function AuctionHeader() {
+export function AuctionHeaderForScheduledAuction() {
   const {
     auctioningToken,
-    biddingToken,
-    auctionState,
     initialAuctionOrder,
     auctionEndDate,
   } = useDerivedAuctionInfo();
+  const { auctionState } = useDerivedAuctionState();
 
   return (
     <Wrapper>
       {renderAuctionStatus({
         auctioningToken,
-        biddingToken,
         auctionState,
         initialAuctionOrder,
       })}
       <CountdownTimer auctionEndDate={auctionEndDate} />
+    </Wrapper>
+  );
+}
+
+export default function AuctionHeader() {
+  const { auctionState } = useDerivedAuctionState();
+  return (
+    <Wrapper>
+      {auctionState == AuctionState.NOT_YET_STARTED ? (
+        <h5>⌛ Auction not yet started</h5>
+      ) : (
+        <AuctionHeaderForScheduledAuction />
+      )}
     </Wrapper>
   );
 }
