@@ -1,11 +1,7 @@
 import { TokenAmount, ChainId } from "@uniswap/sdk";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Text } from "rebass";
-import {
-  ButtonError,
-  ButtonLight,
-  ButtonPrimary,
-} from "../../components/Button";
+import { ButtonLight, ButtonPrimary } from "../../components/Button";
 import { AutoColumn } from "../../components/Column";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
@@ -26,6 +22,7 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/orderPlacement/hooks";
+import { getTokenDisplay } from "../../utils";
 
 export default function OrderPlacement() {
   const { chainId, account } = useActiveWeb3React();
@@ -127,6 +124,15 @@ export default function OrderPlacement() {
   // text to show while loading
   const pendingText = `Placing order`;
 
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
+    biddingToken,
+  ]);
+
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(auctioningToken),
+    [auctioningToken],
+  );
+
   return (
     <>
       <Wrapper id="swap-page">
@@ -162,14 +168,7 @@ export default function OrderPlacement() {
             <PriceInputPanel
               value={price}
               onUserPriceInput={onUserPriceInput}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              label={
-                "Price  [" +
-                auctioningToken?.symbol +
-                "/" +
-                biddingToken?.symbol +
-                "]"
-              }
+              label={`Price — ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
               showMaxButton={false}
               auctioningToken={auctioningToken}
               biddingToken={biddingToken}
@@ -189,24 +188,23 @@ export default function OrderPlacement() {
               disabled={approval === ApprovalState.PENDING}
             >
               {approval === ApprovalState.PENDING ? (
-                <Dots>Approving {biddingToken?.symbol}</Dots>
+                <Dots>Approving {biddingTokenDisplay}</Dots>
               ) : (
-                "Approve " + biddingToken?.symbol
+                `Approve ${biddingTokenDisplay}`
               )}
             </ButtonPrimary>
           ) : (
-            <ButtonError
+            <ButtonPrimary
               onClick={() => {
                 setShowConfirm(true);
               }}
               id="swap-button"
               disabled={!isValid}
-              error={isValid}
             >
               <Text fontSize={20} fontWeight={500}>
-                {error ?? `Execute Order`}
+                {error ?? `Place Order`}
               </Text>
-            </ButtonError>
+            </ButtonPrimary>
           )}
         </BottomGrouping>
       </Wrapper>

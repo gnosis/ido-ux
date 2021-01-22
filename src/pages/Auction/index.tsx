@@ -127,27 +127,24 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
               <AuctionDetails />
               {auctionState == AuctionState.ORDER_PLACING ||
               auctionState == AuctionState.ORDER_PLACING_AND_CANCELING ? (
-                <div style={{ width: "60%" }}>
-                  <OrderBody>
-                    <OrderPlacement />
-                  </OrderBody>
-                </div>
+                <OrderBody>
+                  <OrderPlacement />
+                </OrderBody>
               ) : (
                 <ClaimerBody>
                   <Claimer />
                 </ClaimerBody>
               )}
             </Wrapper>
-            {orders != undefined && orders.orders.length > 0 ? (
-              <OrderDisplayDropdown
-                showAdvanced={showAdvanced}
-                setShowAdvanced={setShowAdvanced}
-                orders={orders.orders}
-              />
-            ) : (
-              <div></div>
-            )}
           </Wrapper>
+
+          {orders && orders.orders.length > 0 && (
+            <OrderDisplayDropdown
+              showAdvanced={showAdvanced}
+              setShowAdvanced={setShowAdvanced}
+              orders={orders.orders}
+            />
+          )}
         </div>
       )}
     </AppBody>

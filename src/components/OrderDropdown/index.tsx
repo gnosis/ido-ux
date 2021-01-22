@@ -17,6 +17,7 @@ export interface OrderTableDetailsProps {
 
 export default function OrderDisplayDropdown({
   showAdvanced,
+  orders,
   setShowAdvanced,
   ...rest
 }: Omit<OrderTableDetailsProps, "onDismiss"> & {
@@ -26,20 +27,23 @@ export default function OrderDisplayDropdown({
   const theme = useContext(ThemeContext);
   return (
     <AdvancedDropdown>
-      {showAdvanced ? (
+      {showAdvanced && !!orders ? (
         <AdvancedOrderDetails
           {...rest}
           onDismiss={() => setShowAdvanced(false)}
+          orders={orders}
         />
       ) : (
         <CursorPointer>
           <RowBetween
             onClick={() => setShowAdvanced(true)}
-            padding={"4px 20px"}
+            padding="4px 4px"
             id="show-advanced"
           >
             <Text fontSize={14} fontWeight={500} style={{ userSelect: "none" }}>
-              Show My Orders
+              {!orders || orders.length === 0
+                ? "You have no orders yet"
+                : `Show ${orders.length} orders`}
             </Text>
             <ChevronDown color={theme.text2} />
           </RowBetween>
@@ -62,14 +66,14 @@ export function AdvancedOrderDetails({
   return (
     <AutoColumn gap="md">
       <CursorPointer>
-        <RowBetween onClick={onDismiss} padding={"4px 20px"}>
+        <RowBetween onClick={onDismiss} padding="4px 4px">
           <Text
             fontSize={14}
             color={theme.text2}
             fontWeight={500}
             style={{ userSelect: "none" }}
           >
-            Hide My Orders
+            Hide {orders.length} orders
           </Text>
           <ChevronUp color={theme.text2} />
         </RowBetween>

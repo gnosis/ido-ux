@@ -52,10 +52,13 @@ export const ButtonPrimary = styled(Base)`
   &:disabled {
     background-image: none;
     background-color: ${({ theme }) => theme.bg3};
+    box-shadow: none;
     color: ${({ theme }) => theme.text3};
     cursor: auto;
     box-shadow: none;
-    border: 1px solid ${({ theme }) => theme.bg2};
+    border: 1px solid transparent;
+    outline: none;
+    opacity: 1;
   }
 `;
 
