@@ -229,5 +229,5 @@ export function escapeRegExp(string: string): string {
 
 // Always return a non-undefined token display
 export function getTokenDisplay(token: Token): string {
-  return token ? token?.symbol || token?.name || token.address : "🤔";
+  return token?.symbol || token?.name || token?.address || "🤔";
 }

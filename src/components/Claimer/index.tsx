@@ -20,7 +20,6 @@ import {
   useDerivedAuctionInfo,
   useSwapState,
 } from "../../state/orderPlacement/hooks";
-// import { TYPE } from "../../theme";
 import TokenLogo from "../TokenLogo";
 import { getTokenDisplay } from "../../utils";
 
