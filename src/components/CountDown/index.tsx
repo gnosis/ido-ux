@@ -12,11 +12,21 @@ const CountDownStyled = styled.div`
   justify-content: center;
   flex-flow: row wrap;
   align-items: center;
-  border-radius: 1rem;
-  background: ${({ theme }) => `${theme.bg2}`};
-  padding: 10px 15px;
+  background: none;
   box-sizing: border-box;
   position: relative;
+
+  &::before {
+    display: block;
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background: ${({ theme }) => theme.buttonGradient1};
+    animation: 2s blink ease infinite;
+    opacity: 0;
+    margin: 0 8px 0 0;
+  }
 
   > p {
     margin: 0 5px 0 0;
@@ -24,6 +34,12 @@ const CountDownStyled = styled.div`
 
   > strong {
     color: ${({ theme }) => `1px solid ${theme.text1}`};
+  }
+
+  @keyframes blink {
+    50% {
+      opacity: 1;
+    }
   }
 `;
 

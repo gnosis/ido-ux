@@ -15,6 +15,9 @@ const Wrapper = styled.div`
   flex-flow: row nowrap;
   justify-content: space-between;
   margin: 0 0 16px;
+  background: ${({ theme }) => theme.bg2};
+  border-radius: 20px;
+  padding: 16px;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-flow: column wrap;
