@@ -37,6 +37,13 @@ const Wrapper = styled.div`
     font-weight: normal;
   }
 
+  > h5 {
+    width: 100%;
+    margin: auto;
+    font-size: 16px;
+    min-height: 150px;
+  }
+
   > h4 > b {
     margin: 0 5px;
   }
@@ -49,9 +56,9 @@ const renderAuctionStatus = ({
   initialAuctionOrder,
 }: {
   auctionState: AuctionState;
-  auctioningToken: Token | null;
-  biddingToken: Token | null;
-  initialAuctionOrder: SellOrder | null;
+  auctioningToken: Pick<Token, "symbol">;
+  biddingToken: Pick<Token, "symbol">;
+  initialAuctionOrder: Pick<SellOrder, "sellAmount" | "buyAmount">;
 }) => {
   switch (auctionState) {
     case AuctionState.ORDER_PLACING:
@@ -106,7 +113,7 @@ export default function AuctionHeader() {
   return (
     <Wrapper>
       {auctionState == AuctionState.NOT_YET_STARTED ? (
-        <h4>Auction not yet started</h4>
+        <h5>⌛ Auction not yet started</h5>
       ) : (
         <AuctionHeaderForScheduledAuction />
       )}
