@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { AutoColumn } from "../Column";
 import { Text } from "rebass";
 
 import NumericalInput from "../NumericalInput";
@@ -22,16 +21,11 @@ export const ArrowWrapper = styled.div`
 `;
 
 export const AdvancedDropdown = styled.div`
-  padding-top: calc(10px + 2rem);
-  padding-bottom: 10px;
-  margin-top: -2rem;
+  padding: 10px 0 0;
   width: 100%;
-  max-width: 400px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
   color: ${({ theme }) => theme.text2};
-  background-color: ${({ theme }) => theme.advancedBG};
-  z-index: -1;
+  background: none;
+  border: 0;
 `;
 
 export const SectionBreak = styled.div`
@@ -56,15 +50,10 @@ export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 }>`
       : theme.green1};
 `;
 
-export const InputGroup = styled(AutoColumn)`
-  position: relative;
-  padding: 40px 0 20px 0;
-`;
-
 export const StyledNumerical = styled(NumericalInput)`
   text-align: center;
   font-size: 48px;
-  font-weight: 500px;
+  font-weight: 500;
   width: 100%;
 
   ::placeholder {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import Modal, { useModal } from "./MesaModal";
 
@@ -20,6 +20,9 @@ import {
   useDerivedAuctionInfo,
   useSwapState,
 } from "../state/orderPlacement/hooks";
+
+// utils
+import { getTokenDisplay } from "../utils";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
   margin: auto 0 0;
@@ -101,10 +104,19 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
 
   const { auctioningToken, biddingToken } = useDerivedAuctionInfo();
 
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
+    biddingToken,
+  ]);
+
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(auctioningToken),
+    [auctioningToken],
+  );
+
   const [modalHook, toggleModal] = useModal({
     ...DEFAULT_MODAL_OPTIONS,
     large: true,
-    title: `${auctioningToken?.symbol}-${biddingToken?.symbol} Order book`,
+    title: `${auctioningTokenDisplay}-${biddingTokenDisplay} Order book`,
     message: (
       <ModalWrapper>
         <OrderBookWidget
