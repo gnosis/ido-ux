@@ -16,30 +16,12 @@ const CountDownStyled = styled.div`
   box-sizing: border-box;
   position: relative;
 
-  &::before {
-    display: block;
-    content: "";
-    width: 8px;
-    height: 8px;
-    border-radius: 8px;
-    background: ${({ theme }) => theme.buttonGradient1};
-    animation: 2s blink ease infinite;
-    opacity: 0;
-    margin: 0 8px 0 0;
-  }
-
   > p {
     margin: 0 5px 0 0;
   }
 
   > strong {
     color: ${({ theme }) => `1px solid ${theme.text1}`};
-  }
-
-  @keyframes blink {
-    50% {
-      opacity: 1;
-    }
   }
 `;
 
