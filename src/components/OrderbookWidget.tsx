@@ -13,7 +13,7 @@ import OrderBookChart, {
 } from "./OrderbookChart";
 import { Token } from "@uniswap/sdk";
 
-const SMALL_VOLUME_THRESHOLD = 0.01;
+const SMALL_VOLUME_THRESHOLD = 0.001;
 
 // Todo: to be removed
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,9 +35,16 @@ const processData = (
   const isBid = type == Offer.Bid;
 
   // Filter tiny orders
-  pricePoints = pricePoints.filter(
-    (pricePoint) => pricePoint.volume > SMALL_VOLUME_THRESHOLD,
-  );
+  if (isBid) {
+    pricePoints = pricePoints.filter(
+      (pricePoint) => pricePoint.volume > SMALL_VOLUME_THRESHOLD,
+    );
+  } else {
+    pricePoints = pricePoints.filter(
+      (pricePoint) =>
+        pricePoint.volume * pricePoint.price > SMALL_VOLUME_THRESHOLD,
+    );
+  }
 
   // Adding first and last element to round up the picture
   if (type == Offer.Bid) {
@@ -89,10 +96,31 @@ const processData = (
         askValueY = null;
         bidValueY = previousPricePoint?.totalVolume || 0;
       } else {
-        askValueY = totalVolume;
+        askValueY = totalVolume * price;
         bidValueY = null;
       }
 
+      if (!isBid) {
+        // Add the new point at the beginning of order
+        //      ------------
+        //      |
+        //  ----|<-here
+        const pricePointDetails: PricePointDetails = {
+          type,
+          volume,
+          totalVolume: acc.totalVolume,
+          price,
+
+          // Data for representation
+          priceNumber: price,
+          totalVolumeNumber: acc.totalVolume,
+          priceFormatted: price.toString(),
+          totalVolumeFormatted: acc.totalVolume.toString(),
+          askValueY: acc.totalVolume * price,
+          bidValueY,
+        };
+        acc.points.push(pricePointDetails);
+      }
       // Add the new point
       const pricePointDetails: PricePointDetails = {
         type,

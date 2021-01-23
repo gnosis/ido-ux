@@ -121,14 +121,13 @@ const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   bidSeries.startLocation = 0.5;
   bidSeries.fillOpacity = 0.1;
 
-  const askSeries = chart.series.push(new am4charts.StepLineSeries());
+  const askSeries = chart.series.push(new am4charts.LineSeries());
   askSeries.dataFields.valueX = "priceNumber";
   askSeries.dataFields.valueY = "askValueY";
   askSeries.strokeWidth = 1;
   askSeries.stroke = am4core.color(colors.red);
   askSeries.fill = askSeries.stroke;
   askSeries.fillOpacity = 0.1;
-  askSeries.startLocation = 0.5;
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor();
