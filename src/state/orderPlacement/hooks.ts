@@ -38,6 +38,39 @@ export enum AuctionState {
   CLAIMING,
 }
 
+export function orderToSellOrder(
+  order: Order | null | undefined,
+  biddingToken: Token | undefined,
+  auctioningToken: Token | undefined,
+): SellOrder | undefined {
+  if (!!order && biddingToken && auctioningToken) {
+    return {
+      sellAmount: new TokenAmount(biddingToken, order.sellAmount.toString()),
+      buyAmount: new TokenAmount(auctioningToken, order.buyAmount.toString()),
+    };
+  } else {
+    return undefined;
+  }
+}
+
+export function orderToPrice(
+  order: SellOrder | null | undefined,
+): Fraction | undefined {
+  if (
+    !order ||
+    order.buyAmount == undefined ||
+    order.buyAmount.raw.toString() == "0" ||
+    order.sellAmount == undefined
+  ) {
+    return undefined;
+  } else {
+    return new Fraction(
+      order.sellAmount.raw.toString(),
+      order.buyAmount.raw.toString(),
+    );
+  }
+}
+
 function decodeSellOrder(
   orderBytes: string,
   soldToken: Token | undefined,
@@ -198,19 +231,9 @@ export function useDerivedAuctionInfo(): {
     relevantTokenBalances?.[biddingToken?.address ?? ""];
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken);
 
-  let clearingPrice: Fraction | undefined;
-  if (
-    !clearingPriceSellOrder ||
-    clearingPriceSellOrder.buyAmount == undefined ||
-    clearingPriceSellOrder.sellAmount == undefined
-  ) {
-    clearingPrice = undefined;
-  } else {
-    clearingPrice = new Fraction(
-      clearingPriceSellOrder.sellAmount.raw.toString(),
-      clearingPriceSellOrder.buyAmount.raw.toString(),
-    );
-  }
+  const clearingPrice: Fraction | undefined = orderToPrice(
+    clearingPriceSellOrder,
+  );
 
   const {
     sellAmountScaled,

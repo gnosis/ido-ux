@@ -1,4 +1,5 @@
-import { encodeOrder, Order } from "../hooks/Order";
+import { BigNumber } from "@ethersproject/bignumber";
+import { decodeOrder, encodeOrder, Order } from "../hooks/Order";
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string;
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
@@ -8,6 +9,10 @@ export interface AdditionalServicesApi {
   getCurrentUserOrders(params: UserOrderParams): Promise<string[]>;
   getAllUserOrdersUrl(params: UserOrderParams): string;
   getAllUserOrders(params: UserOrderParams): Promise<string[]>;
+  getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string;
+  getClearingPriceOrderAndVolume(
+    params: OrderBookParams,
+  ): Promise<ClearingPriceAndVolumeData>;
 }
 
 interface OrderBookParams {
@@ -43,6 +48,11 @@ export interface OrderBookData {
   asks: PricePoint[];
   bids: PricePoint[];
 }
+
+export interface ClearingPriceAndVolumeData {
+  clearingOrder: Order;
+  volume: BigNumber;
+}
 export interface AdditionalServicesEndpoint {
   networkId: number;
   url_production: string;
@@ -72,6 +82,15 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     const baseUrl = this._getBaseUrl(networkId);
 
     const url = `${baseUrl}get_order_book_display_data/${auctionId}`;
+    return url;
+  }
+
+  public getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string {
+    const { networkId, auctionId } = params;
+
+    const baseUrl = this._getBaseUrl(networkId);
+
+    const url = `${baseUrl}get_clearing_order_and_volume/${auctionId}`;
     return url;
   }
 
@@ -169,6 +188,36 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
       throw new Error(
         `Failed to query previous order for auction id ${auctionId} and order ${user}: ${error.message}`,
+      );
+    }
+  }
+
+  public async getClearingPriceOrderAndVolume(
+    params: OrderBookParams,
+  ): Promise<ClearingPriceAndVolumeData> {
+    try {
+      const url = await this.getClearingPriceOrderAndVolumeUrl(params);
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json();
+      }
+      const result = await res.json();
+      console.log(decodeOrder(result[0]));
+      return {
+        clearingOrder: decodeOrder(result[0]),
+        volume: BigNumber.from(result[1]),
+      };
+      return await res.json();
+    } catch (error) {
+      console.error(error);
+
+      const { auctionId } = params;
+
+      throw new Error(
+        `Failed to query clearing price order for auction  id ${auctionId} : ${error.message}`,
       );
     }
   }

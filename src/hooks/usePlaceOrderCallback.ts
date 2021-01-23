@@ -12,6 +12,10 @@ import { useOrderActionHandlers } from "../state/orders/hooks";
 import { encodeOrder } from "./Order";
 import { OrderStatus } from "../state/orders/reducer";
 import { getTokenDisplay } from "../utils";
+import { useContract } from "./useContract";
+import { EASY_AUCTION_NETWORKS } from "../constants";
+import { Result, useSingleCallResult } from "../state/multicall/hooks";
+import easyAuctionABI from "../constants/abis/easyAuction/easyAuction.json";
 
 export const queueStartElement =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -28,7 +32,15 @@ export function usePlaceOrderCallback(
   const addTransaction = useTransactionAdder();
   const { onNewOrder } = useOrderActionHandlers();
   const { auctionId, sellAmount, price } = useSwapState();
-
+  const easyAuctionInstance: Contract | null = useContract(
+    EASY_AUCTION_NETWORKS[chainId as ChainId],
+    easyAuctionABI,
+  );
+  const userId: Result | undefined = useSingleCallResult(
+    easyAuctionInstance,
+    "getUserId",
+    [account == null ? undefined : account],
+  ).result;
   return useMemo(() => {
     return async function onPlaceOrder() {
       if (!chainId || !library || !account) {
@@ -102,7 +114,7 @@ export function usePlaceOrderCallback(
           const order = {
             buyAmount: buyAmountScaled,
             sellAmount: sellAmountScaled,
-            userId: BigNumber.from(0), // Todo: Needs to be set correctly for canceling orders
+            userId: BigNumber.from(userId), // Todo: If many people are placing orders, this might be incorrect
           };
           onNewOrder([
             {
@@ -122,6 +134,7 @@ export function usePlaceOrderCallback(
     };
   }, [
     account,
+    userId,
     addTransaction,
     chainId,
     library,

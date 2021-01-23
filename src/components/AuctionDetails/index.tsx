@@ -6,11 +6,14 @@ import {
   useDerivedAuctionInfo,
   AuctionState,
   useDerivedAuctionState,
+  orderToPrice,
+  orderToSellOrder,
 } from "../../state/orderPlacement/hooks";
 
 import { OrderBookBtn } from "../OrderbookBtn";
 import { getEtherscanLink, getTokenDisplay } from "../../utils";
 import { useActiveWeb3React } from "../../hooks";
+import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolumeCallback";
 
 const Wrapper = styled.div`
   position: relative;
@@ -74,7 +77,6 @@ const Row = styled.span`
 export default function AuctionDetails() {
   const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
-
   const {
     auctionEndDate,
     auctioningToken,
@@ -98,10 +100,21 @@ export default function AuctionDetails() {
   const auctionEndDateString = new Date(
     auctionEndDate * 1000,
   ).toLocaleDateString();
+  const clearingPriceInfo = useClearingPriceInfo();
+  const clearingPriceInfoAsSellorder =
+    clearingPriceInfo &&
+    orderToSellOrder(
+      clearingPriceInfo.clearingOrder,
+      biddingToken,
+      auctioningToken,
+    );
+  let clearingPriceNumber = orderToPrice(
+    clearingPriceInfoAsSellorder,
+  )?.toSignificant(4);
 
-  const clearingPriceNumber =
-    clearingPrice && Number(clearingPrice.toSignificant(4));
-
+  if (clearingPrice) {
+    clearingPriceNumber = clearingPrice && clearingPrice.toSignificant(4);
+  }
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
     biddingToken,
   ]);
