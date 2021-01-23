@@ -454,11 +454,13 @@ export function useOrdersForClaiming(auctionId: number): string[] {
       if (chainId == undefined || account == undefined) {
         return;
       }
-      const sellOrdersFormUser = await additionalServiceApi.getUserOrders({
-        networkId: chainId,
-        auctionId,
-        user: account,
-      });
+      const sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders(
+        {
+          networkId: chainId,
+          auctionId,
+          user: account,
+        },
+      );
       setUserOrders(sellOrdersFormUser);
     }
     if (!userOrders) {

@@ -44,7 +44,7 @@ export function useGetClaimInfo(): ClaimInformation | null {
         if (!chainId || !library || !account || !additionalServiceApi) {
           throw new Error("missing dependencies in useGetClaimInfo callback");
         }
-        const sellOrdersFormUser = await additionalServiceApi.getUserOrders({
+        const sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
           networkId: chainId,
           auctionId,
           user: account,

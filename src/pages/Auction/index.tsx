@@ -6,8 +6,8 @@ import styled from "styled-components";
 import {
   AuctionState,
   useDefaultsFromURLSearch,
-  useDerivedAuctionState,
   useSwapState,
+  useDerivedAuctionState,
   useDeriveAuctioningAndBiddingToken,
 } from "../../state/orderPlacement/hooks";
 import AppBody from "../AppBody";
@@ -102,11 +102,14 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
       ) {
         return;
       }
-      const sellOrdersFromUser = await additionalServiceApi.getUserOrders({
-        networkId: chainId,
-        auctionId,
-        user: account,
-      });
+      const sellOrdersFromUser = await additionalServiceApi.getCurrentUserOrders(
+        {
+          networkId: chainId,
+          auctionId,
+          user: account,
+        },
+      );
+
       const sellOrderDisplays: OrderDisplay[] = [];
       for (const orderString of sellOrdersFromUser) {
         const order = decodeOrder(orderString);

@@ -33,6 +33,33 @@ const Base = styled(RebassButton)<{
     user-select: none;
   }
 `;
+const BaseSmall = styled(RebassButton)<{
+  padding?: string;
+  width?: string;
+  borderRadius?: string;
+}>`
+  padding: ${({ padding }) => (padding ? padding : "5px")};
+  width: ${({ width }) => (width ? width : "100%")};
+  font-weight: 500;
+  text-align: center;
+  border-radius: 5px;
+  border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
+  outline: none;
+  border: 1px solid transparent;
+  color: white;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  align-items: center;
+  cursor: pointer;
+  &:disabled {
+    cursor: auto;
+  }
+
+  > * {
+    user-select: none;
+  }
+`;
 
 export const ButtonPrimary = styled(Base)`
   background-image: ${({ theme }) =>
@@ -59,6 +86,31 @@ export const ButtonPrimary = styled(Base)`
     border: 1px solid transparent;
     outline: none;
     opacity: 1;
+  }
+`;
+
+export const ButtonCancelPrimary = styled(BaseSmall)`
+  background-image: ${({ theme }) =>
+    `linear-gradient(270deg, ${theme.buttonGradient1} 0%, ${theme.buttonGradient2} 100%)`};
+  color: white;
+  transition: 0.1s opacity ease-in-out;
+  &:focus {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
+    opacity: 0.9;
+  }
+  &:hover {
+    opacity: 0.9;
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.primary1)};
+  }
+  &:disabled {
+    background-image: none;
+    background-color: ${({ theme }) => theme.bg3};
+    color: ${({ theme }) => theme.text3};
+    cursor: auto;
+    box-shadow: none;
+    border: 1px solid ${({ theme }) => theme.bg2};
   }
 `;
 
@@ -249,6 +301,26 @@ const ButtonErrorStyle = styled(Base)`
     cursor: auto;
   }
 `;
+const ButtonCancelErrorStyle = styled(BaseSmall)`
+  background-color: ${({ theme }) => theme.red1};
+  border: 0.5px solid ${({ theme }) => theme.red1};
+
+  &:focus {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.red1)};
+    background-color: ${({ theme }) => darken(0.05, theme.red1)};
+  }
+  &:hover {
+    background-color: ${({ theme }) => darken(0.05, theme.red1)};
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.red1)};
+    background-color: ${({ theme }) => darken(0.1, theme.red1)};
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`;
 
 export function ButtonConfirmed({
   confirmed,
@@ -269,6 +341,17 @@ export function ButtonError({
     return <ButtonErrorStyle {...rest} />;
   } else {
     return <ButtonPrimary {...rest} />;
+  }
+}
+
+export function ButtonCancel({
+  error,
+  ...rest
+}: { error?: boolean } & ButtonProps) {
+  if (error) {
+    return <ButtonCancelErrorStyle {...rest} />;
+  } else {
+    return <ButtonCancelPrimary {...rest} />;
   }
 }
 

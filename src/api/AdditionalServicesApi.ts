@@ -4,8 +4,10 @@ export interface AdditionalServicesApi {
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
   getPreviousOrderUrl(params: PreviousOrderParams): string;
   getPreviousOrder(params: PreviousOrderParams): Promise<string>;
-  getUserOrdersUrl(params: UserOrderParams): string;
-  getUserOrders(params: UserOrderParams): Promise<string[]>;
+  getCurrentUserOrdersUrl(params: UserOrderParams): string;
+  getCurrentUserOrders(params: UserOrderParams): Promise<string[]>;
+  getAllUserOrdersUrl(params: UserOrderParams): string;
+  getAllUserOrders(params: UserOrderParams): Promise<string[]>;
 }
 
 interface OrderBookParams {
@@ -84,12 +86,21 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url;
   }
 
-  public getUserOrdersUrl(params: UserOrderParams): string {
+  public getAllUserOrdersUrl(params: UserOrderParams): string {
     const { networkId, auctionId, user } = params;
 
     const baseUrl = this._getBaseUrl(networkId);
 
     const url = `${baseUrl}get_user_orders/${auctionId}/${user}`;
+    return url;
+  }
+
+  public getCurrentUserOrdersUrl(params: UserOrderParams): string {
+    const { networkId, auctionId, user } = params;
+
+    const baseUrl = this._getBaseUrl(networkId);
+
+    const url = `${baseUrl}get_user_orders_without_canceled_or_claimed/${auctionId}/${user}`;
     return url;
   }
 
@@ -117,9 +128,32 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     }
   }
 
-  public async getUserOrders(params: UserOrderParams): Promise<string[]> {
+  public async getAllUserOrders(params: UserOrderParams): Promise<string[]> {
     try {
-      const url = await this.getUserOrdersUrl(params);
+      const url = await this.getAllUserOrdersUrl(params);
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json();
+      }
+      return await res.json();
+    } catch (error) {
+      console.error(error);
+
+      const { auctionId, user } = params;
+
+      throw new Error(
+        `Failed to query previous order for auction id ${auctionId} and order ${user}: ${error.message}`,
+      );
+    }
+  }
+  public async getCurrentUserOrders(
+    params: UserOrderParams,
+  ): Promise<string[]> {
+    try {
+      const url = await this.getCurrentUserOrdersUrl(params);
 
       const res = await fetch(url);
       if (!res.ok) {
