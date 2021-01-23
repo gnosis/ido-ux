@@ -106,6 +106,7 @@ function Table(orders: OrderDisplay[]) {
   if (auctionState != AuctionState.ORDER_PLACING_AND_CANCELING) {
     error = "Not allowed";
   }
+  if (!orders || orders.length == 0) return null;
   return (
     <>
       <ConfirmationModal
