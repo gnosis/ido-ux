@@ -205,7 +205,6 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
         throw await res.json();
       }
       const result = await res.json();
-      console.log(decodeOrder(result[0]));
       return {
         clearingOrder: decodeOrder(result[0]),
         volume: BigNumber.from(result[1]),

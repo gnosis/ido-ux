@@ -14,6 +14,10 @@ import CancelModalFooter from "../swap/CancelOrderModealFooter";
 import SwapModalHeader from "../swap/SwapModalHeader";
 import { useOrderActionHandlers } from "../../state/orders/hooks";
 import { OrderDisplay, OrderStatus } from "../../state/orders/reducer";
+import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolumeCallback";
+import { ClearingPriceAndVolumeData } from "../../api/AdditionalServicesApi";
+import { decodeOrder, encodeOrder } from "../../hooks/Order";
+import { Fraction } from "@uniswap/sdk";
 
 const StyledRow = styled.div`
   display: grid;
@@ -56,11 +60,37 @@ const Wrapper = styled.div`
   padding: 0;
 `;
 
+function getMatchedVolume(
+  orderId: string,
+  clearingOrderInfo: ClearingPriceAndVolumeData,
+): Number {
+  if (orderId == encodeOrder(clearingOrderInfo.clearingOrder)) {
+    return Number(
+      new Fraction(
+        clearingOrderInfo.volume.mul(100).toString(),
+        clearingOrderInfo.clearingOrder.sellAmount.toString(),
+      ).toSignificant(2),
+    );
+  } else {
+    const order = decodeOrder(orderId);
+    if (
+      order.sellAmount
+        .mul(clearingOrderInfo.clearingOrder.buyAmount)
+        .lt(order.buyAmount.mul(clearingOrderInfo.clearingOrder.sellAmount))
+    ) {
+      return Number(0);
+    } else {
+      return 100;
+    }
+  }
+}
+
 function Table(orders: OrderDisplay[]) {
   const { auctionState } = useDerivedAuctionState();
   const { biddingToken } = useDerivedAuctionInfo();
   const cancelOrderCallback = useCancelOrderCallback(biddingToken);
   const { onDeleteOrder } = useOrderActionHandlers();
+  const clearingPriceInfo = useClearingPriceInfo();
 
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
@@ -134,7 +164,11 @@ function Table(orders: OrderDisplay[]) {
         <StyledRow key={order[1].id}>
           <div>{order[1].sellAmount}</div>
           <div>{order[1].price}</div>
-          <div>100</div>
+          <div>
+            {clearingPriceInfo
+              ? getMatchedVolume(order[1].id, clearingPriceInfo)
+              : "loading"}
+          </div>
           <div>
             {order[1].status == OrderStatus.PLACED ? "Placed" : "Pending"}
           </div>
