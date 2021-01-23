@@ -165,13 +165,11 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
               auctionState,
             })}
           </Wrapper>
-          {orders && orders.orders.length > 0 && (
-            <OrderDisplayDropdown
-              showAdvanced={showAdvanced}
-              setShowAdvanced={setShowAdvanced}
-              orders={orders.orders}
-            />
-          )}
+          <OrderDisplayDropdown
+            showAdvanced={showAdvanced}
+            setShowAdvanced={setShowAdvanced}
+            orders={orders.orders}
+          />
         </>
       )}
     </AppBody>
