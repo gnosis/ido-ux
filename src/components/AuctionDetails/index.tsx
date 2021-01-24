@@ -17,12 +17,11 @@ import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolu
 
 const Wrapper = styled.div`
   position: relative;
-  width: calc(40% - 8px);
+  width: calc(50% - 8px);
   background: none;
-  border: ${({ theme }) => `1px solid ${theme.bg2}`};
   box-shadow: none;
   border-radius: 20px;
-  padding: 16px;
+  padding: 10px;
   flex: 0 1 auto;
   box-sizing: border-box;
   display: flex;
@@ -49,8 +48,8 @@ const Row = styled.span`
   flex-flow: row wrap;
   width: 100%;
   justify-content: space-between;
-  align-items: flex-start;
-  margin: 0 0 3px;
+  align-items: flex;
+  margin: 0 0 0 0px;
   font-weight: normal;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -133,6 +132,8 @@ export default function AuctionDetails() {
   return (
     <Wrapper>
       <Details>
+        <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
+        <br></br>
         <Row>
           <i>
             {" "}
@@ -191,8 +192,6 @@ export default function AuctionDetails() {
           <p>{auctionEndDateString}</p>
         </Row>
       </Details>
-
-      <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
     </Wrapper>
   );
 }

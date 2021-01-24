@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   border-radius: 20px;
   padding: 16px;
   flex: 0 1 auto;
-  width: calc(60% - 8px);
+  width: calc(50% - 8px);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
