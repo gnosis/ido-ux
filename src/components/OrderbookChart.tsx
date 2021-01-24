@@ -169,8 +169,8 @@ const drawLabels = ({
   const [xAxis] = chart.xAxes;
   const [yAxis] = chart.yAxes;
 
-  xAxis.title.text = ` Price (${quoteTokenLabel})`;
-  yAxis.title.text = baseTokenLabel;
+  xAxis.title.text = ` Price (${baseTokenLabel})`;
+  yAxis.title.text = quoteTokenLabel;
 
   const [bidSeries, askSeries] = chart.series;
 
