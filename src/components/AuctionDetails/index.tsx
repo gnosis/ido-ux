@@ -21,11 +21,12 @@ const Wrapper = styled.div`
   background: none;
   box-shadow: none;
   border-radius: 20px;
-  padding: 10px;
+  padding: 0px;
   flex: 0 1 auto;
   box-sizing: border-box;
   display: flex;
   flex-flow: column wrap;
+  align-items: center;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
@@ -38,14 +39,17 @@ const Details = styled.div`
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
   font-weight: normal;
-  width: 100%;
+  align-items: center;
+  margin-right: auto;
+  margin-left: auto;
+  width: 90%;
   display: flex;
   flex-flow: column wrap;
   margin: 0 0 16px;
 `;
 
 const Row = styled.span`
-  flex-flow: row wrap;
+  flex-flow: row-wrap;
   width: 100%;
   justify-content: space-between;
   align-items: flex;
@@ -131,8 +135,8 @@ export default function AuctionDetails() {
 
   return (
     <Wrapper>
+      <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
       <Details>
-        <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
         <br></br>
         <Row>
           <i>
