@@ -2,10 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import Modal, { useModal } from "./MesaModal";
 
-// assets
-import { faChartLine } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 // const, types, utils
 import { Token } from "@uniswap/sdk";
 
