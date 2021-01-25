@@ -48,7 +48,7 @@ function renderAuctionElements({
   auctionState: AuctionState;
 }) {
   switch (auctionState) {
-    case AuctionState.NOT_YET_STARTED:
+    case undefined || AuctionState.NOT_YET_STARTED:
       return <></>;
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:

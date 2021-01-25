@@ -122,7 +122,9 @@ export default function AuctionHeader() {
   const { auctionState } = useDerivedAuctionState();
   return (
     <Wrapper>
-      {auctionState == AuctionState.NOT_YET_STARTED ? (
+      {auctionState == undefined ? (
+        <h5>⌛ Loading</h5>
+      ) : auctionState == AuctionState.NOT_YET_STARTED ? (
         <h5>⌛ Auction not yet started</h5>
       ) : (
         <AuctionHeaderForScheduledAuction />
