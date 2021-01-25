@@ -6,25 +6,7 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themesSpiritedaway from "@amcharts/amcharts4/themes/spiritedaway";
 
 import { Token } from "@uniswap/sdk";
-
-export interface OrderBookChartProps {
-  /**
-   * Base Token for Y-axis
-   */
-  baseToken: Token;
-  /**
-   * Quote Token for X-axis
-   */
-  quoteToken: Token;
-  /**
-   * current network id
-   */
-  networkId: number;
-  /**
-   * price/volume data with asks and bids
-   */
-  data: PricePointDetails[] | null;
-}
+import { OrderBookChartProps } from "./OrderbookChart";
 
 const Wrapper = styled.div`
   display: flex;
@@ -64,41 +46,6 @@ const Wrapper = styled.div`
   }
 `;
 
-interface OrderBookErrorProps {
-  error: Error;
-}
-
-export const OrderBookError: React.FC<OrderBookErrorProps> = ({
-  error,
-}: OrderBookErrorProps) => (
-  <Wrapper>{error ? error.message : "loading"}</Wrapper>
-);
-
-export enum Offer {
-  Bid,
-  Ask,
-}
-
-/**
- * Price point data represented in the graph. Contains BigNumbers for operate with less errors and more precission
- * but for representation uses number as expected by the library
- */
-export interface PricePointDetails {
-  // Basic data
-  type: Offer;
-  volume: number; // volume for the price point
-  totalVolume: number; // cumulative volume
-  price: number;
-
-  // Data for representation
-  priceNumber: number;
-  priceFormatted: string;
-  totalVolumeNumber: number;
-  totalVolumeFormatted: string;
-  askValueY: number | null;
-  bidValueY: number | null;
-}
-
 const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   am4core.useTheme(am4themesSpiritedaway);
   am4core.options.autoSetClassName = true;
@@ -134,7 +81,7 @@ const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   bidSeries.strokeWidth = 2;
   bidSeries.stroke = am4core.color(colors.green);
   bidSeries.fill = bidSeries.stroke;
-  bidSeries.fillOpacity = 0.1;
+  bidSeries.fillOpacity = 0.3;
 
   const askSeries = chart.series.push(new am4charts.LineSeries());
   askSeries.dataFields.valueX = "priceNumber";

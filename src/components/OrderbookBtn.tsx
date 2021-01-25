@@ -19,7 +19,9 @@ import {
 
 // utils
 import { getTokenDisplay } from "../utils";
-import OrderBookChartSmall, { OrderBookError } from "./OrderbookChartSmall";
+import { OrderBookError } from "./OrderbookChart";
+
+import OrderBookChartSmall from "./OrderbookChartSmall";
 import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
