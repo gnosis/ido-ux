@@ -318,7 +318,7 @@ export function useDerivedAuctionInfo(): {
 }
 
 export function useDerivedAuctionState(): {
-  auctionState: AuctionState;
+  auctionState: AuctionState | undefined;
 } {
   const { chainId } = useActiveWeb3React();
 
@@ -365,7 +365,7 @@ export function useDerivedAuctionState(): {
     );
   }
 
-  let auctionState = AuctionState.CLAIMING;
+  let auctionState = undefined;
   if (auctionEndDate > new Date().getTime() / 1000) {
     auctionState = AuctionState.ORDER_PLACING;
     if (orderCancellationEndDate >= new Date().getTime() / 1000) {
@@ -374,6 +374,8 @@ export function useDerivedAuctionState(): {
   } else {
     if (clearingPrice?.toSignificant(1) == "0") {
       auctionState = AuctionState.PRICE_SUBMISSION;
+    } else {
+      auctionState = AuctionState.CLAIMING;
     }
   }
   return {
