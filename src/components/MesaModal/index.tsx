@@ -34,13 +34,13 @@ const ModaliGlobalStyle = createGlobalStyle`
   /* End hack */
   
   .modali-open .modali-overlay {
-    background-color: var(--color-background-opaque-grey, ${MODALI_OVERLAY_COLOUR});
+    background-color: ${({ theme }) => theme.bg1};
     opacity: 1;
   }
   
   .modali-open .modali-wrapper-centered .modali {
     // todo get proper --colo-background-pageWrapper  
-    background: #2C2F36;
+    background: ${({ theme }) => theme.bg1};
     box-shadow: 0 .2rem .4rem 0 rgba(0,0,0,0.14);
     border-radius: .6rem;
     border: 0;
@@ -53,7 +53,7 @@ const ModaliGlobalStyle = createGlobalStyle`
       letter-spacing: 0;
       font-size: 1.6rem;
       text-align: left;
-      color: var(--color-text-primary);
+      color: ${({ theme }) => theme.text1};
       margin: 0;
       display: flex;
       align-items: center;
@@ -72,7 +72,7 @@ const ModaliGlobalStyle = createGlobalStyle`
       background: transparent;
       font-size: 4rem;
       line-height: 1;
-      color: var(--color-modali-close);
+      color: ${({ theme }) => theme.text3};
       font-weight: normal;
       opacity: .5;
       padding: 0;
@@ -86,7 +86,7 @@ const ModaliGlobalStyle = createGlobalStyle`
     .modali-body {
       font-size: 1.4rem;
       line-height: 1.3;
-      background: inherit;
+      background: ${({ theme }) => theme.bg1};
       color: var(--color-text-primary);
     }
     
@@ -101,7 +101,7 @@ const ModaliGlobalStyle = createGlobalStyle`
       padding: 0 1.6rem;
       box-sizing: border-box;
 
-      .modali-button.modali-button-default, .modali-button.modali-button-cancel {
+      /* .modali-button.modali-button-default, .modali-button.modali-button-cancel {
         margin: 0;
         border-radius: 0.6rem;
         outline: 0;
@@ -113,7 +113,6 @@ const ModaliGlobalStyle = createGlobalStyle`
         justify-content: center;
         text-decoration: none;
         text-transform: uppercase;
-        background: var(--color-background-CTA);
         color: var(--color-text-CTA);
         font-weight: var(--font-weight-bold);
         font-size: 1.4rem;
@@ -122,7 +121,7 @@ const ModaliGlobalStyle = createGlobalStyle`
           background-color: var(--color-background-button-hover);
           color: var(--color-text-button-hover);
         }
-      }
+      } */
       
       .modali-button.modali-button-default {
         border-radius: 0.6rem;

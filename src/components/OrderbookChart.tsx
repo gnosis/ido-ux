@@ -29,13 +29,13 @@ export interface OrderBookChartProps {
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
-  /* min-height: 40rem; */
-  /* height: calc(100vh - 30rem); */
   min-height: calc(100vh - 30rem);
   text-align: center;
   width: 100%;
   height: 100%;
   min-width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
 
   .amcharts-Sprite-group {
     font-size: 1rem;
@@ -98,52 +98,77 @@ export interface PricePointDetails {
   bidValueY: number | null;
 }
 
-const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
+export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   am4core.useTheme(am4themesSpiritedaway);
   am4core.options.autoSetClassName = true;
   const chart = am4core.create(chartElement, am4charts.XYChart);
+  chart.paddingTop = 0;
+  chart.marginTop = 0;
+  chart.paddingBottom = 0;
+  chart.paddingLeft = 0;
+  chart.paddingRight = 0;
+  chart.marginBottom = 0;
 
   // Colors
   const colors = {
-    green: "#3d7542",
-    red: "#dc1235",
+    green: "#28a745",
+    red: "#dc3545",
+    white: "#FFFFFF",
+    grey: "#565A69",
   };
 
   // Create axes
-  chart.xAxes.push(new am4charts.ValueAxis());
-  chart.yAxes.push(new am4charts.ValueAxis());
+  const priceAxis = chart.xAxes.push(new am4charts.ValueAxis());
+  const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  priceAxis.renderer.labels.template.disabled = true;
+  volumeAxis.renderer.labels.template.disabled = true;
+  priceAxis.renderer.grid.template.disabled = true;
+  volumeAxis.renderer.tooltip.getFillFromObject = false;
+  priceAxis.renderer.tooltip.getFillFromObject = false;
 
+  volumeAxis.renderer.grid.template.disabled = true;
+  priceAxis.renderer.minGridDistance = 10;
+  volumeAxis.renderer.minGridDistance = 10;
   // Create series
   const bidSeries = chart.series.push(new am4charts.StepLineSeries());
   bidSeries.dataFields.valueX = "priceNumber";
   bidSeries.dataFields.valueY = "bidValueY";
-  bidSeries.strokeWidth = 2;
+  bidSeries.strokeWidth = 1;
   bidSeries.stroke = am4core.color(colors.green);
   bidSeries.fill = bidSeries.stroke;
-  bidSeries.startLocation = 0.5;
-  bidSeries.fillOpacity = 0.1;
+  bidSeries.fillOpacity = 0.2;
 
   const askSeries = chart.series.push(new am4charts.LineSeries());
   askSeries.dataFields.valueX = "priceNumber";
   askSeries.dataFields.valueY = "askValueY";
-  askSeries.strokeWidth = 2;
+  askSeries.strokeWidth = 1;
   askSeries.stroke = am4core.color(colors.red);
   askSeries.fill = askSeries.stroke;
   askSeries.fillOpacity = 0.1;
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor();
+  chart.cursor.lineX.stroke = am4core.color("white");
+  chart.cursor.lineX.strokeWidth = 1;
+  chart.cursor.lineX.strokeOpacity = 0.6;
+  chart.cursor.lineX.strokeDasharray = "4";
+
+  chart.cursor.lineY.stroke = am4core.color("white");
+  chart.cursor.lineY.strokeWidth = 1;
+  chart.cursor.lineY.strokeOpacity = 0.6;
+  chart.cursor.lineY.strokeDasharray = "4";
+
   return chart;
 };
 
-interface DrawLabelsParams {
+export interface DrawLabelsParams {
   chart: am4charts.XYChart;
   baseToken: Token;
   quoteToken: Token;
   networkId: number;
 }
 
-const drawLabels = ({
+export const drawLabels = ({
   chart,
   baseToken,
   quoteToken,
@@ -155,8 +180,16 @@ const drawLabels = ({
   const [xAxis] = chart.xAxes;
   const [yAxis] = chart.yAxes;
 
-  xAxis.title.text = ` Price (${quoteTokenLabel})`;
+  xAxis.title.text = ` Price (${baseTokenLabel})`;
   yAxis.title.text = ` Volume (${quoteTokenLabel})`;
+
+  xAxis.tooltip.background.cornerRadius = 0;
+  xAxis.tooltip.background.fill = am4core.color("green");
+  yAxis.tooltip.background.cornerRadius = 0;
+  yAxis.tooltip.background.fill = am4core.color("red");
+
+  xAxis.title.fill = am4core.color("white");
+  yAxis.title.fill = am4core.color("white");
 
   const [bidSeries, askSeries] = chart.series;
 
