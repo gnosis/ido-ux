@@ -69,7 +69,9 @@ interface OrderBookErrorProps {
 
 export const OrderBookError: React.FC<OrderBookErrorProps> = ({
   error,
-}: OrderBookErrorProps) => <Wrapper>{error.message}</Wrapper>;
+}: OrderBookErrorProps) => (
+  <Wrapper>{error ? error.message : "loading"}</Wrapper>
+);
 
 export enum Offer {
   Bid,
