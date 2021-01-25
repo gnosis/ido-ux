@@ -366,7 +366,7 @@ export function useDerivedAuctionState(): {
   }
 
   let auctionState = undefined;
-  if (auctionEndDate > new Date().getTime() / 1000) {
+  if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
     auctionState = AuctionState.ORDER_PLACING;
     if (orderCancellationEndDate >= new Date().getTime() / 1000) {
       auctionState = AuctionState.ORDER_PLACING_AND_CANCELING;
@@ -375,7 +375,7 @@ export function useDerivedAuctionState(): {
     if (clearingPrice?.toSignificant(1) == "0") {
       auctionState = AuctionState.PRICE_SUBMISSION;
     } else {
-      auctionState = AuctionState.CLAIMING;
+      if (clearingPrice) auctionState = AuctionState.CLAIMING;
     }
   }
   return {

@@ -27,7 +27,12 @@ import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
 const ViewOrderBookBtn = styled(ButtonLight)`
   margin: 0 0 0 0;
   background-color: ${({ theme }) => theme.bg1};
-
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  flex-flow: column wrap;
+  margin: 0 0 16px;
+  width: 100%;
   max-height: 200px;
   > svg {
     margin: 0 0 0 5px;
