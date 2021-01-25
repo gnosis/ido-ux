@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import Modal, { useModal } from "./MesaModal";
 
@@ -8,7 +8,7 @@ import { Token } from "@uniswap/sdk";
 // components
 import { DEFAULT_MODAL_OPTIONS } from "./Modal";
 import { ButtonLight } from "./Button";
-import OrderBookWidget, { processRawApiData } from "./OrderbookWidget";
+import OrderBookWidget from "./OrderbookWidget";
 
 // hooks
 import { useActiveWeb3React } from "../hooks";
@@ -19,11 +19,8 @@ import {
 
 // utils
 import { getTokenDisplay } from "../utils";
-import OrderBookChart, {
-  OrderBookError,
-  PricePointDetails,
-} from "./OrderbookChart";
-import { additionalServiceApi } from "../api";
+import OrderBookChartSmall, { OrderBookError } from "./OrderbookChartSmall";
+import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
   margin: 0 0 0 0;
@@ -140,52 +137,8 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
       />,
     ],
   });
-  const [apiData, setApiData] = useState<PricePointDetails[] | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-
-  // sync resetting ApiData to avoid old data on new labels flash
-  // and layout changes
-  useMemo(() => {
-    setApiData(null);
-    setError(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [biddingToken, auctioningToken, chainId]);
-
-  useEffect(() => {
-    // handle stale fetches resolving out of order
-    let cancelled = false;
-
-    const fetchApiData = async (): Promise<void> => {
-      try {
-        const rawData = await additionalServiceApi.getOrderBookData({
-          networkId: chainId,
-          auctionId,
-        });
-
-        if (cancelled) return;
-
-        const processedData = processRawApiData({
-          data: rawData,
-          quoteToken: biddingToken,
-          baseToken: auctioningToken,
-        });
-
-        setApiData(processedData);
-      } catch (error) {
-        if (cancelled) return;
-        console.error("Error populating orderbook with data", error);
-        setError(error);
-      }
-    };
-
-    fetchApiData();
-
-    return (): void => {
-      cancelled = true;
-    };
-  }, [biddingToken, auctioningToken, chainId, auctionId, setApiData, setError]);
-
-  if (error) return <OrderBookError error={error} />;
+  const { error, orderbookData } = useOrderbookDataCallback();
+  if (error || !orderbookData) return <OrderBookError error={error} />;
 
   return (
     <>
@@ -194,11 +147,11 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
         onClick={toggleModal}
         type="button"
       >
-        <OrderBookChart
+        <OrderBookChartSmall
           baseToken={auctioningToken}
           quoteToken={biddingToken}
           networkId={chainId}
-          data={apiData}
+          data={orderbookData}
         />
       </ViewOrderBookBtn>
       <Modal.Modal {...modalHook} />

@@ -31,21 +31,19 @@ const Wrapper = styled.div`
   justify-content: center;
   /* min-height: 40rem; */
   /* height: calc(100vh - 30rem); */
+  min-height: calc(100vh - 30rem);
   text-align: center;
   width: 100%;
   height: 100%;
   min-width: 100%;
-  text-color: ${({ theme }) => theme.white};
 
   .amcharts-Sprite-group {
     font-size: 1rem;
-    color: ${({ theme }) => theme.white};
   }
 
-  .amcharts-Label {
+  .amcharts-Container .amcharts-Label {
     text-transform: uppercase;
-    font-size: 1rem;
-    color: ${({ theme }) => theme.white};
+    font-size: 1.2rem;
   }
 
   .amcharts-ZoomOutButton-group > .amcharts-RoundedRectangle-group {
@@ -102,32 +100,17 @@ const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   am4core.useTheme(am4themesSpiritedaway);
   am4core.options.autoSetClassName = true;
   const chart = am4core.create(chartElement, am4charts.XYChart);
-  chart.paddingTop = 0;
-  chart.marginTop = 0;
-  chart.paddingBottom = 0;
-  chart.paddingLeft = 0;
-  chart.paddingRight = 0;
-  chart.marginBottom = 0;
 
   // Colors
   const colors = {
     green: "#3d7542",
     red: "#dc1235",
-    white: "#FFFFFF",
   };
 
   // Create axes
-  const priceAxis = chart.xAxes.push(new am4charts.ValueAxis());
-  const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis());
-  priceAxis.renderer.labels.template.disabled = true;
-  volumeAxis.renderer.labels.template.disabled = true;
-  priceAxis.renderer.grid.template.disabled = true;
-  priceAxis.renderer.labels.template.fill = am4core.color(colors.white);
-  priceAxis.renderer.labels.template.fill = am4core.color(colors.white);
+  chart.xAxes.push(new am4charts.ValueAxis());
+  chart.yAxes.push(new am4charts.ValueAxis());
 
-  volumeAxis.renderer.grid.template.disabled = true;
-  priceAxis.renderer.minGridDistance = 10;
-  volumeAxis.renderer.minGridDistance = 10;
   // Create series
   const bidSeries = chart.series.push(new am4charts.StepLineSeries());
   bidSeries.dataFields.valueX = "priceNumber";
@@ -135,6 +118,7 @@ const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   bidSeries.strokeWidth = 2;
   bidSeries.stroke = am4core.color(colors.green);
   bidSeries.fill = bidSeries.stroke;
+  bidSeries.startLocation = 0.5;
   bidSeries.fillOpacity = 0.1;
 
   const askSeries = chart.series.push(new am4charts.LineSeries());
@@ -169,8 +153,8 @@ const drawLabels = ({
   const [xAxis] = chart.xAxes;
   const [yAxis] = chart.yAxes;
 
-  xAxis.title.text = ` Price (${baseTokenLabel})`;
-  yAxis.title.text = quoteTokenLabel;
+  xAxis.title.text = ` Price (${quoteTokenLabel})`;
+  yAxis.title.text = ` Volume (${quoteTokenLabel})`;
 
   const [bidSeries, askSeries] = chart.series;
 
