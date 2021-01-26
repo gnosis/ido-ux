@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
 export const BoxTitle = styled.div`
-  align: center;
-  textalign: center;
+  text-align: center;
   justify-content: center;
   height: 3rem;
   flex: 1 0 auto;

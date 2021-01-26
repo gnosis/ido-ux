@@ -30,8 +30,6 @@ const Wrapper = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
-    margin: 0 0 16px;
-    order: 1;
   `};
 `;
 
