@@ -17,10 +17,12 @@ const Wrapper = styled.div`
   text-align: center;
   flex-flow: row nowrap;
   justify-content: space-between;
-  margin: 0 0 16px;
+  margin: 0;
   background: ${({ theme }) => theme.bg2};
   border-radius: 20px;
   padding: 16px;
+  box-sizing: border-box;
+  margin: 0 0 16px;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     flex-flow: column wrap;
@@ -45,7 +47,7 @@ const Wrapper = styled.div`
     font-weight: normal;
 
     ${({ theme }) => theme.mediaWidth.upToMedium`
-      margin: 0 0 16px;
+      margin: 0;
       text-align: center;
       justify-content: center;
     `};
@@ -105,14 +107,14 @@ export function AuctionHeaderForScheduledAuction() {
   const { auctionState } = useDerivedAuctionState();
 
   return (
-    <Wrapper>
+    <>
       {renderAuctionStatus({
         auctioningToken,
         auctionState,
         initialAuctionOrder,
       })}
       <CountdownTimer auctionEndDate={auctionEndDate} />
-    </Wrapper>
+    </>
   );
 }
 

@@ -42,10 +42,13 @@ const Details = styled.div`
   align-items: center;
   margin-right: auto;
   margin-left: auto;
-  width: 90%;
+  width: 100%;
   display: flex;
   flex-flow: column wrap;
-  margin: 0 0 16px;
+  padding: 16px;
+  margin: 16px 0 0;
+  border-radius: 20px;
+  border: 1px solid ${({ theme }) => theme.bg2};
 `;
 
 const Row = styled.span`
@@ -53,7 +56,7 @@ const Row = styled.span`
   width: 100%;
   justify-content: space-between;
   align-items: flex;
-  margin: 0 0 0 0px;
+  margin: 0 0 4px 0;
   font-weight: normal;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -137,7 +140,6 @@ export default function AuctionDetails() {
     <Wrapper>
       <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
       <Details>
-        <br></br>
         <Row>
           <i>
             {" "}

@@ -26,14 +26,16 @@ import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
   margin: 0 0 0 0;
-  background-color: ${({ theme }) => theme.bg1};
-  margin-right: auto;
-  margin-left: auto;
-  display: flex;
-  flex-flow: column wrap;
-  margin: 0 0 16px;
+  background: none;
+  height: auto;
   width: 100%;
-  max-height: 200px;
+  padding: 0;
+  color: ${({ theme }) => theme.text3};
+
+  &:hover {
+    background: none;
+  }
+
   > svg {
     margin: 0 0 0 5px;
   }
@@ -52,7 +54,6 @@ const ModalWrapper = styled.div`
   flex-flow: row wrap;
   padding: 0;
   justify-content: center;
-  background: ${({ theme }) => theme.bg2};
 
   > span {
     display: flex;
@@ -80,7 +81,7 @@ const ModalWrapper = styled.div`
 
   .amcharts-Container .amcharts-Label {
     text-transform: uppercase;
-    font-size: 1.2rem;
+    font-size: 11px;
   }
 
   .amcharts-ZoomOutButton-group > .amcharts-RoundedRectangle-group {

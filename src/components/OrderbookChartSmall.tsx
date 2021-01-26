@@ -1,33 +1,29 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
-import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themesSpiritedaway from "@amcharts/amcharts4/themes/spiritedaway";
-
-import { Token } from "@uniswap/sdk";
-import { OrderBookChartProps } from "./OrderbookChart";
+import { OrderBookChartProps, drawLabels, createChart } from "./OrderbookChart";
 
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
-  /* min-height: 40rem; */
-  /* height: calc(100vh - 30rem); */
   text-align: center;
   width: 100%;
   height: 100%;
   min-width: 100%;
-  text-color: ${({ theme }) => theme.white};
+  color: ${({ theme }) => theme.text4};
+  position: relative;
 
   .amcharts-Sprite-group {
-    font-size: 1rem;
-    color: ${({ theme }) => theme.white};
+    pointer-events: none;
   }
 
   .amcharts-Label {
     text-transform: uppercase;
-    font-size: 1rem;
-    color: ${({ theme }) => theme.white};
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: ${({ theme }) => theme.text4};
+    margin: 10px;
   }
 
   .amcharts-ZoomOutButton-group > .amcharts-RoundedRectangle-group {
@@ -42,89 +38,9 @@ const Wrapper = styled.div`
 
   .amcharts-CategoryAxis .amcharts-Label-group > .amcharts-Label,
   .amcharts-ValueAxis-group .amcharts-Label-group > .amcharts-Label {
-    fill: var(--color-text-primary);
+    fill: ${({ theme }) => theme.text3};
   }
 `;
-
-const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
-  am4core.useTheme(am4themesSpiritedaway);
-  am4core.options.autoSetClassName = true;
-  const chart = am4core.create(chartElement, am4charts.XYChart);
-  chart.paddingTop = 0;
-  chart.marginTop = 0;
-  chart.paddingBottom = 0;
-  chart.paddingLeft = 0;
-  chart.paddingRight = 0;
-  chart.marginBottom = 0;
-
-  // Colors
-  const colors = {
-    green: "#3d7542",
-    red: "#dc1235",
-    white: "#FFFFFF",
-  };
-
-  // Create axes
-  const priceAxis = chart.xAxes.push(new am4charts.ValueAxis());
-  const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis());
-  priceAxis.renderer.labels.template.disabled = true;
-  volumeAxis.renderer.labels.template.disabled = true;
-  priceAxis.renderer.grid.template.disabled = true;
-
-  volumeAxis.renderer.grid.template.disabled = true;
-  priceAxis.renderer.minGridDistance = 10;
-  volumeAxis.renderer.minGridDistance = 10;
-  // Create series
-  const bidSeries = chart.series.push(new am4charts.StepLineSeries());
-  bidSeries.dataFields.valueX = "priceNumber";
-  bidSeries.dataFields.valueY = "bidValueY";
-  bidSeries.strokeWidth = 2;
-  bidSeries.stroke = am4core.color(colors.green);
-  bidSeries.fill = bidSeries.stroke;
-  bidSeries.fillOpacity = 0.3;
-
-  const askSeries = chart.series.push(new am4charts.LineSeries());
-  askSeries.dataFields.valueX = "priceNumber";
-  askSeries.dataFields.valueY = "askValueY";
-  askSeries.strokeWidth = 2;
-  askSeries.stroke = am4core.color(colors.red);
-  askSeries.fill = askSeries.stroke;
-  askSeries.fillOpacity = 0.1;
-
-  // Add cursor
-  chart.cursor = new am4charts.XYCursor();
-  return chart;
-};
-
-interface DrawLabelsParams {
-  chart: am4charts.XYChart;
-  baseToken: Token;
-  quoteToken: Token;
-  networkId: number;
-}
-
-const drawLabels = ({
-  chart,
-  baseToken,
-  quoteToken,
-}: DrawLabelsParams): void => {
-  const baseTokenLabel = baseToken.symbol;
-  const quoteTokenLabel = quoteToken.symbol;
-  const market = baseTokenLabel + "-" + quoteTokenLabel;
-
-  const [xAxis] = chart.xAxes;
-  const [yAxis] = chart.yAxes;
-
-  xAxis.title.text = ` Price (${baseTokenLabel})`;
-  yAxis.title.text = ` Volume (${quoteTokenLabel})`;
-  xAxis.title.fill = am4core.color("white");
-  yAxis.title.fill = am4core.color("white");
-
-  const [bidSeries, askSeries] = chart.series;
-
-  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`;
-  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`;
-};
 
 const OrderBookChartSmall: React.FC<OrderBookChartProps> = (
   props: OrderBookChartProps,
@@ -161,7 +77,7 @@ const OrderBookChartSmall: React.FC<OrderBookChartProps> = (
     chartRef.current.data = data;
   }, [baseToken, networkId, quoteToken, data]);
 
-  return <Wrapper ref={mountPoint}>Show order book for auction</Wrapper>;
+  return <Wrapper ref={mountPoint}>Show order book for this auction</Wrapper>;
 };
 
 export default OrderBookChartSmall;
