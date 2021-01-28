@@ -19,7 +19,7 @@ import {
 
 // utils
 import { getTokenDisplay } from "../utils";
-import { OrderBookError } from "./OrderbookChart";
+import { OrderBookError } from "./OrderbookChartSmall";
 
 import OrderBookChartSmall from "./OrderbookChartSmall";
 import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
@@ -39,6 +39,10 @@ const ViewOrderBookBtn = styled(ButtonLight)`
   > svg {
     margin: 0 0 0 5px;
   }
+`;
+
+const Wrapper = styled.div`
+  display: block;
 `;
 
 // todo correct circular reference:
@@ -149,7 +153,7 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
   if (error || !orderbookData) return <OrderBookError error={error} />;
 
   return (
-    <>
+    <Wrapper>
       <ViewOrderBookBtn
         className={className}
         onClick={toggleModal}
@@ -163,6 +167,6 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
         />
       </ViewOrderBookBtn>
       <Modal.Modal {...modalHook} />
-    </>
+    </Wrapper>
   );
 };

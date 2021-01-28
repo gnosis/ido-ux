@@ -1,17 +1,55 @@
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
+import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import { OrderBookChartProps, drawLabels, createChart } from "./OrderbookChart";
+import {
+  OrderBookChartProps,
+  DrawLabelsParams,
+  createChart,
+} from "./OrderbookChart";
+
+const drawLabels = ({
+  chart,
+  baseToken,
+  quoteToken,
+}: DrawLabelsParams): void => {
+  const baseTokenLabel = baseToken.symbol;
+  const quoteTokenLabel = quoteToken.symbol;
+  const market = baseTokenLabel + "-" + quoteTokenLabel;
+
+  const [xAxis] = chart.xAxes;
+  const [yAxis] = chart.yAxes;
+
+  xAxis.title.text = ` Price (${baseTokenLabel})`;
+  yAxis.title.text = ` Volume (${quoteTokenLabel})`;
+
+  xAxis.tooltip.background.cornerRadius = 0;
+  xAxis.tooltip.background.fill = am4core.color("green");
+  yAxis.tooltip.background.cornerRadius = 0;
+  yAxis.tooltip.background.fill = am4core.color("red");
+
+  xAxis.title.fill = am4core.color("white");
+  yAxis.title.fill = am4core.color("white");
+
+  const [bidSeries, askSeries] = chart.series;
+
+  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`;
+  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`;
+};
 
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
+  align-content: center;
+  min-height: 166.44px;
+  max-height: 166.44px;
+  padding: 16px;
+
   text-align: center;
-  width: 100%;
-  height: 100%;
-  min-width: 100%;
-  color: ${({ theme }) => theme.text4};
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.text2};
   position: relative;
 
   .amcharts-Sprite-group {
@@ -79,5 +117,15 @@ const OrderBookChartSmall: React.FC<OrderBookChartProps> = (
 
   return <Wrapper ref={mountPoint}>Show order book for this auction</Wrapper>;
 };
+
+interface OrderBookErrorProps {
+  error: Error;
+}
+
+export const OrderBookError: React.FC<OrderBookErrorProps> = ({
+  error,
+}: OrderBookErrorProps) => (
+  <Wrapper>{error ? error.message : "loading"}</Wrapper>
+);
 
 export default OrderBookChartSmall;
