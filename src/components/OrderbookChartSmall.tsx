@@ -43,8 +43,10 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   align-content: center;
-  min-height: 186px;
+  min-height: 166.44px;
+  max-height: 166.44px;
   padding: 16px;
+
   text-align: center;
   box-sizing: border-box;
   color: ${({ theme }) => theme.text2};
