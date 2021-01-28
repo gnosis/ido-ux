@@ -26,13 +26,13 @@ change `REACT_APP_NETWORK_ID` to `{yourNetworkId}`, and change `REACT_APP_NETWOR
 
 Checkout the repo gnosis/ido-services and run the orderbook service with
 
-```
+```rust
 cargo run --bin orderbook.
 ```
 
 This will start the necessary backend end points for a smooth development. Then set the env variable:
 
-```
+```bash
 REACT_APP_ADDITIONAL_SERVICES_API_URL=http://127.0.0.1:8080/
 ```
 
@@ -42,7 +42,7 @@ in the .env or .env.local file to the connect to the local api
 
 Set the env variable:
 
-```
+```bash
 REACT_APP_ADDITIONAL_SERVICES_API_URL=https://ido-v1-api-rinkeby.dev.gnosisdev.com/
 ```
 
