@@ -17,21 +17,19 @@ import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolu
 
 const Wrapper = styled.div`
   position: relative;
-  width: calc(40% - 8px);
+  width: calc(50% - 8px);
   background: none;
-  border: ${({ theme }) => `1px solid ${theme.bg2}`};
   box-shadow: none;
   border-radius: 20px;
-  padding: 16px;
+  padding: 0px;
   flex: 0 1 auto;
   box-sizing: border-box;
   display: flex;
   flex-flow: column wrap;
+  align-items: center;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
-    margin: 0 0 16px;
-    order: 1;
   `};
 `;
 
@@ -39,18 +37,24 @@ const Details = styled.div`
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
   font-weight: normal;
+  align-items: center;
+  margin-right: auto;
+  margin-left: auto;
   width: 100%;
   display: flex;
   flex-flow: column wrap;
-  margin: 0 0 16px;
+  padding: 16px;
+  margin: 16px 0 0;
+  border-radius: 20px;
+  border: 1px solid ${({ theme }) => theme.bg2};
 `;
 
 const Row = styled.span`
-  flex-flow: row wrap;
+  flex-flow: row-wrap;
   width: 100%;
   justify-content: space-between;
-  align-items: flex-start;
-  margin: 0 0 3px;
+  align-items: flex;
+  margin: 0 0 4px 0;
   font-weight: normal;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -132,6 +136,7 @@ export default function AuctionDetails() {
 
   return (
     <Wrapper>
+      <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
       <Details>
         <Row>
           <i>
@@ -191,8 +196,6 @@ export default function AuctionDetails() {
           <p>{auctionEndDateString}</p>
         </Row>
       </Details>
-
-      <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
     </Wrapper>
   );
 }

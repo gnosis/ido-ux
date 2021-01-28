@@ -2,10 +2,6 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import Modal, { useModal } from "./MesaModal";
 
-// assets
-import { faChartLine } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 // const, types, utils
 import { Token } from "@uniswap/sdk";
 
@@ -23,13 +19,30 @@ import {
 
 // utils
 import { getTokenDisplay } from "../utils";
+import { OrderBookError } from "./OrderbookChartSmall";
+
+import OrderBookChartSmall from "./OrderbookChartSmall";
+import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
-  margin: auto 0 0;
+  margin: 0 0 0 0;
+  background: none;
+  height: auto;
+  width: 100%;
+  padding: 0;
+  color: ${({ theme }) => theme.text3};
+
+  &:hover {
+    background: none;
+  }
 
   > svg {
     margin: 0 0 0 5px;
   }
+`;
+
+const Wrapper = styled.div`
+  display: block;
 `;
 
 // todo correct circular reference:
@@ -45,7 +58,6 @@ const ModalWrapper = styled.div`
   flex-flow: row wrap;
   padding: 0;
   justify-content: center;
-  background: ${({ theme }) => theme.bg2};
 
   > span {
     display: flex;
@@ -73,7 +85,7 @@ const ModalWrapper = styled.div`
 
   .amcharts-Container .amcharts-Label {
     text-transform: uppercase;
-    font-size: 1.2rem;
+    font-size: 11px;
   }
 
   .amcharts-ZoomOutButton-group > .amcharts-RoundedRectangle-group {
@@ -137,18 +149,24 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
       />,
     ],
   });
+  const { error, orderbookData } = useOrderbookDataCallback();
+  if (error || !orderbookData) return <OrderBookError error={error} />;
 
   return (
-    <>
+    <Wrapper>
       <ViewOrderBookBtn
         className={className}
         onClick={toggleModal}
         type="button"
       >
-        {"View Order Book"}{" "}
-        <FontAwesomeIcon className="chart-icon" icon={faChartLine} />
+        <OrderBookChartSmall
+          baseToken={auctioningToken}
+          quoteToken={biddingToken}
+          networkId={chainId}
+          data={orderbookData}
+        />
       </ViewOrderBookBtn>
       <Modal.Modal {...modalHook} />
-    </>
+    </Wrapper>
   );
 };

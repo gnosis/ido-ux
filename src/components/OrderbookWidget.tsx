@@ -1,9 +1,6 @@
-import React, { useEffect, useMemo } from "react";
-import { additionalServiceApi } from "./../api";
+import React from "react";
 
 import { OrderBookData, PricePoint } from "../api/AdditionalServicesApi";
-
-import { useState } from "react";
 
 import OrderBookChart, {
   OrderBookChartProps,
@@ -12,6 +9,7 @@ import OrderBookChart, {
   Offer,
 } from "./OrderbookChart";
 import { Token } from "@uniswap/sdk";
+import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
 
 const SMALL_VOLUME_THRESHOLD = 0.001;
 
@@ -199,52 +197,8 @@ export interface OrderBookProps extends Omit<OrderBookChartProps, "data"> {
 }
 
 const OrderBookWidget: React.FC<OrderBookProps> = (props: OrderBookProps) => {
-  const { baseToken, quoteToken, networkId, auctionId } = props;
-  const [apiData, setApiData] = useState<PricePointDetails[] | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-
-  // sync resetting ApiData to avoid old data on new labels flash
-  // and layout changes
-  useMemo(() => {
-    setApiData(null);
-    setError(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [baseToken, quoteToken, networkId]);
-
-  useEffect(() => {
-    // handle stale fetches resolving out of order
-    let cancelled = false;
-
-    const fetchApiData = async (): Promise<void> => {
-      try {
-        const rawData = await additionalServiceApi.getOrderBookData({
-          networkId,
-          auctionId,
-        });
-
-        if (cancelled) return;
-
-        const processedData = processRawApiData({
-          data: rawData,
-          baseToken,
-          quoteToken,
-        });
-
-        setApiData(processedData);
-      } catch (error) {
-        if (cancelled) return;
-        console.error("Error populating orderbook with data", error);
-        setError(error);
-      }
-    };
-
-    fetchApiData();
-
-    return (): void => {
-      cancelled = true;
-    };
-  }, [baseToken, quoteToken, networkId, auctionId, setApiData, setError]);
-
+  const { baseToken, quoteToken, networkId } = props;
+  const { error, orderbookData } = useOrderbookDataCallback();
   if (error) return <OrderBookError error={error} />;
 
   return (
@@ -252,7 +206,7 @@ const OrderBookWidget: React.FC<OrderBookProps> = (props: OrderBookProps) => {
       baseToken={baseToken}
       quoteToken={quoteToken}
       networkId={networkId}
-      data={apiData}
+      data={orderbookData}
     />
   );
 };
