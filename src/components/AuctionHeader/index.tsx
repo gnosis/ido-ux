@@ -89,7 +89,7 @@ const renderAuctionStatus = ({
       );
 
     case AuctionState.PRICE_SUBMISSION:
-      return <h3>🗓️ Auction is scheduled</h3>;
+      return <h3>🗓 Auction closed. Pending on-chain price-calculation.</h3>;
 
     default:
       return <h3>🏁 Auction is settled</h3>;
