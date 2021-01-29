@@ -16,14 +16,20 @@
       {
         "indexed": false,
         "internalType": "uint96",
-        "name": "priceNumerator",
+        "name": "soldAuctioningTokens",
         "type": "uint96"
       },
       {
         "indexed": false,
         "internalType": "uint96",
-        "name": "priceDenominator",
+        "name": "soldBiddingTokens",
         "type": "uint96"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "clearingPriceOrder",
+        "type": "bytes32"
       }
     ],
     "name": "AuctionCleared",
