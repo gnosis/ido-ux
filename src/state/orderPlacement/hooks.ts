@@ -24,6 +24,7 @@ import {
   priceInput,
 } from "./actions";
 import { BigNumber } from "@ethersproject/bignumber";
+import { OrderDisplay, OrderStatus } from "../orders/reducer";
 
 export interface SellOrder {
   sellAmount: TokenAmount;
@@ -469,10 +470,42 @@ export function useDefaultsFromURLSearch(search?: string) {
     dispatch(setDefaultsFromURLSearch({ chainId, queryString: search }));
   }, [dispatch, search, chainId]);
 }
+export function useCurrentUserOrdersForDisplay(): OrderDisplay[] {
+  const { auctionId } = useSwapState();
+  const userOrders = useCurrentUserOrders(auctionId);
+  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
+    auctionId,
+  );
 
-export function useOrdersForClaiming(auctionId: number): string[] {
+  const sellOrderDisplays: OrderDisplay[] = [];
+  if (biddingToken && auctioningToken) {
+    for (const orderString of userOrders) {
+      const order = decodeOrder(orderString);
+      sellOrderDisplays.push({
+        id: orderString,
+        sellAmount: new Fraction(
+          order.sellAmount.toString(),
+          BigNumber.from(10).pow(biddingToken.decimals).toString(),
+        ).toSignificant(6),
+        price: new Fraction(
+          order.sellAmount
+            .mul(BigNumber.from(10).pow(auctioningToken.decimals))
+            .toString(),
+          order.buyAmount
+            .mul(BigNumber.from(10).pow(biddingToken.decimals))
+            .toString(),
+        ).toSignificant(6),
+        status: OrderStatus.PLACED,
+      });
+    }
+  }
+  return sellOrderDisplays;
+}
+
+export function useCurrentUserOrders(auctionId: number): string[] {
   const { account, chainId } = useActiveWeb3React();
   const [userOrders, setUserOrders] = useState<any>();
+  const [isFetchingDone, setFetchingDone] = useState<boolean>();
 
   useEffect(() => {
     async function fetchData() {
@@ -487,11 +520,18 @@ export function useOrdersForClaiming(auctionId: number): string[] {
         },
       );
       setUserOrders(sellOrdersFormUser);
+      setFetchingDone(true);
     }
-    if (!userOrders) {
+    if (!userOrders && !isFetchingDone) {
       fetchData();
     }
-  }, [chainId, account, auctionId, userOrders]);
-
+  }, [
+    chainId,
+    account,
+    auctionId,
+    userOrders,
+    setFetchingDone,
+    isFetchingDone,
+  ]);
   return userOrders;
 }
