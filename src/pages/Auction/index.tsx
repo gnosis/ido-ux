@@ -118,7 +118,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
           sellAmount: new Fraction(
             order.sellAmount.toString(),
             BigNumber.from(10).pow(biddingToken.decimals).toString(),
-          ).toSignificant(2),
+          ).toSignificant(6),
           price: new Fraction(
             order.sellAmount
               .mul(BigNumber.from(10).pow(auctioningToken.decimals))
@@ -126,7 +126,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
             order.buyAmount
               .mul(BigNumber.from(10).pow(biddingToken.decimals))
               .toString(),
-          ).toSignificant(2),
+          ).toSignificant(6),
           status: OrderStatus.PLACED,
         });
       }
