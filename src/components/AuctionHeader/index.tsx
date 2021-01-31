@@ -113,7 +113,7 @@ export function AuctionHeaderForScheduledAuction() {
         auctionState,
         initialAuctionOrder,
       })}
-      <CountdownTimer auctionEndDate={auctionEndDate} />
+      <CountdownTimer auctionEndDate={auctionEndDate} showText={true} />
     </>
   );
 }

@@ -5,7 +5,7 @@ const CountDownStyled = styled.div`
   display: flex;
   flex: 0 1 auto;
   font-family: var(--font-mono);
-  text-align: left;
+  text-align: right;
   font-size: 13px;
   color: ${({ theme }) => `1px solid ${theme.text2}`};
   letter-spacing: 0;
@@ -52,15 +52,17 @@ export function formatSeconds(seconds: number): string {
 }
 
 const calculateTimeLeft = (auctionEndDate) => {
-  const diff = auctionEndDate?.toNumber() - Date.now() / 1000;
+  const diff = auctionEndDate - Date.now() / 1000;
   if (diff < 0) return 0;
   return diff;
 };
 
 export default function CountdownTimer({
   auctionEndDate,
+  showText,
 }: {
   auctionEndDate: number;
+  showText: boolean;
 }) {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(auctionEndDate));
 
@@ -75,8 +77,7 @@ export default function CountdownTimer({
 
   return timeLeft && timeLeft > 0 ? (
     <CountDownStyled>
-      {" "}
-      <p>Auction ends in</p>
+      {showText ? <p>Auction ends in</p> : <></>}
       <strong>{formatSeconds(timeLeft)}</strong>
     </CountDownStyled>
   ) : null;

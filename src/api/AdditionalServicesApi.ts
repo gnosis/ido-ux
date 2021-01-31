@@ -1,5 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { decodeOrder, encodeOrder, Order } from "../hooks/Order";
+import { AuctionInfo } from "../hooks/useInterestingAuctionDetails";
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string;
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
@@ -9,6 +10,14 @@ export interface AdditionalServicesApi {
   getCurrentUserOrders(params: UserOrderParams): Promise<string[]>;
   getAllUserOrdersUrl(params: UserOrderParams): string;
   getAllUserOrders(params: UserOrderParams): Promise<string[]>;
+  getMostInterestingAuctionDetailsUrl(params: InterestingAuctionParams): string;
+  getMostInterestingAuctionDetails(
+    params: InterestingAuctionParams,
+  ): Promise<AuctionInfo[]>;
+  getAllAuctionDetailsUrl(params: InterestingAuctionParams): string;
+  getAllAuctionDetails(
+    params: InterestingAuctionParams,
+  ): Promise<AuctionInfo[]>;
   getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string;
   getClearingPriceOrderAndVolume(
     params: OrderBookParams,
@@ -18,6 +27,11 @@ export interface AdditionalServicesApi {
 interface OrderBookParams {
   networkId: number;
   auctionId: number;
+}
+
+interface InterestingAuctionParams {
+  networkId: number;
+  numberOfAuctions: number;
 }
 
 interface PreviousOrderParams {
@@ -114,6 +128,25 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url;
   }
 
+  public getMostInterestingAuctionDetailsUrl(
+    params: InterestingAuctionParams,
+  ): string {
+    const { networkId, numberOfAuctions } = params;
+
+    const baseUrl = this._getBaseUrl(networkId);
+
+    const url = `${baseUrl}get_details_of_most_interesting_auctions/${numberOfAuctions}`;
+    return url;
+  }
+  public getAllAuctionDetailsUrl(params: InterestingAuctionParams): string {
+    const { networkId } = params;
+
+    const baseUrl = this._getBaseUrl(networkId);
+
+    const url = `${baseUrl}get_all_auction_with_details/`;
+    return url;
+  }
+
   public getCurrentUserOrdersUrl(params: UserOrderParams): string {
     const { networkId, auctionId, user } = params;
 
@@ -121,6 +154,53 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
     const url = `${baseUrl}get_user_orders_without_canceled_or_claimed/${auctionId}/${user}`;
     return url;
+  }
+
+  public async getAllAuctionDetails(
+    params: InterestingAuctionParams,
+  ): Promise<AuctionInfo[] | null> {
+    try {
+      const url = await this.getAllAuctionDetailsUrl(params);
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json();
+      }
+      return await res.json();
+    } catch (error) {
+      console.error(error);
+
+      const { networkId } = params;
+
+      throw new Error(
+        `Failed to query all auctions for network ${networkId}: ${error.message}`,
+      );
+    }
+  }
+  public async getMostInterestingAuctionDetails(
+    params: InterestingAuctionParams,
+  ): Promise<AuctionInfo[] | null> {
+    try {
+      const url = await this.getMostInterestingAuctionDetailsUrl(params);
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json();
+      }
+      return await res.json();
+    } catch (error) {
+      console.error(error);
+
+      const { networkId } = params;
+
+      throw new Error(
+        `Failed to query interesting auctions for network ${networkId}: ${error.message}`,
+      );
+    }
   }
 
   public async getPreviousOrder(params: PreviousOrderParams): Promise<string> {
