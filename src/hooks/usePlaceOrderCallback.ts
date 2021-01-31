@@ -107,7 +107,7 @@ export function usePlaceOrderCallback(
               " " +
               biddingTokenDisplay +
               " for " +
-              (parseFloat(sellAmount) / parseFloat(price)).toString() +
+              (parseFloat(sellAmount) / parseFloat(price)).toPrecision(4) +
               " " +
               auctioningTokenDisplay,
           });
