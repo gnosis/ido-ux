@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useActiveWeb3React } from "./index";
 import { additionalServiceApi } from "../api";
 import { PricePoint } from "../api/AdditionalServicesApi";
 
