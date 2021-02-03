@@ -50,7 +50,7 @@ in the .env.local file to the connect to the development api
 
 ## License and origin
 
-The project is a fork of the uniswap front-end from the following [commit]:(https://github.com/Uniswap/uniswap-interface/commit/dc391d1bea58c129f34c3777a80e2d7eebd7b349)
+The project is a fork of the uniswap front-end from the following [commit]:(<https://github.com/Uniswap/uniswap-interface/commit/dc391d1bea58c129f34c3777a80e2d7eebd7b349>)
 
 Copyright © 2021, Gnosis limited.
 
