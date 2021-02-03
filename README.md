@@ -47,3 +47,13 @@ REACT_APP_ADDITIONAL_SERVICES_API_URL=https://ido-v1-api-rinkeby.dev.gnosisdev.c
 ```
 
 in the .env.local file to the connect to the development api
+
+## License and origin
+
+The project is a fork of the uniswap front-end from the following [commit]:(https://github.com/Uniswap/uniswap-interface/commit/dc391d1bea58c129f34c3777a80e2d7eebd7b349)
+
+Copyright © 2021, Gnosis limited.
+
+Copyright © 2020, [Uniswap](https://uniswap.org/).
+
+Released under GNU General Public License v3.0
