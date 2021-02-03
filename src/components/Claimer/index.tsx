@@ -94,7 +94,6 @@ export default function Claimer() {
     () => getTokenDisplay(auctioningToken),
     [auctioningToken],
   );
-
   return (
     <>
       <Wrapper id="swap-page">

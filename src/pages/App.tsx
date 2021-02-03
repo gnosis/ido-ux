@@ -8,6 +8,7 @@ import Web3ReactManager from "../components/Web3ReactManager";
 import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
 import Auction from "./Auction";
 import { RedirectPathToSwapOnly } from "./Auction/redirects";
+import Overview from "./Overview";
 
 const AppWrapper = styled.div`
   display: flex;
@@ -88,6 +89,7 @@ export default function App() {
             <Web3ReactManager>
               <Switch>
                 <Route exact strict path="/auction" component={Auction} />\
+                <Route exact strict path="/overview" component={Overview} />\
                 <Route component={RedirectPathToSwapOnly} />
               </Switch>
             </Web3ReactManager>

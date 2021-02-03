@@ -478,7 +478,7 @@ export function useCurrentUserOrdersForDisplay(): OrderDisplay[] {
   );
 
   const sellOrderDisplays: OrderDisplay[] = [];
-  if (biddingToken && auctioningToken) {
+  if (biddingToken && auctioningToken && userOrders) {
     for (const orderString of userOrders) {
       const order = decodeOrder(orderString);
       sellOrderDisplays.push({
