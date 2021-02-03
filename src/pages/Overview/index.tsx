@@ -2,11 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import DatatablePage from "../../components/AllAuctionsTable";
 import AuctionInfoCard from "../../components/AuctionInfoCard";
-import AuctionRow from "../../components/AuctionRow";
 import DoubleLogo from "../../components/DoubleLogo";
 import { useAllAuctionInfo } from "../../hooks/useAllAuctionInfos";
 import { useInterestingAuctionInfo } from "../../hooks/useInterestingAuctionDetails";
-import AppBody from "../AppBody";
 import { ButtonLight } from "../../components/Button";
 import { useHistory } from "react-router-dom";
 
