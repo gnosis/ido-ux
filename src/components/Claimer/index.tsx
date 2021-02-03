@@ -94,7 +94,6 @@ export default function Claimer() {
     () => getTokenDisplay(auctioningToken),
     [auctioningToken],
   );
-  console.log(biddingToken?.address);
   return (
     <>
       <Wrapper id="swap-page">
