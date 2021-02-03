@@ -66,6 +66,16 @@ export default function TokenLogo({
     address = "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599";
   }
 
+  // mock rinkeby GNO
+  if (
+    chainId === 4 &&
+    address &&
+    address.toLowerCase() ===
+      "0xd0dab4e640d95e9e8a47545598c33e31bdb53c7c".toLowerCase()
+  ) {
+    address = "0x6810e776880C02933D47DB1b9fc05908e5386b96";
+  }
+
   let path = "";
   // hard code to show ETH instead of WETH in UI
   if (

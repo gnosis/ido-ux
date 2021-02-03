@@ -83,7 +83,7 @@ const Wrapper = styled.div`
 
 const ViewBtn = styled(ButtonLight)`
   background: none;
-  height: auto;
+  height: 100%;
   width: 100%;
   color: ${({ theme }) => theme.text3};
 
@@ -98,8 +98,10 @@ const ViewBtn = styled(ButtonLight)`
 
 const Details = styled.div`
   color: ${({ theme }) => theme.text1};
+  background: ${({ theme }) => theme.bg1};
   font-size: 13px;
   width: 100%;
+  height: 100%;
   font-weight: normal;
   display: flex;
   flex-flow: column wrap;
