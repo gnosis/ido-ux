@@ -130,8 +130,8 @@ export default function AuctionDetails() {
 
   const clearingPriceDisplay = !!clearingPriceNumber
     ? `${clearingPriceNumber} ${getTokenDisplay(
-        auctioningToken,
-      )} per ${getTokenDisplay(biddingToken)}`
+        biddingToken,
+      )} per ${getTokenDisplay(auctioningToken)}`
     : "-";
 
   return (
