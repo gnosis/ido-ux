@@ -173,23 +173,107 @@ export function useDeriveAuctioningAndBiddingToken(
   };
 }
 
+export function useGetOrderPlacementError(): {
+  error?: string;
+} {
+  const {
+    auctioningToken,
+    biddingToken,
+    initialAuctionOrder,
+    initialPrice,
+    minBiddingAmountPerOrder,
+  } = useDerivedAuctionInfo();
+
+  const { account } = useActiveWeb3React();
+
+  const { sellAmount, price } = useSwapState();
+
+  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
+    biddingToken,
+  ]);
+  const biddingTokenBalance =
+    relevantTokenBalances?.[biddingToken?.address ?? ""];
+  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken);
+
+  const {
+    sellAmountScaled,
+    buyAmountScaled,
+  } = convertPriceIntoBuyAndSellAmount(
+    auctioningToken,
+    biddingToken,
+    price == "" ? "1" : price,
+    sellAmount,
+  );
+  let error: string | undefined;
+  if (!account) {
+    error = "Connect Wallet";
+  }
+
+  if (!sellAmount) {
+    error = error ?? "Enter an amount";
+  }
+  if (
+    minBiddingAmountPerOrder &&
+    biddingToken &&
+    sellAmount &&
+    ((sellAmountScaled &&
+      BigNumber.from(minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
+      parseFloat(sellAmount) == 0)
+  ) {
+    const errorMsg =
+      "Amount must be bigger than " +
+      new Fraction(
+        minBiddingAmountPerOrder,
+        BigNumber.from(10).pow(biddingToken.decimals).toString(),
+      ).toSignificant(2);
+    error = error ?? errorMsg;
+  }
+
+  if (!price) {
+    error = error ?? "Enter a price";
+  }
+  if (auctioningToken == undefined || biddingToken == undefined) {
+    error = "Please wait a sec";
+  }
+  if (
+    initialAuctionOrder != null &&
+    auctioningToken != undefined &&
+    biddingToken != undefined &&
+    buyAmountScaled &&
+    sellAmountScaled
+      ?.mul(initialAuctionOrder?.sellAmount.raw.toString())
+      .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
+  ) {
+    error = error ?? "Price must be at least " + initialPrice?.toSignificant(2);
+  }
+
+  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount];
+  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
+    error = "Insufficient " + amountIn.token.symbol + " balance";
+  }
+
+  return {
+    error,
+  };
+}
+
 export function useDerivedAuctionInfo(): {
   biddingTokenBalance: TokenAmount | undefined;
   parsedBiddingAmount: TokenAmount | undefined;
-  error?: string;
-  auctioningToken?: Token | null;
-  biddingToken?: Token | null;
-  clearingPriceSellOrder?: SellOrder | null;
-  clearingPriceOrder?: Order | null;
+  auctioningToken: Token | undefined;
+  biddingToken: Token | undefined;
+  clearingPriceSellOrder: SellOrder | null;
+  clearingPriceOrder: Order | null;
   clearingPrice: Fraction | undefined;
-  initialAuctionOrder?: SellOrder | null;
-  auctionEndDate?: number | null;
+  initialAuctionOrder: SellOrder | null;
+  auctionEndDate: number | null;
   clearingPriceVolume: BigNumber | null;
   initialPrice: Fraction | undefined;
+  minBiddingAmountPerOrder: string | undefined;
 } {
   const { chainId, account } = useActiveWeb3React();
 
-  const { auctionId, sellAmount, price } = useSwapState();
+  const { auctionId, sellAmount } = useSwapState();
 
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
     auctionId,
@@ -236,46 +320,6 @@ export function useDerivedAuctionInfo(): {
     clearingPriceSellOrder,
   );
 
-  const {
-    sellAmountScaled,
-    buyAmountScaled,
-  } = convertPriceIntoBuyAndSellAmount(
-    auctioningToken,
-    biddingToken,
-    price,
-    sellAmount,
-  );
-  let error: string | undefined;
-  if (!account) {
-    error = "Connect Wallet";
-  }
-
-  if (!sellAmount) {
-    error = error ?? "Enter an amount";
-  }
-  if (
-    minBiddingAmountPerOrder &&
-    biddingToken &&
-    sellAmount &&
-    ((sellAmountScaled &&
-      BigNumber.from(minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
-      parseFloat(sellAmount) == 0)
-  ) {
-    const errorMsg =
-      "Amount must be bigger than " +
-      new Fraction(
-        minBiddingAmountPerOrder,
-        BigNumber.from(10).pow(biddingToken.decimals).toString(),
-      ).toSignificant(2);
-    error = error ?? errorMsg;
-  }
-
-  if (!price) {
-    error = error ?? "Enter a price";
-  }
-  if (auctioningToken == undefined || biddingToken == undefined) {
-    error = "Please wait a sec";
-  }
   let initialPrice: Fraction | undefined;
   if (initialAuctionOrder?.buyAmount == undefined) {
     initialPrice = undefined;
@@ -285,27 +329,10 @@ export function useDerivedAuctionInfo(): {
       initialAuctionOrder?.sellAmount?.raw.toString(),
     );
   }
-  if (
-    initialAuctionOrder != null &&
-    auctioningToken != undefined &&
-    biddingToken != undefined &&
-    buyAmountScaled &&
-    sellAmountScaled
-      ?.mul(initialAuctionOrder?.sellAmount.raw.toString())
-      .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
-  ) {
-    error = error ?? "Price must be at least " + initialPrice?.toSignificant(2);
-  }
-
-  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount];
-  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    error = "Insufficient " + amountIn.token.symbol + " balance";
-  }
 
   return {
     biddingTokenBalance,
     parsedBiddingAmount,
-    error,
     auctioningToken,
     biddingToken,
     clearingPriceSellOrder,
@@ -315,6 +342,7 @@ export function useDerivedAuctionInfo(): {
     auctionEndDate,
     clearingPriceVolume,
     initialPrice,
+    minBiddingAmountPerOrder,
   };
 }
 

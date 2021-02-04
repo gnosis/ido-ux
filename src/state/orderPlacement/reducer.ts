@@ -13,7 +13,7 @@ export interface SwapState {
 }
 
 const initialState: SwapState = {
-  price: "1",
+  price: "-",
   auctionId: 1,
   sellAmount: "",
 };

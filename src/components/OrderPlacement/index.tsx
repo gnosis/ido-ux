@@ -1,4 +1,4 @@
-import { TokenAmount, ChainId } from "@uniswap/sdk";
+import { TokenAmount, ChainId, Fraction } from "@uniswap/sdk";
 import React, { useState, useEffect, useMemo } from "react";
 import { Text } from "rebass";
 import { ButtonLight, ButtonPrimary } from "../../components/Button";
@@ -19,6 +19,7 @@ import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import {
   useDerivedAuctionInfo,
+  useGetOrderPlacementError,
   useSwapActionHandlers,
   useSwapState,
 } from "../../state/orderPlacement/hooks";
@@ -35,10 +36,11 @@ export default function OrderPlacement() {
   const {
     biddingTokenBalance,
     parsedBiddingAmount,
-    error,
     auctioningToken,
     biddingToken,
+    initialPrice,
   } = useDerivedAuctionInfo();
+  const { error } = useGetOrderPlacementError();
   const { onUserSellAmountInput } = useSwapActionHandlers();
   const { onUserPriceInput } = useSwapActionHandlers();
 
@@ -73,6 +75,14 @@ export default function OrderPlacement() {
     maxAmountInput && parsedBiddingAmount
       ? maxAmountInput.equalTo(parsedBiddingAmount)
       : undefined;
+
+  useEffect(() => {
+    if (price == "-" && initialPrice) {
+      onUserPriceInput(
+        initialPrice.add(new Fraction("1", "100")).toSignificant(4),
+      );
+    }
+  }, [onUserPriceInput, price, initialPrice]);
 
   // reset modal state when closed
   function resetModal() {
