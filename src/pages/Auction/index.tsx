@@ -90,7 +90,7 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
       {!account ? (
         <div>
           <h3>
-            EasyAuction is a platform designed for fair price finding of
+            GnosisAuction is a platform designed for fair price finding of
             one-time events.
           </h3>
           <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>

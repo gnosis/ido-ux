@@ -109,7 +109,7 @@ export default function Overview() {
   return (
     <>
       <ThemeHeader>
-        <TitleText>EasyAuction - fairest auctions</TitleText>
+        <TitleText>GnosisAuction - fairest auctions</TitleText>
       </ThemeHeader>
       <TableWrapper>
         <Wrapper>
