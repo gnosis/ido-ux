@@ -201,7 +201,7 @@ export function useGetOrderPlacementError(): {
   } = convertPriceIntoBuyAndSellAmount(
     auctioningToken,
     biddingToken,
-    price == "" ? "1" : price,
+    price == "-" ? "1" : price,
     sellAmount,
   );
   let error: string | undefined;
@@ -244,7 +244,8 @@ export function useGetOrderPlacementError(): {
       ?.mul(initialAuctionOrder?.sellAmount.raw.toString())
       .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
   ) {
-    error = error ?? "Price must be at least " + initialPrice?.toSignificant(2);
+    error =
+      error ?? "Price must be higher than " + initialPrice?.toSignificant(5);
   }
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount];

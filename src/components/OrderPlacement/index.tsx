@@ -79,7 +79,7 @@ export default function OrderPlacement() {
   useEffect(() => {
     if (price == "-" && initialPrice) {
       onUserPriceInput(
-        initialPrice.add(new Fraction("1", "100")).toSignificant(4),
+        initialPrice.multiply(new Fraction("1001", "1000")).toSignificant(4),
       );
     }
   }, [onUserPriceInput, price, initialPrice]);
