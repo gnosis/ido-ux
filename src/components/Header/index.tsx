@@ -150,7 +150,7 @@ export default function Header() {
         <Title>
           <TitleText>
             <HistoryLink id="link" to="/">
-              🏁 EasyAuction
+              🏁 GnosisAuction
             </HistoryLink>
           </TitleText>
         </Title>
