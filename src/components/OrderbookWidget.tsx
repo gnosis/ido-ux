@@ -9,7 +9,7 @@ import OrderBookChart, {
   Offer,
 } from "./OrderbookChart";
 import { Token } from "@uniswap/sdk";
-import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
+import { useOrderbookState } from "../state/orderbook/hooks";
 
 const SMALL_VOLUME_THRESHOLD = 0.001;
 
@@ -27,7 +27,9 @@ export const logDebug = (...args: any[]): void => {
  */
 const processData = (
   pricePoints: PricePoint[],
+  userOrder: PricePoint,
   highestValue: number,
+  lowestValue: number,
   type: Offer,
 ): PricePointDetails[] => {
   const isBid = type == Offer.Bid;
@@ -46,14 +48,19 @@ const processData = (
 
   // Adding first and last element to round up the picture
   if (type == Offer.Bid) {
+    if (
+      userOrder &&
+      highestValue * 1.5 > userOrder.price &&
+      userOrder.price > lowestValue
+    ) {
+      highestValue =
+        highestValue > userOrder.price ? highestValue : userOrder.price;
+      pricePoints = pricePoints.concat(userOrder);
+    }
     pricePoints.sort((lhs, rhs) => -1 * (lhs.price - rhs.price));
 
     pricePoints.push({
-      price: (highestValue * 99) / 100,
-      volume: 0,
-    });
-    pricePoints.push({
-      price: (pricePoints[0].price * 99) / 100,
+      price: (highestValue * 101) / 100,
       volume: 0,
     });
 
@@ -116,6 +123,7 @@ const processData = (
           totalVolumeFormatted: acc.totalVolume.toString(),
           askValueY: acc.totalVolume * price,
           bidValueY,
+          newOrderValueY: null,
         };
         acc.points.push(pricePointDetails);
       }
@@ -133,8 +141,73 @@ const processData = (
         totalVolumeFormatted: totalVolume.toString(),
         askValueY,
         bidValueY,
+        newOrderValueY: null,
       };
       acc.points.push(pricePointDetails);
+
+      // Next two points are only added for displaying new Order
+      if (userOrder && userOrder == pricePoint) {
+        // Add the new point
+        const pricePointDetails: PricePointDetails = {
+          type,
+          volume,
+          totalVolume,
+          price,
+
+          // Data for representation
+          priceNumber: price,
+          totalVolumeNumber: totalVolume,
+          priceFormatted: price.toString(),
+          totalVolumeFormatted: totalVolume.toString(),
+          askValueY: null,
+          bidValueY: null,
+          newOrderValueY: bidValueY + volume,
+        };
+        acc.points.push(pricePointDetails);
+        const pricePointDetails_2: PricePointDetails = {
+          type,
+          volume,
+          totalVolume,
+          price,
+
+          // Data for representation
+          priceNumber: price,
+          totalVolumeNumber: totalVolume,
+          priceFormatted: price.toString(),
+          totalVolumeFormatted: totalVolume.toString(),
+          askValueY: null,
+          bidValueY: null,
+          newOrderValueY: bidValueY,
+        };
+        acc.points.push(pricePointDetails_2);
+      }
+      if (
+        index > 0 &&
+        userOrder &&
+        userOrder.price &&
+        userOrder.price == acc.points[index - 1].price &&
+        acc.points[index - 1].newOrderValueY == null &&
+        userOrder.volume &&
+        userOrder.volume == acc.points[index - 1].volume
+      ) {
+        // Add the new point
+        const pricePointDetails: PricePointDetails = {
+          type,
+          volume,
+          totalVolume,
+          price,
+
+          // Data for representation
+          priceNumber: price,
+          totalVolumeNumber: totalVolume,
+          priceFormatted: price.toString(),
+          totalVolumeFormatted: totalVolume.toString(),
+          askValueY: null,
+          bidValueY: null,
+          newOrderValueY: bidValueY,
+        };
+        acc.points.push(pricePointDetails);
+      }
 
       return { totalVolume, points: acc.points };
     },
@@ -165,25 +238,40 @@ function _printOrderBook(
 
 interface ProcessRawDataParams {
   data: OrderBookData;
+  userOrder: PricePoint;
   baseToken: Pick<Token, "decimals" | "symbol">;
   quoteToken: Pick<Token, "decimals" | "symbol">;
 }
 
-export const processRawApiData = ({
+export const processOrderbookData = ({
   data,
+  userOrder,
   baseToken,
   quoteToken,
 }: ProcessRawDataParams): PricePointDetails[] => {
   try {
-    const bids = processData(data.bids, data.asks[0].price, Offer.Bid);
+    const bids = processData(
+      data.bids,
+      userOrder,
+      data.asks[0].price,
+      data.asks[0].price,
+      Offer.Bid,
+    );
 
-    const asks = processData(data.asks, bids[0].price, Offer.Ask);
+    const asks = processData(
+      data.asks,
+      null,
+      bids[0].price,
+      data.asks[0].price,
+      Offer.Ask,
+    );
     const pricePoints = bids.concat(asks);
 
     // Sort points by price
     pricePoints.sort((lhs, rhs) => lhs.price - rhs.price);
-
-    _printOrderBook(pricePoints, baseToken.symbol, quoteToken.symbol);
+    const debug = false;
+    if (debug)
+      _printOrderBook(pricePoints, baseToken.symbol, quoteToken.symbol);
 
     return pricePoints;
   } catch (error) {
@@ -198,15 +286,28 @@ export interface OrderBookProps extends Omit<OrderBookChartProps, "data"> {
 
 const OrderBookWidget: React.FC<OrderBookProps> = (props: OrderBookProps) => {
   const { baseToken, quoteToken, networkId } = props;
-  const { error, orderbookData } = useOrderbookDataCallback();
-  if (error) return <OrderBookError error={error} />;
+  const {
+    error,
+    bids,
+    asks,
+    userOrderPrice,
+    userOrderVolume,
+  } = useOrderbookState();
 
+  if (error || !asks || asks.length == 0)
+    return <OrderBookError error={error} />;
+  const processedOrderbook = processOrderbookData({
+    data: { bids, asks },
+    userOrder: { price: userOrderPrice, volume: userOrderVolume },
+    baseToken,
+    quoteToken,
+  });
   return (
     <OrderBookChart
       baseToken={baseToken}
       quoteToken={quoteToken}
       networkId={networkId}
-      data={orderbookData}
+      data={processedOrderbook}
     />
   );
 };

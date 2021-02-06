@@ -16,6 +16,7 @@ import { useContract } from "./useContract";
 import { EASY_AUCTION_NETWORKS } from "../constants";
 import { Result, useSingleCallResult } from "../state/multicall/hooks";
 import easyAuctionABI from "../constants/abis/easyAuction/easyAuction.json";
+import { useOrderbookActionHandlers } from "../state/orderbook/hooks";
 
 export const queueStartElement =
   "0x0000000000000000000000000000000000000000000000000000000000000001";
@@ -32,6 +33,8 @@ export function usePlaceOrderCallback(
   const addTransaction = useTransactionAdder();
   const { onNewOrder } = useOrderActionHandlers();
   const { auctionId, sellAmount, price } = useSwapState();
+  const { onNewBid } = useOrderbookActionHandlers();
+
   const easyAuctionInstance: Contract | null = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
@@ -124,7 +127,10 @@ export function usePlaceOrderCallback(
               status: OrderStatus.PENDING,
             },
           ]);
-
+          onNewBid({
+            volume: parseFloat(sellAmount),
+            price: parseFloat(price),
+          });
           return response.hash;
         })
         .catch((error) => {
@@ -144,5 +150,6 @@ export function usePlaceOrderCallback(
     auctioningToken,
     sellAmount,
     onNewOrder,
+    onNewBid,
   ]);
 }
