@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
 import {
-  useSwapState,
   useDerivedAuctionInfo,
   AuctionState,
   useDerivedAuctionState,
@@ -79,10 +78,8 @@ const Row = styled.span`
 `;
 
 export default function AuctionDetails() {
-  const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
   const {
-    auctionEndDate,
     auctioningToken,
     biddingToken,
     clearingPrice,
@@ -101,9 +98,6 @@ export default function AuctionDetails() {
     [chainId, biddingToken],
   );
 
-  const auctionEndDateString = new Date(
-    auctionEndDate * 1000,
-  ).toLocaleDateString();
   const clearingPriceInfo = useClearingPriceInfo();
   const clearingPriceInfoAsSellorder =
     clearingPriceInfo &&
