@@ -17,7 +17,7 @@ import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolu
 
 const Wrapper = styled.div`
   position: relative;
-  width: calc(50% - 8px);
+  width: calc(60% - 8px);
   background: none;
   box-shadow: none;
   border-radius: 20px;
@@ -174,26 +174,6 @@ export default function AuctionDetails() {
             {initialPrice ? `${initialPrice?.toSignificant(2)} ` : " - "}
             {biddingTokenDisplay} per {auctioningTokenDisplay}
           </p>
-        </Row>
-
-        <Row>
-          <i>Status</i>
-          <p>
-            {" "}
-            {auctionState == AuctionState.ORDER_PLACING ||
-            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
-              ? "Ongoing"
-              : auctionState == AuctionState.PRICE_SUBMISSION
-              ? "Clearing"
-              : "Ended"}
-          </p>
-        </Row>
-        <Row>
-          <i>Id</i> <p>{auctionId}</p>
-        </Row>
-        <Row>
-          <i>Ends</i>
-          <p>{auctionEndDateString}</p>
         </Row>
       </Details>
     </Wrapper>

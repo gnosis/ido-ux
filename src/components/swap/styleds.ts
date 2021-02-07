@@ -88,7 +88,7 @@ export const StyledBalanceMaxMini = styled.button<{ active?: boolean }>`
 
 export const TruncatedText = styled(Text)`
   text-overflow: ellipsis;
-  width: 220px;
+  width: 320px;
   overflow: hidden;
 `;
 

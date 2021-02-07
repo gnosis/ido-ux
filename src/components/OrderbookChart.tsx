@@ -29,7 +29,7 @@ export interface OrderBookChartProps {
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
-  min-height: calc(100vh - 30rem);
+  min-height: calc(60vh - 30rem);
   text-align: center;
   width: 100%;
   height: 100%;
@@ -97,6 +97,7 @@ export interface PricePointDetails {
   askValueY: number | null;
   bidValueY: number | null;
   newOrderValueY: number | null;
+  clearingPriceValueY: number | null;
 }
 
 export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
@@ -135,7 +136,7 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   const bidSeries = chart.series.push(new am4charts.StepLineSeries());
   bidSeries.dataFields.valueX = "priceNumber";
   bidSeries.dataFields.valueY = "bidValueY";
-  bidSeries.strokeWidth = 1;
+  bidSeries.strokeWidth = 2;
   bidSeries.stroke = am4core.color(colors.green);
   bidSeries.fill = bidSeries.stroke;
   bidSeries.fillOpacity = 0.2;
@@ -143,7 +144,7 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   const askSeries = chart.series.push(new am4charts.LineSeries());
   askSeries.dataFields.valueX = "priceNumber";
   askSeries.dataFields.valueY = "askValueY";
-  askSeries.strokeWidth = 1;
+  askSeries.strokeWidth = 2;
   askSeries.stroke = am4core.color(colors.red);
   askSeries.fill = askSeries.stroke;
   askSeries.fillOpacity = 0.1;
@@ -151,10 +152,19 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   const inputSeries = chart.series.push(new am4charts.LineSeries());
   inputSeries.dataFields.valueX = "priceNumber";
   inputSeries.dataFields.valueY = "newOrderValueY";
-  inputSeries.strokeWidth = 2;
+  inputSeries.strokeWidth = 4;
   inputSeries.stroke = am4core.color(colors.orange);
   inputSeries.fill = inputSeries.stroke;
   inputSeries.fillOpacity = 0.1;
+
+  const priceSeries = chart.series.push(new am4charts.LineSeries());
+  priceSeries.dataFields.valueX = "priceNumber";
+  priceSeries.dataFields.valueY = "clearingPriceValueY";
+  priceSeries.strokeWidth = 2;
+  priceSeries.strokeDasharray = "3,3";
+  priceSeries.stroke = am4core.color(colors.white);
+  priceSeries.fill = inputSeries.stroke;
+  priceSeries.fillOpacity = 0.1;
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor();
