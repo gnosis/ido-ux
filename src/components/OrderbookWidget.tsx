@@ -252,7 +252,6 @@ const processData = (
         };
         acc.points.push(pricePointDetails);
       }
-
       return { totalVolume: totalVolume + volume, points: acc.points };
     },
     {
