@@ -12,3 +12,5 @@ export const removeOrders = createAction<{
 export const finalizeOrderPlacement = createAction<void>(
   "finalizeOrderPlacement",
 );
+
+export const loadOrderFromAPI = createAction<void>("LoadOrderFromAPI");

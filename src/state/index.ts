@@ -6,6 +6,7 @@ import user from "./user/reducer";
 import transactions from "./transactions/reducer";
 import swap from "./orderPlacement/reducer";
 import orders from "./orders/reducer";
+import orderbook from "./orderbook/reducer";
 
 import multicall from "./multicall/reducer";
 
@@ -20,6 +21,7 @@ const store = configureStore({
     transactions,
     swap,
     orders,
+    orderbook,
     multicall,
   },
   middleware: [...getDefaultMiddleware(), save({ states: PERSISTED_KEYS })],

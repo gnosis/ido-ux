@@ -1,5 +1,10 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { appendOrders, finalizeOrderPlacement, removeOrders } from "./actions";
+import {
+  appendOrders,
+  finalizeOrderPlacement,
+  loadOrderFromAPI,
+  removeOrders,
+} from "./actions";
 
 export enum OrderStatus {
   PENDING,
@@ -14,10 +19,12 @@ export interface OrderDisplay {
 }
 export interface OrderState {
   orders: OrderDisplay[];
+  shouldLoad: boolean;
 }
 
 const initialState: OrderState = {
   orders: [],
+  shouldLoad: true,
 };
 
 export default createReducer<OrderState>(initialState, (builder) =>
@@ -28,6 +35,7 @@ export default createReducer<OrderState>(initialState, (builder) =>
       return {
         ...state,
         orders,
+        shouldLoad: false,
       };
     })
     .addCase(removeOrders, (state: OrderState, { payload: { orderId } }) => {
@@ -52,6 +60,14 @@ export default createReducer<OrderState>(initialState, (builder) =>
       return {
         ...state,
         orders,
+        shouldLoad: false,
+      };
+    })
+    .addCase(loadOrderFromAPI, (state: OrderState) => {
+      return {
+        ...state,
+        orders: [],
+        shouldLoad: true,
       };
     }),
 );

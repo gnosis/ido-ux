@@ -8,7 +8,7 @@ import { Token } from "@uniswap/sdk";
 // components
 import { DEFAULT_MODAL_OPTIONS } from "./Modal";
 import { ButtonLight } from "./Button";
-import OrderBookWidget from "./OrderbookWidget";
+import OrderBookWidget, { processOrderbookData } from "./OrderbookWidget";
 
 // hooks
 import { useActiveWeb3React } from "../hooks";
@@ -22,7 +22,7 @@ import { getTokenDisplay } from "../utils";
 import { OrderBookError } from "./OrderbookChartSmall";
 
 import OrderBookChartSmall from "./OrderbookChartSmall";
-import { useOrderbookDataCallback } from "../hooks/useOrderbookDataCallback";
+import { useOrderbookState } from "../state/orderbook/hooks";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
   margin: 0 0 0 0;
@@ -149,9 +149,22 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
       />,
     ],
   });
-  const { error, orderbookData } = useOrderbookDataCallback();
-  if (error || !orderbookData) return <OrderBookError error={error} />;
+  const {
+    error,
+    bids,
+    asks,
+    userOrderPrice,
+    userOrderVolume,
+  } = useOrderbookState();
 
+  if (error || !asks || asks.length == 0)
+    return <OrderBookError error={error} />;
+  const processedOrderbook = processOrderbookData({
+    data: { bids, asks },
+    userOrder: { price: userOrderPrice, volume: userOrderVolume },
+    baseToken: auctioningToken,
+    quoteToken: biddingToken,
+  });
   return (
     <Wrapper>
       <ViewOrderBookBtn
@@ -163,7 +176,7 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
           baseToken={auctioningToken}
           quoteToken={biddingToken}
           networkId={chainId}
-          data={orderbookData}
+          data={processedOrderbook}
         />
       </ViewOrderBookBtn>
       <Modal.Modal {...modalHook} />

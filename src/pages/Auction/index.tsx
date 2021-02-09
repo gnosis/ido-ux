@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import OrderPlacement from "../../components/OrderPlacement";
 import Claimer from "../../components/Claimer";
 import styled from "styled-components";
 import {
   AuctionState,
-  useCurrentUserOrdersForDisplay,
+  useCurrentUserOrders,
   useDefaultsFromURLSearch,
   useDerivedAuctionState,
 } from "../../state/orderPlacement/hooks";
@@ -19,11 +19,9 @@ import { ButtonLight } from "../../components/Button";
 import { useActiveWeb3React } from "../../hooks";
 import { useWalletModalToggle } from "../../state/application/hooks";
 import OrderDisplayDropdown from "../../components/OrderDropdown";
-import {
-  useOrderActionHandlers,
-  useOrderState,
-} from "../../state/orders/hooks";
+import { useOrderState } from "../../state/orders/hooks";
 import { OrderState } from "../../state/orders/reducer";
+import { useOrderbookDataCallback } from "../../state/orderbook/hooks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -74,16 +72,8 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
   const { auctionState } = useDerivedAuctionState();
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const orders: OrderState | undefined = useOrderState();
-  const ordersFromApi = useCurrentUserOrdersForDisplay();
-  const [userOrders, setUserOrders] = useState<boolean>();
-  const { onNewOrder } = useOrderActionHandlers();
-
-  useEffect(() => {
-    if (userOrders == undefined && ordersFromApi.length > 0) {
-      onNewOrder(ordersFromApi);
-      setUserOrders(false);
-    }
-  }, [ordersFromApi, onNewOrder, userOrders]);
+  useCurrentUserOrders();
+  useOrderbookDataCallback();
 
   return (
     <AppBody>

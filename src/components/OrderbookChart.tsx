@@ -96,6 +96,7 @@ export interface PricePointDetails {
   totalVolumeFormatted: string;
   askValueY: number | null;
   bidValueY: number | null;
+  newOrderValueY: number | null;
 }
 
 export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
@@ -115,6 +116,7 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
     red: "#dc3545",
     white: "#FFFFFF",
     grey: "#565A69",
+    orange: "#FF6347",
   };
 
   // Create axes
@@ -145,6 +147,14 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   askSeries.stroke = am4core.color(colors.red);
   askSeries.fill = askSeries.stroke;
   askSeries.fillOpacity = 0.1;
+
+  const inputSeries = chart.series.push(new am4charts.LineSeries());
+  inputSeries.dataFields.valueX = "priceNumber";
+  inputSeries.dataFields.valueY = "newOrderValueY";
+  inputSeries.strokeWidth = 2;
+  inputSeries.stroke = am4core.color(colors.orange);
+  inputSeries.fill = inputSeries.stroke;
+  inputSeries.fillOpacity = 0.1;
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor();

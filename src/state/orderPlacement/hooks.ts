@@ -1,6 +1,5 @@
 import { Contract } from "@ethersproject/contracts";
 import { parseUnits } from "@ethersproject/units";
-import { useState } from "react";
 import { ChainId, Fraction } from "@uniswap/sdk";
 import { JSBI, Token, TokenAmount } from "@uniswap/sdk";
 import { useCallback, useEffect } from "react";
@@ -25,6 +24,9 @@ import {
 } from "./actions";
 import { BigNumber } from "@ethersproject/bignumber";
 import { OrderDisplay, OrderStatus } from "../orders/reducer";
+import { useOrderbookActionHandlers } from "../orderbook/hooks";
+import { resetUserPrice, resetUserVolume } from "../orderbook/actions";
+import { useOrderActionHandlers, useOrderState } from "../orders/hooks";
 
 export interface SellOrder {
   sellAmount: TokenAmount;
@@ -106,18 +108,27 @@ export function useSwapActionHandlers(): {
 
   const onUserSellAmountInput = useCallback(
     (sellAmount: string) => {
+      if (isNumeric(sellAmount))
+        dispatch(resetUserVolume({ volume: parseFloat(sellAmount) }));
       dispatch(sellAmountInput({ sellAmount }));
     },
     [dispatch],
   );
   const onUserPriceInput = useCallback(
     (price: string) => {
+      if (isNumeric(price)) {
+        dispatch(resetUserPrice({ price: parseFloat(price) }));
+      }
       dispatch(priceInput({ price }));
     },
     [dispatch],
   );
 
   return { onUserPriceInput, onUserSellAmountInput };
+}
+
+function isNumeric(str: string) {
+  return str != "" && str != "-";
 }
 
 // try to parse a user entered amount for a given token
@@ -493,52 +504,29 @@ export function useDerivedClaimInfo(
 // string updates
 export function useDefaultsFromURLSearch(search?: string) {
   const { chainId } = useActiveWeb3React();
+  const { onPullOrderbookData } = useOrderbookActionHandlers();
+  const { onReloadFromAPI } = useOrderActionHandlers();
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     if (!chainId) return;
     dispatch(setDefaultsFromURLSearch({ chainId, queryString: search }));
-  }, [dispatch, search, chainId]);
+    onPullOrderbookData();
+    onReloadFromAPI();
+  }, [dispatch, search, chainId, onReloadFromAPI, onPullOrderbookData]);
 }
-export function useCurrentUserOrdersForDisplay(): OrderDisplay[] {
+
+export function useCurrentUserOrders() {
+  const { account, chainId } = useActiveWeb3React();
   const { auctionId } = useSwapState();
-  const userOrders = useCurrentUserOrders(auctionId);
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
     auctionId,
   );
-
-  const sellOrderDisplays: OrderDisplay[] = [];
-  if (biddingToken && auctioningToken && userOrders) {
-    for (const orderString of userOrders) {
-      const order = decodeOrder(orderString);
-      sellOrderDisplays.push({
-        id: orderString,
-        sellAmount: new Fraction(
-          order.sellAmount.toString(),
-          BigNumber.from(10).pow(biddingToken.decimals).toString(),
-        ).toSignificant(6),
-        price: new Fraction(
-          order.sellAmount
-            .mul(BigNumber.from(10).pow(auctioningToken.decimals))
-            .toString(),
-          order.buyAmount
-            .mul(BigNumber.from(10).pow(biddingToken.decimals))
-            .toString(),
-        ).toSignificant(6),
-        status: OrderStatus.PLACED,
-      });
-    }
-  }
-  return sellOrderDisplays;
-}
-
-export function useCurrentUserOrders(auctionId: number): string[] {
-  const { account, chainId } = useActiveWeb3React();
-  const [userOrders, setUserOrders] = useState<any>();
-  const [isFetchingDone, setFetchingDone] = useState<boolean>();
+  const { onNewOrder } = useOrderActionHandlers();
+  const { shouldLoad } = useOrderState();
 
   useEffect(() => {
     async function fetchData() {
-      if (chainId == undefined || account == undefined) {
+      if (!chainId || !account || !biddingToken || !auctioningToken) {
         return;
       }
       const sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders(
@@ -548,19 +536,40 @@ export function useCurrentUserOrders(auctionId: number): string[] {
           user: account,
         },
       );
-      setUserOrders(sellOrdersFormUser);
-      setFetchingDone(true);
+      const sellOrderDisplays: OrderDisplay[] = [];
+      if (biddingToken && auctioningToken && sellOrdersFormUser) {
+        for (const orderString of sellOrdersFormUser) {
+          const order = decodeOrder(orderString);
+          sellOrderDisplays.push({
+            id: orderString,
+            sellAmount: new Fraction(
+              order.sellAmount.toString(),
+              BigNumber.from(10).pow(biddingToken.decimals).toString(),
+            ).toSignificant(6),
+            price: new Fraction(
+              order.sellAmount
+                .mul(BigNumber.from(10).pow(auctioningToken.decimals))
+                .toString(),
+              order.buyAmount
+                .mul(BigNumber.from(10).pow(biddingToken.decimals))
+                .toString(),
+            ).toSignificant(6),
+            status: OrderStatus.PLACED,
+          });
+        }
+      }
+      onNewOrder(sellOrderDisplays);
     }
-    if (!userOrders && !isFetchingDone) {
+    if (shouldLoad) {
       fetchData();
     }
   }, [
     chainId,
     account,
     auctionId,
-    userOrders,
-    setFetchingDone,
-    isFetchingDone,
+    onNewOrder,
+    auctioningToken,
+    biddingToken,
+    shouldLoad,
   ]);
-  return userOrders;
 }
