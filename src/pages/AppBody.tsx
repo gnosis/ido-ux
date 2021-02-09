@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   position: relative;
-  max-width: 700px;
+  max-width: 1000px;
   width: 100%;
   height: auto;
   box-sizing: border-box;

@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { ExternalLink } from "../../theme";
 import {
-  useSwapState,
   useDerivedAuctionInfo,
   AuctionState,
   useDerivedAuctionState,
@@ -17,7 +16,7 @@ import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolu
 
 const Wrapper = styled.div`
   position: relative;
-  width: calc(50% - 8px);
+  width: calc(60% - 8px);
   background: none;
   box-shadow: none;
   border-radius: 20px;
@@ -79,10 +78,8 @@ const Row = styled.span`
 `;
 
 export default function AuctionDetails() {
-  const { auctionId } = useSwapState();
   const { chainId } = useActiveWeb3React();
   const {
-    auctionEndDate,
     auctioningToken,
     biddingToken,
     clearingPrice,
@@ -101,9 +98,6 @@ export default function AuctionDetails() {
     [chainId, biddingToken],
   );
 
-  const auctionEndDateString = new Date(
-    auctionEndDate * 1000,
-  ).toLocaleDateString();
   const clearingPriceInfo = useClearingPriceInfo();
   const clearingPriceInfoAsSellorder =
     clearingPriceInfo &&
@@ -174,26 +168,6 @@ export default function AuctionDetails() {
             {initialPrice ? `${initialPrice?.toSignificant(2)} ` : " - "}
             {biddingTokenDisplay} per {auctioningTokenDisplay}
           </p>
-        </Row>
-
-        <Row>
-          <i>Status</i>
-          <p>
-            {" "}
-            {auctionState == AuctionState.ORDER_PLACING ||
-            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
-              ? "Ongoing"
-              : auctionState == AuctionState.PRICE_SUBMISSION
-              ? "Clearing"
-              : "Ended"}
-          </p>
-        </Row>
-        <Row>
-          <i>Id</i> <p>{auctionId}</p>
-        </Row>
-        <Row>
-          <i>Ends</i>
-          <p>{auctionEndDateString}</p>
         </Row>
       </Details>
     </Wrapper>

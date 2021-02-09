@@ -20,7 +20,48 @@ export const logDebug = (...args: any[]): void => {
     console.log(...args);
   }
 };
+const addClearingPriceInfo = (
+  price: number,
+  pricePointsDetails: PricePointDetails[],
+): PricePointDetails[] => {
+  const pricePointBottom: PricePointDetails = {
+    type: null,
+    volume: null,
+    totalVolume: null,
+    price,
 
+    // Data for representation
+    priceNumber: price,
+    totalVolumeNumber: 0,
+    priceFormatted: price.toString(),
+    totalVolumeFormatted: "0",
+    askValueY: null,
+    bidValueY: null,
+    newOrderValueY: null,
+    clearingPriceValueY: 0,
+  };
+  const valueYofBids = pricePointsDetails.map((y) =>
+    Math.max(y.bidValueY, y.askValueY),
+  );
+  const maxValueYofBid = Math.max(...valueYofBids);
+  const pricePointTop: PricePointDetails = {
+    type: null,
+    volume: null,
+    totalVolume: null,
+    price,
+
+    // Data for representation
+    priceNumber: price,
+    totalVolumeNumber: 0,
+    priceFormatted: price.toString(),
+    totalVolumeFormatted: "0",
+    askValueY: null,
+    bidValueY: null,
+    newOrderValueY: null,
+    clearingPriceValueY: maxValueYofBid,
+  };
+  return [pricePointBottom, pricePointTop];
+};
 /**
  * This method turns the raw data that the backend returns into data that can be displayed by the chart.
  * This involves aggregating the total volume and accounting for decimals
@@ -81,7 +122,7 @@ const processData = (
   const { points } = pricePoints.reduce(
     (acc, pricePoint, index) => {
       const { price, volume } = pricePoint;
-      const totalVolume = acc.totalVolume + volume;
+      const totalVolume = acc.totalVolume;
 
       // Amcharts draws step lines so that the x value is centered (Default). To correctly display the order book, we want
       // the x value to be at the left side of the step for asks and at the right side of the step for bids.
@@ -97,35 +138,11 @@ const processData = (
       // Otherwise our steps would be off by one.
       let askValueY, bidValueY;
       if (isBid) {
-        const previousPricePoint = acc.points[index - 1];
         askValueY = null;
-        bidValueY = previousPricePoint?.totalVolume || 0;
+        bidValueY = totalVolume;
       } else {
         askValueY = totalVolume * price;
         bidValueY = null;
-      }
-
-      if (!isBid) {
-        // Add the new point at the beginning of order
-        //      ------------
-        //      |
-        //  ----|<-here
-        const pricePointDetails: PricePointDetails = {
-          type,
-          volume,
-          totalVolume: acc.totalVolume,
-          price,
-
-          // Data for representation
-          priceNumber: price,
-          totalVolumeNumber: acc.totalVolume,
-          priceFormatted: price.toString(),
-          totalVolumeFormatted: acc.totalVolume.toString(),
-          askValueY: acc.totalVolume * price,
-          bidValueY,
-          newOrderValueY: null,
-        };
-        acc.points.push(pricePointDetails);
       }
       // Add the new point
       const pricePointDetails: PricePointDetails = {
@@ -142,8 +159,32 @@ const processData = (
         askValueY,
         bidValueY,
         newOrderValueY: null,
+        clearingPriceValueY: null,
       };
       acc.points.push(pricePointDetails);
+      if (!isBid) {
+        // Add the new point at the beginning of order
+        //      ------------
+        //      |
+        //  ----|<-here
+        const pricePointDetails: PricePointDetails = {
+          type,
+          volume,
+          totalVolume: acc.totalVolume + volume,
+          price,
+
+          // Data for representation
+          priceNumber: price,
+          totalVolumeNumber: acc.totalVolume + volume,
+          priceFormatted: price.toString(),
+          totalVolumeFormatted: (acc.totalVolume + volume).toString(),
+          askValueY: (acc.totalVolume + volume) * price,
+          bidValueY,
+          newOrderValueY: null,
+          clearingPriceValueY: null,
+        };
+        acc.points.push(pricePointDetails);
+      }
 
       // Next two points are only added for displaying new Order
       if (userOrder && userOrder == pricePoint) {
@@ -162,6 +203,7 @@ const processData = (
           askValueY: null,
           bidValueY: null,
           newOrderValueY: bidValueY + volume,
+          clearingPriceValueY: null,
         };
         acc.points.push(pricePointDetails);
         const pricePointDetails_2: PricePointDetails = {
@@ -178,6 +220,7 @@ const processData = (
           askValueY: null,
           bidValueY: null,
           newOrderValueY: bidValueY,
+          clearingPriceValueY: null,
         };
         acc.points.push(pricePointDetails_2);
       }
@@ -205,11 +248,11 @@ const processData = (
           askValueY: null,
           bidValueY: null,
           newOrderValueY: bidValueY,
+          clearingPriceValueY: null,
         };
         acc.points.push(pricePointDetails);
       }
-
-      return { totalVolume, points: acc.points };
+      return { totalVolume: totalVolume + volume, points: acc.points };
     },
     {
       totalVolume: 0,
@@ -242,6 +285,43 @@ interface ProcessRawDataParams {
   baseToken: Pick<Token, "decimals" | "symbol">;
   quoteToken: Pick<Token, "decimals" | "symbol">;
 }
+export function findClearingPrice(
+  sellOrders: PricePoint[],
+  userOrder: PricePoint | undefined,
+  initialAuctionOrder: PricePoint,
+): number | undefined {
+  if (userOrder) {
+    if (userOrder.price > initialAuctionOrder.price && userOrder.volume > 0) {
+      sellOrders = sellOrders.concat(userOrder);
+    }
+  }
+  sellOrders = Object.values(sellOrders);
+
+  sellOrders.sort((lhs, rhs) => -1 * (lhs.price - rhs.price));
+  let totalSellVolume = 0;
+
+  for (const order of sellOrders) {
+    totalSellVolume = totalSellVolume + order.volume;
+    if (totalSellVolume >= initialAuctionOrder.volume * order.price) {
+      const coveredBuyAmount =
+        initialAuctionOrder.volume * order.price -
+        (totalSellVolume - order.volume);
+      if (coveredBuyAmount < order.volume) {
+        return order.price;
+      } else {
+        return (totalSellVolume - order.volume) / initialAuctionOrder.volume;
+      }
+    }
+  }
+  if (
+    totalSellVolume >=
+    initialAuctionOrder.volume * initialAuctionOrder.price
+  ) {
+    return totalSellVolume / initialAuctionOrder.volume;
+  } else {
+    return initialAuctionOrder.price;
+  }
+}
 
 export const processOrderbookData = ({
   data,
@@ -250,6 +330,7 @@ export const processOrderbookData = ({
   quoteToken,
 }: ProcessRawDataParams): PricePointDetails[] => {
   try {
+    const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0]);
     const bids = processData(
       data.bids,
       userOrder,
@@ -265,8 +346,11 @@ export const processOrderbookData = ({
       data.asks[0].price,
       Offer.Ask,
     );
-    const pricePoints = bids.concat(asks);
-
+    let pricePoints = bids.concat(asks);
+    if (clearingPrice) {
+      const priceInfo = addClearingPriceInfo(clearingPrice, pricePoints);
+      pricePoints = pricePoints.concat(priceInfo);
+    }
     // Sort points by price
     pricePoints.sort((lhs, rhs) => lhs.price - rhs.price);
     const debug = false;
