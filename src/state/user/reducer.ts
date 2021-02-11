@@ -51,7 +51,7 @@ function pairKey(token0Address: string, token1Address: string) {
 const initialState: UserState = {
   lastVersion: "",
 
-  userDarkMode: null,
+  userDarkMode: true,
   matchesDarkMode: false,
 
   tokens: {},
@@ -79,12 +79,12 @@ export default createReducer(initialState, (builder) =>
       }
       state.timestamp = currentTimestamp();
     })
-    .addCase(updateUserDarkMode, (state, action) => {
-      state.userDarkMode = action.payload.userDarkMode;
+    .addCase(updateUserDarkMode, (state) => {
+      state.userDarkMode = true; //Darkmode change action.payload.userDarkMode;
       state.timestamp = currentTimestamp();
     })
-    .addCase(updateMatchesDarkMode, (state, action) => {
-      state.matchesDarkMode = action.payload.matchesDarkMode;
+    .addCase(updateMatchesDarkMode, (state) => {
+      state.matchesDarkMode = true; //Darkmode change action.payload.matchesDarkMode;
       state.timestamp = currentTimestamp();
     })
     .addCase(addSerializedToken, (state, { payload: { serializedToken } }) => {
