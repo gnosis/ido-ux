@@ -1,6 +1,6 @@
 {
-  "name": "@uniswap/interface",
-  "description": "Uniswap Interface",
+  "name": "Gnosis-Auction",
+  "description": "Gnosis Auction",
   "homepage": ".",
   "private": true,
   "devDependencies": {
@@ -52,12 +52,14 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-react-hooks": "^4.0.0",
+    "husky": "^4.3.6",
     "i18next": "^15.0.9",
     "i18next-browser-languagedetector": "^3.0.1",
     "i18next-xhr-backend": "^2.0.1",
     "isexe": "^2.0.0",
     "jazzicon": "^1.5.0",
     "levenary": "^1.1.1",
+    "lint-staged": "^10.5.3",
     "lodash.flatmap": "^4.5.0",
     "modali": "^1.2.0",
     "polished": "^3.3.2",
@@ -93,7 +95,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
-    "prettier:ts": "prettier --write './**/*.{js,jsx,ts,tsx}'",
+    "prettier:fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'",
     "cy:run": "cypress run",
     "serve:build": "serve -s build -l 3000",
     "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run"
@@ -117,5 +119,16 @@
   "dependencies": {
     "inter-ui": "^3.15.0",
     "react-table": "^7.6.3"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "yarn run lint:fix",
+      "yarn run prettier:fix"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
