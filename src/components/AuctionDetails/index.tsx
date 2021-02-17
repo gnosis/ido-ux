@@ -163,7 +163,7 @@ export default function AuctionDetails() {
         </Row>
 
         <Row>
-          <i>Min. price</i>
+          <i>Min. sell price</i>
           <p>
             {initialPrice ? `${initialPrice?.toSignificant(2)} ` : " - "}
             {biddingTokenDisplay} per {auctioningTokenDisplay}
