@@ -17,7 +17,7 @@ export default [
   ),
   new Token(
     ChainId.RINKEBY,
-    "0x4dbcdf9b62e891a7cec5a2568c3f4faf9e8abe2b",
+    "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b",
     6,
     "USDC",
     "USDC",
