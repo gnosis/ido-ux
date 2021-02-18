@@ -134,7 +134,7 @@ export default function PendingView({
               color={option.color}
               header={option.name}
               subheader={option.description}
-              icon={require("../../assets/images/" + option.iconName)}
+              icon={option.icon}
             />
           );
         }
