@@ -178,6 +178,9 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   chart.cursor.lineY.strokeOpacity = 0.6;
   chart.cursor.lineY.strokeDasharray = "4";
 
+  // Add default empty data array
+  chart.data = [];
+
   return chart;
 };
 
