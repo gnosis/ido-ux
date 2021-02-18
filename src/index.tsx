@@ -15,6 +15,7 @@ import TransactionUpdater from "./state/transactions/updater";
 import UserUpdater from "./state/user/updater";
 import MulticallUpdater from "./state/multicall/updater";
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from "./theme";
+import "sanitize.css";
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
 
