@@ -128,20 +128,24 @@ export default function AuctionDetails() {
       )} per ${getTokenDisplay(auctioningToken)}`
     : "-";
 
+  const titlePrice = useMemo(
+    () =>
+      auctionState == AuctionState.ORDER_PLACING ||
+      auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
+        ? "Current price"
+        : auctionState == AuctionState.PRICE_SUBMISSION
+        ? "Clearing price"
+        : "Closing price",
+    [auctionState],
+  );
+
   return (
     <Wrapper>
       <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
       <Details>
         <Row>
-          <i>
-            {" "}
-            {auctionState == AuctionState.ORDER_PLACING ||
-            auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
-              ? "Current"
-              : auctionState == AuctionState.PRICE_SUBMISSION
-              ? "Clearing"
-              : "Closing"}{" "}
-            price
+          <i title='"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled'>
+            {titlePrice}
           </i>
           <p>{clearingPriceDisplay}</p>
         </Row>
