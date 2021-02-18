@@ -3,20 +3,18 @@
   "name": "GnosisAuction",
   "icons": [
     {
-      "src": "./images/192x192_App_Icon.png",
+      "src": "./android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "./images/512x512_App_Icon.png",
+      "src": "./android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ],
-  "orientation": "portrait",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
   "display": "standalone",
-  "theme_color": "#ff007a",
-  "background_color": "#fff"
+  "orientation": "portrait"
 }
