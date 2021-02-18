@@ -77,11 +77,14 @@ const IconWrapper = styled.span`
 `
 
 const SettingsIconStyled = styled(SettingsIcon)`
+  fill: ${({ theme }) => theme.text1};
   height: 11px;
   width: 11px;
 
-  .fill {
-    fill: #000;
+  &:hover {
+    .fill {
+      fill: ${({ theme }) => theme.primary2};
+    }
   }
 `
 
