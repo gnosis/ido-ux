@@ -48,6 +48,7 @@ export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = 
     <Wrapper
       className={`buttonConnect ${className}`}
       onClick={() => {
+        // eslint-disable-next-line no-console
         console.log('connect')
       }}
       {...restProps}

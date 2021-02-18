@@ -7,21 +7,25 @@ import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
 import { UserDropdown } from '../../common/UserDropdown'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
+import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 
 const Wrapper = styled.header`
-  &.siteHeader {
-    align-items: center;
-    background-color: ${(props) => props.theme.header.backgroundColor};
-    border-bottom: solid 1px #e8e7e6;
-    display: flex;
-    flex-shrink: 0;
-    height: ${(props) => props.theme.header.height};
-    justify-content: space-between;
-    padding-left: ${(props) => props.theme.layout.horizontalPadding};
-    padding-right: ${(props) => props.theme.layout.horizontalPadding};
-    position: relative;
-    z-index: 100;
-  }
+  background-color: ${({ theme }) => theme.mainBackground};
+  display: flex;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+`
+
+const Inner = styled(InnerContainer)`
+  align-items: center;
+  flex-flow: row;
+  flex-grow: 1;
+  flex-shrink: 0;
+  height: ${(props) => props.theme.header.height};
+  justify-content: space-between;
+  padding-left: ${(props) => props.theme.layout.horizontalPadding};
+  padding-right: ${(props) => props.theme.layout.horizontalPadding};
 `
 
 const LogoLink = styled(Link)`
@@ -89,12 +93,14 @@ export const Header: React.FC = (props) => {
 
   return (
     <Wrapper className="siteHeader" {...props}>
-      <ButtonMenuStyled onClick={mobileMenuToggle} />
-      {mobileMenuVisible && <MobilemenuStyled onClose={() => setMobileMenuVisible(false)} />}
-      <LogoLink className="logoLink" to="/">
-        <Logo />
-      </LogoLink>
-      {isDisconnected ? <ButtonConnectStyled disabled={isConnecting} /> : <UserDropdownStyled />}
+      <Inner>
+        <ButtonMenuStyled onClick={mobileMenuToggle} />
+        {mobileMenuVisible && <MobilemenuStyled onClose={() => setMobileMenuVisible(false)} />}
+        <LogoLink className="logoLink" to="/">
+          <Logo />
+        </LogoLink>
+        {isDisconnected ? <ButtonConnectStyled disabled={isConnecting} /> : <UserDropdownStyled />}
+      </Inner>
     </Wrapper>
   )
 }

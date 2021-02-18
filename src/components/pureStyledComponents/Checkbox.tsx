@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 
 const CheckboxSelectedCSS = css`
   &:before {
-    background-color: ${(props) => props.theme.colors.primary};
+    background-color: ${({ theme }) => theme.primary1};
     content: '';
     height: 8px;
     left: 1px;
@@ -21,8 +21,8 @@ const CheckboxDisabledCSS = css`
 `
 
 export const Checkbox = styled.div<{ checked?: boolean; disabled?: boolean }>`
-  background-color: #fff;
-  border: solid 1px ${(props) => props.theme.colors.primary};
+  background-color: ${({ theme }) => theme.mainBackground};
+  border: solid 1px ${({ theme }) => theme.primary1};
   flex-grow: 0;
   flex-shrink: 0;
   height: 12px;

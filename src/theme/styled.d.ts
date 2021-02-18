@@ -18,6 +18,7 @@ export interface Colors {
   buttonGradient2: Color;
   disabled: Color;
   green1: Color;
+  mainBackground: Color;
   modalBG: Color;
   primary1: Color;
   primary2: Color;

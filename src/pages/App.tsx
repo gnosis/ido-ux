@@ -45,12 +45,12 @@ export default function App() {
                   <Route component={RedirectPathToSwapOnly} />
                 </Switch>
               </Web3ReactManager>
-              <Footer
-                onCookiesBannerShow={() => {
-                  setShowCookiesBanner(true)
-                }}
-              />
             </InnerContainer>
+            <Footer
+              onCookiesBannerShow={() => {
+                setShowCookiesBanner(true)
+              }}
+            />
           </MainScroll>
           <CookiesBanner
             isBannerVisible={showCookiesBanner}

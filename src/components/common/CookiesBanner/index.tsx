@@ -6,16 +6,15 @@ import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
 import { Button } from '../../buttons/Button'
-import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { CloseIcon } from '../../icons/CloseIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
 
 const INNER_WIDTH = '840px'
 
 const Wrapper = styled.div`
-  background-color: #fff;
+  background-color: ${({ theme }) => theme.mainBackground};
   bottom: 0;
-  box-shadow: 0 -5px 8px 0 rgba(212, 213, 211, 0.4);
+  box-shadow: 0 -20px 24px 0 #002249;
   display: flex;
   justify-content: center;
   left: 0;
@@ -33,7 +32,7 @@ const Content = styled.div`
 `
 
 const Text = styled.p`
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: ${({ theme }) => theme.text1};
   font-size: 17px;
   font-weight: normal;
   line-height: 1.4;
@@ -47,7 +46,7 @@ const Text = styled.p`
 `
 
 const Link = styled(NavLink)`
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: ${({ theme }) => theme.text1};
   text-decoration: underline;
 
   &:hover {
@@ -72,7 +71,7 @@ const Labels = styled.div`
 
 const Label = styled.div<{ clickable?: boolean }>`
   align-items: center;
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: ${({ theme }) => theme.text1};
   display: flex;
   font-size: 17px;
   font-weight: normal;
@@ -245,11 +244,7 @@ export const CookiesBanner: React.FC<Props> = (props) => {
               <CheckboxStyled checked={googleAnalyticsAccepted} /> Analytics
             </Label>
           </Labels>
-          <ButtonAccept
-            buttonType={ButtonType.primaryInverted}
-            className="buttonAccept"
-            onClick={acceptAll}
-          >
+          <ButtonAccept className="buttonAccept" onClick={acceptAll}>
             Accept All
           </ButtonAccept>
         </ButtonContainer>

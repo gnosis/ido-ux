@@ -1,56 +1,60 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { SettingsIcon } from '../../icons/SettingsIcon'
+import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 
 const Wrapper = styled.footer`
-  &.siteFooter {
-    align-items: initial;
-    border-radius: 0;
-    display: block;
-    height: auto;
-    margin-top: auto;
-    overflow: visible;
-    padding: 25px 0;
-    width: 100%;
-  }
+  border-top: solid 1px #002249;
+  display: flex;
+  height: auto;
+  justify-content: center;
+  margin-top: auto;
+  overflow: visible;
+  padding: 25px 0;
+  width: 100%;
 `
 
-const Items = styled.ul`
-  &.footerItems {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    list-style: none;
-    margin: 0;
-    padding-bottom: 0;
-    padding-left: ${(props) => props.theme.layout.horizontalPadding};
-    padding-right: ${(props) => props.theme.layout.horizontalPadding};
-    padding-top: 0;
+const Inner = styled(InnerContainer)`
+  align-items: center;
+  flex-flow: row;
+  flex-grow: 1;
+  flex-shrink: 0;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding-bottom: 0;
+  padding-left: ${(props) => props.theme.layout.horizontalPadding};
+  padding-right: ${(props) => props.theme.layout.horizontalPadding};
+  padding-top: 0;
 
-    @media (min-width: ${(props) => props.theme.themeBreakPoints.mdPre}) {
-      flex-direction: row;
-      justify-content: center;
-    }
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.mdPre}) {
+    flex-direction: row;
+    justify-content: center;
   }
 `
 
 const Item = styled.li`
-  color: #000;
+  color: ${({ theme }) => theme.text1};
+  margin-right: 30px;
+  opacity: 0.8;
+
+  &:hover {
+    opacity: 1;
+  }
 
   &:last-child {
-    .break {
-      display: none;
-    }
+    margin-right: 0;
   }
 `
 
 const LinkCSS = css`
-  color: #000;
+  color: ${({ theme }) => theme.text1};
   text-decoration: none;
 
   &:hover {
-    text-decoration: underline;
+    color: ${({ theme }) => theme.primary2};
   }
 `
 
@@ -58,18 +62,8 @@ const ExternalLink = styled.a`
   ${LinkCSS}
 `
 
-const Link = styled.a`
+const Link = styled(NavLink)`
   ${LinkCSS}
-`
-
-const Break = styled.span`
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.mdPre}) {
-    margin: 0 6px;
-
-    &:after {
-      content: '|';
-    }
-  }
 `
 
 const IconWrapper = styled.span`
@@ -102,29 +96,31 @@ export const Footer: React.FC<Props> = (props) => {
 
   return (
     <Wrapper className="siteFooter" {...restProps}>
-      <Items className="footerItems">
+      <Inner as="ul">
         <Item>
           <ExternalLink href="https://gnosis.io/" rel="noopener noreferrer" target="_blank">
             {`©${year} Gnosis`}
           </ExternalLink>
-          <Break className="break" />
         </Item>
         <Item>
-          <Link href="/terms-and-conditions#mainTitle">Terms &amp; Conditions</Link>
-          <Break className="break" />
+          <Link to="/terms-and-conditions">Terms</Link>
         </Item>
         <Item>
-          <Link href="/privacy-policy#mainTitle">Privacy Policy</Link>
-          <Break className="break" />
+          <Link to="/privacy-policy">Privacy</Link>
         </Item>
         <Item>
-          <Link href="/cookie-policy#mainTitle">Cookie Policy</Link>
+          <Link to="/licenses">Cookies</Link>
           <IconWrapper onClick={onCookiesBannerShow}>
             <SettingsIconStyled />
           </IconWrapper>
-          <Break className="break" />
         </Item>
-      </Items>
+        <Item>
+          <Link to="/licenses">Licenses</Link>
+        </Item>
+        <Item>
+          <Link to="/imprint">Imprint</Link>
+        </Item>
+      </Inner>
     </Wrapper>
   )
 }
