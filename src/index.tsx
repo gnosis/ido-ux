@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom'
 import { Web3Provider } from '@ethersproject/providers'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
 import 'inter-ui'
-import { isMobile } from 'react-device-detect'
-import ReactGA from 'react-ga'
 import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
@@ -26,20 +24,6 @@ function getLibrary(provider: any): Web3Provider {
   return new Web3Provider(provider)
 }
 
-const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
-if (typeof GOOGLE_ANALYTICS_ID === 'string') {
-  ReactGA.initialize(GOOGLE_ANALYTICS_ID)
-  ReactGA.set({
-    customBrowserType: !isMobile
-      ? 'desktop'
-      : 'web3' in window || 'ethereum' in window
-      ? 'mobileWeb3'
-      : 'mobileRegular',
-  })
-} else {
-  ReactGA.initialize('test', { testMode: true, debug: true })
-}
-
 function Updaters() {
   return (
     <>
@@ -58,11 +42,9 @@ ReactDOM.render(
         <Provider store={store}>
           <Updaters />
           <ThemeProvider>
-            <>
-              <GlobalStyle />
-              <ThemedGlobalStyle />
-              <App />
-            </>
+            <GlobalStyle />
+            <ThemedGlobalStyle />
+            <App />
           </ThemeProvider>
         </Provider>
       </Web3ProviderNetwork>

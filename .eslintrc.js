@@ -44,8 +44,6 @@ module.exports = {
     'prettier/prettier': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'prettier/prettier': 'error',
     'react/prop-types': 'off',
     'no-console': [
       'warn',

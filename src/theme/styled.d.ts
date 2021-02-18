@@ -5,52 +5,39 @@ import {
 
 export type Color = string;
 export interface Colors {
-  // base
-  white: Color;
-  black: Color;
-
-  // text
-  text1: Color;
-  text2: Color;
-  text3: Color;
-  text4: Color;
-  text5: Color;
-
-  // backgrounds / greys
+  advancedBG: Color;
   bg1: Color;
   bg2: Color;
   bg3: Color;
   bg4: Color;
   bg5: Color;
-
+  black: Color;
+  blue1: Color;
+  border: Color;
+  buttonGradient1: Color;
+  buttonGradient2: Color;
+  disabled: Color;
+  green1: Color;
   modalBG: Color;
-  advancedBG: Color;
-
-  //blues
   primary1: Color;
   primary2: Color;
   primary3: Color;
   primary4: Color;
   primary5: Color;
-
   primaryText1: Color;
-
-  // pinks
+  purple: Color;
+  red1: Color;
   secondary1: Color;
   secondary2: Color;
   secondary3: Color;
-
-  // other
-  red1: Color;
-  green1: Color;
+  text1: Color;
+  text2: Color;
+  text3: Color;
+  text4: Color;
+  text5: Color;
+  white: Color;
   yellow1: Color;
   yellow2: Color;
-  blue1: Color;
-  purple: Color;
-  border: Color;
-  disabled: Color;
-  buttonGradient1: Color;
-  buttonGradient2: Color;
 }
 
 export interface Grids {
@@ -62,20 +49,24 @@ export interface Grids {
 declare module "styled-components" {
   export interface DefaultTheme extends Colors {
     grids: Grids;
-
-    // shadows
     shadow1: string;
-
-    // media queries
     mediaWidth: {
       upToExtraSmall: ThemedCssFunction<DefaultTheme>;
       upToSmall: ThemedCssFunction<DefaultTheme>;
       upToMedium: ThemedCssFunction<DefaultTheme>;
       upToLarge: ThemedCssFunction<DefaultTheme>;
     };
-
-    // css snippets
     flexColumnNoWrap: FlattenSimpleInterpolation;
     flexRowNoWrap: FlattenSimpleInterpolation;
+    cards: any;
+    fonts: any;
+    colors: any;
+    layout: any;
+    themeBreakPoints: any;
+    textField: any;
+    buttonPrimary: any;
+    buttonPrimaryInverted: any;
+    dropdown: any;
+    header: any;
   }
 }

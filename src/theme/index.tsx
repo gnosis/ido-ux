@@ -28,54 +28,39 @@ const mediaWidthTemplates: {
 
 export function colors(darkMode: boolean): Colors {
   return {
-    // base
-    white: '#fff',
-    black: '#000',
-
-    // text
-    text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#DCDCDC' : '#565A69',
-    text3: darkMode ? '#a9acbb' : '#a9acbb',
-    text4: darkMode ? '#565A69' : '#C3C5CB',
-    text5: darkMode ? '#2C2F36' : '#EDEEF2',
-
-    // backgrounds / greys
+    advancedBG: darkMode ? '#2B2D3F' : 'rgb(247 248 250)',
     bg1: darkMode ? '#1E1F2C' : '#FFFFFF',
     bg2: darkMode ? '#2C2D3F' : '#F7F8FA',
     bg3: darkMode ? '#40444f' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#565A69' : '#888D9B',
-
-    //specialty colors
-    modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
-    advancedBG: darkMode ? '#2B2D3F' : 'rgb(247 248 250)',
+    black: '#000',
+    blue1: '#3F77FF',
+    border: darkMode ? '#3a3b5a' : 'rgb(58 59 90 / 10%)',
     buttonGradient1: '#8958FF',
     buttonGradient2: '#3F77FF',
-
-    //primary colors
+    disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
+    green1: '#27AE60',
+    modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
     primary1: darkMode ? '#3F77FF' : '#3F77FF',
     primary2: darkMode ? '#3680E7' : '#FF8CC3',
     primary3: darkMode ? '#4D8FEA' : '#FF99C9',
     primary4: darkMode ? '#376bad70' : '#F6DDE8',
     primary5: darkMode ? 'rgba(69,104,255,0.25)' : 'rgba(69,104,255,0.25)',
-
-    // color text
     primaryText1: darkMode ? '#6F9DFF' : '#3F77FF',
-
-    // secondary colors
+    purple: '#8958FF',
+    red1: '#FF6871',
     secondary1: darkMode ? '#2172E5' : '#3F77FF',
     secondary2: darkMode ? '#17000b26' : '#F6DDE8',
     secondary3: darkMode ? '#17000b26' : 'rgba(69,104,255,0.25)',
-
-    // other
-    red1: '#FF6871',
-    green1: '#27AE60',
+    text1: darkMode ? '#FFFFFF' : '#000000',
+    text2: darkMode ? '#DCDCDC' : '#565A69',
+    text3: darkMode ? '#a9acbb' : '#a9acbb',
+    text4: darkMode ? '#565A69' : '#C3C5CB',
+    text5: darkMode ? '#2C2F36' : '#EDEEF2',
+    white: '#fff',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
-    blue1: '#3F77FF',
-    purple: '#8958FF',
-    border: darkMode ? '#3a3b5a' : 'rgb(58 59 90 / 10%)',
-    disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
   }
 }
 
@@ -101,6 +86,84 @@ export const theme = (darkMode: boolean): any => ({
     display: flex;
     flex-flow: row nowrap;
   `,
+  border: {
+    color: '#eceff1',
+    colorDark: '#ccc',
+    borderRadius: '6px',
+  },
+  buttonPrimary: {
+    backgroundColor: '#e8663d',
+    backgroundColorHover: '#e8663d',
+    borderColor: '#e8663d',
+    borderColorHover: '#e8663d',
+    color: '#fff',
+    colorHover: '#fff',
+  },
+  buttonPrimaryInverted: {
+    backgroundColor: '#fff',
+    backgroundColorHover: '#e8663d',
+    borderColor: '#e8663d',
+    borderColorHover: '#e8663d',
+    color: '#e8663d',
+    colorHover: '#fff',
+  },
+  dropdown: {
+    item: {
+      backgroundColor: 'transparent',
+      backgroundColorActive: '#ccc',
+      backgroundColorHover: '#ccc',
+      borderColor: '#ccc',
+      color: '#000',
+      colorActive: '#ccc',
+      height: '40px',
+      paddingHorizontal: '12px',
+    },
+  },
+  header: {
+    backgroundColor: '#fff',
+    height: '60px',
+  },
+  layout: {
+    commonContainerMaxWidth: '600px',
+    horizontalPadding: '10px',
+    maxWidth: '100%',
+  },
+  paddings: {
+    mainPadding: '15px',
+  },
+  textField: {
+    backgroundColor: '#fff',
+    backgroundColorActive: '#fff',
+    borderColor: '#ccc',
+    borderColorActive: '#aaa',
+    borderRadius: '4px',
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    color: '#000',
+    colorPlaceholder: '#ccc',
+    errorColor: '#880000',
+    fontSize: '16px',
+    fontWeight: '400',
+    height: '36px',
+    paddingHorizontal: '11px',
+  },
+  cards: {
+    backgroundColor: '#fff',
+    borderRadius: '8px ',
+    boxShadow: '0 2px 8px 0 rgba(212, 213, 211, 0.7)',
+    paddingHorizontal: '20px',
+    paddingVertical: '24px',
+  },
+  themeBreakPoints: {
+    lg: '992px',
+    md: '769px',
+    mdPre: '768px',
+    sm: '480px',
+    xl: '1024px',
+    xs: '320px',
+    xxl: '1280px',
+    xxxl: '1366px',
+  },
 })
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
