@@ -1,19 +1,16 @@
-import React from "react";
-import { Link as HistoryLink } from "react-router-dom";
+import React from 'react'
+import { Link as HistoryLink } from 'react-router-dom'
+import styled from 'styled-components'
 
-import styled from "styled-components";
-import { useTokenBalanceTreatingWETHasETH } from "../../state/wallet/hooks";
+import { ChainId, WETH } from '@uniswap/sdk'
+import { isMobile } from 'react-device-detect'
 
-import Row from "../Row";
-import Menu from "../Menu";
-import Web3Status from "../Web3Status";
-
-import { WETH, ChainId } from "@uniswap/sdk";
-import { isMobile } from "react-device-detect";
-import { YellowCard } from "../Card";
-import { useActiveWeb3React } from "../../hooks";
-
-import { RowBetween } from "../Row";
+import { useActiveWeb3React } from '../../hooks'
+import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
+import { YellowCard } from '../Card'
+import Menu from '../Menu'
+import Row, { RowBetween } from '../Row'
+import Web3Status from '../Web3Status'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -30,7 +27,7 @@ const HeaderFrame = styled.div`
     position: relative;
   `};
   z-index: 2;
-`;
+`
 
 const HeaderElement = styled.div`
   display: flex;
@@ -51,7 +48,7 @@ const HeaderElement = styled.div`
     background-color: ${({ theme }) => theme.bg3};
     box-sizing: border-box;
   `};
-`;
+`
 
 const Title = styled.div`
   display: flex;
@@ -65,7 +62,7 @@ const Title = styled.div`
   :hover {
     cursor: pointer;
   }
-`;
+`
 
 const TitleText = styled(Row)`
   width: fit-content;
@@ -78,7 +75,7 @@ const TitleText = styled(Row)`
     color: inherit;
     text-decoration: none;
   }
-`;
+`
 
 const EthBalance = styled.div`
   display: flex;
@@ -93,13 +90,13 @@ const EthBalance = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
-`;
+`
 
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
+  background-color: ${({ active, theme }) => (!active ? theme.bg1 : theme.bg3)};
   border-radius: 12px;
   white-space: nowrap;
 
@@ -110,7 +107,7 @@ const AccountElement = styled.div<{ active: boolean }>`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     margin: 0 auto 0 0;
   `}
-`;
+`
 
 const TestnetWrapper = styled.div`
   white-space: nowrap;
@@ -120,28 +117,25 @@ const TestnetWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
-`;
+`
 
 const NetworkCard = styled(YellowCard)`
   width: fit-content;
   margin-right: 10px;
   border-radius: 12px;
   padding: 8px 12px;
-`;
+`
 
 const MenuWrapper = styled.div`
   pointer-events: auto;
   display: flex;
   position: relative;
-`;
+`
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React();
+  const { account, chainId } = useActiveWeb3React()
 
-  const userEthBalance = useTokenBalanceTreatingWETHasETH(
-    account,
-    WETH[chainId],
-  );
+  const userEthBalance = useTokenBalanceTreatingWETHasETH(account, WETH[chainId])
 
   return (
     <HeaderFrame>
@@ -154,24 +148,16 @@ export default function Header() {
           </TitleText>
         </Title>
         <HeaderElement>
-          <TestnetWrapper style={{ pointerEvents: "auto" }}></TestnetWrapper>
+          <TestnetWrapper style={{ pointerEvents: 'auto' }}></TestnetWrapper>
         </HeaderElement>
         <HeaderElement>
           <TestnetWrapper>
-            {!isMobile && chainId === ChainId.ROPSTEN && (
-              <NetworkCard>Ropsten</NetworkCard>
-            )}
-            {!isMobile && chainId === ChainId.RINKEBY && (
-              <NetworkCard>Rinkeby</NetworkCard>
-            )}
-            {!isMobile && chainId === ChainId.GÖRLI && (
-              <NetworkCard>Görli</NetworkCard>
-            )}
-            {!isMobile && chainId === ChainId.KOVAN && (
-              <NetworkCard>Kovan</NetworkCard>
-            )}
+            {!isMobile && chainId === ChainId.ROPSTEN && <NetworkCard>Ropsten</NetworkCard>}
+            {!isMobile && chainId === ChainId.RINKEBY && <NetworkCard>Rinkeby</NetworkCard>}
+            {!isMobile && chainId === ChainId.GÖRLI && <NetworkCard>Görli</NetworkCard>}
+            {!isMobile && chainId === ChainId.KOVAN && <NetworkCard>Kovan</NetworkCard>}
           </TestnetWrapper>
-          <AccountElement active={!!account} style={{ pointerEvents: "auto" }}>
+          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <EthBalance>{userEthBalance?.toSignificant(4)} ETH</EthBalance>
             ) : null}
@@ -183,5 +169,5 @@ export default function Header() {
         </HeaderElement>
       </RowBetween>
     </HeaderFrame>
-  );
+  )
 }

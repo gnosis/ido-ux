@@ -1,42 +1,35 @@
-import React, { useEffect, useRef } from "react";
-import styled from "styled-components";
+import React, { useEffect, useRef } from 'react'
+import styled from 'styled-components'
 
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
-import {
-  OrderBookChartProps,
-  DrawLabelsParams,
-  createChart,
-} from "./OrderbookChart";
+import * as am4charts from '@amcharts/amcharts4/charts'
+import * as am4core from '@amcharts/amcharts4/core'
 
-const drawLabels = ({
-  chart,
-  baseToken,
-  quoteToken,
-}: DrawLabelsParams): void => {
-  const baseTokenLabel = baseToken.symbol;
-  const quoteTokenLabel = quoteToken.symbol;
-  const market = baseTokenLabel + "-" + quoteTokenLabel;
+import { DrawLabelsParams, OrderBookChartProps, createChart } from './OrderbookChart'
 
-  const [xAxis] = chart.xAxes;
-  const [yAxis] = chart.yAxes;
+const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): void => {
+  const baseTokenLabel = baseToken.symbol
+  const quoteTokenLabel = quoteToken.symbol
+  const market = baseTokenLabel + '-' + quoteTokenLabel
 
-  xAxis.title.text = ` Price (${baseTokenLabel})`;
-  yAxis.title.text = ` Volume (${quoteTokenLabel})`;
+  const [xAxis] = chart.xAxes
+  const [yAxis] = chart.yAxes
 
-  xAxis.tooltip.background.cornerRadius = 0;
-  xAxis.tooltip.background.fill = am4core.color("green");
-  yAxis.tooltip.background.cornerRadius = 0;
-  yAxis.tooltip.background.fill = am4core.color("red");
+  xAxis.title.text = ` Price (${baseTokenLabel})`
+  yAxis.title.text = ` Volume (${quoteTokenLabel})`
 
-  xAxis.title.fill = am4core.color("white");
-  yAxis.title.fill = am4core.color("white");
+  xAxis.tooltip.background.cornerRadius = 0
+  xAxis.tooltip.background.fill = am4core.color('green')
+  yAxis.tooltip.background.cornerRadius = 0
+  yAxis.tooltip.background.fill = am4core.color('red')
 
-  const [bidSeries, askSeries] = chart.series;
+  xAxis.title.fill = am4core.color('white')
+  yAxis.title.fill = am4core.color('white')
 
-  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`;
-  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`;
-};
+  const [bidSeries, askSeries] = chart.series
+
+  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
+  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -79,30 +72,28 @@ const Wrapper = styled.div`
   .amcharts-ValueAxis-group .amcharts-Label-group > .amcharts-Label {
     fill: ${({ theme }) => theme.text3};
   }
-`;
+`
 
-const OrderBookChartSmall: React.FC<OrderBookChartProps> = (
-  props: OrderBookChartProps,
-) => {
-  const { baseToken, quoteToken, networkId, data } = props;
-  const mountPoint = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<am4charts.XYChart | null>(null);
+const OrderBookChartSmall: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
+  const { baseToken, data, networkId, quoteToken } = props
+  const mountPoint = useRef<HTMLDivElement>(null)
+  const chartRef = useRef<am4charts.XYChart | null>(null)
 
   useEffect(() => {
-    if (!mountPoint.current) return;
-    const chart = createChart(mountPoint.current);
-    chartRef.current = chart;
+    if (!mountPoint.current) return
+    const chart = createChart(mountPoint.current)
+    chartRef.current = chart
 
     // dispose on mount only
-    return (): void => chart.dispose();
-  }, []);
+    return (): void => chart.dispose()
+  }, [])
 
   useEffect(() => {
-    if (!chartRef.current || data === null) return;
+    if (!chartRef.current || data === null) return
 
     if (data.length === 0) {
-      chartRef.current.data = [];
-      return;
+      chartRef.current.data = []
+      return
     }
 
     // go on with the update when data is ready
@@ -111,22 +102,20 @@ const OrderBookChartSmall: React.FC<OrderBookChartProps> = (
       baseToken,
       quoteToken,
       networkId,
-    });
+    })
 
-    chartRef.current.data = data;
-  }, [baseToken, networkId, quoteToken, data]);
+    chartRef.current.data = data
+  }, [baseToken, networkId, quoteToken, data])
 
-  return <Wrapper ref={mountPoint}>Show order book for this auction</Wrapper>;
-};
-
-interface OrderBookErrorProps {
-  error: Error;
+  return <Wrapper ref={mountPoint}>Show order book for this auction</Wrapper>
 }
 
-export const OrderBookError: React.FC<OrderBookErrorProps> = ({
-  error,
-}: OrderBookErrorProps) => (
-  <Wrapper>{error ? error.message : "loading"}</Wrapper>
-);
+interface OrderBookErrorProps {
+  error: Error
+}
 
-export default OrderBookChartSmall;
+export const OrderBookError: React.FC<OrderBookErrorProps> = ({ error }: OrderBookErrorProps) => (
+  <Wrapper>{error ? error.message : 'loading'}</Wrapper>
+)
+
+export default OrderBookChartSmall

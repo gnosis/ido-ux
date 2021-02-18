@@ -1,38 +1,40 @@
-import { TokenAmount } from "@uniswap/sdk";
-import React from "react";
-import { Text } from "rebass";
-import { useActiveWeb3React } from "../../hooks";
-import { ExternalLink, TYPE } from "../../theme";
-import { getEtherscanLink } from "../../utils";
-import Copy from "../AccountDetails/Copy";
-import { AutoColumn } from "../Column";
-import { AutoRow, RowBetween } from "../Row";
-import TokenLogo from "../TokenLogo";
+import React from 'react'
+
+import { TokenAmount } from '@uniswap/sdk'
+import { Text } from 'rebass'
+
+import { useActiveWeb3React } from '../../hooks'
+import { ExternalLink, TYPE } from '../../theme'
+import { getEtherscanLink } from '../../utils'
+import Copy from '../AccountDetails/Copy'
+import { AutoColumn } from '../Column'
+import { AutoRow, RowBetween } from '../Row'
+import TokenLogo from '../TokenLogo'
 
 export function TransferModalHeader({
-  recipient,
   ENSName,
   amount,
+  recipient,
 }: {
-  recipient: string;
-  ENSName: string;
-  amount: TokenAmount;
+  recipient: string
+  ENSName: string
+  amount: TokenAmount
 }) {
-  const { chainId } = useActiveWeb3React();
+  const { chainId } = useActiveWeb3React()
   return (
-    <AutoColumn gap="lg" style={{ marginTop: "40px" }}>
+    <AutoColumn gap="lg" style={{ marginTop: '40px' }}>
       <RowBetween>
         <Text fontSize={36} fontWeight={500}>
           {amount?.toSignificant(6)} {amount?.token?.symbol}
         </Text>
-        <TokenLogo address={amount?.token?.address} size={"30px"} />
+        <TokenLogo address={amount?.token?.address} size={'30px'} />
       </RowBetween>
       <TYPE.darkGray fontSize={20}>To</TYPE.darkGray>
       {ENSName ? (
         <AutoColumn gap="lg">
           <TYPE.blue fontSize={36}>{ENSName}</TYPE.blue>
           <AutoRow gap="10px">
-            <ExternalLink href={getEtherscanLink(chainId, ENSName, "address")}>
+            <ExternalLink href={getEtherscanLink(chainId, ENSName, 'address')}>
               <TYPE.blue fontSize={18}>
                 {recipient?.slice(0, 8)}...{recipient?.slice(34, 42)}↗
               </TYPE.blue>
@@ -42,7 +44,7 @@ export function TransferModalHeader({
         </AutoColumn>
       ) : (
         <AutoRow gap="10px">
-          <ExternalLink href={getEtherscanLink(chainId, recipient, "address")}>
+          <ExternalLink href={getEtherscanLink(chainId, recipient, 'address')}>
             <TYPE.blue fontSize={36}>
               {recipient?.slice(0, 6)}...{recipient?.slice(36, 42)}↗
             </TYPE.blue>
@@ -51,5 +53,5 @@ export function TransferModalHeader({
         </AutoRow>
       )}
     </AutoColumn>
-  );
+  )
 }

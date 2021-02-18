@@ -1,85 +1,83 @@
-import { BigNumber } from "@ethersproject/bignumber";
-import { Contract } from "@ethersproject/contracts";
-import { ChainId, TokenAmount } from "@uniswap/sdk";
-import { useEffect, useMemo, useState } from "react";
-import { useTransactionAdder } from "../state/transactions/hooks";
-import {
-  useDerivedAuctionInfo,
-  useSwapState,
-} from "../state/orderPlacement/hooks";
-import { calculateGasMargin, getEasyAuctionContract } from "../utils";
-import { useActiveWeb3React } from "./index";
-import { decodeOrder } from "./Order";
-import { additionalServiceApi } from "./../api";
+import { useEffect, useMemo, useState } from 'react'
+
+import { BigNumber } from '@ethersproject/bignumber'
+import { Contract } from '@ethersproject/contracts'
+import { ChainId, TokenAmount } from '@uniswap/sdk'
+
+import { useDerivedAuctionInfo, useSwapState } from '../state/orderPlacement/hooks'
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { additionalServiceApi } from './../api'
+import { decodeOrder } from './Order'
+import { useActiveWeb3React } from './index'
 
 export const queueStartElement =
-  "0x0000000000000000000000000000000000000000000000000000000000000001";
-export const queueLastElement =
-  "0xffffffffffffffffffffffffffffffffffffffff000000000000000000000001";
+  '0x0000000000000000000000000000000000000000000000000000000000000001'
+export const queueLastElement = '0xffffffffffffffffffffffffffffffffffffffff000000000000000000000001'
 
 export interface AuctionProceedings {
-  claimableBiddingToken: TokenAmount | null;
-  claimableAuctioningToken: TokenAmount | null;
+  claimableBiddingToken: TokenAmount | null
+  claimableAuctioningToken: TokenAmount | null
 }
 
 export interface ClaimInformation {
-  sellOrdersFormUser: string[];
+  sellOrdersFormUser: string[]
 }
 export function useGetClaimInfo(): ClaimInformation | null {
-  const { account, chainId, library } = useActiveWeb3React();
-  const [claimInfo, setClaimInfo] = useState<ClaimInformation | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-  const { auctionId } = useSwapState();
+  const { account, chainId, library } = useActiveWeb3React()
+  const [claimInfo, setClaimInfo] = useState<ClaimInformation | null>(null)
+  const [error, setError] = useState<Error | null>(null)
+  const { auctionId } = useSwapState()
 
   useMemo(() => {
-    setClaimInfo(null);
-    setError(null);
+    setClaimInfo(null)
+    setError(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auctionId, chainId]);
+  }, [auctionId, chainId])
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
     const fetchApiData = async (): Promise<void> => {
       try {
         if (!chainId || !library || !account || !additionalServiceApi) {
-          throw new Error("missing dependencies in useGetClaimInfo callback");
+          throw new Error('missing dependencies in useGetClaimInfo callback')
         }
         const sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
           networkId: chainId,
           auctionId,
           user: account,
-        });
-        if (cancelled) return;
-        setClaimInfo({ sellOrdersFormUser });
+        })
+        if (cancelled) return
+        setClaimInfo({ sellOrdersFormUser })
       } catch (error) {
-        if (cancelled) return;
-        console.error("Error getting withdraw info", error);
-        setError(error);
+        if (cancelled) return
+        console.error('Error getting withdraw info', error)
+        setError(error)
       }
-    };
-    fetchApiData();
+    }
+    fetchApiData()
 
     return (): void => {
-      cancelled = true;
-    };
-  }, [account, chainId, library, auctionId, setClaimInfo]);
+      cancelled = true
+    }
+  }, [account, chainId, library, auctionId, setClaimInfo])
 
   if (error) {
-    console.error("error while fetching claimInfo", error);
-    return null;
+    console.error('error while fetching claimInfo', error)
+    return null
   }
 
-  return claimInfo;
+  return claimInfo
 }
 export function useGetAuctionProceeds(): AuctionProceedings {
-  const claimInfo = useGetClaimInfo();
+  const claimInfo = useGetClaimInfo()
   const {
-    biddingToken,
     auctioningToken,
+    biddingToken,
     clearingPriceOrder,
     clearingPriceSellOrder,
     clearingPriceVolume,
-  } = useDerivedAuctionInfo();
+  } = useDerivedAuctionInfo()
 
   if (
     !claimInfo ||
@@ -92,19 +90,16 @@ export function useGetAuctionProceeds(): AuctionProceedings {
     return {
       claimableBiddingToken: null,
       claimableAuctioningToken: null,
-    };
+    }
   }
-  let claimableAuctioningToken = new TokenAmount(auctioningToken, "0");
-  let claimableBiddingToken = new TokenAmount(biddingToken, "0");
+  let claimableAuctioningToken = new TokenAmount(auctioningToken, '0')
+  let claimableBiddingToken = new TokenAmount(biddingToken, '0')
   for (const order of claimInfo.sellOrdersFormUser) {
-    const decodedOrder = decodeOrder(order);
+    const decodedOrder = decodeOrder(order)
     if (decodedOrder == clearingPriceOrder) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(
-          biddingToken,
-          decodedOrder.sellAmount.sub(clearingPriceVolume).toString(),
-        ),
-      );
+        new TokenAmount(biddingToken, decodedOrder.sellAmount.sub(clearingPriceVolume).toString()),
+      )
       claimableAuctioningToken = claimableAuctioningToken.add(
         new TokenAmount(
           auctioningToken,
@@ -113,7 +108,7 @@ export function useGetAuctionProceeds(): AuctionProceedings {
             .div(clearingPriceOrder.sellAmount)
             .toString(),
         ),
-      );
+      )
     } else if (
       clearingPriceOrder.buyAmount
         .mul(decodedOrder.sellAmount)
@@ -121,9 +116,9 @@ export function useGetAuctionProceeds(): AuctionProceedings {
     ) {
       claimableBiddingToken = claimableBiddingToken.add(
         new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
-      );
+      )
     } else {
-      if (clearingPriceOrder.sellAmount.gt(BigNumber.from("0"))) {
+      if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
             auctioningToken,
@@ -132,42 +127,42 @@ export function useGetAuctionProceeds(): AuctionProceedings {
               .div(clearingPriceOrder.sellAmount)
               .toString(),
           ),
-        );
+        )
       }
     }
   }
   return {
     claimableBiddingToken,
     claimableAuctioningToken,
-  };
+  }
 }
 
 export function useClaimOrderCallback(): null | (() => Promise<string>) {
-  const { account, chainId, library } = useActiveWeb3React();
-  const addTransaction = useTransactionAdder();
+  const { account, chainId, library } = useActiveWeb3React()
+  const addTransaction = useTransactionAdder()
 
-  const { auctionId } = useSwapState();
-  const claimInfo = useGetClaimInfo();
+  const { auctionId } = useSwapState()
+  const claimInfo = useGetClaimInfo()
 
   return useMemo(() => {
     return async function onClaimOrder() {
       if (!chainId || !library || !account || !claimInfo) {
-        throw new Error("missing dependencies in onPlaceOrder callback");
+        throw new Error('missing dependencies in onPlaceOrder callback')
       }
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
         library,
         account,
-      );
+      )
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
-        value: BigNumber | null;
+        value: BigNumber | null
       {
-        estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder;
-        method = easyAuctionContract.claimFromParticipantOrder;
-        args = [auctionId, claimInfo?.sellOrdersFormUser];
-        value = null;
+        estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
+        method = easyAuctionContract.claimFromParticipantOrder
+        args = [auctionId, claimInfo?.sellOrdersFormUser]
+        value = null
       }
 
       return estimate(...args, value ? { value } : {})
@@ -179,15 +174,15 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
         )
         .then((response) => {
           addTransaction(response, {
-            summary: "Claiming tokens",
-          });
+            summary: 'Claiming tokens',
+          })
 
-          return response.hash;
+          return response.hash
         })
         .catch((error) => {
-          console.error(`Claiming or gas estimate failed`, error);
-          throw error;
-        });
-    };
-  }, [account, addTransaction, chainId, library, auctionId, claimInfo]);
+          console.error(`Claiming or gas estimate failed`, error)
+          throw error
+        })
+    }
+  }, [account, addTransaction, chainId, library, auctionId, claimInfo])
 }

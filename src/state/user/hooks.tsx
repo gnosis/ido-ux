@@ -1,20 +1,22 @@
-import { ChainId, JSBI, Pair, Token, TokenAmount, WETH } from "@uniswap/sdk";
-import { useActiveWeb3React } from "../../hooks";
-import { useCallback, useMemo } from "react";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { useAllTokens } from "../../hooks/Tokens";
-import { getTokenInfoWithFallback, isAddress } from "../../utils";
-import { AppDispatch, AppState } from "../index";
+import { useCallback, useMemo } from 'react'
+
+import { ChainId, JSBI, Pair, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import flatMap from 'lodash.flatmap'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+
+import { useActiveWeb3React } from '../../hooks'
+import { useAllTokens } from '../../hooks/Tokens'
+import { getTokenInfoWithFallback, isAddress } from '../../utils'
+import { AppDispatch, AppState } from '../index'
 import {
+  SerializedPair,
+  SerializedToken,
   addSerializedPair,
   addSerializedToken,
   dismissTokenWarning,
   removeSerializedToken,
-  SerializedPair,
-  SerializedToken,
   updateUserDarkMode,
-} from "./actions";
-import flatMap from "lodash.flatmap";
+} from './actions'
 
 function serializeToken(token: Token): SerializedToken {
   return {
@@ -23,7 +25,7 @@ function serializeToken(token: Token): SerializedToken {
     decimals: token.decimals,
     symbol: token.symbol,
     name: token.name,
-  };
+  }
 }
 
 function deserializeToken(serializedToken: SerializedToken): Token {
@@ -33,11 +35,11 @@ function deserializeToken(serializedToken: SerializedToken): Token {
     serializedToken.decimals,
     serializedToken.symbol,
     serializedToken.name,
-  );
+  )
 }
 
 export function useIsDarkMode(): boolean {
-  const { userDarkMode, matchesDarkMode } = useSelector<
+  const { matchesDarkMode, userDarkMode } = useSelector<
     AppState,
     { userDarkMode: boolean | null; matchesDarkMode: boolean }
   >(
@@ -46,102 +48,92 @@ export function useIsDarkMode(): boolean {
       matchesDarkMode,
     }),
     shallowEqual,
-  );
+  )
 
-  return userDarkMode === null ? matchesDarkMode : userDarkMode;
+  return userDarkMode === null ? matchesDarkMode : userDarkMode
 }
 
 export function useDarkModeManager(): [boolean, () => void] {
-  const dispatch = useDispatch<AppDispatch>();
-  const darkMode = useIsDarkMode();
+  const dispatch = useDispatch<AppDispatch>()
+  const darkMode = useIsDarkMode()
 
   const toggleSetDarkMode = useCallback(() => {
-    dispatch(updateUserDarkMode({ userDarkMode: !darkMode }));
-  }, [darkMode, dispatch]);
+    dispatch(updateUserDarkMode({ userDarkMode: !darkMode }))
+  }, [darkMode, dispatch])
 
-  return [darkMode, toggleSetDarkMode];
+  return [darkMode, toggleSetDarkMode]
 }
 
-export function useFetchTokenByAddress(): (
-  address: string,
-) => Promise<Token | null> {
-  const { library, chainId } = useActiveWeb3React();
+export function useFetchTokenByAddress(): (address: string) => Promise<Token | null> {
+  const { chainId, library } = useActiveWeb3React()
 
   return useCallback(
     async (address: string): Promise<Token | null> => {
-      if (!library || !chainId) return null;
-      const validatedAddress = isAddress(address);
-      if (!validatedAddress) return null;
-      const { name, symbol, decimals } = await getTokenInfoWithFallback(
-        validatedAddress,
-        library,
-      );
+      if (!library || !chainId) return null
+      const validatedAddress = isAddress(address)
+      if (!validatedAddress) return null
+      const { decimals, name, symbol } = await getTokenInfoWithFallback(validatedAddress, library)
 
       if (decimals === null) {
-        return null;
+        return null
       } else {
-        return new Token(chainId, validatedAddress, decimals, symbol, name);
+        return new Token(chainId, validatedAddress, decimals, symbol, name)
       }
     },
     [library, chainId],
-  );
+  )
 }
 
 export function useAddUserToken(): (token: Token) => void {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>()
   return useCallback(
     (token: Token) => {
-      dispatch(addSerializedToken({ serializedToken: serializeToken(token) }));
+      dispatch(addSerializedToken({ serializedToken: serializeToken(token) }))
     },
     [dispatch],
-  );
+  )
 }
 
-export function useRemoveUserAddedToken(): (
-  chainId: number,
-  address: string,
-) => void {
-  const dispatch = useDispatch<AppDispatch>();
+export function useRemoveUserAddedToken(): (chainId: number, address: string) => void {
+  const dispatch = useDispatch<AppDispatch>()
   return useCallback(
     (chainId: number, address: string) => {
-      dispatch(removeSerializedToken({ chainId, address }));
+      dispatch(removeSerializedToken({ chainId, address }))
     },
     [dispatch],
-  );
+  )
 }
 
 export function useUserAddedTokens(): Token[] {
-  const { chainId } = useActiveWeb3React();
-  const serializedTokensMap = useSelector<AppState, AppState["user"]["tokens"]>(
+  const { chainId } = useActiveWeb3React()
+  const serializedTokensMap = useSelector<AppState, AppState['user']['tokens']>(
     ({ user: { tokens } }) => tokens,
-  );
+  )
 
   return useMemo(() => {
-    if (!chainId) return [];
-    return Object.values(serializedTokensMap[chainId as ChainId] ?? {}).map(
-      deserializeToken,
-    );
-  }, [serializedTokensMap, chainId]);
+    if (!chainId) return []
+    return Object.values(serializedTokensMap[chainId as ChainId] ?? {}).map(deserializeToken)
+  }, [serializedTokensMap, chainId])
 }
 
-const ZERO = JSBI.BigInt(0);
+const ZERO = JSBI.BigInt(0)
 
 function serializePair(pair: Pair): SerializedPair {
   return {
     token0: serializeToken(pair.token0),
     token1: serializeToken(pair.token1),
-  };
+  }
 }
 
 export function usePairAdder(): (pair: Pair) => void {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
     (pair: Pair) => {
-      dispatch(addSerializedPair({ serializedPair: serializePair(pair) }));
+      dispatch(addSerializedPair({ serializedPair: serializePair(pair) }))
     },
     [dispatch],
-  );
+  )
 }
 
 /**
@@ -152,51 +144,40 @@ export function useTokenWarningDismissal(
   chainId?: number,
   token?: Token,
 ): [boolean, null | (() => void)] {
-  const dismissalState = useSelector<
-    AppState,
-    AppState["user"]["dismissedTokenWarnings"]
-  >((state) => state.user.dismissedTokenWarnings);
+  const dismissalState = useSelector<AppState, AppState['user']['dismissedTokenWarnings']>(
+    (state) => state.user.dismissedTokenWarnings,
+  )
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>()
 
   return useMemo(() => {
-    if (!chainId || !token) return [false, null];
+    if (!chainId || !token) return [false, null]
 
-    const dismissed: boolean =
-      dismissalState?.[chainId]?.[token.address] === true;
+    const dismissed: boolean = dismissalState?.[chainId]?.[token.address] === true
 
     const callback = dismissed
       ? null
-      : () =>
-          dispatch(
-            dismissTokenWarning({ chainId, tokenAddress: token.address }),
-          );
+      : () => dispatch(dismissTokenWarning({ chainId, tokenAddress: token.address }))
 
-    return [dismissed, callback];
-  }, [chainId, token, dismissalState, dispatch]);
+    return [dismissed, callback]
+  }, [chainId, token, dismissalState, dispatch])
 }
 
 const bases = [
   ...Object.values(WETH),
   new Token(
     ChainId.MAINNET,
-    "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+    '0x6B175474E89094C44Da98b954EedeAC495271d0F',
     18,
-    "DAI",
-    "Dai Stablecoin",
+    'DAI',
+    'Dai Stablecoin',
   ),
-  new Token(
-    ChainId.MAINNET,
-    "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-    6,
-    "USDC",
-    "USD//C",
-  ),
-];
+  new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C'),
+]
 
 export function useAllDummyPairs(): Pair[] {
-  const { chainId } = useActiveWeb3React();
-  const tokens = useAllTokens();
+  const { chainId } = useActiveWeb3React()
+  const tokens = useAllTokens()
 
   const generatedPairs: Pair[] = useMemo(
     () =>
@@ -213,30 +194,25 @@ export function useAllDummyPairs(): Pair[] {
               // to construct pairs of the given token with each base
               .map((base) => {
                 if (base.equals(token)) {
-                  return null;
+                  return null
                 } else {
-                  return new Pair(
-                    new TokenAmount(base, ZERO),
-                    new TokenAmount(token, ZERO),
-                  );
+                  return new Pair(new TokenAmount(base, ZERO), new TokenAmount(token, ZERO))
                 }
               })
               .filter((pair) => !!pair) as Pair[]
-          );
+          )
         },
       ),
     [tokens, chainId],
-  );
+  )
 
-  const savedSerializedPairs = useSelector<AppState, AppState["user"]["pairs"]>(
+  const savedSerializedPairs = useSelector<AppState, AppState['user']['pairs']>(
     ({ user: { pairs } }) => pairs,
-  );
+  )
 
   const userPairs = useMemo(
     () =>
-      Object.values<SerializedPair>(
-        savedSerializedPairs[chainId ?? -1] ?? {},
-      ).map(
+      Object.values<SerializedPair>(savedSerializedPairs[chainId ?? -1] ?? {}).map(
         (pair) =>
           new Pair(
             new TokenAmount(deserializeToken(pair.token0), ZERO),
@@ -244,21 +220,21 @@ export function useAllDummyPairs(): Pair[] {
           ),
       ),
     [savedSerializedPairs, chainId],
-  );
+  )
 
   return useMemo(() => {
-    const cache: { [pairKey: string]: boolean } = {};
+    const cache: { [pairKey: string]: boolean } = {}
     return (
       generatedPairs
         .concat(userPairs)
         // filter out duplicate pairs
         .filter((pair) => {
-          const pairKey = `${pair.token0.address}:${pair.token1.address}`;
+          const pairKey = `${pair.token0.address}:${pair.token1.address}`
           if (cache[pairKey]) {
-            return false;
+            return false
           }
-          return (cache[pairKey] = true);
+          return (cache[pairKey] = true)
         })
-    );
-  }, [generatedPairs, userPairs]);
+    )
+  }, [generatedPairs, userPairs])
 }

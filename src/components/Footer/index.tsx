@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react'
+import styled from 'styled-components'
 
 const FooterFrame = styled.div`
   display: flex;
@@ -11,8 +11,8 @@ const FooterFrame = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `};
-`;
+`
 
 export default function Footer() {
-  return <FooterFrame></FooterFrame>;
+  return <FooterFrame></FooterFrame>
 }

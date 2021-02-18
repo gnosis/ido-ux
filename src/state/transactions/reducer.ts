@@ -1,69 +1,64 @@
-import { createReducer } from "@reduxjs/toolkit";
+import { createReducer } from '@reduxjs/toolkit'
+
 import {
+  SerializableTransactionReceipt,
   addTransaction,
   clearAllTransactions,
   finalizeTransaction,
-  SerializableTransactionReceipt,
-} from "./actions";
+} from './actions'
 
-const now = () => new Date().getTime();
+const now = () => new Date().getTime()
 
 export interface TransactionDetails {
-  hash: string;
-  approvalOfToken?: string;
-  summary?: string;
-  receipt?: SerializableTransactionReceipt;
-  addedTime: number;
-  confirmedTime?: number;
-  from: string;
+  hash: string
+  approvalOfToken?: string
+  summary?: string
+  receipt?: SerializableTransactionReceipt
+  addedTime: number
+  confirmedTime?: number
+  from: string
 
   // set to true when we receive a transaction count that exceeds the nonce of this transaction
-  unknownStatus?: boolean;
+  unknownStatus?: boolean
 }
 
 export interface TransactionState {
   [chainId: number]: {
-    [txHash: string]: TransactionDetails;
-  };
+    [txHash: string]: TransactionDetails
+  }
 }
 
-const initialState: TransactionState = {};
+const initialState: TransactionState = {}
 
 export default createReducer(initialState, (builder) =>
   builder
     .addCase(
       addTransaction,
-      (
-        state,
-        { payload: { chainId, from, hash, approvalOfToken, summary } },
-      ) => {
+      (state, { payload: { approvalOfToken, chainId, from, hash, summary } }) => {
         if (state[chainId]?.[hash]) {
-          throw Error("Attempted to add existing transaction.");
+          throw Error('Attempted to add existing transaction.')
         }
-        state[chainId] = state[chainId] ?? {};
+        state[chainId] = state[chainId] ?? {}
         state[chainId][hash] = {
           hash,
           approvalOfToken,
           summary,
           from,
           addedTime: now(),
-        };
+        }
       },
     )
     .addCase(clearAllTransactions, (state, { payload: { chainId } }) => {
-      if (!state[chainId]) return;
-      state[chainId] = {};
+      if (!state[chainId]) return
+      state[chainId] = {}
     })
-    .addCase(
-      finalizeTransaction,
-      (state, { payload: { hash, chainId, receipt } }) => {
-        if (!state[chainId]?.[hash]) {
-          throw Error("Attempted to finalize non-existent transaction.");
-        }
-        state[chainId] = state[chainId] ?? {};
-        state[chainId][hash].receipt = receipt;
-        state[chainId][hash].unknownStatus = false;
-        state[chainId][hash].confirmedTime = now();
-      },
-    ),
-);
+    .addCase(finalizeTransaction, (state, { payload: { chainId, hash, receipt } }) => {
+      if (!state[chainId]?.[hash]) {
+        throw Error('Attempted to finalize non-existent transaction.')
+      }
+      state[chainId] = state[chainId] ?? {}
+      state[chainId][hash].receipt = receipt
+      state[chainId][hash].unknownStatus = false
+      state[chainId][hash].confirmedTime = now()
+    }),
+)

@@ -1,27 +1,28 @@
-import React, { Suspense } from "react";
-import { BrowserRouter, HashRouter, Route, Switch } from "react-router-dom";
-import styled from "styled-components";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import Popups from "../components/Popups";
-import Web3ReactManager from "../components/Web3ReactManager";
-import DarkModeQueryParamReader from "../theme/DarkModeQueryParamReader";
-import Auction from "./Auction";
-import { RedirectPathToSwapOnly } from "./Auction/redirects";
-import Overview from "./Overview";
+import React, { Suspense } from 'react'
+import { BrowserRouter, HashRouter, Route, Switch } from 'react-router-dom'
+import styled from 'styled-components'
+
+import Footer from '../components/Footer'
+import Header from '../components/Header'
+import Popups from '../components/Popups'
+import Web3ReactManager from '../components/Web3ReactManager'
+import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
+import Auction from './Auction'
+import { RedirectPathToSwapOnly } from './Auction/redirects'
+import Overview from './Overview'
 
 const AppWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: center;
   overflow-x: hidden;
-`;
+`
 
 const HeaderWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   justify-content: space-between;
-`;
+`
 
 const BodyWrapper = styled.div`
   display: flex;
@@ -43,7 +44,7 @@ const BodyWrapper = styled.div`
   `};
 
   z-index: 1;
-`;
+`
 
 const BackgroundGradient = styled.div`
   width: 100%;
@@ -62,17 +63,17 @@ const BackgroundGradient = styled.div`
     width: 100%;
     transform: translateY(-150px);
   `};
-`;
+`
 
 const Marginer = styled.div`
   margin-top: 5rem;
-`;
+`
 
-let Router: React.ComponentType;
-if (process.env.PUBLIC_URL === ".") {
-  Router = HashRouter;
+let Router: React.ComponentType
+if (process.env.PUBLIC_URL === '.') {
+  Router = HashRouter
 } else {
-  Router = BrowserRouter;
+  Router = BrowserRouter
 }
 
 export default function App() {
@@ -88,8 +89,8 @@ export default function App() {
             <Popups />
             <Web3ReactManager>
               <Switch>
-                <Route exact strict path="/auction" component={Auction} />\
-                <Route exact strict path="/overview" component={Overview} />\
+                <Route component={Auction} exact path="/auction" strict />\
+                <Route component={Overview} exact path="/overview" strict />\
                 <Route component={RedirectPathToSwapOnly} />
               </Switch>
             </Web3ReactManager>
@@ -100,5 +101,5 @@ export default function App() {
         </AppWrapper>
       </Router>
     </Suspense>
-  );
+  )
 }

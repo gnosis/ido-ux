@@ -1,18 +1,18 @@
-import React, { useMemo } from "react";
-import styled from "styled-components";
-import { ExternalLink } from "../../theme";
+import React, { useMemo } from 'react'
+import styled from 'styled-components'
+
+import { useActiveWeb3React } from '../../hooks'
+import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import {
-  useDerivedAuctionInfo,
   AuctionState,
-  useDerivedAuctionState,
   orderToPrice,
   orderToSellOrder,
-} from "../../state/orderPlacement/hooks";
-
-import { OrderBookBtn } from "../OrderbookBtn";
-import { getEtherscanLink, getTokenDisplay } from "../../utils";
-import { useActiveWeb3React } from "../../hooks";
-import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolumeCallback";
+  useDerivedAuctionInfo,
+  useDerivedAuctionState,
+} from '../../state/orderPlacement/hooks'
+import { ExternalLink } from '../../theme'
+import { getEtherscanLink, getTokenDisplay } from '../../utils'
+import { OrderBookBtn } from '../OrderbookBtn'
 
 const Wrapper = styled.div`
   position: relative;
@@ -30,7 +30,7 @@ const Wrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
   `};
-`;
+`
 
 const Details = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -46,7 +46,7 @@ const Details = styled.div`
   margin: 16px 0 0;
   border-radius: 20px;
   border: 1px solid ${({ theme }) => theme.bg2};
-`;
+`
 
 const Row = styled.span`
   flex-flow: row-wrap;
@@ -57,7 +57,7 @@ const Row = styled.span`
   font-weight: normal;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "label value";
+  grid-template-areas: 'label value';
 
   > i {
     color: ${({ theme }) => theme.text3};
@@ -75,69 +75,58 @@ const Row = styled.span`
     text-align: right;
     white-space: normal;
   }
-`;
+`
 
 export default function AuctionDetails() {
-  const { chainId } = useActiveWeb3React();
+  const { chainId } = useActiveWeb3React()
   const {
     auctioningToken,
     biddingToken,
     clearingPrice,
     initialAuctionOrder,
     initialPrice,
-  } = useDerivedAuctionInfo();
-  const { auctionState } = useDerivedAuctionState();
+  } = useDerivedAuctionInfo()
+  const { auctionState } = useDerivedAuctionState()
 
   const auctionTokenAddress = useMemo(
-    () => getEtherscanLink(chainId, auctioningToken?.address, "address"),
+    () => getEtherscanLink(chainId, auctioningToken?.address, 'address'),
     [chainId, auctioningToken],
-  );
+  )
 
   const biddingTokenAddress = useMemo(
-    () => getEtherscanLink(chainId, biddingToken?.address, "address"),
+    () => getEtherscanLink(chainId, biddingToken?.address, 'address'),
     [chainId, biddingToken],
-  );
+  )
 
-  const clearingPriceInfo = useClearingPriceInfo();
+  const clearingPriceInfo = useClearingPriceInfo()
   const clearingPriceInfoAsSellorder =
     clearingPriceInfo &&
-    orderToSellOrder(
-      clearingPriceInfo.clearingOrder,
-      biddingToken,
-      auctioningToken,
-    );
-  let clearingPriceNumber = orderToPrice(
-    clearingPriceInfoAsSellorder,
-  )?.toSignificant(4);
+    orderToSellOrder(clearingPriceInfo.clearingOrder, biddingToken, auctioningToken)
+  let clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellorder)?.toSignificant(4)
 
   if (clearingPrice) {
-    clearingPriceNumber = clearingPrice && clearingPrice.toSignificant(4);
+    clearingPriceNumber = clearingPrice && clearingPrice.toSignificant(4)
   }
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
-    biddingToken,
-  ]);
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
 
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(auctioningToken),
-    [auctioningToken],
-  );
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
 
-  const clearingPriceDisplay = !!clearingPriceNumber
-    ? `${clearingPriceNumber} ${getTokenDisplay(
-        biddingToken,
-      )} per ${getTokenDisplay(auctioningToken)}`
-    : "-";
+  const clearingPriceDisplay = clearingPriceNumber
+    ? `${clearingPriceNumber} ${getTokenDisplay(biddingToken)} per ${getTokenDisplay(
+        auctioningToken,
+      )}`
+    : '-'
 
   const titlePrice = useMemo(
     () =>
       auctionState == AuctionState.ORDER_PLACING ||
       auctionState == AuctionState.ORDER_PLACING_AND_CANCELING
-        ? "Current price"
+        ? 'Current price'
         : auctionState == AuctionState.PRICE_SUBMISSION
-        ? "Clearing price"
-        : "Closing price",
+        ? 'Clearing price'
+        : 'Closing price',
     [auctionState],
-  );
+  )
 
   return (
     <Wrapper>
@@ -151,29 +140,25 @@ export default function AuctionDetails() {
         </Row>
         <Row>
           <i>Bidding with</i>
-          <ExternalLink href={biddingTokenAddress}>
-            {biddingTokenDisplay} ↗
-          </ExternalLink>
+          <ExternalLink href={biddingTokenAddress}>{biddingTokenDisplay} ↗</ExternalLink>
         </Row>
 
         <Row>
           <i>Total auctioned</i>
           <p>
-            {initialAuctionOrder?.sellAmount.toSignificant(2)}{" "}
-            <ExternalLink href={auctionTokenAddress}>
-              {auctioningTokenDisplay} ↗
-            </ExternalLink>
+            {initialAuctionOrder?.sellAmount.toSignificant(2)}{' '}
+            <ExternalLink href={auctionTokenAddress}>{auctioningTokenDisplay} ↗</ExternalLink>
           </p>
         </Row>
 
         <Row>
           <i>Min. sell price</i>
           <p>
-            {initialPrice ? `${initialPrice?.toSignificant(2)} ` : " - "}
+            {initialPrice ? `${initialPrice?.toSignificant(2)} ` : ' - '}
             {biddingTokenDisplay} per {auctioningTokenDisplay}
           </p>
         </Row>
       </Details>
     </Wrapper>
-  );
+  )
 }

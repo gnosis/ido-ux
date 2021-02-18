@@ -1,26 +1,26 @@
-import React from "react";
-import styled from "styled-components";
-import { Check, Triangle } from "react-feather";
+import { transparentize } from 'polished'
+import React from 'react'
+import styled from 'styled-components'
 
-import { useActiveWeb3React } from "../../hooks";
-import { getEtherscanLink } from "../../utils";
-import { ExternalLink, Spinner } from "../../theme";
-import Circle from "../../assets/images/circle.svg";
+import { Check, Triangle } from 'react-feather'
 
-import { transparentize } from "polished";
-import { useAllTransactions } from "../../state/transactions/hooks";
+import Circle from '../../assets/images/circle.svg'
+import { useActiveWeb3React } from '../../hooks'
+import { useAllTransactions } from '../../state/transactions/hooks'
+import { ExternalLink, Spinner } from '../../theme'
+import { getEtherscanLink } from '../../utils'
 
 const TransactionWrapper = styled.div`
   margin-top: 0.75rem;
-`;
+`
 
 const TransactionStatusText = styled.div`
   margin-right: 0.5rem;
-`;
+`
 
 const TransactionState = styled(ExternalLink)<{
-  pending: boolean;
-  success?: boolean;
+  pending: boolean
+  success?: boolean
 }>`
   display: flex;
   justify-content: space-between;
@@ -50,33 +50,31 @@ const TransactionState = styled(ExternalLink)<{
         ? transparentize(0, theme.green1)
         : transparentize(0, theme.red1)};
   }
-`;
+`
 
 const IconWrapper = styled.div`
   flex-shrink: 0;
-`;
+`
 
 export default function Transaction({ hash }: { hash: string }) {
-  const { chainId } = useActiveWeb3React();
-  const allTransactions = useAllTransactions();
+  const { chainId } = useActiveWeb3React()
+  const allTransactions = useAllTransactions()
 
-  const summary = allTransactions?.[hash]?.summary;
-  const pending = !allTransactions?.[hash]?.receipt;
+  const summary = allTransactions?.[hash]?.summary
+  const pending = !allTransactions?.[hash]?.receipt
   const success =
     !pending &&
     (allTransactions[hash].receipt.status === 1 ||
-      typeof allTransactions[hash].receipt.status === "undefined");
+      typeof allTransactions[hash].receipt.status === 'undefined')
 
   return (
     <TransactionWrapper>
       <TransactionState
-        href={getEtherscanLink(chainId, hash, "transaction")}
+        href={getEtherscanLink(chainId, hash, 'transaction')}
         pending={pending}
         success={success}
       >
-        <TransactionStatusText>
-          {summary ? summary : hash}
-        </TransactionStatusText>
+        <TransactionStatusText>{summary ? summary : hash}</TransactionStatusText>
         <IconWrapper>
           {pending ? (
             <Spinner src={Circle} />
@@ -88,5 +86,5 @@ export default function Transaction({ hash }: { hash: string }) {
         </IconWrapper>
       </TransactionState>
     </TransactionWrapper>
-  );
+  )
 }

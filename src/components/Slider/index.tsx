@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import styled from "styled-components";
+import React, { useCallback } from 'react'
+import styled from 'styled-components'
 
 const StyledRangeInput = styled.input<{ value: number }>`
   -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
@@ -27,9 +27,8 @@ const StyledRangeInput = styled.input<{ value: number }>`
 
     &:hover,
     &:focus {
-      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1),
-        0px 4px 8px rgba(0, 0, 0, 0.08), 0px 16px 24px rgba(0, 0, 0, 0.06),
-        0px 24px 32px rgba(0, 0, 0, 0.04);
+      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.08),
+        0px 16px 24px rgba(0, 0, 0, 0.06), 0px 24px 32px rgba(0, 0, 0, 0.04);
     }
   }
 
@@ -43,9 +42,8 @@ const StyledRangeInput = styled.input<{ value: number }>`
 
     &:hover,
     &:focus {
-      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1),
-        0px 4px 8px rgba(0, 0, 0, 0.08), 0px 16px 24px rgba(0, 0, 0, 0.06),
-        0px 24px 32px rgba(0, 0, 0, 0.04);
+      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.08),
+        0px 16px 24px rgba(0, 0, 0, 0.06), 0px 24px 32px rgba(0, 0, 0, 0.04);
     }
   }
 
@@ -58,9 +56,8 @@ const StyledRangeInput = styled.input<{ value: number }>`
 
     &:hover,
     &:focus {
-      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1),
-        0px 4px 8px rgba(0, 0, 0, 0.08), 0px 16px 24px rgba(0, 0, 0, 0.06),
-        0px 24px 32px rgba(0, 0, 0, 0.04);
+      box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.08),
+        0px 16px 24px rgba(0, 0, 0, 0.06), 0px 24px 32px rgba(0, 0, 0, 0.04);
     }
   }
 
@@ -100,36 +97,36 @@ const StyledRangeInput = styled.input<{ value: number }>`
   &::-ms-fill-upper {
     background: ${({ theme }) => theme.bg3};
   }
-`;
+`
 
 interface InputSliderProps {
-  value: number;
-  onChange: (value: number) => void;
+  value: number
+  onChange: (value: number) => void
 }
 
-export default function InputSlider({ value, onChange }: InputSliderProps) {
+export default function InputSlider({ onChange, value }: InputSliderProps) {
   const changeCallback = useCallback(
     (e) => {
-      onChange(e.target.value);
+      onChange(e.target.value)
     },
     [onChange],
-  );
+  )
 
   return (
     <StyledRangeInput
-      type="range"
-      value={value}
+      aria-labelledby="input-slider"
+      max={100}
+      min={0}
+      onChange={changeCallback}
+      step={1}
       style={{
-        width: "90%",
+        width: '90%',
         marginLeft: 15,
         marginRight: 15,
-        padding: "15px 0",
+        padding: '15px 0',
       }}
-      onChange={changeCallback}
-      aria-labelledby="input-slider"
-      step={1}
-      min={0}
-      max={100}
+      type="range"
+      value={value}
     />
-  );
+  )
 }

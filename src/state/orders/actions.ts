@@ -1,16 +1,15 @@
-import { createAction } from "@reduxjs/toolkit";
-import { OrderDisplay } from "./reducer";
+import { createAction } from '@reduxjs/toolkit'
+
+import { OrderDisplay } from './reducer'
 
 export const appendOrders = createAction<{
-  orders: OrderDisplay[];
-}>("AppendOrders");
+  orders: OrderDisplay[]
+}>('AppendOrders')
 
 export const removeOrders = createAction<{
-  orderId: string;
-}>("RemoveOrders");
+  orderId: string
+}>('RemoveOrders')
 
-export const finalizeOrderPlacement = createAction<void>(
-  "finalizeOrderPlacement",
-);
+export const finalizeOrderPlacement = createAction<void>('finalizeOrderPlacement')
 
-export const loadOrderFromAPI = createAction<void>("LoadOrderFromAPI");
+export const loadOrderFromAPI = createAction<void>('LoadOrderFromAPI')

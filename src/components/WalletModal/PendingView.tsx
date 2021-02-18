@@ -1,13 +1,16 @@
-import { AbstractConnector } from "@web3-react/abstract-connector";
-import React from "react";
-import styled from "styled-components";
-import Option from "./Option";
-import { SUPPORTED_WALLETS } from "../../constants";
-import WalletConnectData from "./WalletConnectData";
-import { walletconnect, injected } from "../../connectors";
-import { Spinner } from "../../theme";
-import Circle from "../../assets/images/circle.svg";
-import { darken } from "polished";
+import { darken } from 'polished'
+import React from 'react'
+import styled from 'styled-components'
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AbstractConnector } from '@web3-react/abstract-connector'
+
+import Circle from '../../assets/images/circle.svg'
+import { injected, walletconnect } from '../../connectors'
+import { SUPPORTED_WALLETS } from '../../constants'
+import { Spinner } from '../../theme'
+import Option from './Option'
+import WalletConnectData from './WalletConnectData'
 
 const PendingSection = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -17,7 +20,7 @@ const PendingSection = styled.div`
   & > * {
     width: 100%;
   }
-`;
+`
 
 const SpinnerWrapper = styled(Spinner)`
   font-size: 4rem;
@@ -27,7 +30,7 @@ const SpinnerWrapper = styled(Spinner)`
       color: ${({ theme }) => theme.bg4};
     }
   }
-`;
+`
 
 const LoadingMessage = styled.div<{ error?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap};
@@ -35,19 +38,19 @@ const LoadingMessage = styled.div<{ error?: boolean }>`
   justify-content: flex-start;
   border-radius: 12px;
   margin-bottom: 20px;
-  color: ${({ theme, error }) => (error ? theme.red1 : "inherit")};
-  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text4)};
+  color: ${({ error, theme }) => (error ? theme.red1 : 'inherit')};
+  border: 1px solid ${({ error, theme }) => (error ? theme.red1 : theme.text4)};
 
   & > * {
     padding: 1rem;
   }
-`;
+`
 
 const ErrorGroup = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   align-items: center;
   justify-content: flex-start;
-`;
+`
 
 const ErrorButton = styled.div`
   border-radius: 8px;
@@ -63,36 +66,34 @@ const ErrorButton = styled.div`
     cursor: pointer;
     background-color: ${({ theme }) => darken(0.1, theme.text4)};
   }
-`;
+`
 
 const LoadingWrapper = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   align-items: center;
   justify-content: center;
-`;
+`
 
 export default function PendingView({
-  uri = "",
-  size,
   connector,
   error = false,
   setPendingError,
+  size,
   tryActivation,
+  uri = '',
 }: {
-  uri?: string;
-  size?: number;
-  connector?: AbstractConnector;
-  error?: boolean;
-  setPendingError: (error: boolean) => void;
-  tryActivation: (connector: AbstractConnector) => void;
+  uri?: string
+  size?: number
+  connector?: AbstractConnector
+  error?: boolean
+  setPendingError: (error: boolean) => void
+  tryActivation: (connector: AbstractConnector) => void
 }) {
-  const isMetamask = window.ethereum && window.ethereum.isMetaMask;
+  const isMetamask = window.ethereum && window.ethereum.isMetaMask
 
   return (
     <PendingSection>
-      {!error && connector === walletconnect && (
-        <WalletConnectData size={size} uri={uri} />
-      )}
+      {!error && connector === walletconnect && <WalletConnectData size={size} uri={uri} />}
       <LoadingMessage error={error}>
         <LoadingWrapper>
           {!error && <SpinnerWrapper src={Circle} />}
@@ -101,45 +102,45 @@ export default function PendingView({
               <div>Error connecting.</div>
               <ErrorButton
                 onClick={() => {
-                  setPendingError(false);
-                  tryActivation(connector);
+                  setPendingError(false)
+                  tryActivation(connector)
                 }}
               >
                 Try Again
               </ErrorButton>
             </ErrorGroup>
           ) : connector === walletconnect ? (
-            "Scan QR code with a compatible wallet..."
+            'Scan QR code with a compatible wallet...'
           ) : (
-            "Initializing..."
+            'Initializing...'
           )}
         </LoadingWrapper>
       </LoadingMessage>
       {Object.keys(SUPPORTED_WALLETS).map((key) => {
-        const option = SUPPORTED_WALLETS[key];
+        const option = SUPPORTED_WALLETS[key]
         if (option.connector === connector) {
           if (option.connector === injected) {
-            if (isMetamask && option.name !== "MetaMask") {
-              return null;
+            if (isMetamask && option.name !== 'MetaMask') {
+              return null
             }
-            if (!isMetamask && option.name === "MetaMask") {
-              return null;
+            if (!isMetamask && option.name === 'MetaMask') {
+              return null
             }
           }
           return (
             <Option
-              id={`connect-${key}`}
-              key={key}
               clickable={false}
               color={option.color}
               header={option.name}
+              icon={require('../../assets/images/' + option.iconName)}
+              id={`connect-${key}`}
+              key={key}
               subheader={option.description}
-              icon={require("../../assets/images/" + option.iconName)}
             />
-          );
+          )
         }
-        return null;
+        return null
       })}
     </PendingSection>
-  );
+  )
 }

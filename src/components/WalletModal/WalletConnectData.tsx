@@ -1,6 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import QRCode from "qrcode.react";
+import React from 'react'
+import styled from 'styled-components'
+
+import QRCode from 'qrcode.react'
 
 const QRCodeWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -8,18 +9,13 @@ const QRCodeWrapper = styled.div`
   justify-content: center;
   border-radius: 12px;
   margin-bottom: 20px;
-`;
+`
 
 interface WalletConnectDataProps {
-  uri?: string;
-  size: number;
+  uri?: string
+  size: number
 }
 
-export default function WalletConnectData({
-  uri = "",
-  size,
-}: WalletConnectDataProps) {
-  return (
-    <QRCodeWrapper>{uri && <QRCode size={size} value={uri} />}</QRCodeWrapper>
-  );
+export default function WalletConnectData({ size, uri = '' }: WalletConnectDataProps) {
+  return <QRCodeWrapper>{uri && <QRCode size={size} value={uri} />}</QRCodeWrapper>
 }

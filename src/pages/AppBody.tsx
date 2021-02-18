@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react'
+import styled from 'styled-components'
 
 const Wrapper = styled.div`
   position: relative;
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
   > div {
     width: 100%;
   }
-`;
+`
 
 /**
  * The styled container element that wraps the content of most pages and the tabs.
@@ -28,5 +28,5 @@ export default function AppBody({ children }: { children: React.ReactNode }) {
     <Wrapper>
       <>{children}</>
     </Wrapper>
-  );
+  )
 }

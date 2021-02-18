@@ -1,17 +1,16 @@
-import React, { useCallback, useState } from "react";
-import { AlertCircle, CheckCircle } from "react-feather";
+import React, { useCallback, useState } from 'react'
+import styled from 'styled-components'
 
-import styled from "styled-components";
+import { AlertCircle, CheckCircle } from 'react-feather'
 
-import { useActiveWeb3React } from "../../hooks";
-import useInterval from "../../hooks/useInterval";
-import { useRemovePopup } from "../../state/application/hooks";
-import { TYPE } from "../../theme";
-
-import { ExternalLink } from "../../theme/components";
-import { getEtherscanLink } from "../../utils";
-import { AutoColumn } from "../Column";
-import { AutoRow } from "../Row";
+import { useActiveWeb3React } from '../../hooks'
+import useInterval from '../../hooks/useInterval'
+import { useRemovePopup } from '../../state/application/hooks'
+import { TYPE } from '../../theme'
+import { ExternalLink } from '../../theme/components'
+import { getEtherscanLink } from '../../utils'
+import { AutoColumn } from '../Column'
+import { AutoRow } from '../Row'
 
 const Fader = styled.div<{ count: number }>`
   position: absolute;
@@ -21,68 +20,52 @@ const Fader = styled.div<{ count: number }>`
   height: 2px;
   background-color: ${({ theme }) => theme.bg3};
   transition: width 100ms linear;
-`;
+`
 
-const delay = 100;
+const delay = 100
 
 export default function TxnPopup({
   hash,
+  popKey,
   success,
   summary,
-  popKey,
 }: {
-  hash: string;
-  success?: boolean;
-  summary?: string;
-  popKey?: string;
+  hash: string
+  success?: boolean
+  summary?: string
+  popKey?: string
 }) {
-  const { chainId } = useActiveWeb3React();
-  const [count, setCount] = useState(1);
+  const { chainId } = useActiveWeb3React()
+  const [count, setCount] = useState(1)
 
-  const [isRunning, setIsRunning] = useState(true);
-  const removePopup = useRemovePopup();
+  const [isRunning, setIsRunning] = useState(true)
+  const removePopup = useRemovePopup()
 
-  const removeThisPopup = useCallback(() => removePopup(popKey), [
-    popKey,
-    removePopup,
-  ]);
+  const removeThisPopup = useCallback(() => removePopup(popKey), [popKey, removePopup])
 
   useInterval(
     () => {
-      count > 150 ? removeThisPopup() : setCount(count + 1);
+      count > 150 ? removeThisPopup() : setCount(count + 1)
     },
     isRunning ? delay : null,
-  );
+  )
 
   return (
-    <AutoRow
-      onMouseEnter={() => setIsRunning(false)}
-      onMouseLeave={() => setIsRunning(true)}
-    >
+    <AutoRow onMouseEnter={() => setIsRunning(false)} onMouseLeave={() => setIsRunning(true)}>
       {success ? (
-        <CheckCircle
-          color={"#27AE60"}
-          size={24}
-          style={{ paddingRight: "24px" }}
-        />
+        <CheckCircle color={'#27AE60'} size={24} style={{ paddingRight: '24px' }} />
       ) : (
-        <AlertCircle
-          color={"#FF6871"}
-          size={24}
-          style={{ paddingRight: "24px" }}
-        />
+        <AlertCircle color={'#FF6871'} size={24} style={{ paddingRight: '24px' }} />
       )}
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>
-          {summary
-            ? summary
-            : "Hash: " + hash.slice(0, 8) + "..." + hash.slice(58, 65)}
+          {summary ? summary : 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}
         </TYPE.body>
-        <ExternalLink href={getEtherscanLink(chainId, hash, "transaction")}>
+        <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
           View on Etherscan
         </ExternalLink>
       </AutoColumn>
       <Fader count={count} />
     </AutoRow>
-  );
+  )
 }

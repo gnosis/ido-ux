@@ -1,19 +1,19 @@
-import React from "react";
-import styled, { css } from "styled-components";
-import { animated, useTransition, useSpring } from "react-spring";
-import { Spring } from "react-spring/renderprops";
+import { transparentize } from 'polished'
+import React from 'react'
+import styled, { css } from 'styled-components'
 
-import { DialogOverlay, DialogContent } from "@reach/dialog";
-import { isMobile } from "react-device-detect";
-import "@reach/dialog/styles.css";
-import { transparentize } from "polished";
-import { useGesture } from "react-use-gesture";
+import { DialogContent, DialogOverlay } from '@reach/dialog'
+import { isMobile } from 'react-device-detect'
+import { animated, useSpring, useTransition } from 'react-spring'
+import { Spring } from 'react-spring/renderprops'
+import '@reach/dialog/styles.css'
+import { useGesture } from 'react-use-gesture'
 
-const AnimatedDialogOverlay = animated(DialogOverlay);
+const AnimatedDialogOverlay = animated(DialogOverlay)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogOverlay = styled(({ mobile, ...rest }) => (
-  <AnimatedDialogOverlay {...rest} />
-))<{ mobile: boolean }>`
+const StyledDialogOverlay = styled(({ mobile, ...rest }) => <AnimatedDialogOverlay {...rest} />)<{
+  mobile: boolean
+}>`
   &[data-reach-dialog-overlay] {
     z-index: 2;
     display: flex;
@@ -28,7 +28,7 @@ const StyledDialogOverlay = styled(({ mobile, ...rest }) => (
       `}
 
     &::after {
-      content: "";
+      content: '';
       background-color: ${({ theme }) => theme.modalBG};
       opacity: 0.5;
       top: 0;
@@ -39,12 +39,12 @@ const StyledDialogOverlay = styled(({ mobile, ...rest }) => (
       z-index: -1;
     }
   }
-`;
+`
 
 // destructure to not pass custom props to Dialog DOM element
 const StyledDialogContent = styled(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ({ minHeight, maxHeight, mobile, isOpen, ...rest }) => (
+  ({ isOpen, maxHeight, minHeight, mobile, ...rest }) => (
     <DialogContent aria-label="content" {...rest} />
   ),
 )`
@@ -52,8 +52,7 @@ const StyledDialogContent = styled(
     margin: 0 0 2rem 0;
     border: 1px solid ${({ theme }) => theme.bg1};
     background-color: ${({ theme }) => theme.bg1};
-    box-shadow: 0 4px 8px 0
-      ${({ theme }) => transparentize(0.95, theme.shadow1)};
+    box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
     width: 50vw;
 
@@ -75,7 +74,7 @@ const StyledDialogContent = styled(
       max-height: 65vh;
       margin: 0;
     `}
-    ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
+    ${({ mobile, theme }) => theme.mediaWidth.upToSmall`
       width:  85vw;
       max-height: 66vh;
       ${
@@ -89,7 +88,7 @@ const StyledDialogContent = styled(
       }
     `}
   }
-`;
+`
 
 const HiddenCloseButton = styled.button`
   margin: 0;
@@ -97,13 +96,13 @@ const HiddenCloseButton = styled.button`
   width: 0;
   height: 0;
   border: none;
-`;
+`
 
 export const DEFAULT_MODAL_OPTIONS = {
   centered: true,
   animated: true,
   closeButton: true,
-};
+}
 
 export const ModalBodyWrapper = styled.div`
   padding: 0.5rem 1.5rem;
@@ -113,50 +112,50 @@ export const ModalBodyWrapper = styled.div`
     color: inherit;
     padding: 0;
   }
-`;
+`
 interface ModalProps {
-  isOpen: boolean;
-  onDismiss: () => void;
-  minHeight?: number | false;
-  maxHeight?: number;
-  initialFocusRef?: React.RefObject<any>;
-  children?: React.ReactNode;
+  isOpen: boolean
+  onDismiss: () => void
+  minHeight?: number | false
+  maxHeight?: number
+  initialFocusRef?: React.RefObject<any>
+  children?: React.ReactNode
 }
 
 export default function Modal({
-  isOpen,
-  onDismiss,
-  minHeight = false,
-  maxHeight = 50,
-  initialFocusRef = null,
   children,
+  initialFocusRef = null,
+  isOpen,
+  maxHeight = 50,
+  minHeight = false,
+  onDismiss,
 }: ModalProps) {
   const transitions = useTransition(isOpen, null, {
     config: { duration: 200 },
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
-  });
+  })
 
-  const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }));
+  const [{ xy }, set] = useSpring(() => ({ xy: [0, 0] }))
   const bind = useGesture({
     onDrag: (state) => {
-      let velocity = state.velocity;
+      let velocity = state.velocity
       if (velocity < 1) {
-        velocity = 1;
+        velocity = 1
       }
       if (velocity > 8) {
-        velocity = 8;
+        velocity = 8
       }
       set({
         xy: state.down ? state.movement : [0, 0],
         config: { mass: 1, tension: 210, friction: 20 },
-      });
+      })
       if (velocity > 3 && state.direction[1] > 0) {
-        onDismiss();
+        onDismiss()
       }
     },
-  });
+  })
 
   if (isMobile) {
     return (
@@ -165,20 +164,18 @@ export default function Modal({
           ({ item, key, props }) =>
             item && (
               <StyledDialogOverlay
-                key={key}
-                style={props}
-                onDismiss={onDismiss}
                 initialFocusRef={initialFocusRef}
+                key={key}
                 mobile={true}
+                onDismiss={onDismiss}
+                style={props}
               >
                 <Spring // animation for entrance and exit
                   from={{
-                    transform: isOpen
-                      ? "translateY(200px)"
-                      : "translateY(100px)",
+                    transform: isOpen ? 'translateY(200px)' : 'translateY(100px)',
                   }}
                   to={{
-                    transform: isOpen ? "translateY(0px)" : "translateY(200px)",
+                    transform: isOpen ? 'translateY(0px)' : 'translateY(200px)',
                   }}
                 >
                   {(props) => (
@@ -192,11 +189,11 @@ export default function Modal({
                     >
                       <StyledDialogContent
                         ariaLabel="test"
-                        style={props}
                         hidden={true}
-                        minHeight={minHeight}
                         maxHeight={maxHeight}
+                        minHeight={minHeight}
                         mobile={isMobile}
+                        style={props}
                       >
                         <HiddenCloseButton onClick={onDismiss} />
                         {children}
@@ -208,7 +205,7 @@ export default function Modal({
             ),
         )}
       </>
-    );
+    )
   } else {
     return (
       <>
@@ -216,17 +213,17 @@ export default function Modal({
           ({ item, key, props }) =>
             item && (
               <StyledDialogOverlay
-                key={key}
-                style={props}
-                onDismiss={onDismiss}
                 initialFocusRef={initialFocusRef}
+                key={key}
                 mobile={false}
+                onDismiss={onDismiss}
+                style={props}
               >
                 <StyledDialogContent
                   hidden={true}
-                  minHeight={minHeight}
-                  maxHeight={maxHeight}
                   isOpen={isOpen}
+                  maxHeight={maxHeight}
+                  minHeight={minHeight}
                 >
                   <HiddenCloseButton onClick={onDismiss} />
                   {children}
@@ -235,6 +232,6 @@ export default function Modal({
             ),
         )}
       </>
-    );
+    )
   }
 }

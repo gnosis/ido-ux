@@ -1,25 +1,23 @@
-import React, { useState, useEffect } from "react";
-import ReactGA from "react-ga";
-import styled from "styled-components";
-import { isMobile } from "react-device-detect";
-import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
-import { URI_AVAILABLE } from "@web3-react/walletconnect-connector";
-import usePrevious from "../../hooks/usePrevious";
-import {
-  useWalletModalOpen,
-  useWalletModalToggle,
-} from "../../state/application/hooks";
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
-import Modal from "../Modal";
-import AccountDetails from "../AccountDetails";
-import PendingView from "./PendingView";
-import Option from "./Option";
-import { SUPPORTED_WALLETS } from "../../constants";
-import { ExternalLink } from "../../theme";
-import MetamaskIcon from "../../assets/images/metamask.png";
-import { ReactComponent as Close } from "../../assets/images/x.svg";
-import { injected, walletconnect, fortmatic, portis } from "../../connectors";
-import { OVERLAY_READY } from "../../connectors/Fortmatic";
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
+import { isMobile } from 'react-device-detect'
+import ReactGA from 'react-ga'
+
+import MetamaskIcon from '../../assets/images/metamask.png'
+import { ReactComponent as Close } from '../../assets/images/x.svg'
+import { fortmatic, injected, portis, walletconnect } from '../../connectors'
+import { OVERLAY_READY } from '../../connectors/Fortmatic'
+import { SUPPORTED_WALLETS } from '../../constants'
+import usePrevious from '../../hooks/usePrevious'
+import { useWalletModalOpen, useWalletModalToggle } from '../../state/application/hooks'
+import { ExternalLink } from '../../theme'
+import AccountDetails from '../AccountDetails'
+import Modal from '../Modal'
+import Option from './Option'
+import PendingView from './PendingView'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -29,31 +27,30 @@ const CloseIcon = styled.div`
     cursor: pointer;
     opacity: 0.6;
   }
-`;
+`
 
 const CloseColor = styled(Close)`
   path {
     stroke: ${({ theme }) => theme.text4};
   }
-`;
+`
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
   padding: 0;
   width: 100%;
-`;
+`
 
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
   font-weight: 500;
-  color: ${(props) =>
-    props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit"};
+  color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem;
   `};
-`;
+`
 
 const ContentWrapper = styled.div`
   background-color: ${({ theme }) => theme.bg2};
@@ -62,7 +59,7 @@ const ContentWrapper = styled.div`
   border-bottom-right-radius: 20px;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
-`;
+`
 
 const UpperSection = styled.div`
   position: relative;
@@ -82,7 +79,7 @@ const UpperSection = styled.div`
     margin-top: 0;
     font-weight: 500;
   }
-`;
+`
 
 const Blurb = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -94,7 +91,7 @@ const Blurb = styled.div`
     margin: 1rem;
     font-size: 12px;
   `};
-`;
+`
 
 const OptionGrid = styled.div`
   display: grid;
@@ -103,186 +100,175 @@ const OptionGrid = styled.div`
     grid-template-columns: 1fr;
     grid-gap: 10px;
   `};
-`;
+`
 
 const HoverText = styled.div`
   :hover {
     cursor: pointer;
   }
-`;
+`
 
 const WALLET_VIEWS = {
-  OPTIONS: "options",
-  OPTIONS_SECONDARY: "options_secondary",
-  ACCOUNT: "account",
-  PENDING: "pending",
-};
+  OPTIONS: 'options',
+  OPTIONS_SECONDARY: 'options_secondary',
+  ACCOUNT: 'account',
+  PENDING: 'pending',
+}
 
 export default function WalletModal({
-  pendingTransactions,
-  confirmedTransactions,
   ENSName,
+  confirmedTransactions,
+  pendingTransactions,
 }: {
-  pendingTransactions: string[]; // hashes of pending
-  confirmedTransactions: string[]; // hashes of confirmed
-  ENSName?: string;
+  pendingTransactions: string[] // hashes of pending
+  confirmedTransactions: string[] // hashes of confirmed
+  ENSName?: string
 }) {
   // important that these are destructed from the account-specific web3-react context
-  const { active, account, connector, activate, error } = useWeb3React();
+  const { account, activate, active, connector, error } = useWeb3React()
 
-  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT);
+  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
 
-  const [pendingWallet, setPendingWallet] = useState();
+  const [pendingWallet, setPendingWallet] = useState()
 
-  const [pendingError, setPendingError] = useState<boolean>();
+  const [pendingError, setPendingError] = useState<boolean>()
 
-  const walletModalOpen = useWalletModalOpen();
-  const toggleWalletModal = useWalletModalToggle();
+  const walletModalOpen = useWalletModalOpen()
+  const toggleWalletModal = useWalletModalToggle()
 
-  const previousAccount = usePrevious(account);
+  const previousAccount = usePrevious(account)
 
   // close on connection, when logged out before
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
-      toggleWalletModal();
+      toggleWalletModal()
     }
-  }, [account, previousAccount, toggleWalletModal, walletModalOpen]);
+  }, [account, previousAccount, toggleWalletModal, walletModalOpen])
 
   // always reset to account view
   useEffect(() => {
     if (walletModalOpen) {
-      setPendingError(false);
-      setWalletView(WALLET_VIEWS.ACCOUNT);
+      setPendingError(false)
+      setWalletView(WALLET_VIEWS.ACCOUNT)
     }
-  }, [walletModalOpen]);
+  }, [walletModalOpen])
 
   // set up uri listener for walletconnect
-  const [uri, setUri] = useState();
+  const [uri, setUri] = useState()
   useEffect(() => {
     const activateWC = (uri) => {
-      setUri(uri);
+      setUri(uri)
       // setWalletView(WALLET_VIEWS.PENDING)
-    };
-    walletconnect.on(URI_AVAILABLE, activateWC);
+    }
+    walletconnect.on(URI_AVAILABLE, activateWC)
     return () => {
-      walletconnect.off(URI_AVAILABLE, activateWC);
-    };
-  }, []);
+      walletconnect.off(URI_AVAILABLE, activateWC)
+    }
+  }, [])
 
   // close modal when a connection is successful
-  const activePrevious = usePrevious(active);
-  const connectorPrevious = usePrevious(connector);
+  const activePrevious = usePrevious(active)
+  const connectorPrevious = usePrevious(connector)
   useEffect(() => {
     if (
       walletModalOpen &&
-      ((active && !activePrevious) ||
-        (connector && connector !== connectorPrevious && !error))
+      ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))
     ) {
-      setWalletView(WALLET_VIEWS.ACCOUNT);
+      setWalletView(WALLET_VIEWS.ACCOUNT)
     }
-  }, [
-    setWalletView,
-    active,
-    error,
-    connector,
-    walletModalOpen,
-    activePrevious,
-    connectorPrevious,
-  ]);
+  }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
 
   const tryActivation = async (connector) => {
-    let name = "";
+    let name = ''
     Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
-        return (name = SUPPORTED_WALLETS[key].name);
+        return (name = SUPPORTED_WALLETS[key].name)
       }
-      return true;
-    });
+      return true
+    })
     // log selected wallet
     ReactGA.event({
-      category: "Wallet",
-      action: "Change Wallet",
+      category: 'Wallet',
+      action: 'Change Wallet',
       label: name,
-    });
-    setPendingWallet(connector); // set wallet for pending view
-    setWalletView(WALLET_VIEWS.PENDING);
+    })
+    setPendingWallet(connector) // set wallet for pending view
+    setWalletView(WALLET_VIEWS.PENDING)
     activate(connector, undefined, true).catch((error) => {
       if (error instanceof UnsupportedChainIdError) {
-        activate(connector); // a little janky...can't use setError because the connector isn't set
+        activate(connector) // a little janky...can't use setError because the connector isn't set
       } else {
-        setPendingError(true);
+        setPendingError(true)
       }
-    });
-  };
+    })
+  }
 
   // close wallet modal if fortmatic modal is active
   useEffect(() => {
     fortmatic.on(OVERLAY_READY, () => {
-      toggleWalletModal();
-    });
-  }, [toggleWalletModal]);
+      toggleWalletModal()
+    })
+  }, [toggleWalletModal])
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
-    const isMetamask = window.ethereum && window.ethereum.isMetaMask;
+    const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
-      const option = SUPPORTED_WALLETS[key];
+      const option = SUPPORTED_WALLETS[key]
       // check for mobile options
       if (isMobile) {
         //disable portis on mobile for now
         if (option.connector === portis) {
-          return null;
+          return null
         }
 
         if (!window.web3 && !window.ethereum && option.mobile) {
           return (
             <Option
-              onClick={() => {
-                option.connector !== connector &&
-                  !option.href &&
-                  tryActivation(option.connector);
-              }}
-              id={`connect-${key}`}
-              key={key}
               active={option.connector && option.connector === connector}
               color={option.color}
-              link={option.href}
               header={option.name}
+              icon={require('../../assets/images/' + option.iconName)}
+              id={`connect-${key}`}
+              key={key}
+              link={option.href}
+              onClick={() => {
+                option.connector !== connector && !option.href && tryActivation(option.connector)
+              }}
               subheader={null}
-              icon={require("../../assets/images/" + option.iconName)}
             />
-          );
+          )
         }
-        return null;
+        return null
       }
 
       // overwrite injected when needed
       if (option.connector === injected) {
         // don't show injected if there's no injected provider
         if (!(window.web3 || window.ethereum)) {
-          if (option.name === "MetaMask") {
+          if (option.name === 'MetaMask') {
             return (
               <Option
+                color={'#E8831D'}
+                header={'Install Metamask'}
+                icon={MetamaskIcon}
                 id={`connect-${key}`}
                 key={key}
-                color={"#E8831D"}
-                header={"Install Metamask"}
+                link={'https://metamask.io/'}
                 subheader={null}
-                link={"https://metamask.io/"}
-                icon={MetamaskIcon}
               />
-            );
+            )
           } else {
-            return null; //dont want to return install twice
+            return null //dont want to return install twice
           }
         }
         // don't return metamask if injected provider isn't metamask
-        else if (option.name === "MetaMask" && !isMetamask) {
-          return null;
+        else if (option.name === 'MetaMask' && !isMetamask) {
+          return null
         }
         // likewise for generic
-        else if (option.name === "Injected" && isMetamask) {
-          return null;
+        else if (option.name === 'Injected' && isMetamask) {
+          return null
         }
       }
 
@@ -291,27 +277,27 @@ export default function WalletModal({
         !isMobile &&
         !option.mobileOnly && (
           <Option
+            active={option.connector === connector}
+            color={option.color}
+            header={option.name}
+            icon={
+              option.iconName == 'metamask.png'
+                ? MetamaskIcon //can not handle dynamically generated requires, hence we use hardcorded. Need to find different solution for others wallets
+                : require('../../assets/images/' + option.iconName)
+            }
             id={`connect-${key}`}
+            key={key}
+            link={option.href}
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
-                : !option.href && tryActivation(option.connector);
-            }}
-            key={key}
-            active={option.connector === connector}
-            color={option.color}
-            link={option.href}
-            header={option.name}
-            subheader={null} //use option.descriptio to bring back multi-line
-            icon={
-              option.iconName == "metamask.png"
-                ? MetamaskIcon //can not handle dynamically generated requires, hence we use hardcorded. Need to find different solution for others wallets
-                : require("../../assets/images/" + option.iconName)
-            }
+                : !option.href && tryActivation(option.connector)
+            }} //use option.descriptio to bring back multi-line
+            subheader={null}
           />
         )
-      );
-    });
+      )
+    })
   }
 
   function getModalContent() {
@@ -322,30 +308,29 @@ export default function WalletModal({
             <CloseColor />
           </CloseIcon>
           <HeaderRow>
-            {error instanceof UnsupportedChainIdError
-              ? "Wrong Network"
-              : "Error connecting"}
+            {error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error connecting'}
           </HeaderRow>
           <ContentWrapper>
             {error instanceof UnsupportedChainIdError ? (
               <h5>Please connect to the appropriate Ethereum network.</h5>
             ) : (
-              "Error connecting. Try refreshing the page."
+              'Error connecting. Try refreshing the page.'
             )}
           </ContentWrapper>
         </UpperSection>
-      );
+      )
     }
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
       return (
         <AccountDetails
-          toggleWalletModal={toggleWalletModal}
-          pendingTransactions={pendingTransactions}
           confirmedTransactions={confirmedTransactions}
+          // eslint-disable-next-line
           ENSName={ENSName}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
+          pendingTransactions={pendingTransactions}
+          toggleWalletModal={toggleWalletModal}
         />
-      );
+      )
     }
     return (
       <UpperSection>
@@ -356,8 +341,8 @@ export default function WalletModal({
           <HeaderRow color="blue">
             <HoverText
               onClick={() => {
-                setPendingError(false);
-                setWalletView(WALLET_VIEWS.ACCOUNT);
+                setPendingError(false)
+                setWalletView(WALLET_VIEWS.ACCOUNT)
               }}
             >
               Back
@@ -371,19 +356,19 @@ export default function WalletModal({
         <ContentWrapper>
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView
-              uri={uri}
-              size={220}
               connector={pendingWallet}
               error={pendingError}
               setPendingError={setPendingError}
+              size={220}
               tryActivation={tryActivation}
+              uri={uri}
             />
           ) : (
             <OptionGrid>{getOptions()}</OptionGrid>
           )}
           {walletView !== WALLET_VIEWS.PENDING && (
             <Blurb>
-              <span>New to Ethereum? &nbsp;</span>{" "}
+              <span>New to Ethereum? &nbsp;</span>{' '}
               <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
                 Learn more about wallets
               </ExternalLink>
@@ -391,17 +376,12 @@ export default function WalletModal({
           )}
         </ContentWrapper>
       </UpperSection>
-    );
+    )
   }
 
   return (
-    <Modal
-      isOpen={walletModalOpen}
-      onDismiss={toggleWalletModal}
-      minHeight={null}
-      maxHeight={90}
-    >
+    <Modal isOpen={walletModalOpen} maxHeight={90} minHeight={null} onDismiss={toggleWalletModal}>
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
-  );
+  )
 }

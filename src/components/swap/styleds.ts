@@ -1,11 +1,12 @@
-import styled from "styled-components";
-import { Text } from "rebass";
+import styled from 'styled-components'
 
-import NumericalInput from "../NumericalInput";
+import { Text } from 'rebass'
+
+import NumericalInput from '../NumericalInput'
 
 export const Wrapper = styled.div`
   position: relative;
-`;
+`
 
 export const ArrowWrapper = styled.div`
   padding: 2px;
@@ -18,7 +19,7 @@ export const ArrowWrapper = styled.div`
     cursor: pointer;
     opacity: 0.8;
   }
-`;
+`
 
 export const AdvancedDropdown = styled.div`
   padding: 10px 0 0;
@@ -26,21 +27,21 @@ export const AdvancedDropdown = styled.div`
   color: ${({ theme }) => theme.text2};
   background: none;
   border: 0;
-`;
+`
 
 export const SectionBreak = styled.div`
   height: 1px;
   width: 100%;
   background-color: ${({ theme }) => theme.bg3};
-`;
+`
 
 export const BottomGrouping = styled.div`
   margin-top: 12px;
   position: relative;
-`;
+`
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 }>`
-  color: ${({ theme, severity }) =>
+  color: ${({ severity, theme }) =>
     severity === 3
       ? theme.red1
       : severity === 2
@@ -48,7 +49,7 @@ export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 }>`
       : severity === 1
       ? theme.text1
       : theme.green1};
-`;
+`
 
 export const StyledNumerical = styled(NumericalInput)`
   text-align: center;
@@ -59,7 +60,7 @@ export const StyledNumerical = styled(NumericalInput)`
   ::placeholder {
     color: ${({ theme }) => theme.text4};
   }
-`;
+`
 export const StyledBalanceMaxMini = styled.button<{ active?: boolean }>`
   height: 22px;
   width: 22px;
@@ -84,32 +85,32 @@ export const StyledBalanceMaxMini = styled.button<{ active?: boolean }>`
     background-color: ${({ theme }) => theme.bg3};
     outline: none;
   }
-`;
+`
 
 export const TruncatedText = styled(Text)`
   text-overflow: ellipsis;
   width: 320px;
   overflow: hidden;
-`;
+`
 
 // styles
 export const Dots = styled.span`
   &::after {
     display: inline-block;
     animation: ellipsis 1.25s infinite;
-    content: ".";
+    content: '.';
     width: 1em;
     text-align: left;
   }
   @keyframes ellipsis {
     0% {
-      content: ".";
+      content: '.';
     }
     33% {
-      content: "..";
+      content: '..';
     }
     66% {
-      content: "...";
+      content: '...';
     }
   }
-`;
+`

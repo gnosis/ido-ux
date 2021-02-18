@@ -1,6 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import { BoxTitle } from "../components/BoxTitle";
+import React from 'react'
+import styled from 'styled-components'
+
+import { BoxTitle } from '../components/BoxTitle'
 
 const Wrapper = styled.div`
   position: relative;
@@ -19,20 +20,16 @@ const Wrapper = styled.div`
     border: 0;
     padding: 16px 0;
   `};
-`;
+`
 
 /**
  * The styled container element that wraps the content of most pages and the tabs.
  */
-export default function ParticipationBody({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ParticipationBody({ children }: { children: React.ReactNode }) {
   return (
     <Wrapper>
       <BoxTitle>Place Order</BoxTitle>
       <>{children}</>
     </Wrapper>
-  );
+  )
 }

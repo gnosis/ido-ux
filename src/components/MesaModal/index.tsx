@@ -1,15 +1,16 @@
 // file copied from gnosis/dex-react
-import React from "react";
-import { createGlobalStyle } from "styled-components";
+import React from 'react'
+import { createGlobalStyle } from 'styled-components'
+
 import Modali, {
   ModalHook,
   ModalOptions,
   ModalProps,
   toggleModaliComponent,
   useModali,
-} from "modali";
+} from 'modali'
 
-const MODALI_OVERLAY_COLOUR = "#2f3e4e80";
+const MODALI_OVERLAY_COLOUR = '#2f3e4e80'
 
 const ModaliGlobalStyle = createGlobalStyle` 
 /* Hack to fix Modali screen flash */
@@ -155,17 +156,17 @@ const ModaliGlobalStyle = createGlobalStyle`
   body.modali-open .modali-body-style {
     padding: 0;
   }
-`;
+`
 
 const Modal: React.FC<Modali.ModalProps> = (props) => (
   <>
     <ModaliGlobalStyle />
     <Modali.Modal {...props} />
   </>
-);
+)
 
 // To import default Modali and not change much code elsewhere
-const StyledModali = { ...Modali, Modal };
+const StyledModali = { ...Modali, Modal }
 
 export {
   StyledModali as default,
@@ -174,4 +175,4 @@ export {
   ModalProps,
   toggleModaliComponent as toggleModal,
   useModali as useModal,
-};
+}
