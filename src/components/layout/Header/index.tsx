@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { useWeb3React } from '@web3-react/core'
 
 import { NetworkContextName } from '../../../constants'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
@@ -33,20 +33,18 @@ const Inner = styled(InnerContainer)`
 `
 
 const LogoLink = styled(Link)`
-  &.logoLink {
-    left: 50%;
-    position: absolute;
-    text-decoration: none;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    z-index: 1;
+  left: 50%;
+  position: absolute;
+  text-decoration: none;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  z-index: 1;
 
-    @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
-      left: auto;
-      position: relative;
-      top: auto;
-      transform: none;
-    }
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+    left: auto;
+    position: relative;
+    top: auto;
+    transform: none;
   }
 `
 
@@ -104,8 +102,7 @@ const MobilemenuStyled = styled(Mobilemenu)`
 `
 
 export const Header: React.FC = (props) => {
-  const isConnecting = false
-  const { account, active, connector, error } = useWeb3React()
+  const { active } = useWeb3React()
   const contextNetwork = useWeb3React(NetworkContextName)
   const isDisconnected = !contextNetwork.active && !active
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
@@ -123,7 +120,7 @@ export const Header: React.FC = (props) => {
           <Logo />
         </LogoLink>
         <Menu />
-        {isDisconnected ? <ButtonConnectStyled disabled={isConnecting} /> : <UserDropdownStyled />}
+        {isDisconnected ? <ButtonConnectStyled /> : <UserDropdownStyled />}
       </Inner>
     </Wrapper>
   )

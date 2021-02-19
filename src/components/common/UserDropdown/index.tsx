@@ -1,6 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { ChainId } from '@uniswap/sdk'
+import { useWeb3React } from '@web3-react/core'
+
+import { useActiveWeb3React } from '../../../hooks'
 import { truncateStringInTheMiddle } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonCopy } from '../../buttons/ButtonCopy'
@@ -146,25 +150,26 @@ const getWalletName = (provider: any): string => {
 }
 
 const UserDropdownButton = () => {
-  const address = '0x12345678901010101010101011010101010101'
+  const { account } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
 
   return (
     <DropdownButton>
       <Address>
-        <AddressText className="addressText" title={address}>
-          {truncateStringInTheMiddle(address, 6, 4)}
+        <AddressText className="addressText" title={account}>
+          {truncateStringInTheMiddle(account, 8, 6)}
         </AddressText>
         <ChevronDown />
       </Address>
-      {/* {networkConfig.networkId && ( */}
       <Connection>
         <ConnectionStatus />
         <ConnectionText>
-          {/* {networkConfig.getNetworkName()} / {getWalletName(provider)} */}
-          Rinkeby / Metamask
+          {chainId === ChainId.ROPSTEN && 'Ropsten'}
+          {chainId === ChainId.RINKEBY && 'Rinkeby'}
+          {chainId === ChainId.GÖRLI && 'Görli'}
+          {chainId === ChainId.KOVAN && 'Kovan'}
         </ConnectionText>
       </Connection>
-      {/* )} */}
     </DropdownButton>
   )
 }
