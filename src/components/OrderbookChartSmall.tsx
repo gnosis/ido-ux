@@ -98,11 +98,10 @@ const OrderBookChartSmall: React.FC<OrderBookChartProps> = (
   }, []);
 
   useEffect(() => {
-    if (!chartRef.current || data === null) return;
+    if (!chartRef.current) return;
 
-    if (data.length === 0) {
-      chartRef.current.data = [];
-      return;
+    if (data && data.length !== 0) {
+      chartRef.current.data = data;
     }
 
     // go on with the update when data is ready
@@ -112,8 +111,6 @@ const OrderBookChartSmall: React.FC<OrderBookChartProps> = (
       quoteToken,
       networkId,
     });
-
-    chartRef.current.data = data;
   }, [baseToken, networkId, quoteToken, data]);
 
   return <Wrapper ref={mountPoint}>Show order book for this auction</Wrapper>;
