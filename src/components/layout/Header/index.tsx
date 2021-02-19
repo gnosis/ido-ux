@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+
+import { NetworkContextName } from '../../../constants'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
@@ -71,6 +74,10 @@ const UserDropdownStyled = styled(UserDropdown)`
   margin-left: auto;
   position: relative;
   z-index: 5;
+
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+    margin-left: 0;
+  }
 `
 
 const Menu = styled(Mainmenu)`
@@ -98,7 +105,9 @@ const MobilemenuStyled = styled(Mobilemenu)`
 
 export const Header: React.FC = (props) => {
   const isConnecting = false
-  const isDisconnected = true
+  const { account, active, connector, error } = useWeb3React()
+  const contextNetwork = useWeb3React(NetworkContextName)
+  const isDisconnected = !contextNetwork.active && !active
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
 
   const mobileMenuToggle = () => {

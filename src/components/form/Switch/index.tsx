@@ -11,8 +11,7 @@ const Wrapper = styled.div<{ disabled?: boolean }>`
 `
 
 const SwitchWrapper = styled.div<{ active: boolean; small?: boolean }>`
-  background-color: ${(props) =>
-    props.active ? props.theme.colors.primary : props.theme.colors.mediumGrey};
+  background-color: ${(props) => (props.active ? '#990000' : '#333')};
   border-radius: ${(props) => (props.small ? '15px' : '20px')};
   cursor: pointer;
   height: ${(props) => (props.small ? '15px' : '20px')};

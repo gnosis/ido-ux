@@ -33,14 +33,18 @@ const DropdownButton = styled.div`
   height: 100%;
   justify-content: center;
 
+  .fill {
+    fill: #fff;
+  }
+
   &:hover {
     .addressText {
-      color: ${(props) => props.theme.colors.darkerGrey};
+      color: #fff;
     }
 
     .chevronDown {
       .fill {
-        fill: ${(props) => props.theme.colors.darkerGrey};
+        fill: #fff;
       }
     }
   }
@@ -49,10 +53,11 @@ const DropdownButton = styled.div`
 const Address = styled.div`
   align-items: center;
   display: flex;
+  margin-top: 10px;
 `
 
 const AddressText = styled.div`
-  color: ${(props) => props.theme.colors.textColor};
+  color: #fff;
   font-size: 15px;
   font-weight: 400;
   line-height: 1.2;
@@ -65,7 +70,7 @@ const Connection = styled.div`
 `
 
 const ConnectionStatus = styled.div`
-  background-color: ${(props) => props.theme.colors.holdGreen};
+  background-color: #008c73;
   border-radius: 8px;
   flex-grow: 0;
   flex-shrink: 0;
@@ -75,7 +80,7 @@ const ConnectionStatus = styled.div`
 `
 
 const ConnectionText = styled.div`
-  color: ${(props) => props.theme.colors.holdGreen};
+  color: #008c73;
   font-size: 9px;
   font-weight: 600;
   line-height: 1.2;
@@ -98,7 +103,7 @@ const DropdownItemStyled = styled(DropdownItem)`
 const Item = styled.div`
   align-items: center;
   border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: #333;
   display: flex;
   font-size: 13px;
   justify-content: space-between;
