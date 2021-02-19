@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Token } from '@uniswap/sdk'
 
 import { useActiveWeb3React } from '../hooks'
-import { useDerivedAuctionInfo, useSwapState } from '../state/orderPlacement/hooks'
+import { useSwapState } from '../state/orderPlacement/hooks'
 import { useOrderbookState } from '../state/orderbook/hooks'
 import { getTokenDisplay } from '../utils'
 import { ButtonLight } from './Button'
@@ -94,28 +94,26 @@ interface OrderBookBtnProps {
 }
 
 export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnProps) => {
-  const { className } = props
+  const { baseToken, className, quoteToken } = props
   //   const theme = useContext(ThemeContext);
   const { chainId } = useActiveWeb3React()
   const { auctionId } = useSwapState()
 
-  const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(baseToken), [baseToken])
 
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(quoteToken), [quoteToken])
 
   const [modalHook, toggleModal] = useModal({
     ...DEFAULT_MODAL_OPTIONS,
     large: true,
-    title: `${auctioningTokenDisplay}-${biddingTokenDisplay} Order book`,
+    title: `${biddingTokenDisplay}-${auctioningTokenDisplay} Order book`,
     message: (
       <ModalWrapper>
         <OrderBookWidget
           auctionId={auctionId}
-          baseToken={biddingToken}
+          baseToken={baseToken}
           networkId={chainId}
-          quoteToken={auctioningToken}
+          quoteToken={quoteToken}
         />
       </ModalWrapper>
     ),
@@ -135,17 +133,17 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnPro
   const processedOrderbook = processOrderbookData({
     data: { bids, asks },
     userOrder: { price: userOrderPrice, volume: userOrderVolume },
-    baseToken: auctioningToken,
-    quoteToken: biddingToken,
+    baseToken,
+    quoteToken,
   })
   return (
     <Wrapper>
       <ViewOrderBookBtn className={className} onClick={toggleModal} type="button">
         <OrderBookChartSmall
-          baseToken={auctioningToken}
+          baseToken={baseToken}
           data={processedOrderbook}
           networkId={chainId}
-          quoteToken={biddingToken}
+          quoteToken={quoteToken}
         />
       </ViewOrderBookBtn>
       <Modal.Modal {...modalHook} />
