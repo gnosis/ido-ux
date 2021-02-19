@@ -41,9 +41,12 @@ const Wrapper = styled.div`
     font-size: 1rem;
   }
 
-  .amcharts-Container .amcharts-Label {
+  .amcharts-Label {
     text-transform: uppercase;
-    font-size: 1.2rem;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: ${({ theme }) => theme.text4};
+    margin: 10px;
   }
 
   .amcharts-ZoomOutButton-group > .amcharts-RoundedRectangle-group {
@@ -59,7 +62,7 @@ const Wrapper = styled.div`
   .amcharts-AxisLabel,
   .amcharts-CategoryAxis .amcharts-Label-group > .amcharts-Label,
   .amcharts-ValueAxis-group .amcharts-Label-group > .amcharts-Label {
-    fill: var(--color-text-primary);
+    fill: ${({ theme }) => theme.text3};
   }
 `;
 
@@ -104,8 +107,8 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   am4core.useTheme(am4themesSpiritedaway);
   am4core.options.autoSetClassName = true;
   const chart = am4core.create(chartElement, am4charts.XYChart);
-  chart.paddingTop = 0;
-  chart.marginTop = 0;
+  chart.paddingTop = 20;
+  chart.marginTop = 20;
   chart.paddingBottom = 0;
   chart.paddingLeft = 0;
   chart.paddingRight = 0;
@@ -168,15 +171,21 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor();
-  chart.cursor.lineX.stroke = am4core.color("white");
+  chart.cursor.lineX.stroke = am4core.color(colors.white);
   chart.cursor.lineX.strokeWidth = 1;
   chart.cursor.lineX.strokeOpacity = 0.6;
   chart.cursor.lineX.strokeDasharray = "4";
 
-  chart.cursor.lineY.stroke = am4core.color("white");
+  chart.cursor.lineY.stroke = am4core.color(colors.white);
   chart.cursor.lineY.strokeWidth = 1;
   chart.cursor.lineY.strokeOpacity = 0.6;
   chart.cursor.lineY.strokeDasharray = "4";
+
+  // Button configuration
+  chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5);
+  chart.zoomOutButton.background.fill = am4core.color("#25283D");
+  chart.zoomOutButton.icon.stroke = am4core.color(colors.white);
+  chart.zoomOutButton.icon.strokeWidth = 2;
 
   // Add default empty data array
   chart.data = [];
@@ -202,7 +211,6 @@ export const drawLabels = ({
 
   const [xAxis] = chart.xAxes;
   const [yAxis] = chart.yAxes;
-
   xAxis.title.text = ` Price (${baseTokenLabel})`;
   yAxis.title.text = ` Volume (${quoteTokenLabel})`;
 
