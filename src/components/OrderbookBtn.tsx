@@ -12,10 +12,7 @@ import OrderBookWidget, { processOrderbookData } from "./OrderbookWidget";
 
 // hooks
 import { useActiveWeb3React } from "../hooks";
-import {
-  useDerivedAuctionInfo,
-  useSwapState,
-} from "../state/orderPlacement/hooks";
+import { useSwapState } from "../state/orderPlacement/hooks";
 
 // utils
 import { getTokenDisplay } from "../utils";
@@ -113,8 +110,6 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
   //   const theme = useContext(ThemeContext);
   const { chainId } = useActiveWeb3React();
   const { auctionId } = useSwapState();
-
-  const { auctioningToken, biddingToken } = useDerivedAuctionInfo();
 
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(baseToken), [
     baseToken,
