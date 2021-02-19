@@ -10,7 +10,7 @@ yarn
 
 ### Configure Environment
 
-Copy `.env.example` to `.env` and change the appropriate variables.
+Copy `.env.example` or `.env` to `.env.local` and change the appropriate variables.
 
 ### Run
 
