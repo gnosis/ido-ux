@@ -99,23 +99,27 @@ export default function AuctionDetails() {
   )
 
   const clearingPriceInfo = useClearingPriceInfo()
-  const clearingPriceInfoAsSellorder =
-    clearingPriceInfo &&
-    orderToSellOrder(clearingPriceInfo.clearingOrder, biddingToken, auctioningToken)
-  let clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellorder)?.toSignificant(4)
 
-  if (clearingPrice) {
-    clearingPriceNumber = clearingPrice && clearingPrice.toSignificant(4)
-  }
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
 
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
 
-  const clearingPriceDisplay = clearingPriceNumber
-    ? `${clearingPriceNumber} ${getTokenDisplay(biddingToken)} per ${getTokenDisplay(
-        auctioningToken,
-      )}`
-    : '-'
+  const clearingPriceDisplay = useMemo(() => {
+    const clearingPriceInfoAsSellOrder =
+      clearingPriceInfo &&
+      orderToSellOrder(clearingPriceInfo.clearingOrder, biddingToken, auctioningToken)
+    let clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
+
+    if (clearingPrice) {
+      clearingPriceNumber = clearingPrice && clearingPrice.toSignificant(4)
+    }
+
+    return clearingPriceNumber
+      ? `${clearingPriceNumber} ${getTokenDisplay(biddingToken)} per ${getTokenDisplay(
+          auctioningToken,
+        )}`
+      : '-'
+  }, [auctioningToken, biddingToken, clearingPrice, clearingPriceInfo])
 
   const titlePrice = useMemo(
     () =>

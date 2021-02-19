@@ -34,7 +34,6 @@ const Wrapper = styled.div`
   display: block;
 `
 
-// const ModalWrapper = styled(ModalBodyWrapper)`
 const ModalWrapper = styled.div`
   display: flex;
   text-align: center;

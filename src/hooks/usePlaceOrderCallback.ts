@@ -68,7 +68,7 @@ export function usePlaceOrderCallback(
         order: {
           buyAmount: buyAmountScaled,
           sellAmount: sellAmountScaled,
-          userId: BigNumber.from(0),
+          userId: BigNumber.from(0), // This could be optimized
         },
       })
       let estimate,
@@ -83,6 +83,7 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [previousOrder],
+          '0x',
         ]
         value = null
       }
@@ -112,7 +113,7 @@ export function usePlaceOrderCallback(
           const order = {
             buyAmount: buyAmountScaled,
             sellAmount: sellAmountScaled,
-            userId: BigNumber.from(userId),
+            userId: BigNumber.from(userId), // If many people are placing orders, this might be incorrect
           }
           onNewOrder([
             {
