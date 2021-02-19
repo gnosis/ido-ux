@@ -69,11 +69,10 @@ const Link = styled(NavLink)`
 const IconWrapper = styled.span`
   cursor: pointer;
   display: inline-block;
-  height: 12px;
+  height: 14px;
   margin-left: 6px;
   position: relative;
-  top: -1px;
-  width: 12px;
+  width: 14px;
 `
 
 const SettingsIconStyled = styled(SettingsIcon)`
