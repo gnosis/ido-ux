@@ -1,38 +1,37 @@
+import { darken } from 'polished'
 import React, { ButtonHTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import { ChevronRight } from '../../icons/ChevronRight'
 
 const Wrapper = styled.button`
-  &.buttonConnect {
-    align-items: center;
-    background: transparent;
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    font-size: 15px;
-    font-weight: 400;
-    height: 100%;
-    line-height: 1.2;
-    outline: none;
-    padding: 0;
-    border: none;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: ${({ theme }) => theme.primary1};
+  cursor: pointer;
+  display: flex;
+  font-size: 16px;
+  font-weight: 400;
+  height: 100%;
+  line-height: 1.2;
+  outline: none;
+  padding: 0;
 
-    &[disabled] {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .fill {
+    fill: ${({ theme }) => theme.primary1};
+  }
+
+  &:hover {
+    color: ${({ theme }) => darken(0.15, theme.primary1)};
 
     .fill {
-      fill: #fff;
-    }
-
-    &:hover {
-      color: #fff;
-
-      .fill {
-        fill: #fff;
-      }
+      fill: ${({ theme }) => darken(0.15, theme.primary1)};
     }
   }
 `

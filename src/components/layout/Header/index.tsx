@@ -6,6 +6,7 @@ import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
 import { UserDropdown } from '../../common/UserDropdown'
+import { Mainmenu } from '../../navigation/Mainmenu'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 
@@ -60,12 +61,25 @@ const ButtonConnectStyled = styled(ButtonConnect)`
   margin-left: auto;
   position: relative;
   z-index: 5;
+
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+    margin-left: 0;
+  }
 `
 
 const UserDropdownStyled = styled(UserDropdown)`
   margin-left: auto;
   position: relative;
   z-index: 5;
+`
+
+const Menu = styled(Mainmenu)`
+  display: none;
+
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+    display: flex;
+    margin-left: auto;
+  }
 `
 
 const MobilemenuStyled = styled(Mobilemenu)`
@@ -99,6 +113,7 @@ export const Header: React.FC = (props) => {
         <LogoLink className="logoLink" to="/">
           <Logo />
         </LogoLink>
+        <Menu />
         {isDisconnected ? <ButtonConnectStyled disabled={isConnecting} /> : <UserDropdownStyled />}
       </Inner>
     </Wrapper>
