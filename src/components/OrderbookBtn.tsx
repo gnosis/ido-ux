@@ -16,9 +16,7 @@ import { useSwapState } from "../state/orderPlacement/hooks";
 
 // utils
 import { getTokenDisplay } from "../utils";
-import { OrderBookError } from "./OrderbookChartSmall";
-
-import OrderBookChartSmall from "./OrderbookChartSmall";
+import OrderBookChartSmall, { OrderBookError } from "./OrderbookChartSmall";
 import { useOrderbookState } from "../state/orderbook/hooks";
 
 const ViewOrderBookBtn = styled(ButtonLight)`

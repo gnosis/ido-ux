@@ -153,6 +153,12 @@
         "internalType": "uint256",
         "name": "minFundingThreshold",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "allowListManager",
+        "type": "address"
       }
     ],
     "name": "NewAuction",
@@ -254,6 +260,25 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "auctionAccessManager",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -537,6 +562,11 @@
         "internalType": "bool",
         "name": "isAtomicClosureAllowed",
         "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "allowListManager",
+        "type": "address"
       }
     ],
     "name": "initiateAuction",
@@ -597,6 +627,11 @@
         "internalType": "bytes32[]",
         "name": "_prevSellOrders",
         "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "allowListCallData",
+        "type": "bytes"
       }
     ],
     "name": "placeSellOrders",
@@ -712,6 +747,11 @@
         "internalType": "bytes32[]",
         "name": "_prevSellOrder",
         "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "allowListCallData",
+        "type": "bytes"
       }
     ],
     "name": "settleAuctionAtomically",

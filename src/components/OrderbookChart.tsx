@@ -187,6 +187,9 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   chart.zoomOutButton.icon.stroke = am4core.color(colors.white);
   chart.zoomOutButton.icon.strokeWidth = 2;
 
+  // Add default empty data array
+  chart.data = [];
+
   return chart;
 };
 
