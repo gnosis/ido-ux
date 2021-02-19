@@ -88,6 +88,7 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [previousOrder],
+          "0x",
         ];
         value = null;
       }
