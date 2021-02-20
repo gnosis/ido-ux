@@ -7,11 +7,11 @@ import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from '../../../hooks'
 import { truncateStringInTheMiddle } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { ButtonCopy } from '../../buttons/ButtonCopy'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
 import { Switch } from '../../form/Switch'
 import { ChevronDown } from '../../icons/ChevronDown'
+import { ChevronRight } from '../../icons/ChevronRight'
 
 const Wrapper = styled(Dropdown)`
   align-items: center;
@@ -38,17 +38,17 @@ const DropdownButton = styled.div`
   justify-content: center;
 
   .fill {
-    fill: #fff;
+    fill: ${({ theme }) => theme.text1};
   }
 
   &:hover {
     .addressText {
-      color: #fff;
+      color: ${({ theme }) => theme.text1};
     }
 
     .chevronDown {
       .fill {
-        fill: #fff;
+        fill: ${({ theme }) => theme.text1};
       }
     }
   }
@@ -61,7 +61,7 @@ const Address = styled.div`
 `
 
 const AddressText = styled.div`
-  color: #fff;
+  color: ${({ theme }) => theme.text1};
   font-size: 15px;
   font-weight: 400;
   line-height: 1.2;
@@ -74,7 +74,7 @@ const Connection = styled.div`
 `
 
 const ConnectionStatus = styled.div`
-  background-color: #008c73;
+  background-color: ${({ theme }) => theme.green1};
   border-radius: 8px;
   flex-grow: 0;
   flex-shrink: 0;
@@ -84,7 +84,7 @@ const ConnectionStatus = styled.div`
 `
 
 const ConnectionText = styled.div`
-  color: #008c73;
+  color: ${({ theme }) => theme.green1};
   font-size: 9px;
   font-weight: 600;
   line-height: 1.2;
@@ -106,8 +106,8 @@ const DropdownItemStyled = styled(DropdownItem)`
 
 const Item = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
-  color: #333;
+  border-bottom: 1px solid ${({ theme }) => theme.border};
+  color: ${(props) => props.theme.dropdown.color};
   display: flex;
   font-size: 13px;
   justify-content: space-between;
@@ -132,22 +132,6 @@ const DisconnectButton = styled(Button)`
   line-height: 1;
   width: 100%;
 `
-
-const TextAndButton = styled.span`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-`
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getWalletName = (provider: any): string => {
-  const isMetaMask =
-    Object.prototype.hasOwnProperty.call(provider._web3Provider, 'isMetaMask') &&
-    provider._web3Provider.isMetaMask
-  const isWalletConnect = Object.prototype.hasOwnProperty.call(provider._web3Provider, 'wc')
-
-  return isMetaMask ? 'MetaMask' : isWalletConnect ? 'WalletConnect' : 'Unknown'
-}
 
 const UserDropdownButton = () => {
   const { account } = useWeb3React()
@@ -177,15 +161,15 @@ const UserDropdownButton = () => {
 const UserDropdownContent = () => {
   const items = [
     {
-      title: 'Network',
-      value: 'Rinkeby',
-    },
-    {
       title: 'Wallet',
       value: 'Metamask',
     },
     {
-      title: 'Dark Theme',
+      title: 'Your transactions',
+      value: <ChevronRight />,
+    },
+    {
+      title: 'Night mode',
       value: (
         <Switch
           active

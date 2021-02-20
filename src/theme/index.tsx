@@ -40,7 +40,7 @@ export function colors(darkMode: boolean): Colors {
     buttonGradient1: '#8958FF',
     buttonGradient2: '#3F77FF',
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
-    green1: '#27AE60',
+    green1: ' #008c73',
     mainBackground: darkMode ? '#001429' : '#F7F8FA',
     modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
     primary1: darkMode ? '#e8663d' : '#e8663d',
@@ -111,17 +111,15 @@ export const theme = (darkMode: boolean): any => ({
   dropdown: {
     item: {
       backgroundColor: 'transparent',
-      backgroundColorActive: '#ccc',
-      backgroundColorHover: '#ccc',
-      borderColor: '#ccc',
-      color: '#000',
-      colorActive: '#ccc',
-      height: '40px',
-      paddingHorizontal: '12px',
+      backgroundColorActive: darkMode ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.02)',
+      backgroundColorHover: darkMode ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.02)',
+      color: darkMode ? '#fff' : '#000',
+      colorActive: darkMode ? '#fff' : '#000',
+      height: '37px',
+      paddingHorizontal: '13px',
     },
   },
   header: {
-    backgroundColor: '#fff',
     height: '60px',
   },
   layout: {

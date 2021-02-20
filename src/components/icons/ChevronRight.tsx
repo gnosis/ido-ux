@@ -2,14 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Wrapper = styled.svg`
-  bottom: auto;
-  left: auto;
-  position: relative;
-  right: auto;
-  top: auto;
-
   .fill {
-    fill: #ccc;
+    fill: #fff;
   }
 `
 
