@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { decodeOrder, encodeOrder, Order } from "../hooks/Order";
-import { AuctionInfo } from "../hooks/useInterestingAuctionDetails";
+import { AuctionInfo } from "../hooks/useAllAuctionInfos";
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string;
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
@@ -83,11 +83,13 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
   public constructor(params: AdditionalServicesApiParams) {
     params.forEach((endpoint) => {
-      this.urlsByNetwork[endpoint.networkId] = getAdditionalServiceUrl(
-        process.env.PRICE_ESTIMATOR_URL === "production"
-          ? endpoint.url_production
-          : endpoint.url_develop || endpoint.url_production, // fallback on required url_production
-      );
+      if (endpoint.url_develop || endpoint.url_production) {
+        this.urlsByNetwork[endpoint.networkId] = getAdditionalServiceUrl(
+          process.env.PRICE_ESTIMATOR_URL === "production"
+            ? endpoint.url_production
+            : endpoint.url_develop || endpoint.url_production, // fallback on required url_production
+        );
+      }
     });
   }
   public getOrderBookUrl(params: OrderBookParams): string {

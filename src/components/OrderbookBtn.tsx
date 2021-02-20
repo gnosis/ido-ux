@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Modal, { useModal } from "./MesaModal";
 
 // const, types, utils
-import { Token } from "@uniswap/sdk";
+import { Token } from "uniswap-xdai-sdk";
 
 // components
 import { DEFAULT_MODAL_OPTIONS } from "./Modal";
