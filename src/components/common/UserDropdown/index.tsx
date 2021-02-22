@@ -107,7 +107,7 @@ const DropdownItemStyled = styled(DropdownItem)`
 const Item = styled.div`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border};
-  color: ${(props) => props.theme.dropdown.color};
+  color: ${({ theme }) => theme.dropdown.item.color};
   display: flex;
   font-size: 13px;
   justify-content: space-between;
@@ -141,7 +141,7 @@ const UserDropdownButton = () => {
     <DropdownButton>
       <Address>
         <AddressText className="addressText" title={account}>
-          {truncateStringInTheMiddle(account, 8, 6)}
+          {account ? truncateStringInTheMiddle(account, 8, 6) : 'Invalid address.'}
         </AddressText>
         <ChevronDown />
       </Address>

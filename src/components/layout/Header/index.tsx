@@ -2,9 +2,13 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { useWeb3React } from '@web3-react/core'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
-import { NetworkContextName } from '../../../constants'
+import useENSName from '../../../hooks/useENSName'
+import { useWalletModalToggle } from '../../../state/application/hooks'
+import { useAllTransactions } from '../../../state/transactions/hooks'
+import { TransactionDetails } from '../../../state/transactions/reducer'
+import WalletModal from '../../WalletModal'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
@@ -101,27 +105,71 @@ const MobilemenuStyled = styled(Mobilemenu)`
   }
 `
 
+const Error = styled.span`
+  align-items: center;
+  color: ${({ theme }) => theme.primary1};
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  height: 100%;
+  line-height: 1.2;
+  margin-left: auto;
+`
+
 export const Header: React.FC = (props) => {
-  const { active } = useWeb3React()
-  const contextNetwork = useWeb3React(NetworkContextName)
-  const isDisconnected = !contextNetwork.active && !active
+  const { account, error } = useWeb3React()
+  const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
+  const wrongNetwork = error instanceof UnsupportedChainIdError
+  const toggleWalletModal = useWalletModalToggle()
+  const allTransactions = useAllTransactions()
+  const ENSName = useENSName(account)
+
+  const recentTransactionsOnly = (a: TransactionDetails) => {
+    return new Date().getTime() - a.addedTime < 86_400_000
+  }
+
+  const newTransactionFirst = (a: TransactionDetails, b: TransactionDetails) => {
+    return b.addedTime - a.addedTime
+  }
+
+  const sortedRecentTransactions = React.useMemo(() => {
+    const txs = Object.values(allTransactions)
+    return txs.filter(recentTransactionsOnly).sort(newTransactionFirst)
+  }, [allTransactions])
+
+  const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash)
+  const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
 
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
 
   return (
-    <Wrapper className="siteHeader" {...props}>
-      <Inner>
-        <ButtonMenuStyled onClick={mobileMenuToggle} />
-        {mobileMenuVisible && <MobilemenuStyled onClose={() => setMobileMenuVisible(false)} />}
-        <LogoLink className="logoLink" to="/">
-          <Logo />
-        </LogoLink>
-        <Menu />
-        {isDisconnected ? <ButtonConnectStyled /> : <UserDropdownStyled />}
-      </Inner>
-    </Wrapper>
+    <>
+      <Wrapper className="siteHeader" {...props}>
+        <Inner>
+          <ButtonMenuStyled onClick={mobileMenuToggle} />
+          {mobileMenuVisible && <MobilemenuStyled onClose={() => setMobileMenuVisible(false)} />}
+          <LogoLink className="logoLink" to="/">
+            <Logo />
+          </LogoLink>
+          <Menu />
+          {isConnected ? (
+            <UserDropdownStyled />
+          ) : wrongNetwork ? (
+            <Error>Invalid network</Error>
+          ) : (
+            <ButtonConnectStyled onClick={toggleWalletModal} />
+          )}
+        </Inner>
+      </Wrapper>
+      <WalletModal
+        confirmedTransactions={confirmed}
+        // eslint-disable-next-line
+        ENSName={ENSName}
+        pendingTransactions={pending}
+      />
+    </>
   )
 }
