@@ -19,7 +19,7 @@ const currentTimestamp = () => new Date().getTime()
 interface UserState {
   lastVersion: string
 
-  userDarkMode: boolean | null // the user's choice for dark mode or light mode
+  userDarkMode: boolean | true // the user's choice for dark mode or light mode
   matchesDarkMode: boolean // whether the dark mode media query matches
 
   tokens: {
@@ -79,12 +79,12 @@ export default createReducer(initialState, (builder) =>
       }
       state.timestamp = currentTimestamp()
     })
-    .addCase(updateUserDarkMode, (state) => {
-      state.userDarkMode = true //Darkmode change action.payload.userDarkMode;
+    .addCase(updateUserDarkMode, (state, action) => {
+      state.userDarkMode = action.payload.userDarkMode
       state.timestamp = currentTimestamp()
     })
-    .addCase(updateMatchesDarkMode, (state) => {
-      state.matchesDarkMode = true //Darkmode change action.payload.matchesDarkMode;
+    .addCase(updateMatchesDarkMode, (state, action) => {
+      state.matchesDarkMode = action.payload.matchesDarkMode
       state.timestamp = currentTimestamp()
     })
     .addCase(addSerializedToken, (state, { payload: { serializedToken } }) => {

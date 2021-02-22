@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const Paragraph = styled.p`
-  color: ${(props) => props.theme.colors.textColor};
+  color: ${({ theme }) => theme.text1};
   font-size: 16px;
   font-weight: 400;
   line-height: 1.4;
@@ -13,7 +13,7 @@ export const Paragraph = styled.p`
   }
 
   a {
-    color: ${(props) => props.theme.colors.primary};
+    color: ${({ theme }) => theme.primary1};
     text-decoration: underline;
 
     &:hover {

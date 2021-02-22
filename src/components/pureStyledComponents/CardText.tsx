@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const CardText = styled.div`
-  color: ${(props) => props.theme.colors.textColor};
+  color: #ccc;
   font-size: 16px;
   font-style: italic;
   font-weight: 400;

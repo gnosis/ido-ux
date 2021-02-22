@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const EmptyContentText = styled.div`
   align-items: center;
-  color: ${(props) => props.theme.colors.textColor};
+  color: ${({ theme }) => theme.text1};
   display: flex;
   font-size: 15px;
   font-weight: 500;

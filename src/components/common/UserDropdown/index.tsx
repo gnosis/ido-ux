@@ -5,6 +5,7 @@ import { ChainId } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 
 import { useActiveWeb3React } from '../../../hooks'
+import { useDarkModeManager } from '../../../state/user/hooks'
 import { truncateStringInTheMiddle } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
@@ -105,7 +106,7 @@ const DropdownItemStyled = styled(DropdownItem)`
   }
 `
 
-const Item = styled.div<{ hasOnClick?: boolean }>`
+const Item = styled.div<{ hasOnClick?: boolean; disabled?: boolean }>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border};
   color: ${({ theme }) => theme.dropdown.item.color};
@@ -121,6 +122,8 @@ const Item = styled.div<{ hasOnClick?: boolean }>`
     background-color: ${(props) =>
       props.hasOnClick ? props.theme.dropdown.item.backgroundColorHover : 'transparent'};
   }
+
+  ${(props) => props.disabled && 'pointer-events: none;'}
 `
 
 const Title = styled.div`
@@ -167,6 +170,7 @@ const UserDropdownButton = () => {
 
 export const UserDropdown: React.FC = (props) => {
   const [transactionsModalVisible, setTransactionsModalVisible] = React.useState(false)
+  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const UserDropdownContent = () => {
     const items = [
@@ -176,24 +180,16 @@ export const UserDropdown: React.FC = (props) => {
       },
       {
         title: 'Your transactions',
-        value: <ChevronRight />,
         onClick: () => {
           setTransactionsModalVisible(true)
-          console.log('asdf')
         },
+        value: <ChevronRight />,
       },
       {
+        disabled: true,
+        onClick: toggleDarkMode,
         title: 'Night mode',
-        value: (
-          <Switch
-            active
-            disabled
-            onClick={() => {
-              console.log('toggle')
-            }}
-            small
-          />
-        ),
+        value: <Switch active={darkMode} disabled small />,
       },
     ]
 
@@ -202,6 +198,7 @@ export const UserDropdown: React.FC = (props) => {
         {items.map((item, index) => {
           return (
             <Item
+              disabled={item.disabled && item.disabled}
               hasOnClick={item.onClick && item.onClick ? true : false}
               key={index}
               onClick={item.onClick && item.onClick}
@@ -246,9 +243,7 @@ export const UserDropdown: React.FC = (props) => {
         maxHeight={90}
         minHeight={null}
         onDismiss={() => setTransactionsModalVisible(false)}
-      >
-        <div>hey</div>
-      </TransactionsModal>
+      />
     </>
   )
 }

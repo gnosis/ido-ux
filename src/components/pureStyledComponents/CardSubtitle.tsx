@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const CardSubtitle = styled.div`
-  color: ${(props) => props.theme.colors.darkerGrey};
+  color: #ccc;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.2;

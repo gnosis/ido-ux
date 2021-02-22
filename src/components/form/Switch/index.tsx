@@ -11,10 +11,10 @@ const Wrapper = styled.div<{ disabled?: boolean }>`
 `
 
 const SwitchWrapper = styled.div<{ active: boolean; small?: boolean }>`
-  background-color: ${(props) => (props.active ? '#990000' : '#333')};
+  background-color: ${(props) => (props.active ? props.theme.primary1 : '#ccc')};
   border-radius: ${(props) => (props.small ? '15px' : '20px')};
   cursor: pointer;
-  height: ${(props) => (props.small ? '15px' : '20px')};
+  height: ${(props) => (props.small ? '16px' : '20px')};
   position: relative;
   transition: all 0.1s linear;
   width: ${(props) => (props.small ? '26px' : '36px')};
@@ -44,8 +44,8 @@ Circle.defaultProps = {
 }
 
 const Label = styled.span`
-  color: ${(props) => props.theme.colors.darkerGrey};
-  font-size: 18px;
+  color: ${({ theme }) => theme.text1};
+  font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
   margin-left: 6px;

@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const SmallNote = styled.p`
-  color: ${(props) => props.theme.colors.mediumGrey};
+  color: #ccc;
   font-size: 12px;
   font-weight: 400;
   line-height: 1.3;

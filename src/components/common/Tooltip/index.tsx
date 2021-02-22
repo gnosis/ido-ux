@@ -10,14 +10,14 @@ const Wrapper = styled.span`
 
   .tooltipIcon {
     .fill {
-      fill: ${(props) => props.theme.colors.darkGrey};
+      fill: #ccc;
     }
   }
 
   &:hover {
     .tooltipIcon {
       .fill {
-        fill: ${(props) => props.theme.colors.darkerGrey};
+        fill: #ccc;
       }
     }
   }

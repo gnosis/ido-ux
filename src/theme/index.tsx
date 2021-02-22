@@ -1,5 +1,9 @@
 import React, { useMemo } from 'react'
-import styled, { ThemeProvider as StyledComponentsThemeProvider, css } from 'styled-components'
+import styled, {
+  DefaultTheme,
+  ThemeProvider as StyledComponentsThemeProvider,
+  css,
+} from 'styled-components'
 
 import { Text, TextProps } from 'rebass'
 
@@ -65,7 +69,7 @@ export function colors(darkMode: boolean): Colors {
   }
 }
 
-export const theme = (darkMode: boolean): any => ({
+export const theme = (darkMode: boolean): DefaultTheme => ({
   ...colors(darkMode),
   fonts: {
     defaultSize: '14px',
@@ -89,11 +93,11 @@ export const theme = (darkMode: boolean): any => ({
   `,
   buttonPrimary: {
     backgroundColor: '#e8663d',
-    backgroundColorHover: '#e8663d',
+    backgroundColorHover: '#c35532',
     borderColor: '#e8663d',
-    borderColorHover: '#e8663d',
-    color: '#fff',
-    colorHover: '#fff',
+    borderColorHover: '#c35532',
+    color: '#001429',
+    colorHover: '#001429',
   },
   buttonPrimaryInverted: {
     backgroundColor: '#fff',

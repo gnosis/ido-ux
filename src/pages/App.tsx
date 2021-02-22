@@ -31,9 +31,6 @@ export default function App() {
       <Router>
         <Route component={DarkModeQueryParamReader} />
         <MainWrapper>
-          {/* <HeaderWrapper>
-            <Header />
-          </HeaderWrapper> */}
           <Header />
           <MainScroll>
             <InnerContainer>

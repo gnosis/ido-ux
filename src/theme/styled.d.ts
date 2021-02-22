@@ -60,13 +60,13 @@ declare module "styled-components" {
     buttonPrimary: any;
     buttonPrimaryInverted: any;
     cards: any;
-    colors: any;
     dropdown: any;
     flexColumnNoWrap: FlattenSimpleInterpolation;
     flexRowNoWrap: FlattenSimpleInterpolation;
     fonts: any;
     header: any;
     layout: any;
+    paddings: any;
     textField: any;
     themeBreakPoints: any;
   }
