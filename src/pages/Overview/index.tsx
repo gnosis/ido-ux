@@ -73,7 +73,7 @@ export default function Overview() {
   // Todo: think about how to get a network id without connection to metamaks
   const chainId = 4;
   const highlightedAuctions = useInterestingAuctionInfo(4, chainId);
-  const allAuctions = useAllAuctionInfo(4, chainId);
+  const allAuctions = useAllAuctionInfo();
   const history = useHistory();
 
   function handleClick(auctionId: number, chainId: number) {
