@@ -4,7 +4,11 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 
 import { network } from "../../connectors";
-import { useEagerConnect, useInactiveListener } from "../../hooks";
+import {
+  useEagerConnect,
+  useInactiveListener,
+  useActiveListener,
+} from "../../hooks";
 import { Spinner } from "../../theme";
 import Circle from "../../assets/images/circle.svg";
 import { NetworkContextName } from "../../constants";
@@ -51,6 +55,9 @@ export default function Web3ReactManager({ children }) {
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager);
+
+  // So we can trigger some events on accountsChanged
+  useActiveListener();
 
   // handle delayed loader state
   const [showLoader, setShowLoader] = useState(false);
