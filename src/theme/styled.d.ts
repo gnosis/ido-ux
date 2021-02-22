@@ -57,17 +57,17 @@ declare module "styled-components" {
       upToMedium: ThemedCssFunction<DefaultTheme>;
       upToLarge: ThemedCssFunction<DefaultTheme>;
     };
-    flexColumnNoWrap: FlattenSimpleInterpolation;
-    flexRowNoWrap: FlattenSimpleInterpolation;
-    cards: any;
-    fonts: any;
-    colors: any;
-    layout: any;
-    themeBreakPoints: any;
-    textField: any;
     buttonPrimary: any;
     buttonPrimaryInverted: any;
+    cards: any;
+    colors: any;
     dropdown: any;
+    flexColumnNoWrap: FlattenSimpleInterpolation;
+    flexRowNoWrap: FlattenSimpleInterpolation;
+    fonts: any;
     header: any;
+    layout: any;
+    textField: any;
+    themeBreakPoints: any;
   }
 }

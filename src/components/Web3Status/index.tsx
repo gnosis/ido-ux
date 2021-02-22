@@ -22,7 +22,7 @@ import { shortenAddress } from '../../utils'
 import { ButtonSecondary } from '../Button'
 import Identicon from '../Identicon'
 import { RowBetween } from '../Row'
-import WalletModal from '../WalletModal'
+import WalletModal from '../modals/WalletModal'
 
 const SpinnerWrapper = styled(Spinner)`
   margin: 0 0.25rem 0 0.25rem;

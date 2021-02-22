@@ -12,6 +12,7 @@ import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
 import { Switch } from '../../form/Switch'
 import { ChevronDown } from '../../icons/ChevronDown'
 import { ChevronRight } from '../../icons/ChevronRight'
+import { TransactionsModal } from '../../modals/TransactionsModal'
 
 const Wrapper = styled(Dropdown)`
   align-items: center;
@@ -104,16 +105,22 @@ const DropdownItemStyled = styled(DropdownItem)`
   }
 `
 
-const Item = styled.div`
+const Item = styled.div<{ hasOnClick?: boolean }>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border};
   color: ${({ theme }) => theme.dropdown.item.color};
+  cursor: ${(props) => (props.hasOnClick ? 'pointer' : 'default')};
   display: flex;
   font-size: 13px;
   justify-content: space-between;
   line-height: 1.2;
   padding: 12px;
   width: 100%;
+
+  &:hover {
+    background-color: ${(props) =>
+      props.hasOnClick ? props.theme.dropdown.item.backgroundColorHover : 'transparent'};
+  }
 `
 
 const Title = styled.div`
@@ -158,56 +165,66 @@ const UserDropdownButton = () => {
   )
 }
 
-const UserDropdownContent = () => {
-  const items = [
-    {
-      title: 'Wallet',
-      value: 'Metamask',
-    },
-    {
-      title: 'Your transactions',
-      value: <ChevronRight />,
-    },
-    {
-      title: 'Night mode',
-      value: (
-        <Switch
-          active
-          disabled
-          onClick={() => {
-            console.log('toggle')
-          }}
-          small
-        />
-      ),
-    },
-  ]
-
-  return (
-    <Content>
-      {items.map((item, index) => {
-        return (
-          <Item key={index}>
-            <Title>{item.title}</Title>
-            <Value>{item.value}</Value>
-          </Item>
-        )
-      })}
-      <Item>
-        <DisconnectButton
-          buttonType={ButtonType.danger}
-          onClick={() => {
-            // disconnect()
-          }}
-        >
-          Disconnect
-        </DisconnectButton>
-      </Item>
-    </Content>
-  )
-}
-
 export const UserDropdown: React.FC = (props) => {
+  const [transactionsModalVisible, setTransactionsModalVisible] = React.useState(false)
+
+  const UserDropdownContent = () => {
+    const items = [
+      {
+        title: 'Wallet',
+        value: 'Metamask',
+      },
+      {
+        title: 'Your transactions',
+        value: <ChevronRight />,
+        onClick: () => {
+          setTransactionsModalVisible(true)
+          console.log('asdf')
+        },
+      },
+      {
+        title: 'Night mode',
+        value: (
+          <Switch
+            active
+            disabled
+            onClick={() => {
+              console.log('toggle')
+            }}
+            small
+          />
+        ),
+      },
+    ]
+
+    return (
+      <Content>
+        {items.map((item, index) => {
+          return (
+            <Item
+              hasOnClick={item.onClick && item.onClick ? true : false}
+              key={index}
+              onClick={item.onClick && item.onClick}
+            >
+              <Title>{item.title}</Title>
+              <Value>{item.value}</Value>
+            </Item>
+          )
+        })}
+        <Item>
+          <DisconnectButton
+            buttonType={ButtonType.danger}
+            onClick={() => {
+              // disconnect()
+            }}
+          >
+            Disconnect
+          </DisconnectButton>
+        </Item>
+      </Content>
+    )
+  }
+
   const headerDropdownItems = [
     <DropdownItemStyled key="1">
       <UserDropdownContent />
@@ -215,13 +232,23 @@ export const UserDropdown: React.FC = (props) => {
   ]
 
   return (
-    <Wrapper
-      activeItemHighlight={false}
-      closeOnClick={false}
-      dropdownButtonContent={<UserDropdownButton />}
-      dropdownPosition={DropdownPosition.right}
-      items={headerDropdownItems}
-      {...props}
-    />
+    <>
+      <Wrapper
+        activeItemHighlight={false}
+        closeOnClick={false}
+        dropdownButtonContent={<UserDropdownButton />}
+        dropdownPosition={DropdownPosition.right}
+        items={headerDropdownItems}
+        {...props}
+      />
+      <TransactionsModal
+        isOpen={transactionsModalVisible}
+        maxHeight={90}
+        minHeight={null}
+        onDismiss={() => setTransactionsModalVisible(false)}
+      >
+        <div>hey</div>
+      </TransactionsModal>
+    </>
   )
 }

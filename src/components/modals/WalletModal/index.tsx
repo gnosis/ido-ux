@@ -6,15 +6,15 @@ import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
-import MetamaskIcon from '../../assets/images/metamask.png'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { fortmatic, injected, portis, walletconnect } from '../../connectors'
-import { OVERLAY_READY } from '../../connectors/Fortmatic'
-import { SUPPORTED_WALLETS } from '../../constants'
-import usePrevious from '../../hooks/usePrevious'
-import { useWalletModalOpen, useWalletModalToggle } from '../../state/application/hooks'
-import { ExternalLink } from '../../theme'
-import AccountDetails from '../AccountDetails'
+import MetamaskIcon from '../../../assets/images/metamask.png'
+import { ReactComponent as Close } from '../../../assets/images/x.svg'
+import { fortmatic, injected, portis, walletconnect } from '../../../connectors'
+import { OVERLAY_READY } from '../../../connectors/Fortmatic'
+import { SUPPORTED_WALLETS } from '../../../constants'
+import usePrevious from '../../../hooks/usePrevious'
+import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
+import { ExternalLink } from '../../../theme'
+import AccountDetails from '../../AccountDetails'
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
@@ -228,7 +228,7 @@ export default function WalletModal({
               active={option.connector && option.connector === connector}
               color={option.color}
               header={option.name}
-              icon={require('../../assets/images/' + option.iconName)}
+              icon={require('../../../assets/images/' + option.iconName)}
               id={`connect-${key}`}
               key={key}
               link={option.href}
@@ -283,7 +283,7 @@ export default function WalletModal({
             icon={
               option.iconName == 'metamask.png'
                 ? MetamaskIcon //can not handle dynamically generated requires, hence we use hardcorded. Need to find different solution for others wallets
-                : require('../../assets/images/' + option.iconName)
+                : require('../../../assets/images/' + option.iconName)
             }
             id={`connect-${key}`}
             key={key}

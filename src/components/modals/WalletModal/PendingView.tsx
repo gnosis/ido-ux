@@ -5,10 +5,10 @@ import styled from 'styled-components'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
-import Circle from '../../assets/images/circle.svg'
-import { injected, walletconnect } from '../../connectors'
-import { SUPPORTED_WALLETS } from '../../constants'
-import { Spinner } from '../../theme'
+import Circle from '../../../assets/images/circle.svg'
+import { injected, walletconnect } from '../../../connectors'
+import { SUPPORTED_WALLETS } from '../../../constants'
+import { Spinner } from '../../../theme'
 import Option from './Option'
 import WalletConnectData from './WalletConnectData'
 
@@ -132,7 +132,7 @@ export default function PendingView({
               clickable={false}
               color={option.color}
               header={option.name}
-              icon={require('../../assets/images/' + option.iconName)}
+              icon={require('../../../assets/images/' + option.iconName)}
               id={`connect-${key}`}
               key={key}
               subheader={option.description}

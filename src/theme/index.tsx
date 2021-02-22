@@ -87,11 +87,6 @@ export const theme = (darkMode: boolean): any => ({
     display: flex;
     flex-flow: row nowrap;
   `,
-  border: {
-    color: '#eceff1',
-    colorDark: '#ccc',
-    borderRadius: '6px',
-  },
   buttonPrimary: {
     backgroundColor: '#e8663d',
     backgroundColorHover: '#e8663d',
@@ -115,8 +110,8 @@ export const theme = (darkMode: boolean): any => ({
     boxShadow: '0 0 24px 0 #002249',
     item: {
       backgroundColor: 'transparent',
-      backgroundColorActive: darkMode ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.02)',
-      backgroundColorHover: darkMode ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.02)',
+      backgroundColorActive: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+      backgroundColorHover: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)',
       color: darkMode ? '#fff' : '#000',
       colorActive: darkMode ? '#fff' : '#000',
       height: '37px',

@@ -11,8 +11,8 @@ import { getEtherscanLink } from '../../utils'
 import { ButtonPrimary } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
 import Loader from '../Loader'
-import Modal from '../Modal'
 import { RowBetween } from '../Row'
+import Modal from '../modals/Modal'
 
 const Wrapper = styled.div`
   width: 100%;
