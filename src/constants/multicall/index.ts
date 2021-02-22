@@ -1,4 +1,4 @@
-import { ChainId } from "@uniswap/sdk";
+import { ChainId } from "uniswap-xdai-sdk";
 import MULTICALL_ABI from "./abi.json";
 
 const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {
@@ -7,6 +7,7 @@ const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.KOVAN]: "0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A",
   [ChainId.RINKEBY]: "0x42Ad527de7d4e9d9d011aC45B31D8551f8Fe9821",
   [ChainId.GÖRLI]: "0x77dCa2C955b15e9dE4dbBCf1246B4B85b651e50e",
+  [ChainId.XDAI]: "0xb5b692a88bdfc81ca69dcb1d924f59f0413a602a",
 };
 
 export { MULTICALL_ABI, MULTICALL_NETWORKS };

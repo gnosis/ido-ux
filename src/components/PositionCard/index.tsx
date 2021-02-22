@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { darken } from "polished";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { Percent, Pair, JSBI } from "@uniswap/sdk";
+import { Percent, Pair, JSBI } from "uniswap-xdai-sdk";
 
 import { useActiveWeb3React } from "../../hooks";
 import { useTotalSupply } from "../../data/TotalSupply";

@@ -1,4 +1,4 @@
-import { Token, ChainId } from "@uniswap/sdk";
+import { Token, ChainId } from "uniswap-xdai-sdk";
 
 export default [
   new Token(

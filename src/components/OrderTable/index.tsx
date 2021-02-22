@@ -17,7 +17,7 @@ import { OrderDisplay, OrderStatus } from "../../state/orders/reducer";
 import { useClearingPriceInfo } from "../../hooks/useCurrentClearingOrderAndVolumeCallback";
 import { ClearingPriceAndVolumeData } from "../../api/AdditionalServicesApi";
 import { decodeOrder, encodeOrder } from "../../hooks/Order";
-import { Fraction } from "@uniswap/sdk";
+import { Fraction } from "uniswap-xdai-sdk";
 
 const StyledRow = styled.div`
   display: grid;

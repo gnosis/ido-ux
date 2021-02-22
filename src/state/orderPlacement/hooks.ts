@@ -1,7 +1,6 @@
 import { Contract } from "@ethersproject/contracts";
 import { parseUnits } from "@ethersproject/units";
-import { ChainId, Fraction } from "@uniswap/sdk";
-import { JSBI, Token, TokenAmount } from "@uniswap/sdk";
+import { ChainId, Fraction, JSBI, Token, TokenAmount } from "uniswap-xdai-sdk";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { convertPriceIntoBuyAndSellAmount } from "../../utils/prices";

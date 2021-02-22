@@ -1,6 +1,6 @@
 import { MaxUint256 } from "@ethersproject/constants";
 import { TransactionResponse } from "@ethersproject/providers";
-import { TokenAmount } from "@uniswap/sdk";
+import { TokenAmount } from "uniswap-xdai-sdk";
 import { useCallback, useMemo } from "react";
 import { useTokenAllowance } from "../data/Allowances";
 import {
