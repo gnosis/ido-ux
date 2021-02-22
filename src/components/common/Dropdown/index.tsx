@@ -63,10 +63,15 @@ const Items = styled(BaseCard)<{
   fullWidth?: boolean
   isOpen: boolean
 }>`
+  background: ${({ theme }) => theme.dropdown.background};
+  border-radius: 1px solid ${({ theme }) => theme.dropdown.borderRadius};
+  border: 1px solid ${({ theme }) => theme.dropdown.border};
+  box-shadow: ${({ theme }) => theme.dropdown.boxShadow};
   display: ${(props) => (props.isOpen ? 'block' : 'none')};
   min-width: 160px;
   position: absolute;
   white-space: nowrap;
+
   ${(props) => props.fullWidth && 'width: 100%;'}
   ${(props) => (props.dropdownPosition === DropdownPosition.left ? PositionLeftCSS : '')}
   ${(props) => (props.dropdownPosition === DropdownPosition.right ? PositionRightCSS : '')}

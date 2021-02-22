@@ -109,6 +109,10 @@ export const theme = (darkMode: boolean): any => ({
     colorHover: '#fff',
   },
   dropdown: {
+    background: darkMode ? '#001429' : '#001429',
+    border: darkMode ? '#174172' : '#174172',
+    borderRadius: '12px',
+    boxShadow: '0 0 24px 0 #002249',
     item: {
       backgroundColor: 'transparent',
       backgroundColorActive: darkMode ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.02)',
