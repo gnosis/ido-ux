@@ -7,6 +7,14 @@ import {
   walletlink,
 } from "../connectors";
 
+import ArrowRightIcon from "../assets/images/arrow-right.svg";
+import MetamaskIcon from "../assets/images/metamask.png";
+import WalletConnectIcon from "../assets/images/walletConnectIcon.png";
+import CoinbaseWalletIcon from "../assets/images/coinbaseWalletIcon.svg";
+import TrustWalletIcon from "../assets/images/trustWallet.png";
+import FortmaticIcon from "../assets/images/fortmaticIcon.png";
+import PortisIcon from "../assets/images/portisIcon.png";
+
 export const chainNames = {
   1: "mainnet",
   4: "rinkeby",
@@ -26,7 +34,7 @@ const MAINNET_WALLETS = {
   INJECTED: {
     connector: injected,
     name: "Injected",
-    iconName: "arrow-right.svg",
+    icon: ArrowRightIcon,
     description: "Injected web3 provider.",
     href: null,
     color: "#010101",
@@ -35,10 +43,18 @@ const MAINNET_WALLETS = {
   METAMASK: {
     connector: injected,
     name: "MetaMask",
-    iconName: "metamask.png",
+    icon: MetamaskIcon,
     description: "Easy-to-use browser extension.",
     href: null,
     color: "#E8831D",
+  },
+  WALLET_CONNECT: {
+    connector: walletconnect,
+    name: "WalletConnect",
+    icon: WalletConnectIcon,
+    description: "Connect to Trust Wallet, Rainbow Wallet and more...",
+    href: null,
+    color: "#4196FC",
   },
 };
 export const SUPPORTED_WALLETS =
@@ -47,25 +63,17 @@ export const SUPPORTED_WALLETS =
     : {
         ...MAINNET_WALLETS,
         ...{
-          WALLET_CONNECT: {
-            connector: walletconnect,
-            name: "WalletConnect",
-            iconName: "walletConnectIcon.svg",
-            description: "Connect to Trust Wallet, Rainbow Wallet and more...",
-            href: null,
-            color: "#4196FC",
-          },
           WALLET_LINK: {
             connector: walletlink,
             name: "Coinbase Wallet",
-            iconName: "coinbaseWalletIcon.svg",
+            icon: CoinbaseWalletIcon,
             description: "Use Coinbase Wallet app on mobile device",
             href: null,
             color: "#315CF5",
           },
           COINBASE_LINK: {
             name: "Open in Coinbase Wallet",
-            iconName: "coinbaseWalletIcon.svg",
+            icon: CoinbaseWalletIcon,
             description: "Open in Coinbase Wallet app.",
             href: "https://go.cb-w.com/mtUDhEZPy1",
             color: "#315CF5",
@@ -74,7 +82,7 @@ export const SUPPORTED_WALLETS =
           },
           TRUST_WALLET_LINK: {
             name: "Open in Trust Wallet",
-            iconName: "trustWallet.png",
+            icon: TrustWalletIcon,
             description: "iOS and Android app.",
             href:
               "https://link.trustwallet.com/open_url?coin_id=60&url=https://uniswap.exchange/swap",
@@ -85,7 +93,7 @@ export const SUPPORTED_WALLETS =
           FORTMATIC: {
             connector: fortmatic,
             name: "Fortmatic",
-            iconName: "fortmaticIcon.png",
+            icon: FortmaticIcon,
             description: "Login using Fortmatic hosted wallet",
             href: null,
             color: "#6748FF",
@@ -94,7 +102,7 @@ export const SUPPORTED_WALLETS =
           Portis: {
             connector: portis,
             name: "Portis",
-            iconName: "portisIcon.png",
+            icon: PortisIcon,
             description: "Login using Portis hosted wallet",
             href: null,
             color: "#4A6C9B",
