@@ -14,17 +14,12 @@ const NETWORK_URL_XDAI = process.env.REACT_APP_NETWORK_URL_XDAI;
 const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY;
 const PORTIS_ID = process.env.REACT_APP_PORTIS_ID;
 
-if (typeof NETWORK_URL_MAINNET === "undefined") {
-  throw new Error(
-    `REACT_APP_NETWORK_URL_MAINNET must be a defined environment variable`,
-  );
-}
-
 const networkConnectorArguments: NetworkConnectorArguments = {
   urls: [],
   defaultChainId: 1,
 };
-networkConnectorArguments.urls[1] = NETWORK_URL_MAINNET;
+if (NETWORK_URL_MAINNET)
+  networkConnectorArguments.urls[Number(1)] = NETWORK_URL_MAINNET;
 if (NETWORK_URL_RINKEBY)
   networkConnectorArguments.urls[Number(4)] = NETWORK_URL_RINKEBY;
 if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI;
