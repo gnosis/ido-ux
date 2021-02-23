@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { Moon, Sun } from 'react-feather'
 
 import { useDarkModeManager } from '../../state/user/hooks'

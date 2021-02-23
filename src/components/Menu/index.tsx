@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
-import styled from 'styled-components'
-
 import { Code, Info, MessageCircle } from 'react-feather'
+import styled from 'styled-components'
 
 import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
 import useToggle from '../../hooks/useToggle'

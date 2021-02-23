@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
+import { Repeat } from 'react-feather'
 import { ThemeContext } from 'styled-components'
 
 import { Trade } from '@uniswap/sdk'
-import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
 
 import { StyledBalanceMaxMini } from './styleds'

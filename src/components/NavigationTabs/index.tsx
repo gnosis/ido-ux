@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react'
+import { ArrowLeft } from 'react-feather'
 import { Link as HistoryLink, RouteComponentProps, withRouter } from 'react-router-dom'
 import styled from 'styled-components'
-
-import { ArrowLeft } from 'react-feather'
 
 import useBodyKeyDown from '../../hooks/useBodyKeyDown'
 import { CursorPointer } from '../../theme'

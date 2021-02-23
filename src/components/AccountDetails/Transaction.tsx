@@ -1,8 +1,6 @@
-import { transparentize } from 'polished'
 import React from 'react'
-import styled from 'styled-components'
-
 import { Check, Triangle } from 'react-feather'
+import styled from 'styled-components'
 
 import Circle from '../../assets/images/circle.svg'
 import { useActiveWeb3React } from '../../hooks'
