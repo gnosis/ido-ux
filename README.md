@@ -1,4 +1,4 @@
-# Easy Auction Front-end
+# Gnosis Auction Front-end
 
 ## Development
 

@@ -12,16 +12,11 @@ import OrderBookWidget, { processOrderbookData } from "./OrderbookWidget";
 
 // hooks
 import { useActiveWeb3React } from "../hooks";
-import {
-  useDerivedAuctionInfo,
-  useSwapState,
-} from "../state/orderPlacement/hooks";
+import { useSwapState } from "../state/orderPlacement/hooks";
 
 // utils
 import { getTokenDisplay } from "../utils";
-import { OrderBookError } from "./OrderbookChartSmall";
-
-import OrderBookChartSmall from "./OrderbookChartSmall";
+import OrderBookChartSmall, { OrderBookError } from "./OrderbookChartSmall";
 import { useOrderbookState } from "../state/orderbook/hooks";
 
 const ViewOrderBookBtn = styled(ButtonLight)`
@@ -109,31 +104,28 @@ interface OrderBookBtnProps {
 export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
   props: OrderBookBtnProps,
 ) => {
-  const { className } = props;
+  const { baseToken, quoteToken, className } = props;
   //   const theme = useContext(ThemeContext);
   const { chainId } = useActiveWeb3React();
   const { auctionId } = useSwapState();
 
-  const { auctioningToken, biddingToken } = useDerivedAuctionInfo();
-
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
-    biddingToken,
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(baseToken), [
+    baseToken,
   ]);
 
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(auctioningToken),
-    [auctioningToken],
-  );
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(quoteToken), [
+    quoteToken,
+  ]);
 
   const [modalHook, toggleModal] = useModal({
     ...DEFAULT_MODAL_OPTIONS,
     large: true,
-    title: `${auctioningTokenDisplay}-${biddingTokenDisplay} Order book`,
+    title: `${biddingTokenDisplay}-${auctioningTokenDisplay} Order book`,
     message: (
       <ModalWrapper>
         <OrderBookWidget
-          baseToken={biddingToken}
-          quoteToken={auctioningToken}
+          baseToken={baseToken}
+          quoteToken={quoteToken}
           networkId={chainId}
           auctionId={auctionId}
         />
@@ -162,8 +154,8 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
   const processedOrderbook = processOrderbookData({
     data: { bids, asks },
     userOrder: { price: userOrderPrice, volume: userOrderVolume },
-    baseToken: auctioningToken,
-    quoteToken: biddingToken,
+    baseToken,
+    quoteToken,
   });
   return (
     <Wrapper>
@@ -173,8 +165,8 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (
         type="button"
       >
         <OrderBookChartSmall
-          baseToken={auctioningToken}
-          quoteToken={biddingToken}
+          baseToken={baseToken}
+          quoteToken={quoteToken}
           networkId={chainId}
           data={processedOrderbook}
         />
