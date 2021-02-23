@@ -282,9 +282,9 @@ export function useDerivedAuctionInfo(): {
   initialPrice: Fraction | undefined;
   minBiddingAmountPerOrder: string | undefined;
 } {
-  const { chainId, account } = useActiveWeb3React();
+  const { account } = useActiveWeb3React();
 
-  const { auctionId, sellAmount } = useSwapState();
+  const { chainId, auctionId, sellAmount } = useSwapState();
 
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
     auctionId,
@@ -360,9 +360,7 @@ export function useDerivedAuctionInfo(): {
 export function useDerivedAuctionState(): {
   auctionState: AuctionState | undefined;
 } {
-  const { chainId } = useActiveWeb3React();
-
-  const { auctionId } = useSwapState();
+  const { chainId, auctionId } = useSwapState();
 
   const easyAuctionInstance: Contract | null = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],

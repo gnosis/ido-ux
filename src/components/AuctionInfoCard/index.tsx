@@ -143,7 +143,11 @@ export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
   const history = useHistory();
 
   function handleClick() {
-    history.push(`/auction?auctionId=${auctionInfo.auctionId}`);
+    history.push(
+      `/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(
+        auctionInfo.chainId,
+      )}`,
+    );
   }
 
   return (

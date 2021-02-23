@@ -20,6 +20,7 @@ import MetamaskIcon from "../../assets/images/metamask.png";
 import { ReactComponent as Close } from "../../assets/images/x.svg";
 import { injected, walletconnect, fortmatic, portis } from "../../connectors";
 import { OVERLAY_READY } from "../../connectors/Fortmatic";
+import { useNetworkCheck } from "../Web3Status";
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -141,6 +142,8 @@ export default function WalletModal({
 
   const previousAccount = usePrevious(account);
 
+  const { errorWrongNetwork } = useNetworkCheck();
+
   // close on connection, when logged out before
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
@@ -176,7 +179,10 @@ export default function WalletModal({
     if (
       walletModalOpen &&
       ((active && !activePrevious) ||
-        (connector && connector !== connectorPrevious && !error))
+        (connector &&
+          connector !== connectorPrevious &&
+          !error &&
+          !errorWrongNetwork))
     ) {
       setWalletView(WALLET_VIEWS.ACCOUNT);
     }
@@ -185,6 +191,7 @@ export default function WalletModal({
     active,
     error,
     connector,
+    errorWrongNetwork,
     walletModalOpen,
     activePrevious,
     connectorPrevious,
@@ -315,20 +322,22 @@ export default function WalletModal({
   }
 
   function getModalContent() {
-    if (error) {
+    if (error || errorWrongNetwork) {
       return (
         <UpperSection>
           <CloseIcon onClick={toggleWalletModal}>
             <CloseColor />
           </CloseIcon>
           <HeaderRow>
-            {error instanceof UnsupportedChainIdError
+            {error instanceof UnsupportedChainIdError || errorWrongNetwork
               ? "Wrong Network"
               : "Error connecting"}
           </HeaderRow>
           <ContentWrapper>
             {error instanceof UnsupportedChainIdError ? (
               <h5>Please connect to the appropriate Ethereum network.</h5>
+            ) : errorWrongNetwork ? (
+              errorWrongNetwork
             ) : (
               "Error connecting. Try refreshing the page."
             )}

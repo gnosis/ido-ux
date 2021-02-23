@@ -22,7 +22,7 @@ import LightCircle from "../../assets/svg/lightcircle.svg";
 import { RowBetween } from "../Row";
 import { shortenAddress } from "../../utils";
 import { useAllTransactions } from "../../state/transactions/hooks";
-import { NetworkContextName } from "../../constants";
+import { chainNames, NetworkContextName } from "../../constants";
 import {
   injected,
   walletconnect,
@@ -30,6 +30,8 @@ import {
   fortmatic,
   portis,
 } from "../../connectors";
+import { useSwapState } from "../../state/orderPlacement/hooks";
+import { useActiveWeb3React } from "../../hooks";
 
 const SpinnerWrapper = styled(Spinner)`
   margin: 0 0.25rem 0 0.25rem;
@@ -142,6 +144,18 @@ function recentTransactionsOnly(a: TransactionDetails) {
   return new Date().getTime() - a.addedTime < 86_400_000;
 }
 
+export function useNetworkCheck(): { errorWrongNetwork: string | undefined } {
+  const { chainId: injectedChainId } = useActiveWeb3React();
+  const { chainId } = useSwapState();
+  const errorWrongNetwork =
+    injectedChainId == undefined || chainId == injectedChainId || chainId == 0
+      ? undefined
+      : `Please make sure you connect to the network: ${chainNames[chainId]} in your wallet`;
+  return {
+    errorWrongNetwork,
+  };
+}
+
 export default function Web3Status() {
   const { t } = useTranslation();
   const { active, account, connector, error } = useWeb3React();
@@ -167,6 +181,7 @@ export default function Web3Status() {
 
   const toggleWalletModal = useWalletModalToggle();
 
+  const { errorWrongNetwork } = useNetworkCheck();
   // handle the logo we want to show with the account
   function getStatusIcon() {
     if (connector === injected) {
@@ -199,7 +214,7 @@ export default function Web3Status() {
   }
 
   function getWeb3Status() {
-    if (account) {
+    if (account && !errorWrongNetwork) {
       return (
         <Web3StatusConnected
           id="web3-status-connected"
@@ -217,12 +232,12 @@ export default function Web3Status() {
           {!hasPendingTransactions && getStatusIcon()}
         </Web3StatusConnected>
       );
-    } else if (error) {
+    } else if (error || errorWrongNetwork) {
       return (
         <Web3StatusError onClick={toggleWalletModal}>
           <NetworkIcon />
           <Text>
-            {error instanceof UnsupportedChainIdError
+            {error instanceof UnsupportedChainIdError || errorWrongNetwork
               ? "Wrong Network"
               : "Error"}
           </Text>

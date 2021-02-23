@@ -76,8 +76,8 @@ export default function Overview() {
   const allAuctions = useAllAuctionInfo(4, chainId);
   const history = useHistory();
 
-  function handleClick(auctionId: number) {
-    history.push(`/auction?auctionId=${auctionId}`);
+  function handleClick(auctionId: number, chainId: number) {
+    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}`);
   }
   if (!highlightedAuctions || !allAuctions) return null;
   const tableData = [];
@@ -101,7 +101,10 @@ export default function Overview() {
           ? "Ongoing"
           : "Ended",
       link: (
-        <ViewBtn onClick={() => handleClick(item.auctionId)} type="button">
+        <ViewBtn
+          onClick={() => handleClick(item.auctionId, Number(item.chainId))}
+          type="button"
+        >
           {" "}
           view{" "}
         </ViewBtn>
