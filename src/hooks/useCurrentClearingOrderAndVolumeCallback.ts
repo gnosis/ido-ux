@@ -3,6 +3,7 @@ import { useSwapState } from "../state/orderPlacement/hooks";
 import { useActiveWeb3React } from "./index";
 import { additionalServiceApi } from "./../api";
 import { ClearingPriceAndVolumeData } from "../api/AdditionalServicesApi";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
   const { account, chainId, library } = useActiveWeb3React();
@@ -37,9 +38,18 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
         if (cancelled) return;
         setClearingPriceAndVolume(clearingOrderAndVolume);
       } catch (error) {
-        if (cancelled) return;
-        console.error("Error getting clearing price info", error);
+        setClearingPriceAndVolume({
+          clearingOrder: {
+            sellAmount: BigNumber.from(0),
+            buyAmount: BigNumber.from(0),
+            userId: BigNumber.from(0),
+          },
+          volume: BigNumber.from(0),
+        });
         setError(error);
+        console.error("Error getting clearing price info", error);
+
+        if (cancelled) return;
       }
     };
     fetchApiData();
@@ -48,11 +58,6 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
       cancelled = true;
     };
   }, [account, chainId, library, auctionId, setClearingPriceAndVolume]);
-
-  if (error) {
-    console.error("error while fetching price info", error);
-    return null;
-  }
 
   return clearingInfo;
 }

@@ -529,13 +529,19 @@ export function useCurrentUserOrders() {
       if (!chainId || !account || !biddingToken || !auctioningToken) {
         return;
       }
-      const sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders(
-        {
+
+      let sellOrdersFormUser: string[] = [];
+
+      try {
+        sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders({
           networkId: chainId,
           auctionId,
           user: account,
-        },
-      );
+        });
+      } catch (error) {
+        console.error("Error getting current orders: ", error);
+      }
+
       const sellOrderDisplays: OrderDisplay[] = [];
       if (biddingToken && auctioningToken && sellOrdersFormUser) {
         for (const orderString of sellOrdersFormUser) {

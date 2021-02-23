@@ -45,9 +45,11 @@ export function useAllAuctionInfo(
         if (cancelled) return;
         setMostInterestingAuctions(auctionInfo);
       } catch (error) {
-        if (cancelled) return;
-        console.error("Error getting clearing price info", error);
+        setMostInterestingAuctions([]);
         setError(error);
+        console.error("Error getting clearing price info", error);
+
+        if (cancelled) return;
       }
     };
     fetchApiData();
@@ -56,11 +58,6 @@ export function useAllAuctionInfo(
       cancelled = true;
     };
   }, [chainId, numberOfItems, setMostInterestingAuctions]);
-
-  if (error) {
-    console.error("error while fetching price info", error);
-    return null;
-  }
 
   return auctionInfo;
 }
