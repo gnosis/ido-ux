@@ -7,12 +7,14 @@ import {
 } from "./actions";
 
 export interface SwapState {
+  readonly chainId: number;
   readonly price: string;
   readonly sellAmount: string;
   readonly auctionId: number;
 }
 
 const initialState: SwapState = {
+  chainId: 0,
   price: "-",
   auctionId: 1,
   sellAmount: "",
@@ -35,6 +37,7 @@ export default createReducer<SwapState>(initialState, (builder) =>
 
         return {
           ...initialState,
+          chainId: parseAuctionIdParameter(parsedQs.chainId),
           auctionId: parseAuctionIdParameter(parsedQs.auctionId),
         };
       }

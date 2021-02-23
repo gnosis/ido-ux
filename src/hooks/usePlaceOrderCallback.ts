@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
-import { ChainId, Token } from "@uniswap/sdk";
+import { ChainId, Token } from "uniswap-xdai-sdk";
 import { useMemo } from "react";
 import { convertPriceIntoBuyAndSellAmount } from "../utils/prices";
 import { useTransactionAdder } from "../state/transactions/hooks";
@@ -88,7 +88,7 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [previousOrder],
-          "0x",
+          "0x", // Todo: Depending on the allowList interface, different bytes values need to be sent
         ];
         value = null;
       }

@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { decodeOrder, encodeOrder, Order } from "../hooks/Order";
-import { AuctionInfo } from "../hooks/useInterestingAuctionDetails";
+import { AuctionInfo } from "../hooks/useAllAuctionInfos";
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string;
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>;
@@ -14,10 +14,8 @@ export interface AdditionalServicesApi {
   getMostInterestingAuctionDetails(
     params: InterestingAuctionParams,
   ): Promise<AuctionInfo[]>;
-  getAllAuctionDetailsUrl(params: InterestingAuctionParams): string;
-  getAllAuctionDetails(
-    params: InterestingAuctionParams,
-  ): Promise<AuctionInfo[]>;
+  getAllAuctionDetailsUrl(networkId: number): string;
+  getAllAuctionDetails(): Promise<AuctionInfo[]>;
   getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string;
   getClearingPriceOrderAndVolume(
     params: OrderBookParams,
@@ -83,11 +81,13 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
   public constructor(params: AdditionalServicesApiParams) {
     params.forEach((endpoint) => {
-      this.urlsByNetwork[endpoint.networkId] = getAdditionalServiceUrl(
-        process.env.PRICE_ESTIMATOR_URL === "production"
-          ? endpoint.url_production
-          : endpoint.url_develop || endpoint.url_production, // fallback on required url_production
-      );
+      if (endpoint.url_develop || endpoint.url_production) {
+        this.urlsByNetwork[endpoint.networkId] = getAdditionalServiceUrl(
+          process.env.PRICE_ESTIMATOR_URL === "production"
+            ? endpoint.url_production
+            : endpoint.url_develop || endpoint.url_production, // fallback on required url_production
+        );
+      }
     });
   }
   public getOrderBookUrl(params: OrderBookParams): string {
@@ -138,9 +138,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     const url = `${baseUrl}get_details_of_most_interesting_auctions/${numberOfAuctions}`;
     return url;
   }
-  public getAllAuctionDetailsUrl(params: InterestingAuctionParams): string {
-    const { networkId } = params;
-
+  public getAllAuctionDetailsUrl(networkId: number): string {
     const baseUrl = this._getBaseUrl(networkId);
 
     const url = `${baseUrl}get_all_auction_with_details/`;
@@ -156,27 +154,29 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url;
   }
 
-  public async getAllAuctionDetails(
-    params: InterestingAuctionParams,
-  ): Promise<AuctionInfo[] | null> {
+  public async getAllAuctionDetails(): Promise<AuctionInfo[] | null> {
     try {
-      const url = await this.getAllAuctionDetailsUrl(params);
+      const promises: Promise<Response>[] = [];
+      for (const networkId in this.urlsByNetwork) {
+        const url = await this.getAllAuctionDetailsUrl(Number(networkId));
 
-      const res = await fetch(url);
-      if (!res.ok) {
-        // backend returns {"message":"invalid url query"}
-        // for bad requests
-        throw await res.json();
+        promises.push(fetch(url));
       }
-      return await res.json();
+      const results = await Promise.all(promises);
+      const allAuctions = [];
+      for (const res of results) {
+        if (!res.ok) {
+          // backend returns {"message":"invalid url query"}
+          // for bad requests
+          throw await res.json();
+        }
+        allAuctions.push(await res.json());
+      }
+      return allAuctions.flat();
     } catch (error) {
       console.error(error);
 
-      const { networkId } = params;
-
-      throw new Error(
-        `Failed to query all auctions for network ${networkId}: ${error.message}`,
-      );
+      throw new Error(`Failed to query all auctions: ${error.message}`);
     }
   }
   public async getMostInterestingAuctionDetails(
@@ -352,7 +352,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     const baseUrl = this.urlsByNetwork[networkId];
     if (typeof baseUrl === "undefined") {
       throw new Error(
-        `REACT_APP_ADDITIONAL_SERVICES_API_URL must be a defined environment variable`,
+        `REACT_APP_ADDITIONAL_SERVICES_API_URL must be a defined environment variable for network ${networkId}`,
       );
     }
 
