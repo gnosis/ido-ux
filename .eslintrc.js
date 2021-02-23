@@ -79,7 +79,7 @@ module.exports = {
           {
             group: 'external',
             pattern:
-              '{lodash.debounce,lodash.uniqby,react-router,lodash.clonedeep,moment,apollo-link-retry,apollo-cache-inmemory,apollo-client,apollo-link,apollo-link-http,apollo-link-logger,apollo-link-ws,apollo-utilities,lodash.orderby,react-blockies,lodash.uniqby,@realitio/realitio-lib/formatters/question,@realitio/realitio-lib/formatters/template,@gnosis.pm/conditional-tokens-contracts/utils/id-helpers,@walletconnect/web3-provide,web3modal,polished,react-modal,big-number-input,react-dom/test-utils,@apollo/react-hooks,@react-hook/debounce,react-data-table-component,@apollo/react-testing,@testing-library/dom,@testing-library/user-event,@testing-library/react,react-hook-form,styled-components,ethers/utils,react-dom,react-router-dom,logdown,ethers,ethers/providers,moment-timezone,web3-utils,graphql-tag}',
+              '{rebass/styled-components,polished,react-feather,react-router,@walletconnect/web3-provider,@testing-library/dom,@testing-library/user-event,@testing-library/react,styled-components,ethers/utils,react-dom,react-router-dom,ethers,ethers/providers,web3-utils}',
             position: 'before',
           },
         ],
