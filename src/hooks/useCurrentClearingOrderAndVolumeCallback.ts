@@ -3,7 +3,6 @@ import { useSwapState } from "../state/orderPlacement/hooks";
 import { useActiveWeb3React } from "./index";
 import { additionalServiceApi } from "./../api";
 import { ClearingPriceAndVolumeData } from "../api/AdditionalServicesApi";
-import { BigNumber } from "@ethersproject/bignumber";
 
 export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
   const { account, chainId, library } = useActiveWeb3React();
@@ -11,12 +10,10 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
     clearingInfo,
     setClearingPriceAndVolume,
   ] = useState<ClearingPriceAndVolumeData | null>(null);
-  const [error, setError] = useState<Error | null>(null);
   const { auctionId } = useSwapState();
 
   useMemo(() => {
     setClearingPriceAndVolume(null);
-    setError(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auctionId, chainId]);
   useEffect(() => {
@@ -38,15 +35,7 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
         if (cancelled) return;
         setClearingPriceAndVolume(clearingOrderAndVolume);
       } catch (error) {
-        setClearingPriceAndVolume({
-          clearingOrder: {
-            sellAmount: BigNumber.from(0),
-            buyAmount: BigNumber.from(0),
-            userId: BigNumber.from(0),
-          },
-          volume: BigNumber.from(0),
-        });
-        setError(error);
+        setClearingPriceAndVolume(null);
         console.error("Error getting clearing price info", error);
 
         if (cancelled) return;

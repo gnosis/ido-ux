@@ -1,4 +1,4 @@
-import { ChainId, Token, WETH } from "@uniswap/sdk";
+import { ChainId, Token, WETH } from "uniswap-xdai-sdk";
 import KOVAN_TOKENS from "./kovan";
 import MAINNET_TOKENS from "./mainnet";
 import RINKEBY_TOKENS from "./rinkeby";
@@ -36,5 +36,6 @@ export const ALL_TOKENS: AllTokens = [
       [ChainId.GÖRLI]: {},
       [ChainId.ROPSTEN]: {},
       [ChainId.KOVAN]: {},
+      [ChainId.XDAI]: {},
     },
   );

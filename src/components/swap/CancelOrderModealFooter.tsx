@@ -1,4 +1,4 @@
-import { Token } from "@uniswap/sdk";
+import { Token } from "uniswap-xdai-sdk";
 import React from "react";
 import { Text } from "rebass";
 

@@ -1,18 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { additionalServiceApi } from "./../api";
-import { PricePoint } from "../api/AdditionalServicesApi";
-
-export interface AuctionInfo {
-  auctionId: number;
-  order: PricePoint;
-  symbolAuctioningToken: string;
-  symbolBiddingToken: string;
-  addressAuctioningToken: string;
-  addressBiddingToken: string;
-  decimalsAuctioningToken: number;
-  decimalsBiddingToken: number;
-  endTimeTimestamp: number;
-}
+import { AuctionInfo } from "./useAllAuctionInfos";
 
 export function useInterestingAuctionInfo(
   numberOfItems: number,
@@ -21,11 +9,9 @@ export function useInterestingAuctionInfo(
   const [auctionInfo, setMostInterestingAuctions] = useState<
     AuctionInfo[] | null
   >(null);
-  const [error, setError] = useState<Error | null>(null);
 
   useMemo(() => {
     setMostInterestingAuctions(null);
-    setError(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
   useEffect(() => {
@@ -47,8 +33,7 @@ export function useInterestingAuctionInfo(
         if (cancelled) return;
         setMostInterestingAuctions(auctionInfo);
       } catch (error) {
-        setMostInterestingAuctions([]);
-        setError(error);
+        setMostInterestingAuctions(null);
         console.error("Error getting clearing price info", error);
 
         if (cancelled) return;

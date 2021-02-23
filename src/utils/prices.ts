@@ -1,7 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { tryParseAmount } from "../state/orderPlacement/hooks";
 
-import { Token } from "@uniswap/sdk";
+import { Token } from "uniswap-xdai-sdk";
 
 export function convertPriceIntoBuyAndSellAmount(
   auctioningToken: Token | undefined,
