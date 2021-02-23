@@ -72,8 +72,10 @@ export default function CountdownTimer({
       if (mounted) setTimeLeft(calculateTimeLeft(auctionEndDate))
     }, 1000)
 
-    return () => (mounted = false)
-  })
+    return () => {
+      mounted = false
+    }
+  }, [auctionEndDate])
 
   return timeLeft && timeLeft > 0 ? (
     <CountDownStyled>
