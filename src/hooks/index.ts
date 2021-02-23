@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { injected } from "../connectors";
 import { NetworkContextName } from "../constants";
+import { useOrderActionHandlers } from "../state/orders/hooks";
 
 export function useActiveWeb3React() {
   const context = useWeb3ReactCore<Web3Provider>();
@@ -91,4 +92,25 @@ export function useInactiveListener(suppress = false) {
     }
     return;
   }, [active, error, suppress, activate]);
+}
+
+/**
+ * Hook that subscribes to some events
+ */
+export function useActiveListener() {
+  const { active, error, activate } = useWeb3ReactCore();
+  const { onReloadFromAPI } = useOrderActionHandlers();
+
+  useEffect(() => {
+    const { ethereum } = window;
+
+    if (ethereum && ethereum.on && active && !error) {
+      const handleAccountsChanged = () => {
+        // Reload orders on accounts changed
+        onReloadFromAPI();
+      };
+
+      ethereum.on("accountsChanged", handleAccountsChanged);
+    }
+  }, [active, error, onReloadFromAPI, activate]);
 }
