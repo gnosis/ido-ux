@@ -1,9 +1,8 @@
 import { darken, lighten } from 'polished'
 import React from 'react'
 import { ChevronDown } from 'react-feather'
-import styled from 'styled-components'
-
 import { ButtonProps, Button as RebassButton } from 'rebass/styled-components'
+import styled from 'styled-components'
 
 import { RowBetween } from '../Row'
 
