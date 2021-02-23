@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { AuctionInfo } from "../../hooks/useInterestingAuctionDetails";
+import { AuctionInfo } from "../../hooks/useAllAuctionInfos";
 import DoubleLogo from "../DoubleLogo";
 import { ButtonLight } from "../Button";
 import { useHistory } from "react-router-dom";
@@ -143,7 +143,11 @@ export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
   const history = useHistory();
 
   function handleClick() {
-    history.push(`/auction?auctionId=${auctionInfo.auctionId}`);
+    history.push(
+      `/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(
+        auctionInfo.chainId,
+      )}`,
+    );
   }
 
   return (

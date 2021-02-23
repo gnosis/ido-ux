@@ -5,7 +5,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themesSpiritedaway from "@amcharts/amcharts4/themes/spiritedaway";
 
-import { Token } from "@uniswap/sdk";
+import { Token } from "uniswap-xdai-sdk";
 
 export interface OrderBookChartProps {
   /**

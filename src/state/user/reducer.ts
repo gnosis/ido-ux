@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { ChainId, WETH } from "@uniswap/sdk";
+import { ChainId, WETH } from "uniswap-xdai-sdk";
 import {
   addSerializedPair,
   addSerializedToken,

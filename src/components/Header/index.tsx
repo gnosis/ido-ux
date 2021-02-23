@@ -8,7 +8,7 @@ import Row from "../Row";
 import Menu from "../Menu";
 import Web3Status from "../Web3Status";
 
-import { WETH, ChainId } from "@uniswap/sdk";
+import { WETH, ChainId } from "uniswap-xdai-sdk";
 import { isMobile } from "react-device-detect";
 import { YellowCard } from "../Card";
 import { useActiveWeb3React } from "../../hooks";

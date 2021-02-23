@@ -1,6 +1,6 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
-import { ChainId, TokenAmount } from "@uniswap/sdk";
+import { ChainId, TokenAmount } from "uniswap-xdai-sdk";
 import { useEffect, useMemo, useState } from "react";
 import { useTransactionAdder } from "../state/transactions/hooks";
 import {

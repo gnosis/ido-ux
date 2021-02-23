@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { additionalServiceApi } from "../api";
 import { PricePoint } from "../api/AdditionalServicesApi";
 
@@ -12,38 +12,24 @@ export interface AuctionInfo {
   decimalsAuctioningToken: number;
   decimalsBiddingToken: number;
   endTimeTimestamp: number;
+  chainId: String;
 }
 
-export function useAllAuctionInfo(
-  numberOfItems: number,
-  chainId: number,
-): AuctionInfo[] | null {
-  const [auctionInfo, setMostInterestingAuctions] = useState<
-    AuctionInfo[] | null
-  >(null);
+export function useAllAuctionInfo(): AuctionInfo[] | null {
+  const [auctionInfo, setAllAuctions] = useState<AuctionInfo[] | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  useMemo(() => {
-    setMostInterestingAuctions(null);
-    setError(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId]);
   useEffect(() => {
     let cancelled = false;
 
     const fetchApiData = async (): Promise<void> => {
       try {
-        if (!chainId || !additionalServiceApi) {
-          throw new Error(
-            "missing dependencies in useInterestingAuctionInfo callback",
-          );
+        if (!additionalServiceApi) {
+          throw new Error("missing dependencies in useAllAuctionInfo callback");
         }
-        const auctionInfo = await additionalServiceApi.getAllAuctionDetails({
-          networkId: chainId,
-          numberOfAuctions: numberOfItems,
-        });
+        const auctionInfo = await additionalServiceApi.getAllAuctionDetails();
         if (cancelled) return;
-        setMostInterestingAuctions(auctionInfo);
+        setAllAuctions(auctionInfo);
       } catch (error) {
         if (cancelled) return;
         console.error("Error getting clearing price info", error);
@@ -55,10 +41,10 @@ export function useAllAuctionInfo(
     return (): void => {
       cancelled = true;
     };
-  }, [chainId, numberOfItems, setMostInterestingAuctions]);
+  }, [setAllAuctions]);
 
   if (error) {
-    console.error("error while fetching price info", error);
+    console.error("error while fetching auction info", error);
     return null;
   }
 

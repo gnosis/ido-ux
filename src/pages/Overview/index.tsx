@@ -7,6 +7,7 @@ import { useAllAuctionInfo } from "../../hooks/useAllAuctionInfos";
 import { useInterestingAuctionInfo } from "../../hooks/useInterestingAuctionDetails";
 import { ButtonLight } from "../../components/Button";
 import { useHistory } from "react-router-dom";
+import { chainNames } from "../../constants";
 
 const ViewBtn = styled(ButtonLight)`
   background: none;
@@ -72,17 +73,18 @@ export default function Overview() {
   // Todo: think about how to get a network id without connection to metamaks
   const chainId = 4;
   const highlightedAuctions = useInterestingAuctionInfo(4, chainId);
-  const allAuctions = useAllAuctionInfo(4, chainId);
+  const allAuctions = useAllAuctionInfo();
   const history = useHistory();
 
-  function handleClick(auctionId: number) {
-    history.push(`/auction?auctionId=${auctionId}`);
+  function handleClick(auctionId: number, chainId: number) {
+    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}`);
   }
   if (!highlightedAuctions || !allAuctions) return null;
   const tableData = [];
   allAuctions.forEach((item) => {
     tableData.push({
       auctionId: item.auctionId,
+      chainId: chainNames[Number(item.chainId)],
       selling: item.symbolAuctioningToken,
       buying: item.symbolBiddingToken,
       symbol: (
@@ -99,7 +101,10 @@ export default function Overview() {
           ? "Ongoing"
           : "Ended",
       link: (
-        <ViewBtn onClick={() => handleClick(item.auctionId)} type="button">
+        <ViewBtn
+          onClick={() => handleClick(item.auctionId, Number(item.chainId))}
+          type="button"
+        >
           {" "}
           view{" "}
         </ViewBtn>

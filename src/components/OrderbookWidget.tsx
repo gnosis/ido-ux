@@ -8,7 +8,7 @@ import OrderBookChart, {
   PricePointDetails,
   Offer,
 } from "./OrderbookChart";
-import { Token } from "@uniswap/sdk";
+import { Token } from "uniswap-xdai-sdk";
 import { useOrderbookState } from "../state/orderbook/hooks";
 
 const SMALL_VOLUME_THRESHOLD = 0.001;
