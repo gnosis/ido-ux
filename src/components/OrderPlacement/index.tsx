@@ -4,6 +4,7 @@ import { Text } from "rebass";
 import { ButtonLight, ButtonPrimary } from "../../components/Button";
 import { AutoColumn } from "../../components/Column";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import WarningModal from "../../components/WarningModal";
 import CurrencyInputPanel from "../../components/CurrencyInputPanel";
 import PriceInputPanel from "../../components/PriceInputPanel";
 import { BottomGrouping, Dots, Wrapper } from "../../components/swap/styleds";
@@ -24,9 +25,12 @@ import {
   useSwapState,
 } from "../../state/orderPlacement/hooks";
 import { getTokenDisplay } from "../../utils";
+import { useOrderState } from "../../state/orders/hooks";
+import { OrderState } from "../../state/orders/reducer";
 
 export default function OrderPlacement() {
   const { chainId, account } = useActiveWeb3React();
+  const orders: OrderState | undefined = useOrderState();
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle();
@@ -48,6 +52,7 @@ export default function OrderPlacement() {
 
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [showWarning, setShowWarning] = useState<boolean>(false);
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false); // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true); // waiting for user confirmation
 
@@ -143,6 +148,18 @@ export default function OrderPlacement() {
     [auctioningToken],
   );
 
+  const handleShowConfirm = () => {
+    const sameOrder = orders.orders.find(
+      (order) => order.sellAmount === sellAmount,
+    );
+
+    if (!sameOrder) {
+      setShowConfirm(true);
+    } else {
+      setShowWarning(true);
+    }
+  };
+
   return (
     <>
       <Wrapper id="swap-page">
@@ -159,6 +176,14 @@ export default function OrderPlacement() {
           topContent={modalHeader}
           bottomContent={modalBottom}
           pendingText={pendingText}
+        />
+        <WarningModal
+          isOpen={showWarning}
+          title="Warning!"
+          content={`Pick a different price, you already has an order for ${sellAmount} ${biddingTokenDisplay}`}
+          onDismiss={() => {
+            setShowWarning(false);
+          }}
         />
         <AutoColumn gap={"md"}>
           <>
@@ -205,9 +230,7 @@ export default function OrderPlacement() {
             </ButtonPrimary>
           ) : (
             <ButtonPrimary
-              onClick={() => {
-                setShowConfirm(true);
-              }}
+              onClick={handleShowConfirm}
               id="swap-button"
               disabled={!isValid}
             >
