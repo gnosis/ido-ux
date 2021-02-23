@@ -3,6 +3,9 @@
   "description": "Gnosis Auction",
   "homepage": ".",
   "private": true,
+  "engines": {
+    "node": ">=4.4.7 <=14.15.4"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "cross-env REACT_APP_GIT_COMMIT_HASH=$(git show -s --format=%H) react-scripts build",
