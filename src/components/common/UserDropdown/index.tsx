@@ -106,12 +106,12 @@ const DropdownItemStyled = styled(DropdownItem)`
   }
 `
 
-const Item = styled.div<{ hasOnClick?: boolean; disabled?: boolean }>`
+const Item = styled.div<{ hasOnClick?: boolean; disabled?: boolean; hide?: boolean }>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border};
   color: ${({ theme }) => theme.dropdown.item.color};
   cursor: ${(props) => (props.hasOnClick ? 'pointer' : 'default')};
-  display: flex;
+  display: ${(props) => (props.hide ? 'none' : 'flex')};
   font-size: 13px;
   justify-content: space-between;
   line-height: 1.2;
@@ -187,6 +187,7 @@ export const UserDropdown: React.FC = (props) => {
       },
       {
         disabled: true,
+        hide: true,
         onClick: toggleDarkMode,
         title: 'Night mode',
         value: <Switch active={darkMode} disabled small />,
@@ -200,6 +201,7 @@ export const UserDropdown: React.FC = (props) => {
             <Item
               disabled={item.disabled && item.disabled}
               hasOnClick={item.onClick && item.onClick ? true : false}
+              hide={item.hide && item.hide}
               key={index}
               onClick={item.onClick && item.onClick}
             >
