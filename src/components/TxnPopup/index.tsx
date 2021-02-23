@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react'
-import styled from 'styled-components'
-
 import { AlertCircle, CheckCircle } from 'react-feather'
+import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../hooks'
 import useInterval from '../../hooks/useInterval'

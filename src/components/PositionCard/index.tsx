@@ -1,10 +1,10 @@
 import { darken } from 'polished'
 import React, { useState } from 'react'
+import { ChevronDown, ChevronUp } from 'react-feather'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { JSBI, Pair, Percent } from '@uniswap/sdk'
-import { ChevronDown, ChevronUp } from 'react-feather'
 import { Text } from 'rebass'
 
 import { useTotalSupply } from '../../data/TotalSupply'

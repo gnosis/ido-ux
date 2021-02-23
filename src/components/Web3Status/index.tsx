@@ -1,9 +1,9 @@
 import { darken, lighten } from 'polished'
 import React, { useMemo } from 'react'
+import { Activity } from 'react-feather'
 import styled, { css } from 'styled-components'
 
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { Activity } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 
 import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'

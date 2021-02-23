@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
+import { ChevronDown, ChevronUp } from 'react-feather'
 import { ThemeContext } from 'styled-components'
 
-import { ChevronDown, ChevronUp } from 'react-feather'
 import { Text } from 'rebass'
 
 import { OrderDisplay } from '../../state/orders/reducer'

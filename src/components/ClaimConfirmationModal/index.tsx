@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
+import { ArrowUpCircle } from 'react-feather'
 import styled, { ThemeContext } from 'styled-components'
 
-import { ArrowUpCircle } from 'react-feather'
 import { Text } from 'rebass'
 
 import { useActiveWeb3React } from '../../hooks'
