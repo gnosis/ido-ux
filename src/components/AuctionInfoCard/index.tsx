@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { AuctionInfo } from "../../hooks/useInterestingAuctionDetails";
+import { AuctionInfo } from "../../hooks/useAllAuctionInfos";
 import DoubleLogo from "../DoubleLogo";
 import { ButtonLight } from "../Button";
 import { useHistory } from "react-router-dom";

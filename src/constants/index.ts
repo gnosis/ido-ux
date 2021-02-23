@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent, Token, WETH } from "@uniswap/sdk";
+import { ChainId, JSBI, Percent } from "uniswap-xdai-sdk";
 import {
   fortmatic,
   injected,
@@ -7,6 +7,12 @@ import {
   walletlink,
 } from "../connectors";
 
+export const chainNames = {
+  1: "mainnet",
+  4: "rinkeby",
+  100: "xdai",
+};
+
 export const ROUTER_ADDRESS = "0xf164fC0Ec4E93095b804a4795bBe1e041497b92a";
 export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: "0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441",
@@ -14,41 +20,8 @@ export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.KOVAN]: "0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A",
   [ChainId.RINKEBY]: "0x99e63218201e44549AB8a6Fa220e1018FDB48f79",
   [ChainId.GÖRLI]: "0x732ed4E98f7906B81eb8ECD5269952DCEd966A0f",
+  [ChainId.XDAI]: "0x67Ce8491BaFE98D24B502f9a79772972CBC38989",
 };
-// used for display in the default list when adding liquidity
-export const COMMON_BASES = {
-  [ChainId.MAINNET]: [
-    WETH[ChainId.MAINNET],
-    new Token(
-      ChainId.MAINNET,
-      "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-      18,
-      "DAI",
-      "Dai Stablecoin",
-    ),
-    new Token(
-      ChainId.MAINNET,
-      "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-      6,
-      "USDC",
-      "USD//C",
-    ),
-  ],
-  [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
-  [ChainId.RINKEBY]: [
-    WETH[ChainId.RINKEBY],
-    new Token(
-      ChainId.RINKEBY,
-      "0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735",
-      18,
-      "DAI",
-      "Dai Stablecoin",
-    ),
-  ],
-  [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]],
-};
-
 const MAINNET_WALLETS = {
   INJECTED: {
     connector: injected,
@@ -68,7 +41,6 @@ const MAINNET_WALLETS = {
     color: "#E8831D",
   },
 };
-
 export const SUPPORTED_WALLETS =
   process.env.REACT_APP_CHAIN_ID !== "1"
     ? MAINNET_WALLETS

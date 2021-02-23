@@ -7,7 +7,7 @@ import {
 } from "../../state/orderPlacement/hooks";
 import styled from "styled-components";
 import CountdownTimer from "../CountDown";
-import { Token } from "@uniswap/sdk";
+import { Token } from "uniswap-xdai-sdk";
 import { getTokenDisplay } from "../../utils";
 
 const Wrapper = styled.div`

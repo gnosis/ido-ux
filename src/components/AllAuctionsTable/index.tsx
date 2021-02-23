@@ -51,6 +51,11 @@ export default function DatatablePage(allAuctions: any[]) {
         minWidth: 50,
       },
       {
+        Header: "Network",
+        accessor: "chainId",
+        minWidth: 50,
+      },
+      {
         Header: "Selling",
         accessor: "selling",
         minWidth: 50,

@@ -1,4 +1,4 @@
-import { Fraction, Percent, Token, TokenAmount, Trade } from "@uniswap/sdk";
+import { Fraction, Percent, Token, TokenAmount, Trade } from "uniswap-xdai-sdk";
 import React, { useContext, useMemo } from "react";
 import { Text } from "rebass";
 import { ThemeContext } from "styled-components";

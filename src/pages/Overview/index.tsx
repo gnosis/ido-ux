@@ -7,6 +7,7 @@ import { useAllAuctionInfo } from "../../hooks/useAllAuctionInfos";
 import { useInterestingAuctionInfo } from "../../hooks/useInterestingAuctionDetails";
 import { ButtonLight } from "../../components/Button";
 import { useHistory } from "react-router-dom";
+import { chainNames } from "../../constants";
 
 const ViewBtn = styled(ButtonLight)`
   background: none;
@@ -83,6 +84,7 @@ export default function Overview() {
   allAuctions.forEach((item) => {
     tableData.push({
       auctionId: item.auctionId,
+      chainId: chainNames[Number(item.chainId)],
       selling: item.symbolAuctioningToken,
       buying: item.symbolBiddingToken,
       symbol: (

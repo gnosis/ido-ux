@@ -15,7 +15,7 @@ import { EASY_AUCTION_NETWORKS, ROUTER_ADDRESS } from "../constants";
 import easyAuctionABI from "../constants/abis/easyAuction/easyAuction.json";
 import ERC20_ABI from "../constants/abis/erc20.json";
 import ERC20_BYTES32_ABI from "../constants/abis/erc20_bytes32.json";
-import { ChainId, JSBI, Percent, TokenAmount, Token } from "@uniswap/sdk";
+import { ChainId, JSBI, Percent, TokenAmount, Token } from "uniswap-xdai-sdk";
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -32,6 +32,7 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   4: "rinkeby.",
   5: "goerli.",
   42: "kovan.",
+  100: "xdai.",
 };
 
 export function getEtherscanLink(

@@ -12,6 +12,7 @@ export interface AuctionInfo {
   decimalsAuctioningToken: number;
   decimalsBiddingToken: number;
   endTimeTimestamp: number;
+  chainId: String;
 }
 
 export function useAllAuctionInfo(

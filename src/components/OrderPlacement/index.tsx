@@ -1,4 +1,4 @@
-import { TokenAmount, ChainId, Fraction } from "@uniswap/sdk";
+import { TokenAmount, ChainId, Fraction } from "uniswap-xdai-sdk";
 import React, { useState, useEffect, useMemo } from "react";
 import { Text } from "rebass";
 import { ButtonLight, ButtonPrimary } from "../../components/Button";
