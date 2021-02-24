@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { withTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import ReactTooltip, { TooltipProps } from 'react-tooltip'
 
@@ -26,12 +26,10 @@ interface Props extends TooltipProps {
   className?: string
   id: string
   text: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  theme?: any
 }
 
-export const TooltipComponent: React.FC<Props> = (props) => {
-  const { className, delayHide = 50, delayShow = 250, id, text, theme, ...restProps } = props
+export const Tooltip: React.FC<Props> = (props) => {
+  const { className, delayHide = 50, delayShow = 250, id, text, ...restProps } = props
   const tooltipId = `tooltip_${id}`
 
   return (
@@ -60,5 +58,3 @@ export const TooltipComponent: React.FC<Props> = (props) => {
     </Wrapper>
   )
 }
-
-export const Tooltip = withTheme(TooltipComponent)
