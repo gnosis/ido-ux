@@ -9,11 +9,11 @@ const Wrapper = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  height: 15px;
+  height: 14px;
   margin: 0;
   outline: none;
   padding: 0;
-  width: 13px;
+  width: 14px;
 
   svg {
     .fill {

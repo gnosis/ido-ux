@@ -10,7 +10,6 @@ const Value = styled.div<{ align: string }>`
   align-items: center;
   color: ${({ theme }) => theme.text1};
   display: flex;
-  flex-direction: column;
   font-size: 20px;
   font-weight: 700;
   justify-content: ${(props) => props.align};
@@ -30,7 +29,6 @@ const Key = styled.div<{ align: string }>`
   align-items: center;
   color: ${({ theme }) => theme.text1};
   display: flex;
-  flex-direction: column;
   font-size: 18px;
   font-weight: 400;
   justify-content: ${(props) => props.align};

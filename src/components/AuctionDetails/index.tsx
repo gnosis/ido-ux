@@ -10,9 +10,9 @@ import {
   useDerivedAuctionInfo,
   useDerivedAuctionState,
 } from '../../state/orderPlacement/hooks'
-import { ExternalLink } from '../../theme'
 import { getEtherscanLink, getTokenDisplay } from '../../utils'
 import { KeyValue } from '../common/KeyValue'
+import { Tooltip } from '../common/Tooltip'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -83,18 +83,43 @@ const AuctionDetails = () => {
   return (
     <Wrapper>
       <Cell>
-        {/* <i title='"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled' /> */}
-        <KeyValue itemKey={titlePrice} itemValue={clearingPriceDisplay} />
+        <KeyValue
+          itemKey={
+            <>
+              <span>{titlePrice}</span>
+              <Tooltip
+                id="auctionPrice"
+                text={
+                  '"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled'
+                }
+              />
+            </>
+          }
+          itemValue={clearingPriceDisplay}
+        />
       </Cell>
       <Cell>
         {/* <ExternalLink href={biddingTokenAddress}>{} ↗</ExternalLink> */}
-        <KeyValue itemKey={'Bidding with'} itemValue={biddingTokenDisplay} />
+        <KeyValue
+          itemKey={
+            <>
+              <span>Bidding with</span>
+              <Tooltip id="biddingWith" text={'Bidding with tooltip'} />
+            </>
+          }
+          itemValue={biddingTokenDisplay}
+        />
       </Cell>
       <Cell>Time</Cell>
       <Cell>
         {/* <ExternalLink href={auctionTokenAddress}>{} ↗</ExternalLink> */}
         <KeyValue
-          itemKey={'Total auctioned'}
+          itemKey={
+            <>
+              <span>Total auctioned</span>
+              <Tooltip id="totalAuctioned" text={'Total auctioned tooltip'} />
+            </>
+          }
           itemValue={`${initialAuctionOrder?.sellAmount.toSignificant(
             2,
           )} ${auctioningTokenDisplay}`}
@@ -102,7 +127,12 @@ const AuctionDetails = () => {
       </Cell>
       <Cell>
         <KeyValue
-          itemKey={'Min Sell Price'}
+          itemKey={
+            <>
+              <span>Min Sell Price</span>
+              <Tooltip id="minSellPrice" text={'Min Sell Price tooltip'} />
+            </>
+          }
           itemValue={`${initialPrice ? initialPrice?.toSignificant(2) : ' - '}
           ${biddingTokenDisplay}/${auctioningTokenDisplay}`}
         />

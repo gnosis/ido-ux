@@ -10,15 +10,14 @@ const Wrapper = styled.span`
 
   .tooltipIcon {
     .fill {
-      fill: #ccc;
+      fill: ${({ theme }) => theme.text1};
+      transition: fill 0.1s linear;
     }
   }
 
   &:hover {
-    .tooltipIcon {
-      .fill {
-        fill: #ccc;
-      }
+    .fill {
+      fill: ${({ theme }) => theme.primary1};
     }
   }
 `
@@ -46,9 +45,10 @@ export const TooltipComponent: React.FC<Props> = (props) => {
     >
       <TooltipIcon />
       <ReactTooltip
-        arrowColor={theme.colors.darkerGrey}
-        backgroundColor={theme.colors.darkerGrey}
-        border={false}
+        arrowColor={'#001429'}
+        backgroundColor={'#001429'}
+        border
+        borderColor={'#174172'}
         className="customTooltip"
         delayHide={delayHide}
         delayShow={delayShow}
