@@ -13,6 +13,7 @@ import {
 import { getEtherscanLink, getTokenDisplay } from '../../utils'
 import { KeyValue } from '../common/KeyValue'
 import { Tooltip } from '../common/Tooltip'
+import { ExternalLink } from '../navigation/ExternalLink'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -99,7 +100,6 @@ const AuctionDetails = () => {
         />
       </Cell>
       <Cell>
-        {/* <ExternalLink href={biddingTokenAddress}>{} ↗</ExternalLink> */}
         <KeyValue
           itemKey={
             <>
@@ -107,12 +107,16 @@ const AuctionDetails = () => {
               <Tooltip id="biddingWith" text={'Bidding with tooltip'} />
             </>
           }
-          itemValue={biddingTokenDisplay}
+          itemValue={
+            <>
+              <span>{biddingTokenDisplay}</span>
+              <ExternalLink href={biddingTokenAddress} />
+            </>
+          }
         />
       </Cell>
       <Cell>Time</Cell>
       <Cell>
-        {/* <ExternalLink href={auctionTokenAddress}>{} ↗</ExternalLink> */}
         <KeyValue
           itemKey={
             <>
@@ -120,9 +124,14 @@ const AuctionDetails = () => {
               <Tooltip id="totalAuctioned" text={'Total auctioned tooltip'} />
             </>
           }
-          itemValue={`${initialAuctionOrder?.sellAmount.toSignificant(
-            2,
-          )} ${auctioningTokenDisplay}`}
+          itemValue={
+            <>
+              <span>{`${initialAuctionOrder?.sellAmount.toSignificant(
+                2,
+              )} ${auctioningTokenDisplay}`}</span>
+              <ExternalLink href={auctionTokenAddress} />
+            </>
+          }
         />
       </Cell>
       <Cell>
