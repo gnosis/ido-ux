@@ -11,6 +11,7 @@ import {
   useDerivedAuctionState,
 } from '../../state/orderPlacement/hooks'
 import { getEtherscanLink, getTokenDisplay } from '../../utils'
+import TokenLogo from '../TokenLogo'
 import { KeyValue } from '../common/KeyValue'
 import { Tooltip } from '../common/Tooltip'
 import { ExternalLink } from '../navigation/ExternalLink'
@@ -96,7 +97,7 @@ const AuctionDetails = () => {
               />
             </>
           }
-          itemValue={clearingPriceDisplay}
+          itemValue={clearingPriceDisplay ? clearingPriceDisplay : '-'}
         />
       </Cell>
       <Cell>
@@ -108,10 +109,15 @@ const AuctionDetails = () => {
             </>
           }
           itemValue={
-            <>
-              <span>{biddingTokenDisplay}</span>
-              <ExternalLink href={biddingTokenAddress} />
-            </>
+            biddingToken ? (
+              <>
+                <TokenLogo address={biddingToken.address} size={'20px'} />
+                <span>{biddingTokenDisplay}</span>
+                <ExternalLink href={biddingTokenAddress} />
+              </>
+            ) : (
+              '-'
+            )
           }
         />
       </Cell>
@@ -125,12 +131,17 @@ const AuctionDetails = () => {
             </>
           }
           itemValue={
-            <>
-              <span>{`${initialAuctionOrder?.sellAmount.toSignificant(
-                2,
-              )} ${auctioningTokenDisplay}`}</span>
-              <ExternalLink href={auctionTokenAddress} />
-            </>
+            auctioningToken ? (
+              <>
+                <TokenLogo address={auctioningToken.address} size={'20px'} />
+                <span>{`${initialAuctionOrder?.sellAmount.toSignificant(
+                  2,
+                )} ${auctioningTokenDisplay}`}</span>
+                <ExternalLink href={auctionTokenAddress} />
+              </>
+            ) : (
+              '-'
+            )
           }
         />
       </Cell>
@@ -142,8 +153,12 @@ const AuctionDetails = () => {
               <Tooltip id="minSellPrice" text={'Min Sell Price tooltip'} />
             </>
           }
-          itemValue={`${initialPrice ? initialPrice?.toSignificant(2) : ' - '}
-          ${biddingTokenDisplay}/${auctioningTokenDisplay}`}
+          itemValue={
+            initialPrice && auctioningTokenDisplay && auctioningTokenDisplay
+              ? `${initialPrice ? initialPrice?.toSignificant(2) : ' - '}
+          ${biddingTokenDisplay}/${auctioningTokenDisplay}`
+              : '-'
+          }
         />
       </Cell>
     </Wrapper>
