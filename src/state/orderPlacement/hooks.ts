@@ -70,7 +70,7 @@ function decodeSellOrder(
   soldToken: Token | undefined,
   boughtToken: Token | undefined,
 ): SellOrder | null {
-  if (soldToken == undefined || boughtToken == undefined) {
+  if (soldToken == undefined || boughtToken == undefined || orderBytes == undefined) {
     return null
   }
   const sellAmount = new Fraction(

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { AuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { ButtonLight } from '../Button'
-import CountdownTimer from '../CountDown'
+// import CountdownTimer from '../CountDown'
 import DoubleLogo from '../DoubleLogo'
 
 const HeaderWrapper = styled.div`
@@ -167,7 +167,7 @@ export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
           </HeaderWrapper>
           <Row>
             <i>Ends in</i>
-            <CountdownTimer auctionEndDate={auctionInfo.endTimeTimestamp} showText={false} />
+            {/* <CountdownTimer auctionEndDate={auctionInfo.endTimeTimestamp} showText={false} /> */}
           </Row>
 
           <Row>
