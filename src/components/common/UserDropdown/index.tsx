@@ -172,11 +172,27 @@ export const UserDropdown: React.FC = (props) => {
   const [transactionsModalVisible, setTransactionsModalVisible] = React.useState(false)
   const [darkMode, toggleDarkMode] = useDarkModeManager()
 
+  const { deactivate, library } = useActiveWeb3React()
+
+  const getWalletName = React.useCallback((): string => {
+    const provider = library.provider
+
+    const isMetaMask =
+      Object.prototype.hasOwnProperty.call(provider, 'isMetaMask') && provider.isMetaMask
+    const isWalletConnect = Object.prototype.hasOwnProperty.call(provider, 'wc')
+
+    return isMetaMask ? 'MetaMask' : isWalletConnect ? 'WalletConnect' : 'Unknown'
+  }, [library])
+
+  const disconnect = React.useCallback(async () => {
+    deactivate()
+  }, [deactivate])
+
   const UserDropdownContent = () => {
     const items = [
       {
         title: 'Wallet',
-        value: 'Metamask',
+        value: getWalletName(),
       },
       {
         title: 'Your transactions',
@@ -214,7 +230,7 @@ export const UserDropdown: React.FC = (props) => {
           <DisconnectButton
             buttonType={ButtonType.danger}
             onClick={() => {
-              // disconnect()
+              disconnect()
             }}
           >
             Disconnect

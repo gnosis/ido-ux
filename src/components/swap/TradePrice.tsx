@@ -15,16 +15,16 @@ interface TradePriceProps {
 
 export default function TradePrice({ setShowInverted, showInverted, trade }: TradePriceProps) {
   const theme = useContext(ThemeContext)
-  const inputToken = trade?.inputAmount?.token
-  const outputToken = trade?.outputAmount?.token
+  const inputTokenSymbol = trade?.inputAmount?.currency?.symbol
+  const outputTokenSymbol = trade?.outputAmount?.currency?.symbol
 
   const price = showInverted
     ? trade?.executionPrice?.toSignificant(6)
     : trade?.executionPrice?.invert()?.toSignificant(6)
 
   const label = showInverted
-    ? `${outputToken?.symbol} per ${inputToken?.symbol}`
-    : `${inputToken?.symbol} per ${outputToken?.symbol}`
+    ? `${outputTokenSymbol} per ${inputTokenSymbol}`
+    : `${inputTokenSymbol} per ${outputTokenSymbol}`
 
   return (
     <Text

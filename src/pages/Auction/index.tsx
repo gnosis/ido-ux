@@ -19,10 +19,19 @@ import {
 import { useOrderbookDataCallback } from '../../state/orderbook/hooks'
 import { useOrderState } from '../../state/orders/hooks'
 import { OrderState } from '../../state/orders/reducer'
+import AppBody from '../AppBody'
 import ClaimerBody from '../ClaimerBody'
 import OrderBody from '../OrderBody'
 
-const renderAuctionElements = ({ auctionState }: { auctionState: AuctionState }) => {
+const Wrapper = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  justify-content: space-between;
+  align-items: stretch;
+  ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
+`
+function renderAuctionElements({ auctionState }: { auctionState: AuctionState }) {
   switch (auctionState) {
     case undefined || AuctionState.NOT_YET_STARTED:
       return <></>
@@ -52,7 +61,7 @@ const renderAuctionElements = ({ auctionState }: { auctionState: AuctionState })
   }
 }
 
-const Auction = ({ location: { search } }: RouteComponentProps) => {
+export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search)
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
@@ -62,25 +71,28 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
   useCurrentUserOrders()
   useOrderbookDataCallback()
 
-  return !account ? (
-    <div>
-      <h3>GnosisAuction is a platform designed for fair price finding of one-time events.</h3>
-      <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-    </div>
-  ) : (
-    <>
-      <AuctionHeader />
-      {renderAuctionElements({
-        auctionState,
-      })}
-
-      <OrderDisplayDropdown
-        orders={orders.orders}
-        setShowAdvanced={setShowAdvanced}
-        showAdvanced={showAdvanced}
-      />
-    </>
+  return (
+    <AppBody>
+      {!account ? (
+        <div>
+          <h3>GnosisAuction is a platform designed for fair price finding of one-time events.</h3>
+          <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+        </div>
+      ) : (
+        <>
+          <Wrapper>
+            <AuctionHeader />
+            {renderAuctionElements({
+              auctionState,
+            })}
+          </Wrapper>
+          <OrderDisplayDropdown
+            orders={orders.orders}
+            setShowAdvanced={setShowAdvanced}
+            showAdvanced={showAdvanced}
+          />
+        </>
+      )}
+    </AppBody>
   )
 }
-
-export default Auction
