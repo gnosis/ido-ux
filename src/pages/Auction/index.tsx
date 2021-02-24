@@ -1,27 +1,27 @@
-import React, { useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import OrderPlacement from "../../components/OrderPlacement";
-import Claimer from "../../components/Claimer";
-import styled from "styled-components";
+import React, { useState } from 'react'
+import { RouteComponentProps } from 'react-router-dom'
+import styled from 'styled-components'
+
+import AuctionDetails from '../../components/AuctionDetails'
+import AuctionHeader from '../../components/AuctionHeader'
+import { ButtonLight } from '../../components/Button'
+import Claimer from '../../components/Claimer'
+import OrderDisplayDropdown from '../../components/OrderDropdown'
+import OrderPlacement from '../../components/OrderPlacement'
+import { useActiveWeb3React } from '../../hooks'
+import { useWalletModalToggle } from '../../state/application/hooks'
 import {
   AuctionState,
   useCurrentUserOrders,
   useDefaultsFromURLSearch,
   useDerivedAuctionState,
-} from "../../state/orderPlacement/hooks";
-import AppBody from "../AppBody";
-import OrderBody from "../OrderBody";
-import ClaimerBody from "../ClaimerBody";
-
-import AuctionDetails from "../../components/AuctionDetails";
-import AuctionHeader from "../../components/AuctionHeader";
-import { ButtonLight } from "../../components/Button";
-import { useActiveWeb3React } from "../../hooks";
-import { useWalletModalToggle } from "../../state/application/hooks";
-import OrderDisplayDropdown from "../../components/OrderDropdown";
-import { useOrderState } from "../../state/orders/hooks";
-import { OrderState } from "../../state/orders/reducer";
-import { useOrderbookDataCallback } from "../../state/orderbook/hooks";
+} from '../../state/orderPlacement/hooks'
+import { useOrderbookDataCallback } from '../../state/orderbook/hooks'
+import { useOrderState } from '../../state/orders/hooks'
+import { OrderState } from '../../state/orders/reducer'
+import AppBody from '../AppBody'
+import ClaimerBody from '../ClaimerBody'
+import OrderBody from '../OrderBody'
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,15 +30,11 @@ const Wrapper = styled.div`
   justify-content: space-between;
   align-items: stretch;
   ${({ theme }) => theme.mediaWidth.upToMedium`flex-flow: column wrap;`};
-`;
-function renderAuctionElements({
-  auctionState,
-}: {
-  auctionState: AuctionState;
-}) {
+`
+function renderAuctionElements({ auctionState }: { auctionState: AuctionState }) {
   switch (auctionState) {
     case undefined || AuctionState.NOT_YET_STARTED:
-      return <></>;
+      return <></>
     case AuctionState.ORDER_PLACING:
     case AuctionState.ORDER_PLACING_AND_CANCELING:
       return (
@@ -48,7 +44,7 @@ function renderAuctionElements({
             <OrderPlacement />
           </OrderBody>
         </>
-      );
+      )
 
     case AuctionState.CLAIMING:
       return (
@@ -58,31 +54,28 @@ function renderAuctionElements({
             <Claimer />
           </ClaimerBody>
         </>
-      );
+      )
 
     default:
-      return <div></div>;
+      return <div></div>
   }
 }
 
 export default function Auction({ location: { search } }: RouteComponentProps) {
-  useDefaultsFromURLSearch(search);
-  const { account } = useActiveWeb3React();
-  const toggleWalletModal = useWalletModalToggle();
-  const { auctionState } = useDerivedAuctionState();
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const orders: OrderState | undefined = useOrderState();
-  useCurrentUserOrders();
-  useOrderbookDataCallback();
+  useDefaultsFromURLSearch(search)
+  const { account } = useActiveWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
+  const { auctionState } = useDerivedAuctionState()
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
+  const orders: OrderState | undefined = useOrderState()
+  useCurrentUserOrders()
+  useOrderbookDataCallback()
 
   return (
     <AppBody>
       {!account ? (
         <div>
-          <h3>
-            GnosisAuction is a platform designed for fair price finding of
-            one-time events.
-          </h3>
+          <h3>GnosisAuction is a platform designed for fair price finding of one-time events.</h3>
           <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
         </div>
       ) : (
@@ -94,12 +87,12 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
             })}
           </Wrapper>
           <OrderDisplayDropdown
-            showAdvanced={showAdvanced}
-            setShowAdvanced={setShowAdvanced}
             orders={orders.orders}
+            setShowAdvanced={setShowAdvanced}
+            showAdvanced={showAdvanced}
           />
         </>
       )}
     </AppBody>
-  );
+  )
 }

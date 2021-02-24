@@ -1,6 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import { BoxTitle } from "../components/BoxTitle";
+import React from 'react'
+import styled from 'styled-components'
+
+import { BoxTitle } from '../components/BoxTitle'
 
 const Body = styled.div`
   position: relative;
@@ -16,20 +17,16 @@ const Body = styled.div`
     width: 100%;
     order: 2;
   `};
-`;
+`
 
 /**
  * The styled container element that wraps the content of most pages and the tabs.
  */
-export default function ClaimerBody({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ClaimerBody({ children }: { children: React.ReactNode }) {
   return (
     <Body>
       <BoxTitle>Claim Proceedings</BoxTitle>
       <>{children}</>
     </Body>
-  );
+  )
 }

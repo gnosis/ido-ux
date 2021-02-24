@@ -1,16 +1,16 @@
-import React, { useRef, useEffect } from "react";
-import { Info, Code, MessageCircle } from "react-feather";
-import styled from "styled-components";
-import { ReactComponent as MenuIcon } from "../../assets/images/menu.svg";
-import useToggle from "../../hooks/useToggle";
+import React, { useEffect, useRef } from 'react'
+import { Code, Info, MessageCircle } from 'react-feather'
+import styled from 'styled-components'
 
-import { ExternalLink } from "../../theme";
+import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
+import useToggle from '../../hooks/useToggle'
+import { ExternalLink } from '../../theme'
 
 const StyledMenuIcon = styled(MenuIcon)`
   path {
     stroke: ${({ theme }) => theme.text1};
   }
-`;
+`
 
 const StyledMenuButton = styled.button`
   width: 100%;
@@ -38,7 +38,7 @@ const StyledMenuButton = styled.button`
   svg {
     margin-top: 2px;
   }
-`;
+`
 
 const StyledMenu = styled.div`
   margin-left: 0.5rem;
@@ -48,7 +48,7 @@ const StyledMenu = styled.div`
   position: relative;
   border: none;
   text-align: left;
-`;
+`
 
 const MenuFlyout = styled.span`
   min-width: 8.125rem;
@@ -69,7 +69,7 @@ const MenuFlyout = styled.span`
     bottom: 70px;
     top: initial;
   `}
-`;
+`
 
 const MenuItem = styled(ExternalLink)`
   flex: 1;
@@ -83,34 +83,34 @@ const MenuItem = styled(ExternalLink)`
   > svg {
     margin-right: 8px;
   }
-`;
+`
 
-const CODE_LINK = !!process.env.REACT_APP_GIT_COMMIT_HASH
+const CODE_LINK = process.env.REACT_APP_GIT_COMMIT_HASH
   ? `https://github.com/gnosis/ido-contracts/tree/${process.env.REACT_APP_GIT_COMMIT_HASH}`
-  : "https://github.com/gnosis/ido-contracts";
+  : 'https://github.com/gnosis/ido-contracts'
 
 export default function Menu() {
-  const node = useRef<HTMLDivElement>();
-  const [open, toggle] = useToggle(false);
+  const node = useRef<HTMLDivElement>()
+  const [open, toggle] = useToggle(false)
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (node.current?.contains(e.target) ?? false) {
-        return;
+        return
       }
-      toggle();
-    };
+      toggle()
+    }
 
     if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside)
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open, toggle]);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [open, toggle])
 
   return (
     <StyledMenu ref={node}>
@@ -120,22 +120,22 @@ export default function Menu() {
       {open && (
         <MenuFlyout>
           <MenuItem
-            id="link"
             href="https://forum.gnosis.io/t/should-gnosisdao-build-an-ido-specific-dapp/895"
+            id="link"
           >
             <Info size={14} />
             About
           </MenuItem>
-          <MenuItem id="link" href={CODE_LINK}>
+          <MenuItem href={CODE_LINK} id="link">
             <Code size={14} />
             Code
           </MenuItem>
-          <MenuItem id="link" href="https://discord.gg/xUHSDkRB">
+          <MenuItem href="https://discord.gg/xUHSDkRB" id="link">
             <MessageCircle size={14} />
             Discord
           </MenuItem>
         </MenuFlyout>
       )}
     </StyledMenu>
-  );
+  )
 }

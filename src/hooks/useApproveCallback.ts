@@ -1,15 +1,14 @@
-import { MaxUint256 } from "@ethersproject/constants";
-import { TransactionResponse } from "@ethersproject/providers";
-import { TokenAmount } from "@uniswap/sdk";
-import { useCallback, useMemo } from "react";
-import { useTokenAllowance } from "../data/Allowances";
-import {
-  useTransactionAdder,
-  useHasPendingApproval,
-} from "../state/transactions/hooks";
-import { calculateGasMargin } from "../utils";
-import { useTokenContract } from "./useContract";
-import { useActiveWeb3React } from "./index";
+import { useCallback, useMemo } from 'react'
+
+import { MaxUint256 } from '@ethersproject/constants'
+import { TransactionResponse } from '@ethersproject/providers'
+import { TokenAmount } from '@uniswap/sdk'
+
+import { useTokenAllowance } from '../data/Allowances'
+import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
+import { calculateGasMargin } from '../utils'
+import { useActiveWeb3React } from './index'
+import { useTokenContract } from './useContract'
 
 export enum ApprovalState {
   UNKNOWN,
@@ -23,85 +22,71 @@ export function useApproveCallback(
   amountToApprove?: TokenAmount,
   addressToApprove?: string,
 ): [ApprovalState, () => Promise<void>] {
-  const { account } = useActiveWeb3React();
+  const { account } = useActiveWeb3React()
 
   const currentAllowance = useTokenAllowance(
     amountToApprove?.token,
     account ?? undefined,
     addressToApprove,
-  );
-  const pendingApproval = useHasPendingApproval(
-    amountToApprove?.token?.address,
-  );
+  )
+  const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address)
 
   // check the current approval status
   const approval = useMemo(() => {
-    if (!amountToApprove) return ApprovalState.UNKNOWN;
+    if (!amountToApprove) return ApprovalState.UNKNOWN
     // we might not have enough data to know whether or not we need to approve
-    if (!currentAllowance) return ApprovalState.UNKNOWN;
-    if (pendingApproval) return ApprovalState.PENDING;
+    if (!currentAllowance) return ApprovalState.UNKNOWN
+    if (pendingApproval) return ApprovalState.PENDING
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove)
       ? ApprovalState.NOT_APPROVED
-      : ApprovalState.APPROVED;
-  }, [amountToApprove, currentAllowance, pendingApproval]);
+      : ApprovalState.APPROVED
+  }, [amountToApprove, currentAllowance, pendingApproval])
 
-  const tokenContract = useTokenContract(amountToApprove?.token?.address);
-  const addTransaction = useTransactionAdder();
+  const tokenContract = useTokenContract(amountToApprove?.token?.address)
+  const addTransaction = useTransactionAdder()
 
   const approve = useCallback(async (): Promise<void> => {
     if (approval !== ApprovalState.NOT_APPROVED) {
-      console.error("approve was called unnecessarily");
-      return;
+      console.error('approve was called unnecessarily')
+      return
     }
 
     if (!tokenContract) {
-      console.error("tokenContract is null");
-      return;
+      console.error('tokenContract is null')
+      return
     }
 
     if (!amountToApprove) {
-      console.error("missing amount to approve");
-      return;
+      console.error('missing amount to approve')
+      return
     }
 
-    let useExact = false;
+    let useExact = false
     const estimatedGas = await tokenContract.estimateGas
       .approve(addressToApprove, MaxUint256)
       .catch(() => {
         // general fallback for tokens who restrict approval amounts
-        useExact = true;
-        return tokenContract.estimateGas.approve(
-          addressToApprove,
-          amountToApprove.raw.toString(),
-        );
-      });
+        useExact = true
+        return tokenContract.estimateGas.approve(addressToApprove, amountToApprove.raw.toString())
+      })
 
     return tokenContract
-      .approve(
-        addressToApprove,
-        useExact ? amountToApprove.raw.toString() : MaxUint256,
-        {
-          gasLimit: calculateGasMargin(estimatedGas),
-        },
-      )
+      .approve(addressToApprove, useExact ? amountToApprove.raw.toString() : MaxUint256, {
+        gasLimit: calculateGasMargin(estimatedGas),
+      })
       .then((response: TransactionResponse) => {
         addTransaction(response, {
-          summary: "Approve " + amountToApprove?.token?.symbol,
+          summary: 'Approve ' + amountToApprove?.token?.symbol,
           approvalOfToken: amountToApprove?.token?.address,
-        });
+        })
       })
       .catch((error: Error) => {
-        console.debug("Failed to approve token", error);
-        throw error;
-      });
-  }, [
-    approval,
-    tokenContract,
-    addressToApprove,
-    amountToApprove,
-    addTransaction,
-  ]);
+        // eslint-disable-next-line no-console
+        console.debug('Failed to approve token', error)
+        throw error
+      })
+  }, [approval, tokenContract, addressToApprove, amountToApprove, addTransaction])
 
-  return [approval, approve];
+  return [approval, approve]
 }

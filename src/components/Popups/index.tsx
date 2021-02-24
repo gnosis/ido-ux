@@ -1,17 +1,18 @@
-import { ChainId, Pair, Token } from "@uniswap/sdk";
-import React, { useContext, useMemo } from "react";
-import styled, { ThemeContext } from "styled-components";
-import { useMediaLayout } from "use-media";
+import React, { useContext, useMemo } from 'react'
+import { X } from 'react-feather'
+import styled, { ThemeContext } from 'styled-components'
 
-import { X } from "react-feather";
-import { PopupContent } from "../../state/application/actions";
-import { useActivePopups, useRemovePopup } from "../../state/application/hooks";
-import { ExternalLink } from "../../theme";
-import { AutoColumn } from "../Column";
-import DoubleTokenLogo from "../DoubleLogo";
-import Row from "../Row";
-import TxnPopup from "../TxnPopup";
-import { Text } from "rebass";
+import { ChainId, Pair, Token } from '@uniswap/sdk'
+import { Text } from 'rebass'
+import { useMediaLayout } from 'use-media'
+
+import { PopupContent } from '../../state/application/actions'
+import { useActivePopups, useRemovePopup } from '../../state/application/hooks'
+import { ExternalLink } from '../../theme'
+import { AutoColumn } from '../Column'
+import DoubleTokenLogo from '../DoubleLogo'
+import Row from '../Row'
+import TxnPopup from '../TxnPopup'
 
 const StyledClose = styled(X)`
   position: absolute;
@@ -21,15 +22,15 @@ const StyledClose = styled(X)`
   :hover {
     cursor: pointer;
   }
-`;
+`
 
 const MobilePopupWrapper = styled.div<{ height: string | number }>`
   position: relative;
   max-width: 100%;
   height: ${({ height }) => height};
-  margin: ${({ height }) => (height ? "0 auto;" : 0)};
-  margin-bottom: ${({ height }) => (height ? "20px" : 0)}};
-`;
+  margin: ${({ height }) => (height ? '0 auto;' : 0)};
+  margin-bottom: ${({ height }) => (height ? '20px' : 0)}};
+`
 
 const MobilePopupInner = styled.div`
   height: 99%;
@@ -41,7 +42,7 @@ const MobilePopupInner = styled.div`
   ::-webkit-scrollbar {
     display: none;
   }
-`;
+`
 
 const FixedPopupColumn = styled(AutoColumn)`
   position: absolute;
@@ -53,7 +54,7 @@ const FixedPopupColumn = styled(AutoColumn)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
-`;
+`
 
 const Popup = styled.div`
   display: inline-block;
@@ -70,35 +71,31 @@ const Popup = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 290px;
   `}
-`;
+`
 
 function PoolPopup({
   token0,
   token1,
 }: {
-  token0: { address?: string; symbol?: string };
-  token1: { address?: string; symbol?: string };
+  token0: { address?: string; symbol?: string }
+  token1: { address?: string; symbol?: string }
 }) {
   const pairAddress: string | null = useMemo(() => {
-    if (!token0 || !token1) return null;
+    if (!token0 || !token1) return null
     // just mock it out
     return Pair.getAddress(
       new Token(ChainId.MAINNET, token0.address, 18),
       new Token(ChainId.MAINNET, token1.address, 18),
-    );
-  }, [token0, token1]);
+    )
+  }, [token0, token1])
 
   return (
-    <AutoColumn gap={"10px"}>
+    <AutoColumn gap={'10px'}>
       <Text fontSize={20} fontWeight={500}>
         Pool Imported
       </Text>
       <Row>
-        <DoubleTokenLogo
-          a0={token0?.address ?? ""}
-          a1={token1?.address ?? ""}
-          margin={true}
-        />
+        <DoubleTokenLogo a0={token0?.address ?? ''} a1={token1?.address ?? ''} margin={true} />
         <Text fontSize={16} fontWeight={500}>
           UNI {token0?.symbol} / {token1?.symbol}
         </Text>
@@ -109,45 +106,32 @@ function PoolPopup({
         </ExternalLink>
       ) : null}
     </AutoColumn>
-  );
+  )
 }
 
-function PopupItem({
-  content,
-  popKey,
-}: {
-  content: PopupContent;
-  popKey: string;
-}) {
-  if ("txn" in content) {
+function PopupItem({ content, popKey }: { content: PopupContent; popKey: string }) {
+  if ('txn' in content) {
     const {
       txn: { hash, success, summary },
-    } = content;
-    return (
-      <TxnPopup
-        popKey={popKey}
-        hash={hash}
-        success={success}
-        summary={summary}
-      />
-    );
-  } else if ("poolAdded" in content) {
+    } = content
+    return <TxnPopup hash={hash} popKey={popKey} success={success} summary={summary} />
+  } else if ('poolAdded' in content) {
     const {
       poolAdded: { token0, token1 },
-    } = content;
+    } = content
 
-    return <PoolPopup token0={token0} token1={token1} />;
+    return <PoolPopup token0={token0} token1={token1} />
   }
 }
 
 export default function Popups() {
-  const theme = useContext(ThemeContext);
+  const theme = useContext(ThemeContext)
   // get all popups
-  const activePopups = useActivePopups();
-  const removePopup = useRemovePopup();
+  const activePopups = useActivePopups()
+  const removePopup = useRemovePopup()
 
   // switch view settings on mobile
-  const isMobile = useMediaLayout({ maxWidth: "600px" });
+  const isMobile = useMediaLayout({ maxWidth: '600px' })
 
   if (!isMobile) {
     return (
@@ -155,21 +139,18 @@ export default function Popups() {
         {activePopups.map((item) => {
           return (
             <Popup key={item.key}>
-              <StyledClose
-                color={theme.text2}
-                onClick={() => removePopup(item.key)}
-              />
+              <StyledClose color={theme.text2} onClick={() => removePopup(item.key)} />
               <PopupItem content={item.content} popKey={item.key} />
             </Popup>
-          );
+          )
         })}
       </FixedPopupColumn>
-    );
+    )
   }
   //mobile
   else
     return (
-      <MobilePopupWrapper height={activePopups?.length > 0 ? "fit-content" : 0}>
+      <MobilePopupWrapper height={activePopups?.length > 0 ? 'fit-content' : 0}>
         <MobilePopupInner>
           {activePopups // reverse so new items up front
             .slice(0)
@@ -177,15 +158,12 @@ export default function Popups() {
             .map((item) => {
               return (
                 <Popup key={item.key}>
-                  <StyledClose
-                    color={theme.text2}
-                    onClick={() => removePopup(item.key)}
-                  />
+                  <StyledClose color={theme.text2} onClick={() => removePopup(item.key)} />
                   <PopupItem content={item.content} popKey={item.key} />
                 </Popup>
-              );
+              )
             })}
         </MobilePopupInner>
       </MobilePopupWrapper>
-    );
+    )
 }

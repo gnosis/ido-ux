@@ -1,202 +1,180 @@
-import { TokenAmount, ChainId, Fraction } from "@uniswap/sdk";
-import React, { useState, useEffect, useMemo } from "react";
-import { Text } from "rebass";
-import { ButtonLight, ButtonPrimary } from "../../components/Button";
-import { AutoColumn } from "../../components/Column";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import CurrencyInputPanel from "../../components/CurrencyInputPanel";
-import PriceInputPanel from "../../components/PriceInputPanel";
-import { BottomGrouping, Dots, Wrapper } from "../../components/swap/styleds";
-import SwapModalFooter from "../swap/PlaceOrderModalFooter";
-import SwapModalHeader from "../../components/swap/SwapModalHeader";
-import { useActiveWeb3React } from "../../hooks";
-import { EASY_AUCTION_NETWORKS } from "../../constants";
-import {
-  useApproveCallback,
-  ApprovalState,
-} from "../../hooks/useApproveCallback";
-import { usePlaceOrderCallback } from "../../hooks/usePlaceOrderCallback";
-import { useWalletModalToggle } from "../../state/application/hooks";
+import React, { useEffect, useMemo, useState } from 'react'
+
+import { ChainId, Fraction, TokenAmount } from '@uniswap/sdk'
+import { Text } from 'rebass'
+
+import { ButtonLight, ButtonPrimary } from '../../components/Button'
+import { AutoColumn } from '../../components/Column'
+import ConfirmationModal from '../../components/ConfirmationModal'
+import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import PriceInputPanel from '../../components/PriceInputPanel'
+import SwapModalHeader from '../../components/swap/SwapModalHeader'
+import { BottomGrouping, Dots, Wrapper } from '../../components/swap/styleds'
+import { EASY_AUCTION_NETWORKS } from '../../constants'
+import { useActiveWeb3React } from '../../hooks'
+import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
+import { usePlaceOrderCallback } from '../../hooks/usePlaceOrderCallback'
+import { useWalletModalToggle } from '../../state/application/hooks'
 import {
   useDerivedAuctionInfo,
   useGetOrderPlacementError,
   useSwapActionHandlers,
   useSwapState,
-} from "../../state/orderPlacement/hooks";
-import { getTokenDisplay } from "../../utils";
+} from '../../state/orderPlacement/hooks'
+import { getTokenDisplay } from '../../utils'
+import SwapModalFooter from '../swap/PlaceOrderModalFooter'
 
 export default function OrderPlacement() {
-  const { chainId, account } = useActiveWeb3React();
+  const { account, chainId } = useActiveWeb3React()
 
   // toggle wallet when disconnected
-  const toggleWalletModal = useWalletModalToggle();
+  const toggleWalletModal = useWalletModalToggle()
 
   // swap state
-  const { price, sellAmount } = useSwapState();
+  const { price, sellAmount } = useSwapState()
   const {
-    biddingTokenBalance,
-    parsedBiddingAmount,
     auctioningToken,
     biddingToken,
+    biddingTokenBalance,
     initialPrice,
-  } = useDerivedAuctionInfo();
-  const { error } = useGetOrderPlacementError();
-  const { onUserSellAmountInput } = useSwapActionHandlers();
-  const { onUserPriceInput } = useSwapActionHandlers();
+    parsedBiddingAmount,
+  } = useDerivedAuctionInfo()
+  const { error } = useGetOrderPlacementError()
+  const { onUserSellAmountInput } = useSwapActionHandlers()
+  const { onUserPriceInput } = useSwapActionHandlers()
 
-  const isValid = !error;
+  const isValid = !error
 
   // modal and loading
-  const [showConfirm, setShowConfirm] = useState<boolean>(false);
-  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false); // clicked confirmed
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true); // waiting for user confirmation
+  const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
+  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
 
   // txn values
-  const [txHash, setTxHash] = useState<string>("");
+  const [txHash, setTxHash] = useState<string>('')
 
-  const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount;
+  const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   // check whether the user has approved the EasyAuction Contract
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
-  );
-  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false);
+  )
+  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
   useEffect(() => {
     if (approval === ApprovalState.PENDING) {
-      setApprovalSubmitted(true);
+      setApprovalSubmitted(true)
     }
-  }, [approval, approvalSubmitted]);
+  }, [approval, approvalSubmitted])
 
-  const maxAmountInput: TokenAmount = !!biddingTokenBalance
-    ? biddingTokenBalance
-    : undefined;
+  const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
   const atMaxAmountInput: boolean =
-    maxAmountInput && parsedBiddingAmount
-      ? maxAmountInput.equalTo(parsedBiddingAmount)
-      : undefined;
+    maxAmountInput && parsedBiddingAmount ? maxAmountInput.equalTo(parsedBiddingAmount) : undefined
 
   useEffect(() => {
-    if (price == "-" && initialPrice) {
-      onUserPriceInput(
-        initialPrice.multiply(new Fraction("1001", "1000")).toSignificant(4),
-      );
+    if (price == '-' && initialPrice) {
+      onUserPriceInput(initialPrice.multiply(new Fraction('1001', '1000')).toSignificant(4))
     }
-  }, [onUserPriceInput, price, initialPrice]);
+  }, [onUserPriceInput, price, initialPrice])
 
   // reset modal state when closed
   function resetModal() {
     // clear input if txn submitted
     if (!pendingConfirmation) {
-      onUserSellAmountInput("");
+      onUserSellAmountInput('')
     }
-    setPendingConfirmation(true);
-    setAttemptingTxn(false);
+    setPendingConfirmation(true)
+    setAttemptingTxn(false)
   }
 
   // the callback to execute the swap
-  const placeOrderCallback = usePlaceOrderCallback(
-    auctioningToken,
-    biddingToken,
-  );
+  const placeOrderCallback = usePlaceOrderCallback(auctioningToken, biddingToken)
 
   function onPlaceOrder() {
-    setAttemptingTxn(true);
+    setAttemptingTxn(true)
 
     placeOrderCallback().then((hash) => {
-      setTxHash(hash);
-      setPendingConfirmation(false);
-    });
+      setTxHash(hash)
+      setPendingConfirmation(false)
+    })
   }
 
   // errors
-  const [showInverted, setShowInverted] = useState<boolean>(false);
+  const [showInverted, setShowInverted] = useState<boolean>(false)
 
   function modalHeader() {
-    return <SwapModalHeader />;
+    return <SwapModalHeader />
   }
 
   function modalBottom() {
     return (
       <SwapModalFooter
-        confirmText={"Confirm Order"}
-        showInverted={showInverted}
-        setShowInverted={setShowInverted}
-        onPlaceOrder={onPlaceOrder}
-        biddingToken={biddingToken}
         auctioningToken={auctioningToken}
+        biddingToken={biddingToken}
+        confirmText={'Confirm Order'}
+        onPlaceOrder={onPlaceOrder}
         price={price}
         sellAmount={sellAmount}
+        setShowInverted={setShowInverted}
+        showInverted={showInverted}
       />
-    );
+    )
   }
 
   // text to show while loading
-  const pendingText = `Placing order`;
+  const pendingText = `Placing order`
 
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [
-    biddingToken,
-  ]);
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
 
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(auctioningToken),
-    [auctioningToken],
-  );
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
 
   return (
     <>
       <Wrapper id="swap-page">
         <ConfirmationModal
-          isOpen={showConfirm}
-          title="Confirm Order"
-          onDismiss={() => {
-            resetModal();
-            setShowConfirm(false);
-          }}
           attemptingTxn={attemptingTxn}
-          pendingConfirmation={pendingConfirmation}
-          hash={txHash}
-          topContent={modalHeader}
           bottomContent={modalBottom}
+          hash={txHash}
+          isOpen={showConfirm}
+          onDismiss={() => {
+            resetModal()
+            setShowConfirm(false)
+          }}
+          pendingConfirmation={pendingConfirmation}
           pendingText={pendingText}
+          title="Confirm Order"
+          topContent={modalHeader}
         />
-        <AutoColumn gap={"md"}>
+        <AutoColumn gap={'md'}>
           <>
             <CurrencyInputPanel
-              label={"Amount"}
-              value={sellAmount}
+              id="auction-input"
+              label={'Amount'}
+              onMax={() => {
+                maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
+              }}
+              onUserSellAmountInput={onUserSellAmountInput}
               showMaxButton={!atMaxAmountInput}
               token={biddingToken}
-              onUserSellAmountInput={onUserSellAmountInput}
-              onMax={() => {
-                maxAmountInput &&
-                  onUserSellAmountInput(maxAmountInput.toExact());
-              }}
-              id="auction-input"
+              value={sellAmount}
             />
 
             <PriceInputPanel
-              value={price}
-              onUserPriceInput={onUserPriceInput}
-              label={`Price — ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
-              showMaxButton={false}
               auctioningToken={auctioningToken}
               biddingToken={biddingToken}
               id="price-input"
+              label={`Price — ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+              onUserPriceInput={onUserPriceInput}
+              showMaxButton={false}
+              value={price}
             />
           </>
         </AutoColumn>
         <BottomGrouping>
           {!account ? (
-            <ButtonLight onClick={toggleWalletModal}>
-              Connect Wallet
-            </ButtonLight>
-          ) : approval === ApprovalState.NOT_APPROVED ||
-            approval === ApprovalState.PENDING ? (
-            <ButtonPrimary
-              onClick={approveCallback}
-              disabled={approval === ApprovalState.PENDING}
-            >
+            <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+          ) : approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING ? (
+            <ButtonPrimary disabled={approval === ApprovalState.PENDING} onClick={approveCallback}>
               {approval === ApprovalState.PENDING ? (
                 <Dots>Approving {biddingTokenDisplay}</Dots>
               ) : (
@@ -205,11 +183,11 @@ export default function OrderPlacement() {
             </ButtonPrimary>
           ) : (
             <ButtonPrimary
-              onClick={() => {
-                setShowConfirm(true);
-              }}
-              id="swap-button"
               disabled={!isValid}
+              id="swap-button"
+              onClick={() => {
+                setShowConfirm(true)
+              }}
             >
               <Text fontSize={20} fontWeight={500}>
                 {error ?? `Place Order`}
@@ -219,5 +197,5 @@ export default function OrderPlacement() {
         </BottomGrouping>
       </Wrapper>
     </>
-  );
+  )
 }

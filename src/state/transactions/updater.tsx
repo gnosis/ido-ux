@@ -1,27 +1,29 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useActiveWeb3React } from "../../hooks";
-import { useAddPopup, useBlockNumber } from "../application/hooks";
-import { AppDispatch, AppState } from "../index";
-import { finalizeTransaction } from "./actions";
-import { finalizeOrderPlacement } from "../orders/actions";
+import { useEffect } from 'react'
+
+import { useDispatch, useSelector } from 'react-redux'
+
+import { useActiveWeb3React } from '../../hooks'
+import { useAddPopup, useBlockNumber } from '../application/hooks'
+import { AppDispatch, AppState } from '../index'
+import { finalizeOrderPlacement } from '../orders/actions'
+import { finalizeTransaction } from './actions'
 
 export default function Updater() {
-  const { chainId, library } = useActiveWeb3React();
+  const { chainId, library } = useActiveWeb3React()
 
-  const lastBlockNumber = useBlockNumber();
+  const lastBlockNumber = useBlockNumber()
 
-  const dispatch = useDispatch<AppDispatch>();
-  const transactions = useSelector<AppState, AppState["transactions"]>(
+  const dispatch = useDispatch<AppDispatch>()
+  const transactions = useSelector<AppState, AppState['transactions']>(
     (state) => state.transactions,
-  );
+  )
 
   // show popup on confirm
-  const addPopup = useAddPopup();
+  const addPopup = useAddPopup()
 
   useEffect(() => {
-    if (!chainId || !library || !lastBlockNumber) return;
-    const allTransactions = transactions[chainId ?? -1] ?? {};
+    if (!chainId || !library || !lastBlockNumber) return
+    const allTransactions = transactions[chainId ?? -1] ?? {}
 
     Object.keys(allTransactions)
       .filter((hash) => !allTransactions[hash].receipt)
@@ -45,8 +47,8 @@ export default function Updater() {
                     transactionIndex: receipt.transactionIndex,
                   },
                 }),
-              );
-              dispatch(finalizeOrderPlacement());
+              )
+              dispatch(finalizeOrderPlacement())
               // add success or failure popup
               if (receipt.status === 1) {
                 addPopup({
@@ -55,7 +57,7 @@ export default function Updater() {
                     success: true,
                     summary: allTransactions[hash]?.summary,
                   },
-                });
+                })
               } else {
                 addPopup({
                   txn: {
@@ -63,15 +65,15 @@ export default function Updater() {
                     success: false,
                     summary: allTransactions[hash]?.summary,
                   },
-                });
+                })
               }
             }
           })
           .catch((error) => {
-            console.error(`failed to check transaction hash: ${hash}`, error);
-          });
-      });
-  }, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup]);
+            console.error(`failed to check transaction hash: ${hash}`, error)
+          })
+      })
+  }, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup])
 
-  return null;
+  return null
 }

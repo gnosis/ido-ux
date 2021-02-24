@@ -1,10 +1,11 @@
-import React from "react";
-import styled from "styled-components";
-import { AuctionInfo } from "../../hooks/useInterestingAuctionDetails";
-import DoubleLogo from "../DoubleLogo";
-import { ButtonLight } from "../Button";
-import { useHistory } from "react-router-dom";
-import CountdownTimer from "../CountDown";
+import React from 'react'
+import { useHistory } from 'react-router-dom'
+import styled from 'styled-components'
+
+import { AuctionInfo } from '../../hooks/useInterestingAuctionDetails'
+import { ButtonLight } from '../Button'
+import CountdownTimer from '../CountDown'
+import DoubleLogo from '../DoubleLogo'
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -62,7 +63,7 @@ const HeaderWrapper = styled.div`
   > h4 > b {
     margin: 0 5px;
   }
-`;
+`
 
 const Wrapper = styled.div`
   position: relative;
@@ -79,7 +80,7 @@ const Wrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     width: 100%;
   `};
-`;
+`
 
 const ViewBtn = styled(ButtonLight)`
   background: none;
@@ -94,7 +95,7 @@ const ViewBtn = styled(ButtonLight)`
   > svg {
     margin: 0 0 0 5px;
   }
-`;
+`
 
 const Details = styled.div`
   color: ${({ theme }) => theme.text1};
@@ -108,7 +109,7 @@ const Details = styled.div`
   padding: 16px;
   border-radius: 20px;
   border: 1px solid ${({ theme }) => theme.bg2};
-`;
+`
 
 const Row = styled.span`
   flex-flow: row-wrap;
@@ -119,7 +120,7 @@ const Row = styled.span`
   font-weight: normal;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "label value";
+  grid-template-areas: 'label value';
 
   > i {
     color: ${({ theme }) => theme.text3};
@@ -137,13 +138,13 @@ const Row = styled.span`
     text-align: right;
     white-space: normal;
   }
-`;
+`
 
 export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
-  const history = useHistory();
+  const history = useHistory()
 
   function handleClick() {
-    history.push(`/auction?auctionId=${auctionInfo.auctionId}`);
+    history.push(`/auction?auctionId=${auctionInfo.auctionId}`)
   }
 
   return (
@@ -158,23 +159,20 @@ export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
             <DoubleLogo
               a0={auctionInfo.addressAuctioningToken}
               a1={auctionInfo.addressBiddingToken}
-              size={40}
               margin={true}
+              size={40}
             />
           </HeaderWrapper>
           <Row>
             <i>Ends in</i>
-            <CountdownTimer
-              auctionEndDate={auctionInfo.endTimeTimestamp}
-              showText={false}
-            />
+            <CountdownTimer auctionEndDate={auctionInfo.endTimeTimestamp} showText={false} />
           </Row>
 
           <Row>
             <i>Min. price</i>
             <p>
-              {auctionInfo.order.price} {` ` + auctionInfo.symbolBiddingToken}{" "}
-              per {auctionInfo.symbolAuctioningToken}
+              {auctionInfo.order.price} {` ` + auctionInfo.symbolBiddingToken} per{' '}
+              {auctionInfo.symbolAuctioningToken}
             </p>
           </Row>
           <Row>
@@ -183,5 +181,5 @@ export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
         </Details>
       </ViewBtn>
     </Wrapper>
-  );
+  )
 }

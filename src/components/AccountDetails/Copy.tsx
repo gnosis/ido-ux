@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import useCopyClipboard from "../../hooks/useCopyClipboard";
+import React from 'react'
+import { CheckCircle, Copy } from 'react-feather'
+import styled from 'styled-components'
 
-import { LinkStyledButton } from "../../theme";
-import { CheckCircle, Copy } from "react-feather";
+import useCopyClipboard from '../../hooks/useCopyClipboard'
+import { LinkStyledButton } from '../../theme'
 
 const CopyIcon = styled(LinkStyledButton)`
   color: ${({ theme }) => theme.text4};
@@ -18,32 +18,29 @@ const CopyIcon = styled(LinkStyledButton)`
     text-decoration: none;
     color: ${({ theme }) => theme.text3};
   }
-`;
+`
 const TransactionStatusText = styled.span`
   margin-left: 0.25rem;
   ${({ theme }) => theme.flexRowNoWrap};
   align-items: center;
-`;
+`
 
-export default function CopyHelper(props: {
-  toCopy: string;
-  children?: React.ReactNode;
-}) {
-  const [isCopied, setCopied] = useCopyClipboard();
+export default function CopyHelper(props: { toCopy: string; children?: React.ReactNode }) {
+  const [isCopied, setCopied] = useCopyClipboard()
 
   return (
     <CopyIcon onClick={() => setCopied(props.toCopy)}>
       {props.children}
       {isCopied ? (
         <TransactionStatusText>
-          <CheckCircle size={"16"} />
+          <CheckCircle size={'16'} />
           <TransactionStatusText>Copied</TransactionStatusText>
         </TransactionStatusText>
       ) : (
         <TransactionStatusText>
-          <Copy size={"16"} />
+          <Copy size={'16'} />
         </TransactionStatusText>
       )}
     </CopyIcon>
-  );
+  )
 }

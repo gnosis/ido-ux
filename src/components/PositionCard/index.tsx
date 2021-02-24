@@ -1,62 +1,57 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { darken } from "polished";
-import { RouteComponentProps, withRouter } from "react-router-dom";
-import { Percent, Pair, JSBI } from "@uniswap/sdk";
+import { darken } from 'polished'
+import React, { useState } from 'react'
+import { ChevronDown, ChevronUp } from 'react-feather'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { useActiveWeb3React } from "../../hooks";
-import { useTotalSupply } from "../../data/TotalSupply";
-import { useTokenBalance } from "../../state/wallet/hooks";
+import { JSBI, Pair, Percent } from '@uniswap/sdk'
+import { Text } from 'rebass'
 
-import Card, { GreyCard } from "../Card";
-import TokenLogo from "../TokenLogo";
-import DoubleLogo from "../DoubleLogo";
-import { Text } from "rebass";
-import { ExternalLink } from "../../theme/components";
-import { AutoColumn } from "../Column";
-import { ChevronDown, ChevronUp } from "react-feather";
-import { ButtonSecondary } from "../Button";
-import { RowBetween, RowFixed, AutoRow } from "../Row";
+import { useTotalSupply } from '../../data/TotalSupply'
+import { useActiveWeb3React } from '../../hooks'
+import { useTokenBalance } from '../../state/wallet/hooks'
+import { ExternalLink } from '../../theme/components'
+import { ButtonSecondary } from '../Button'
+import Card, { GreyCard } from '../Card'
+import { AutoColumn } from '../Column'
+import DoubleLogo from '../DoubleLogo'
+import { AutoRow, RowBetween, RowFixed } from '../Row'
+import TokenLogo from '../TokenLogo'
 
 const FixedHeightRow = styled(RowBetween)`
   height: 24px;
-`;
+`
 
 const HoverCard = styled(Card)`
   border: 1px solid ${({ theme }) => theme.bg2};
   :hover {
     border: 1px solid ${({ theme }) => darken(0.06, theme.bg2)};
   }
-`;
+`
 
 interface PositionCardProps extends RouteComponentProps<unknown> {
-  pair: Pair;
-  minimal?: boolean;
-  border?: string;
+  pair: Pair
+  minimal?: boolean
+  border?: string
 }
 
-function PositionCard({
-  pair,
-  history,
-  border,
-  minimal = false,
-}: PositionCardProps) {
-  const { account } = useActiveWeb3React();
+function PositionCard({ border, history, minimal = false, pair }: PositionCardProps) {
+  const { account } = useActiveWeb3React()
 
-  const token0 = pair?.token0;
-  const token1 = pair?.token1;
+  const token0 = pair?.token0
+  const token1 = pair?.token1
 
-  const [showMore, setShowMore] = useState(false);
+  const [showMore, setShowMore] = useState(false)
 
-  const userPoolBalance = useTokenBalance(account, pair?.liquidityToken);
-  const totalPoolTokens = useTotalSupply(pair?.liquidityToken);
+  const userPoolBalance = useTokenBalance(account, pair?.liquidityToken)
+  const totalPoolTokens = useTotalSupply(pair?.liquidityToken)
 
   const poolTokenPercentage =
     !!userPoolBalance &&
     !!totalPoolTokens &&
     JSBI.greaterThanOrEqual(totalPoolTokens.raw, userPoolBalance.raw)
       ? new Percent(userPoolBalance.raw, totalPoolTokens.raw)
-      : undefined;
+      : undefined
 
   const [token0Deposited, token1Deposited] =
     !!pair &&
@@ -65,20 +60,10 @@ function PositionCard({
     // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
     JSBI.greaterThanOrEqual(totalPoolTokens.raw, userPoolBalance.raw)
       ? [
-          pair.getLiquidityValue(
-            token0,
-            totalPoolTokens,
-            userPoolBalance,
-            false,
-          ),
-          pair.getLiquidityValue(
-            token1,
-            totalPoolTokens,
-            userPoolBalance,
-            false,
-          ),
+          pair.getLiquidityValue(token0, totalPoolTokens, userPoolBalance, false),
+          pair.getLiquidityValue(token1, totalPoolTokens, userPoolBalance, false),
         ]
-      : [undefined, undefined];
+      : [undefined, undefined]
 
   if (minimal) {
     return (
@@ -88,7 +73,7 @@ function PositionCard({
             <AutoColumn gap="12px">
               <FixedHeightRow>
                 <RowFixed>
-                  <Text fontWeight={500} fontSize={16}>
+                  <Text fontSize={16} fontWeight={500}>
                     Your current position
                   </Text>
                 </RowFixed>
@@ -96,18 +81,18 @@ function PositionCard({
               <FixedHeightRow onClick={() => setShowMore(!showMore)}>
                 <RowFixed>
                   <DoubleLogo
-                    a0={token0?.address || ""}
-                    a1={token1?.address || ""}
+                    a0={token0?.address || ''}
+                    a1={token1?.address || ''}
                     margin={true}
                     size={20}
                   />
-                  <Text fontWeight={500} fontSize={20}>
+                  <Text fontSize={20} fontWeight={500}>
                     {token0?.symbol}/{token1?.symbol}
                   </Text>
                 </RowFixed>
                 <RowFixed>
-                  <Text fontWeight={500} fontSize={20}>
-                    {userPoolBalance ? userPoolBalance.toSignificant(4) : "-"}
+                  <Text fontSize={20} fontWeight={500}>
+                    {userPoolBalance ? userPoolBalance.toSignificant(4) : '-'}
                   </Text>
                 </RowFixed>
               </FixedHeightRow>
@@ -119,17 +104,12 @@ function PositionCard({
                   {token0Deposited ? (
                     <RowFixed>
                       {!minimal && <TokenLogo address={token0?.address} />}
-                      <Text
-                        color="#888D9B"
-                        fontSize={16}
-                        fontWeight={500}
-                        marginLeft={"6px"}
-                      >
+                      <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
                         {token0Deposited?.toSignificant(6)}
                       </Text>
                     </RowFixed>
                   ) : (
-                    "-"
+                    '-'
                   )}
                 </FixedHeightRow>
                 <FixedHeightRow>
@@ -139,17 +119,12 @@ function PositionCard({
                   {token1Deposited ? (
                     <RowFixed>
                       {!minimal && <TokenLogo address={token1?.address} />}
-                      <Text
-                        color="#888D9B"
-                        fontSize={16}
-                        fontWeight={500}
-                        marginLeft={"6px"}
-                      >
+                      <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
                         {token1Deposited?.toSignificant(6)}
                       </Text>
                     </RowFixed>
                   ) : (
-                    "-"
+                    '-'
                   )}
                 </FixedHeightRow>
               </AutoColumn>
@@ -157,31 +132,28 @@ function PositionCard({
           </GreyCard>
         )}
       </>
-    );
+    )
   } else
     return (
       <HoverCard border={border}>
         <AutoColumn gap="12px">
-          <FixedHeightRow
-            onClick={() => setShowMore(!showMore)}
-            style={{ cursor: "pointer" }}
-          >
+          <FixedHeightRow onClick={() => setShowMore(!showMore)} style={{ cursor: 'pointer' }}>
             <RowFixed>
               <DoubleLogo
-                a0={token0?.address || ""}
-                a1={token1?.address || ""}
+                a0={token0?.address || ''}
+                a1={token1?.address || ''}
                 margin={true}
                 size={20}
               />
-              <Text fontWeight={500} fontSize={20}>
+              <Text fontSize={20} fontWeight={500}>
                 {token0?.symbol}/{token1?.symbol}
               </Text>
             </RowFixed>
             <RowFixed>
               {showMore ? (
-                <ChevronUp size="20" style={{ marginLeft: "10px" }} />
+                <ChevronUp size="20" style={{ marginLeft: '10px' }} />
               ) : (
-                <ChevronDown size="20" style={{ marginLeft: "10px" }} />
+                <ChevronDown size="20" style={{ marginLeft: '10px' }} />
               )}
             </RowFixed>
           </FixedHeightRow>
@@ -195,19 +167,19 @@ function PositionCard({
                 </RowFixed>
                 {token0Deposited ? (
                   <RowFixed>
-                    <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                    <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                       {token0Deposited?.toSignificant(6)}
                     </Text>
                     {!minimal && (
                       <TokenLogo
-                        size="20px"
-                        style={{ marginLeft: "8px" }}
                         address={token0?.address}
+                        size="20px"
+                        style={{ marginLeft: '8px' }}
                       />
                     )}
                   </RowFixed>
                 ) : (
-                  "-"
+                  '-'
                 )}
               </FixedHeightRow>
 
@@ -219,19 +191,19 @@ function PositionCard({
                 </RowFixed>
                 {token1Deposited ? (
                   <RowFixed>
-                    <Text fontSize={16} fontWeight={500} marginLeft={"6px"}>
+                    <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                       {token1Deposited?.toSignificant(6)}
                     </Text>
                     {!minimal && (
                       <TokenLogo
-                        size="20px"
-                        style={{ marginLeft: "8px" }}
                         address={token1?.address}
+                        size="20px"
+                        style={{ marginLeft: '8px' }}
                       />
                     )}
                   </RowFixed>
                 ) : (
-                  "-"
+                  '-'
                 )}
               </FixedHeightRow>
               {!minimal && (
@@ -240,7 +212,7 @@ function PositionCard({
                     Your pool tokens:
                   </Text>
                   <Text fontSize={16} fontWeight={500}>
-                    {userPoolBalance ? userPoolBalance.toSignificant(4) : "-"}
+                    {userPoolBalance ? userPoolBalance.toSignificant(4) : '-'}
                   </Text>
                 </FixedHeightRow>
               )}
@@ -250,38 +222,30 @@ function PositionCard({
                     Your pool share
                   </Text>
                   <Text fontSize={16} fontWeight={500}>
-                    {poolTokenPercentage
-                      ? poolTokenPercentage.toFixed(2) + "%"
-                      : "-"}
+                    {poolTokenPercentage ? poolTokenPercentage.toFixed(2) + '%' : '-'}
                   </Text>
                 </FixedHeightRow>
               )}
 
-              <AutoRow justify="center" marginTop={"10px"}>
-                <ExternalLink
-                  href={`https://uniswap.info/pair/${pair?.liquidityToken.address}`}
-                >
+              <AutoRow justify="center" marginTop={'10px'}>
+                <ExternalLink href={`https://uniswap.info/pair/${pair?.liquidityToken.address}`}>
                   View pool information ↗
                 </ExternalLink>
               </AutoRow>
               <RowBetween marginTop="10px">
                 <ButtonSecondary
-                  width="48%"
                   onClick={() => {
-                    history.push(
-                      "/add/" + token0?.address + "-" + token1?.address,
-                    );
+                    history.push('/add/' + token0?.address + '-' + token1?.address)
                   }}
+                  width="48%"
                 >
                   Add
                 </ButtonSecondary>
                 <ButtonSecondary
-                  width="48%"
                   onClick={() => {
-                    history.push(
-                      "/remove/" + token0?.address + "-" + token1?.address,
-                    );
+                    history.push('/remove/' + token0?.address + '-' + token1?.address)
                   }}
+                  width="48%"
                 >
                   Remove
                 </ButtonSecondary>
@@ -290,7 +254,7 @@ function PositionCard({
           )}
         </AutoColumn>
       </HoverCard>
-    );
+    )
 }
 
-export default withRouter(PositionCard);
+export default withRouter(PositionCard)

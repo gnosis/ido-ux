@@ -1,11 +1,12 @@
-import React from "react";
-import styled from "styled-components";
-import { escapeRegExp } from "../../utils";
+import React from 'react'
+import styled from 'styled-components'
+
+import { escapeRegExp } from '../../utils'
 
 const StyledInput = styled.input<{
-  error?: boolean;
-  fontSize?: string;
-  align?: string;
+  error?: boolean
+  fontSize?: string
+  align?: string
 }>`
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
   width: 0;
@@ -15,7 +16,7 @@ const StyledInput = styled.input<{
   border: none;
   flex: 1 1 auto;
   background-color: ${({ theme }) => theme.bg1};
-  font-size: ${({ fontSize }) => fontSize ?? "24px"};
+  font-size: ${({ fontSize }) => fontSize ?? '24px'};
   text-align: ${({ align }) => align && align};
   white-space: nowrap;
   overflow: hidden;
@@ -27,7 +28,7 @@ const StyledInput = styled.input<{
     -webkit-appearance: none;
   }
 
-  [type="number"] {
+  [type='number'] {
     -moz-appearance: textfield;
   }
 
@@ -39,52 +40,52 @@ const StyledInput = styled.input<{
   ::placeholder {
     color: ${({ theme }) => theme.text4};
   }
-`;
+`
 
-const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`); // match escaped "." characters via in a non-capturing group
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
 export const Input = React.memo(function InnerInput({
-  value,
   onUserSellAmountInput,
   placeholder,
+  value,
   ...rest
 }: {
-  value: string | number;
-  onUserSellAmountInput: (string) => void;
-  error?: boolean;
-  fontSize?: string;
-  align?: "right" | "left";
-} & Omit<React.HTMLProps<HTMLInputElement>, "ref" | "onChange" | "as">) {
+  value: string | number
+  onUserSellAmountInput: (string) => void
+  error?: boolean
+  fontSize?: string
+  align?: 'right' | 'left'
+} & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const enforcer = (nextUserInput: string) => {
-    if (nextUserInput === "" || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onUserSellAmountInput(nextUserInput);
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      onUserSellAmountInput(nextUserInput)
     }
-  };
+  }
 
   return (
     <StyledInput
       {...rest}
-      value={value}
-      onChange={(event) => {
-        // replace commas with periods, because uniswap exclusively uses period as the decimal separator
-        enforcer(event.target.value.replace(/,/g, "."));
-      }}
-      // universal input options
-      inputMode="decimal"
-      title="Token Amount"
       autoComplete="off"
       autoCorrect="off"
-      // text-specific options
-      type="text"
-      pattern="^[0-9]*[.,]?[0-9]*$"
-      placeholder={placeholder || "0.0"}
-      minLength={1}
+      // universal input options
+      inputMode="decimal"
       maxLength={79}
+      minLength={1}
+      onChange={(event) => {
+        // replace commas with periods, because uniswap exclusively uses period as the decimal separator
+        enforcer(event.target.value.replace(/,/g, '.'))
+      }}
+      // text-specific options
+      pattern="^[0-9]*[.,]?[0-9]*$"
+      placeholder={placeholder || '0.0'}
       spellCheck="false"
+      title="Token Amount"
+      type="text"
+      value={value}
     />
-  );
-});
+  )
+})
 
-export default Input;
+export default Input
 
 // const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group

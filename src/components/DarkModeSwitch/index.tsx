@@ -1,20 +1,15 @@
-import React from "react";
-import { Sun, Moon } from "react-feather";
-import { useDarkModeManager } from "../../state/user/hooks";
+import React from 'react'
+import { Moon, Sun } from 'react-feather'
 
-import { ButtonSecondary } from "../Button";
+import { useDarkModeManager } from '../../state/user/hooks'
+import { ButtonSecondary } from '../Button'
 
 export default function DarkModeSwitch() {
-  const [darkMode, toggleDarkMode] = useDarkModeManager();
+  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   return (
-    <ButtonSecondary
-      onClick={toggleDarkMode}
-      p="8px 12px"
-      ml="0.5rem"
-      width="min-content"
-    >
+    <ButtonSecondary ml="0.5rem" onClick={toggleDarkMode} p="8px 12px" width="min-content">
       {darkMode ? <Sun size={16} /> : <Moon size={16} />}
     </ButtonSecondary>
-  );
+  )
 }
