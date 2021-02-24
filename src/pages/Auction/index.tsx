@@ -7,20 +7,20 @@ import AuctionHeader from '../../components/AuctionHeader'
 import Claimer from '../../components/Claimer'
 import OrderDisplayDropdown from '../../components/OrderDropdown'
 import OrderPlacement from '../../components/OrderPlacement'
+import { OrderBookBtn } from '../../components/OrderbookBtn'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import {
   AuctionState,
   useCurrentUserOrders,
   useDefaultsFromURLSearch,
+  useDerivedAuctionInfo,
   useDerivedAuctionState,
   useSwapState,
 } from '../../state/orderPlacement/hooks'
 import { useOrderbookDataCallback } from '../../state/orderbook/hooks'
 import { useOrderState } from '../../state/orders/hooks'
 import { OrderState } from '../../state/orders/reducer'
-import ClaimerBody from '../ClaimerBody'
-import OrderBody from '../OrderBody'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
@@ -53,6 +53,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
   const orders: OrderState | undefined = useOrderState()
   const { auctionId } = useSwapState()
   const url = window.location.href
+  const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
 
   useDefaultsFromURLSearch(search)
   useCurrentUserOrders()
@@ -66,18 +67,14 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
+
       <AuctionHeader />
 
       {(auctionState === AuctionState.ORDER_PLACING ||
-        auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-        <OrderBody>
-          <OrderPlacement />
-        </OrderBody>
-      )}
-      {auctionState === AuctionState.CLAIMING && (
-        <ClaimerBody>
-          <Claimer />
-        </ClaimerBody>
+        auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
+      {auctionState === AuctionState.CLAIMING && <Claimer />}
+      {auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED && (
+        <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
       )}
       {(auctionState === undefined || auctionState === AuctionState.NOT_YET_STARTED) && (
         <>Auction not started yet.</>
