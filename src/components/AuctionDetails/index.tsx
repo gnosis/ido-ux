@@ -99,9 +99,7 @@ export default function AuctionDetails() {
   )
 
   const clearingPriceInfo = useClearingPriceInfo()
-
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
 
   const clearingPriceDisplay = useMemo(() => {
