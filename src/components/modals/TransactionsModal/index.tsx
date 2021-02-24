@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { ReactComponent as Close } from '../../../assets/images/x.svg'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import { TransactionDetails } from '../../../state/transactions/reducer'
-import Transaction from '../../auction/AccountDetails/Transaction'
+import Transaction from '../../AccountDetails/Transaction'
 import Modal from '../Modal'
 
 const CloseIcon = styled.div`

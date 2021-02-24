@@ -2,11 +2,11 @@ import React from 'react'
 import { Check, Triangle } from 'react-feather'
 import styled from 'styled-components'
 
-import Circle from '../../../assets/images/circle.svg'
-import { useActiveWeb3React } from '../../../hooks'
-import { useAllTransactions } from '../../../state/transactions/hooks'
-import { ExternalLink, Spinner } from '../../../theme'
-import { getEtherscanLink } from '../../../utils'
+import Circle from '../../assets/images/circle.svg'
+import { useActiveWeb3React } from '../../hooks'
+import { useAllTransactions } from '../../state/transactions/hooks'
+import { ExternalLink, Spinner } from '../../theme'
+import { getEtherscanLink } from '../../utils'
 
 const TransactionWrapper = styled.div`
   margin-top: 0.75rem;

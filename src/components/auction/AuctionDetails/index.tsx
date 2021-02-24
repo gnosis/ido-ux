@@ -1,29 +1,28 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-import { useActiveWeb3React } from '../../hooks'
-import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
+import { useActiveWeb3React } from '../../../hooks'
+import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import {
   AuctionState,
   orderToPrice,
   orderToSellOrder,
   useDerivedAuctionInfo,
   useDerivedAuctionState,
-} from '../../state/orderPlacement/hooks'
-import { getEtherscanLink, getTokenDisplay } from '../../utils'
-import TokenLogo from '../TokenLogo'
-import { KeyValue } from '../common/KeyValue'
-import { Tooltip } from '../common/Tooltip'
-import { ExternalLink } from '../navigation/ExternalLink'
-
-const TIMER_SIZE = '154px'
+} from '../../../state/orderPlacement/hooks'
+import { getEtherscanLink, getTokenDisplay } from '../../../utils'
+import TokenLogo from '../../TokenLogo'
+import { KeyValue } from '../../common/KeyValue'
+import { Tooltip } from '../../common/Tooltip'
+import { ExternalLink } from '../../navigation/ExternalLink'
+import { AuctionTimer } from '../AuctionTimer'
 
 const Wrapper = styled.div`
   align-items: center;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.border};
   display: grid;
-  grid-template-columns: 1fr 3px 1fr ${TIMER_SIZE} 1fr 3px 1fr;
+  grid-template-columns: 1fr 3px 1fr 154px 1fr 3px 1fr;
   margin: 0 0 50px;
   max-width: 100%;
   min-height: 130px;
@@ -42,14 +41,14 @@ const Cell = styled(KeyValue)`
 `
 
 const Break = styled.div`
-  background-color: #e8663d;
+  background-color: ${({ theme }) => theme.primary1};
   border-radius: 3px;
   min-height: 50px;
   width: 3px;
 `
 
 const TimerWrapper = styled.div`
-  max-height: ${TIMER_SIZE};
+  max-height: 130px;
   position: relative;
 `
 
@@ -143,8 +142,9 @@ const AuctionDetails = () => {
           )
         }
       />
-
-      <TimerWrapper>Time</TimerWrapper>
+      <TimerWrapper>
+        <AuctionTimer />
+      </TimerWrapper>
       <Cell
         itemKey={
           <>

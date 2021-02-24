@@ -2,12 +2,11 @@ import React, { useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 
-import AuctionDetails from '../../components/AuctionDetails'
-import AuctionHeader from '../../components/AuctionHeader'
 import Claimer from '../../components/Claimer'
 import OrderDisplayDropdown from '../../components/OrderDropdown'
 import OrderPlacement from '../../components/OrderPlacement'
 import { OrderBookBtn } from '../../components/OrderbookBtn'
+import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import {
@@ -67,9 +66,6 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
-
-      <AuctionHeader />
-
       {(auctionState === AuctionState.ORDER_PLACING ||
         auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
       {auctionState === AuctionState.CLAIMING && <Claimer />}

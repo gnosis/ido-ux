@@ -1,29 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-const CountDownStyled = styled.div`
-  display: flex;
-  flex: 0 1 auto;
-  font-family: var(--font-mono);
-  text-align: right;
-  font-size: 13px;
-  color: ${({ theme }) => `1px solid ${theme.text2}`};
-  letter-spacing: 0;
-  justify-content: center;
-  flex-flow: row wrap;
-  align-items: center;
-  background: none;
-  box-sizing: border-box;
-  position: relative;
-
-  > p {
-    margin: 0 5px 0 0;
-  }
-
-  > strong {
-    color: ${({ theme }) => `1px solid ${theme.text1}`};
-  }
-`
+const CountDownStyled = styled.div``
 
 export function formatSeconds(seconds: number): string {
   const days = Math.floor(seconds / 24 / 60 / 60) % 360
@@ -79,7 +57,7 @@ export default function CountdownTimer({
 
   return timeLeft && timeLeft > 0 ? (
     <CountDownStyled>
-      {showText ? <p>Auction ends in</p> : <></>}
+      {showText ? <>Auction ends in</> : <></>}
       <strong>{formatSeconds(timeLeft)}</strong>
     </CountDownStyled>
   ) : null
