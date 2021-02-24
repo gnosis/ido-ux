@@ -16,18 +16,42 @@ import { KeyValue } from '../common/KeyValue'
 import { Tooltip } from '../common/Tooltip'
 import { ExternalLink } from '../navigation/ExternalLink'
 
+const TIMER_SIZE = '154px'
+
 const Wrapper = styled.div`
   align-items: center;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.border};
   display: grid;
-  grid-template-columns: 1fr 1fr 154px 1fr 1fr;
+  grid-template-columns: 1fr 3px 1fr ${TIMER_SIZE} 1fr 3px 1fr;
   margin: 0 0 50px;
   max-width: 100%;
   min-height: 130px;
 `
 
-const Cell = styled.div``
+const Cell = styled(KeyValue)`
+  padding: 0 10px;
+
+  &:first-child {
+    padding-left: 0;
+  }
+
+  &:last-child {
+    padding-right: 0;
+  }
+`
+
+const Break = styled.div`
+  background-color: #e8663d;
+  border-radius: 3px;
+  min-height: 50px;
+  width: 3px;
+`
+
+const TimerWrapper = styled.div`
+  max-height: ${TIMER_SIZE};
+  position: relative;
+`
 
 const AuctionDetails = () => {
   const { chainId } = useActiveWeb3React()
@@ -84,83 +108,80 @@ const AuctionDetails = () => {
 
   return (
     <Wrapper>
-      <Cell>
-        <KeyValue
-          itemKey={
+      <Cell
+        itemKey={
+          <>
+            <span>{titlePrice}</span>
+            <Tooltip
+              id="auctionPrice"
+              text={
+                '"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled'
+              }
+            />
+          </>
+        }
+        itemValue={clearingPriceDisplay ? clearingPriceDisplay : '-'}
+      />
+
+      <Break />
+      <Cell
+        itemKey={
+          <>
+            <span>Bidding with</span>
+            <Tooltip id="biddingWith" text={'Bidding with tooltip'} />
+          </>
+        }
+        itemValue={
+          biddingToken ? (
             <>
-              <span>{titlePrice}</span>
-              <Tooltip
-                id="auctionPrice"
-                text={
-                  '"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled'
-                }
-              />
+              <TokenLogo address={biddingToken.address} size={'20px'} />
+              <span>{biddingTokenDisplay}</span>
+              <ExternalLink href={biddingTokenAddress} />
             </>
-          }
-          itemValue={clearingPriceDisplay ? clearingPriceDisplay : '-'}
-        />
-      </Cell>
-      <Cell>
-        <KeyValue
-          itemKey={
+          ) : (
+            '-'
+          )
+        }
+      />
+
+      <TimerWrapper>Time</TimerWrapper>
+      <Cell
+        itemKey={
+          <>
+            <span>Total auctioned</span>
+            <Tooltip id="totalAuctioned" text={'Total auctioned tooltip'} />
+          </>
+        }
+        itemValue={
+          auctioningToken ? (
             <>
-              <span>Bidding with</span>
-              <Tooltip id="biddingWith" text={'Bidding with tooltip'} />
+              <TokenLogo address={auctioningToken.address} size={'20px'} />
+              <span>{`${initialAuctionOrder?.sellAmount.toSignificant(
+                2,
+              )} ${auctioningTokenDisplay}`}</span>
+              <ExternalLink href={auctionTokenAddress} />
             </>
-          }
-          itemValue={
-            biddingToken ? (
-              <>
-                <TokenLogo address={biddingToken.address} size={'20px'} />
-                <span>{biddingTokenDisplay}</span>
-                <ExternalLink href={biddingTokenAddress} />
-              </>
-            ) : (
-              '-'
-            )
-          }
-        />
-      </Cell>
-      <Cell>Time</Cell>
-      <Cell>
-        <KeyValue
-          itemKey={
-            <>
-              <span>Total auctioned</span>
-              <Tooltip id="totalAuctioned" text={'Total auctioned tooltip'} />
-            </>
-          }
-          itemValue={
-            auctioningToken ? (
-              <>
-                <TokenLogo address={auctioningToken.address} size={'20px'} />
-                <span>{`${initialAuctionOrder?.sellAmount.toSignificant(
-                  2,
-                )} ${auctioningTokenDisplay}`}</span>
-                <ExternalLink href={auctionTokenAddress} />
-              </>
-            ) : (
-              '-'
-            )
-          }
-        />
-      </Cell>
-      <Cell>
-        <KeyValue
-          itemKey={
-            <>
-              <span>Min Sell Price</span>
-              <Tooltip id="minSellPrice" text={'Min Sell Price tooltip'} />
-            </>
-          }
-          itemValue={
-            initialPrice && auctioningTokenDisplay && auctioningTokenDisplay
-              ? `${initialPrice ? initialPrice?.toSignificant(2) : ' - '}
+          ) : (
+            '-'
+          )
+        }
+      />
+
+      <Break />
+      <Cell
+        itemKey={
+          <>
+            <span>Min Sell Price</span>
+            <Tooltip id="minSellPrice" text={'Min Sell Price tooltip'} />
+          </>
+        }
+        itemValue={
+          initialPrice && auctioningTokenDisplay && auctioningTokenDisplay
+            ? `${initialPrice ? initialPrice?.toSignificant(2) : ' - '}
           ${biddingTokenDisplay}/${auctioningTokenDisplay}`
-              : '-'
-          }
-        />
-      </Cell>
+            : '-'
+        }
+      />
     </Wrapper>
   )
 }
