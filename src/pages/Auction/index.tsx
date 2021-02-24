@@ -4,7 +4,6 @@ import styled from 'styled-components'
 
 import AuctionDetails from '../../components/AuctionDetails'
 import AuctionHeader from '../../components/AuctionHeader'
-import { ButtonLight } from '../../components/Button'
 import Claimer from '../../components/Claimer'
 import OrderDisplayDropdown from '../../components/OrderDropdown'
 import OrderPlacement from '../../components/OrderPlacement'
@@ -19,7 +18,6 @@ import {
 import { useOrderbookDataCallback } from '../../state/orderbook/hooks'
 import { useOrderState } from '../../state/orders/hooks'
 import { OrderState } from '../../state/orders/reducer'
-import AppBody from '../AppBody'
 import ClaimerBody from '../ClaimerBody'
 import OrderBody from '../OrderBody'
 
@@ -57,7 +55,7 @@ function renderAuctionElements({ auctionState }: { auctionState: AuctionState })
       )
 
     default:
-      return <div></div>
+      return null
   }
 }
 
@@ -72,27 +70,18 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
   useOrderbookDataCallback()
 
   return (
-    <AppBody>
-      {!account ? (
-        <div>
-          <h3>GnosisAuction is a platform designed for fair price finding of one-time events.</h3>
-          <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-        </div>
-      ) : (
-        <>
-          <Wrapper>
-            <AuctionHeader />
-            {renderAuctionElements({
-              auctionState,
-            })}
-          </Wrapper>
-          <OrderDisplayDropdown
-            orders={orders.orders}
-            setShowAdvanced={setShowAdvanced}
-            showAdvanced={showAdvanced}
-          />
-        </>
-      )}
-    </AppBody>
+    <>
+      <Wrapper>
+        <AuctionHeader />
+        {renderAuctionElements({
+          auctionState,
+        })}
+      </Wrapper>
+      <OrderDisplayDropdown
+        orders={orders.orders}
+        setShowAdvanced={setShowAdvanced}
+        showAdvanced={showAdvanced}
+      />
+    </>
   )
 }
