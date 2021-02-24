@@ -13,8 +13,8 @@ const Value = styled.div<{ align: string }>`
   font-size: 20px;
   font-weight: 700;
   justify-content: ${(props) => props.align};
-  line-height: 1.3;
-  margin: 0;
+  line-height: 1;
+  margin: 0 0 2px;
 
   > * {
     margin-right: 8px;
@@ -60,10 +60,10 @@ interface Props {
 }
 
 export const KeyValue: React.FC<Props> = (props) => {
-  const { align, itemKey, itemValue } = props
+  const { align, itemKey, itemValue, ...restProps } = props
 
   return (
-    <Wrapper>
+    <Wrapper {...restProps}>
       <Value align={align}>{itemValue}</Value>
       <Key align={align}>{itemKey}</Key>
     </Wrapper>

@@ -52,6 +52,11 @@ const TimerWrapper = styled.div`
   position: relative;
 `
 
+const TooltipStyled = styled(Tooltip)`
+  position: relative;
+  top: -1px;
+`
+
 const AuctionDetails = () => {
   const { chainId } = useActiveWeb3React()
   const {
@@ -111,7 +116,7 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>{titlePrice}</span>
-            <Tooltip
+            <TooltipStyled
               id="auctionPrice"
               text={
                 '"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled'
@@ -121,13 +126,12 @@ const AuctionDetails = () => {
         }
         itemValue={clearingPriceDisplay ? clearingPriceDisplay : '-'}
       />
-
       <Break />
       <Cell
         itemKey={
           <>
             <span>Bidding with</span>
-            <Tooltip id="biddingWith" text={'Bidding with tooltip'} />
+            <TooltipStyled id="biddingWith" text={'Bidding with tooltip'} />
           </>
         }
         itemValue={
@@ -149,7 +153,7 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Total auctioned</span>
-            <Tooltip id="totalAuctioned" text={'Total auctioned tooltip'} />
+            <TooltipStyled id="totalAuctioned" text={'Total auctioned tooltip'} />
           </>
         }
         itemValue={
@@ -172,7 +176,7 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Min Sell Price</span>
-            <Tooltip id="minSellPrice" text={'Min Sell Price tooltip'} />
+            <TooltipStyled id="minSellPrice" text={'Min Sell Price tooltip'} />
           </>
         }
         itemValue={

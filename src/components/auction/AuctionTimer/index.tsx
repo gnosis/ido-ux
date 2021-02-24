@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 import {
   AuctionState,
@@ -26,9 +26,65 @@ const Center = styled.div`
   border-radius: 50%;
   box-shadow: 0 0 6px 0 ${({ theme }) => theme.mainBackground};
   display: flex;
+  flex-flow: column;
   height: 126px;
   justify-content: center;
   width: 126px;
+`
+
+const Time = styled.div`
+  color: ${({ theme }) => theme.primary1};
+  flex-shrink: 1;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  margin-bottom: -2px;
+  min-width: 0;
+  text-align: center;
+  white-space: nowrap;
+`
+
+const Text = styled.div`
+  color: ${({ theme }) => theme.primary1};
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.8;
+  text-align: center;
+  text-transform: uppercase;
+`
+
+const TextBig = styled.div`
+  color: ${({ theme }) => theme.primary1};
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+`
+
+const Blinker = keyframes`
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  50.01% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+`
+
+const Blink = styled.span`
+  animation-direction: alternate;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+  animation-name: ${Blinker};
+  animation-timing-function: linear;
 `
 
 const formatSeconds = (seconds: number): string => {
@@ -70,7 +126,6 @@ const calculateTimeLeft = (auctionEndDate: number) => {
 export const AuctionTimer = () => {
   const { auctionState } = useDerivedAuctionState()
   const { auctionEndDate } = useDerivedAuctionInfo()
-
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(auctionEndDate))
 
   React.useEffect(() => {
@@ -87,22 +142,30 @@ export const AuctionTimer = () => {
   return (
     <Wrapper>
       <Center>
-        {auctionState === undefined && <span>Loading</span>}
-        {auctionState === AuctionState.NOT_YET_STARTED && <span>Auction not yet started</span>}
+        {auctionState === undefined && <TextBig>Loading</TextBig>}
+        {auctionState === AuctionState.NOT_YET_STARTED && <TextBig>Auction not started</TextBig>}
         {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
           auctionState === AuctionState.ORDER_PLACING) && (
-          <div>
-            {timeLeft && timeLeft > -1 ? <strong>{formatSeconds(timeLeft)}</strong> : '-'}
-            <div>Ends in</div>
-          </div>
+          <>
+            <Time>
+              {timeLeft && timeLeft > -1 ? (
+                formatSeconds(timeLeft)
+              ) : (
+                <>
+                  --<Blink>:</Blink>--<Blink>:</Blink>--
+                </>
+              )}
+            </Time>
+            <Text>Ends in</Text>
+          </>
         )}
-        {auctionState === AuctionState.PRICE_SUBMISSION && <span>Closed</span>}
+        {auctionState === AuctionState.PRICE_SUBMISSION && <TextBig>Auction Closed</TextBig>}
         {auctionState !== AuctionState.NOT_YET_STARTED &&
           auctionState !== AuctionState.ORDER_PLACING_AND_CANCELING &&
           auctionState !== AuctionState.ORDER_PLACING &&
           auctionState !== AuctionState.PRICE_SUBMISSION &&
           auctionState !== AuctionState.CLAIMING &&
-          auctionState !== undefined && <span>Settled</span>}
+          auctionState !== undefined && <TextBig>Auction Settled</TextBig>}
       </Center>
     </Wrapper>
   )
