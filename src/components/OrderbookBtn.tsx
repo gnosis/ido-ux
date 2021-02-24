@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
+import { Token } from 'uniswap-xdai-sdk'
 
-import { Token } from '@uniswap/sdk'
-
+// hooks
 import { useActiveWeb3React } from '../hooks'
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { useOrderbookState } from '../state/orderbook/hooks'

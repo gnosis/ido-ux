@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
+import { Token } from 'uniswap-xdai-sdk'
 
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
-import { Token } from '@uniswap/sdk'
 
 export interface OrderBookChartProps {
   /**

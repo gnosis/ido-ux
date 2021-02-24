@@ -1,19 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { PricePoint } from '../api/AdditionalServicesApi'
 import { additionalServiceApi } from './../api'
-
-export interface AuctionInfo {
-  auctionId: number
-  order: PricePoint
-  symbolAuctioningToken: string
-  symbolBiddingToken: string
-  addressAuctioningToken: string
-  addressBiddingToken: string
-  decimalsAuctioningToken: number
-  decimalsBiddingToken: number
-  endTimeTimestamp: number
-}
+import { AuctionInfo } from './useAllAuctionInfos'
 
 export function useInterestingAuctionInfo(
   numberOfItems: number,

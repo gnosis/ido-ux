@@ -1,10 +1,8 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { AbstractConnector } from '@web3-react/abstract-connector'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { ConnectorUpdate } from '@web3-react/types'
 import invariant from 'tiny-invariant'
 
-interface NetworkConnectorArguments {
+export interface NetworkConnectorArguments {
   urls: { [chainId: number]: string }
   defaultChainId?: number
 }

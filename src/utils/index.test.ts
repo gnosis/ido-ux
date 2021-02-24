@@ -1,6 +1,7 @@
+import { ChainId, JSBI, Percent, Token, TokenAmount } from 'uniswap-xdai-sdk'
+
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
-import { ChainId, JSBI, Percent, Token, TokenAmount } from '@uniswap/sdk'
 
 import {
   basisPointsToPercent,

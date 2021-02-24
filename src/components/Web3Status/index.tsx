@@ -12,9 +12,11 @@ import PortisIcon from '../../assets/images/portisIcon.png'
 import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import LightCircle from '../../assets/svg/lightcircle.svg'
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../../connectors'
-import { NetworkContextName } from '../../constants'
+import { NetworkContextName, chainNames } from '../../constants'
+import { useActiveWeb3React } from '../../hooks'
 import useENSName from '../../hooks/useENSName'
 import { useWalletModalToggle } from '../../state/application/hooks'
+import { useSwapState } from '../../state/orderPlacement/hooks'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { Spinner } from '../../theme'
@@ -132,6 +134,18 @@ function recentTransactionsOnly(a: TransactionDetails) {
   return new Date().getTime() - a.addedTime < 86_400_000
 }
 
+export function useNetworkCheck(): { errorWrongNetwork: string | undefined } {
+  const { chainId: injectedChainId } = useActiveWeb3React()
+  const { chainId } = useSwapState()
+  const errorWrongNetwork =
+    injectedChainId == undefined || chainId == injectedChainId || chainId == 0
+      ? undefined
+      : `Please make sure you connect to the network: ${chainNames[chainId]} in your wallet`
+  return {
+    errorWrongNetwork,
+  }
+}
+
 export default function Web3Status() {
   const { t } = useTranslation()
   const { account, active, connector, error } = useWeb3React()
@@ -153,6 +167,7 @@ export default function Web3Status() {
 
   const toggleWalletModal = useWalletModalToggle()
 
+  const { errorWrongNetwork } = useNetworkCheck()
   // handle the logo we want to show with the account
   function getStatusIcon() {
     if (connector === injected) {
@@ -185,7 +200,7 @@ export default function Web3Status() {
   }
 
   function getWeb3Status() {
-    if (account) {
+    if (account && !errorWrongNetwork) {
       return (
         <Web3StatusConnected
           id="web3-status-connected"
@@ -203,11 +218,15 @@ export default function Web3Status() {
           {!hasPendingTransactions && getStatusIcon()}
         </Web3StatusConnected>
       )
-    } else if (error) {
+    } else if (error || errorWrongNetwork) {
       return (
         <Web3StatusError onClick={toggleWalletModal}>
           <NetworkIcon />
-          <Text>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error'}</Text>
+          <Text>
+            {error instanceof UnsupportedChainIdError || errorWrongNetwork
+              ? 'Wrong Network'
+              : 'Error'}
+          </Text>
         </Web3StatusError>
       )
     } else {

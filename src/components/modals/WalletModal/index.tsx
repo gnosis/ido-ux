@@ -15,6 +15,7 @@ import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
 import AccountDetails from '../../AccountDetails'
+import { useNetworkCheck } from '../../Web3Status'
 import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
@@ -138,6 +139,8 @@ export default function WalletModal({
 
   const previousAccount = usePrevious(account)
 
+  const { errorWrongNetwork } = useNetworkCheck()
+
   // close on connection, when logged out before
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
@@ -172,11 +175,21 @@ export default function WalletModal({
   useEffect(() => {
     if (
       walletModalOpen &&
-      ((active && !activePrevious) || (connector && connector !== connectorPrevious && !error))
+      ((active && !activePrevious) ||
+        (connector && connector !== connectorPrevious && !error && !errorWrongNetwork))
     ) {
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }
-  }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
+  }, [
+    setWalletView,
+    active,
+    error,
+    connector,
+    errorWrongNetwork,
+    walletModalOpen,
+    activePrevious,
+    connectorPrevious,
+  ])
 
   const tryActivation = async (connector) => {
     let name = ''
@@ -228,7 +241,7 @@ export default function WalletModal({
               active={option.connector && option.connector === connector}
               color={option.color}
               header={option.name}
-              icon={require('../../../assets/images/' + option.iconName)}
+              icon={option.icon}
               id={`connect-${key}`}
               key={key}
               link={option.href}
@@ -280,11 +293,7 @@ export default function WalletModal({
             active={option.connector === connector}
             color={option.color}
             header={option.name}
-            icon={
-              option.iconName == 'metamask.png'
-                ? MetamaskIcon //can not handle dynamically generated requires, hence we use hardcorded. Need to find different solution for others wallets
-                : require('../../../assets/images/' + option.iconName)
-            }
+            icon={option.icon}
             id={`connect-${key}`}
             key={key}
             link={option.href}
@@ -301,18 +310,22 @@ export default function WalletModal({
   }
 
   function getModalContent() {
-    if (error) {
+    if (error || errorWrongNetwork) {
       return (
         <UpperSection>
           <CloseIcon onClick={toggleWalletModal}>
             <CloseColor />
           </CloseIcon>
           <HeaderRow>
-            {error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error connecting'}
+            {error instanceof UnsupportedChainIdError || errorWrongNetwork
+              ? 'Wrong Network'
+              : 'Error connecting'}
           </HeaderRow>
           <ContentWrapper>
             {error instanceof UnsupportedChainIdError ? (
               <h5>Please connect to the appropriate Ethereum network.</h5>
+            ) : errorWrongNetwork ? (
+              errorWrongNetwork
             ) : (
               'Error connecting. Try refreshing the page.'
             )}

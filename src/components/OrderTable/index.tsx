@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { Fraction } from 'uniswap-xdai-sdk'
 
-import { Fraction } from '@uniswap/sdk'
 import { Text } from 'rebass'
 
 import { ClearingPriceAndVolumeData } from '../../api/AdditionalServicesApi'

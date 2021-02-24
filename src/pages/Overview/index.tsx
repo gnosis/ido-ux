@@ -6,6 +6,7 @@ import DatatablePage from '../../components/AllAuctionsTable'
 import AuctionInfoCard from '../../components/AuctionInfoCard'
 import { ButtonLight } from '../../components/Button'
 import DoubleLogo from '../../components/DoubleLogo'
+import { chainNames } from '../../constants'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
 
@@ -69,21 +70,21 @@ const TitleText = styled.div`
 `
 
 export default function Overview() {
-  // eslint-disable-next-line no-warning-comments
-  // Todo: think about how to get a network id without connecting to metamak
+  // Todo: think about how to get a network id without connection to metamaks
   const chainId = 4
   const highlightedAuctions = useInterestingAuctionInfo(4, chainId)
-  const allAuctions = useAllAuctionInfo(4, chainId)
+  const allAuctions = useAllAuctionInfo()
   const history = useHistory()
 
-  function handleClick(auctionId: number) {
-    history.push(`/auction?auctionId=${auctionId}`)
+  function handleClick(auctionId: number, chainId: number) {
+    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}`)
   }
   if (!highlightedAuctions || !allAuctions) return null
   const tableData = []
   allAuctions.forEach((item) => {
     tableData.push({
       auctionId: item.auctionId,
+      chainId: chainNames[Number(item.chainId)],
       selling: item.symbolAuctioningToken,
       buying: item.symbolBiddingToken,
       symbol: (
@@ -97,7 +98,7 @@ export default function Overview() {
       date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),
       status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       link: (
-        <ViewBtn onClick={() => handleClick(item.auctionId)} type="button">
+        <ViewBtn onClick={() => handleClick(item.auctionId, Number(item.chainId))} type="button">
           {' '}
           view{' '}
         </ViewBtn>

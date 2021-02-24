@@ -1,6 +1,6 @@
 import React from 'react'
+import { Token } from 'uniswap-xdai-sdk'
 
-import { Token } from '@uniswap/sdk'
 import { Text } from 'rebass'
 
 import { ButtonError } from '../Button'

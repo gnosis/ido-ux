@@ -1,6 +1,5 @@
 import { useEffect, useMemo } from 'react'
-
-import { ChainId, Token, WETH } from '@uniswap/sdk'
+import { ChainId, Token, WETH } from 'uniswap-xdai-sdk'
 
 import { ALL_TOKENS } from '../constants/tokens'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'

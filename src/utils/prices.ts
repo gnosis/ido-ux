@@ -1,5 +1,6 @@
+import { Token } from 'uniswap-xdai-sdk'
+
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token } from '@uniswap/sdk'
 
 import { tryParseAmount } from '../state/orderPlacement/hooks'
 

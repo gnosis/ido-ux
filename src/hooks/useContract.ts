@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
+import { ChainId } from 'uniswap-xdai-sdk'
 
 import { Contract } from '@ethersproject/contracts'
-import { ChainId } from '@uniswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import ERC20_ABI from '../constants/abis/erc20.json'

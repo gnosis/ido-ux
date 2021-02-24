@@ -1,6 +1,5 @@
 import React from 'react'
-
-import { Token } from '@uniswap/sdk'
+import { Token } from 'uniswap-xdai-sdk'
 
 import { OrderBookData, PricePoint } from '../api/AdditionalServicesApi'
 import { useOrderbookState } from '../state/orderbook/hooks'

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { ChainId, Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
-import { ChainId, Fraction, TokenAmount } from '@uniswap/sdk'
 import { Text } from 'rebass'
 
 import { ButtonLight, ButtonPrimary } from '../../components/Button'

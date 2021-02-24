@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-
-import { WETH } from '@uniswap/sdk'
+import { WETH } from 'uniswap-xdai-sdk'
 
 import EthereumLogo from '../../assets/images/ethereum-logo.png'
 import { useActiveWeb3React } from '../../hooks'
@@ -59,6 +58,15 @@ const TokenLogo = ({
     address.toLowerCase() === '0xd0dab4e640d95e9e8a47545598c33e31bdb53c7c'.toLowerCase()
   ) {
     address = '0x6810e776880C02933D47DB1b9fc05908e5386b96'
+  }
+
+  // mock rinkeby STAKE on xDAI
+  if (
+    chainId === 100 &&
+    address &&
+    address.toLowerCase() === '0xb7D311E2Eb55F2f68a9440da38e7989210b9A05e'.toLowerCase()
+  ) {
+    address = '0x0Ae055097C6d159879521C384F1D2123D1f195e6'
   }
 
   let path = ''
