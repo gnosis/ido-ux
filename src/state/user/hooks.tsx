@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
+import { ChainId, JSBI, Pair, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
-import { ChainId, JSBI, Pair, Token, TokenAmount, WETH } from '@uniswap/sdk'
 import flatMap from 'lodash.flatmap'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 

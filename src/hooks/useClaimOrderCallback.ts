@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { ChainId, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, TokenAmount } from '@uniswap/sdk'
 
 import { useDerivedAuctionInfo, useSwapState } from '../state/orderPlacement/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'

@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
-
-import { ChainId, JSBI, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { ChainId, JSBI, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'

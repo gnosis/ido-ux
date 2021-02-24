@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from 'react'
+import { ChainId, Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
-import { ChainId, Fraction, JSBI, Token, TokenAmount } from '@uniswap/sdk'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { additionalServiceApi } from '../../api'
@@ -253,9 +253,9 @@ export function useDerivedAuctionInfo(): {
   initialPrice: Fraction | undefined
   minBiddingAmountPerOrder: string | undefined
 } {
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
-  const { auctionId, sellAmount } = useSwapState()
+  const { auctionId, chainId, sellAmount } = useSwapState()
 
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(auctionId)
 
@@ -319,9 +319,7 @@ export function useDerivedAuctionInfo(): {
 export function useDerivedAuctionState(): {
   auctionState: AuctionState | undefined
 } {
-  const { chainId } = useActiveWeb3React()
-
-  const { auctionId } = useSwapState()
+  const { auctionId, chainId } = useSwapState()
 
   const easyAuctionInstance: Contract | null = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],

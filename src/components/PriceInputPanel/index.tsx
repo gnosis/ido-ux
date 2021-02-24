@@ -1,8 +1,7 @@
 import { darken } from 'polished'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-
-import { Pair, Token } from '@uniswap/sdk'
+import { Pair, Token } from 'uniswap-xdai-sdk'
 
 import { TYPE } from '../../theme'
 import DoubleLogo from '../DoubleLogo'

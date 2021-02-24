@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import styled from 'styled-components'
+import { JSBI, Pair, Percent } from 'uniswap-xdai-sdk'
 
-import { JSBI, Pair, Percent } from '@uniswap/sdk'
 import { Text } from 'rebass'
 
 import { useTotalSupply } from '../../data/TotalSupply'

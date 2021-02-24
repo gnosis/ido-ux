@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
+import { ChainId, Fraction, Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, Fraction, Token } from '@uniswap/sdk'
 
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'

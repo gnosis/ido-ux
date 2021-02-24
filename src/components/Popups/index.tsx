@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from 'react'
 import { X } from 'react-feather'
 import styled, { ThemeContext } from 'styled-components'
+import { ChainId, Pair, Token } from 'uniswap-xdai-sdk'
 
-import { ChainId, Pair, Token } from '@uniswap/sdk'
 import { Text } from 'rebass'
 import { useMediaLayout } from 'use-media'
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
-import { Token } from '@uniswap/sdk'
+import { Token } from 'uniswap-xdai-sdk'
 
 import {
   AuctionState,

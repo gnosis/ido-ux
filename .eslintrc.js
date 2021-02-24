@@ -79,7 +79,7 @@ module.exports = {
           {
             group: 'external',
             pattern:
-              '{rebass/styled-components,polished,react-feather,react-router,@walletconnect/web3-provider,@testing-library/dom,@testing-library/user-event,@testing-library/react,styled-components,ethers/utils,react-dom,react-router-dom,ethers,ethers/providers,web3-utils}',
+              '{uniswap-xdai-sdk,rebass/styled-components,polished,react-feather,react-router,@walletconnect/web3-provider,@testing-library/dom,@testing-library/user-event,@testing-library/react,styled-components,ethers/utils,react-dom,react-router-dom,ethers,ethers/providers,web3-utils}',
             position: 'before',
           },
         ],

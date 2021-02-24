@@ -1,8 +1,8 @@
 import React, { useContext, useMemo } from 'react'
 import { ThemeContext } from 'styled-components'
+import { Fraction, Percent, Token, TokenAmount, Trade } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
-import { Fraction, Percent, Token, TokenAmount, Trade } from '@uniswap/sdk'
 import { Text } from 'rebass'
 
 import { getTokenDisplay } from '../../utils'

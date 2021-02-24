@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
-
-import { Token, TokenAmount } from '@uniswap/sdk'
+import { Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { useTokenContract } from '../hooks/useContract'
 import { useSingleCallResult } from '../state/multicall/hooks'

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { ThemeContext } from 'styled-components'
+import { Percent } from 'uniswap-xdai-sdk'
 
-import { Percent } from '@uniswap/sdk'
 import { Text } from 'rebass'
 
 import { YellowCard } from '../Card'

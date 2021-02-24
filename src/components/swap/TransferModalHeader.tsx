@@ -1,6 +1,6 @@
 import React from 'react'
+import { TokenAmount } from 'uniswap-xdai-sdk'
 
-import { TokenAmount } from '@uniswap/sdk'
 import { Text } from 'rebass'
 
 import { useActiveWeb3React } from '../../hooks'

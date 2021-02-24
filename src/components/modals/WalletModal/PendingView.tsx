@@ -132,7 +132,7 @@ export default function PendingView({
               clickable={false}
               color={option.color}
               header={option.name}
-              icon={require('../../../assets/images/' + option.iconName)}
+              icon={option.icon}
               id={`connect-${key}`}
               key={key}
               subheader={option.description}

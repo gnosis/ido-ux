@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
+import { ChainId, Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { ChainId, Token } from '@uniswap/sdk'
 
 import { EASY_AUCTION_NETWORKS } from '../constants'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
@@ -83,7 +83,7 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [previousOrder],
-          '0x',
+          '0x', // Todo: Depending on the allowList interface, different bytes values need to be sent
         ]
         value = null
       }

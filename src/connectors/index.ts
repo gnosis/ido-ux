@@ -4,28 +4,35 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import { FortmaticConnector } from './Fortmatic'
-import { NetworkConnector } from './NetworkConnector'
+import { NetworkConnector, NetworkConnectorArguments } from './NetworkConnector'
 
 const POLLING_INTERVAL = 10000
-const NETWORK_URL = process.env.REACT_APP_NETWORK_URL
+const NETWORK_URL_RINKEBY = process.env.REACT_APP_NETWORK_URL_RINKEBY
+const NETWORK_URL_MAINNET = process.env.REACT_APP_NETWORK_URL_MAINNET
+const NETWORK_URL_XDAI = process.env.REACT_APP_NETWORK_URL_XDAI
+
 const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
 const PORTIS_ID = process.env.REACT_APP_PORTIS_ID
 
-if (typeof NETWORK_URL === 'undefined') {
-  throw new Error(`REACT_APP_NETWORK_URL must be a defined environment variable`)
+const networkConnectorArguments: NetworkConnectorArguments = {
+  urls: [],
+  defaultChainId: 1,
 }
+if (NETWORK_URL_MAINNET) networkConnectorArguments.urls[Number(1)] = NETWORK_URL_MAINNET
+if (NETWORK_URL_RINKEBY) networkConnectorArguments.urls[Number(4)] = NETWORK_URL_RINKEBY
+if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI
 
-export const network = new NetworkConnector({
-  urls: { [Number(process.env.REACT_APP_CHAIN_ID)]: NETWORK_URL },
-})
+export const network = new NetworkConnector(networkConnectorArguments)
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 5777],
+  supportedChainIds: [1, 3, 4, 5, 42, 100, 5777],
 })
 
 // mainnet only
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1: NETWORK_URL },
+  rpc: {
+    4: NETWORK_URL_RINKEBY,
+  },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: false,
   pollingInterval: POLLING_INTERVAL,
@@ -45,7 +52,7 @@ export const portis = new PortisConnector({
 
 // mainnet only
 export const walletlink = new WalletLinkConnector({
-  url: NETWORK_URL,
+  url: NETWORK_URL_MAINNET,
   appName: 'Uniswap',
   appLogoUrl:
     'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg',

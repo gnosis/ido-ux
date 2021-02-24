@@ -1,8 +1,8 @@
 import { darken } from 'polished'
 import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
+import { Pair, Token } from 'uniswap-xdai-sdk'
 
-import { Pair, Token } from '@uniswap/sdk'
 import { useTranslation } from 'react-i18next'
 
 import { useActiveWeb3React } from '../../hooks'

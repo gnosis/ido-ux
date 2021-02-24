@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
+import { ChainId, JSBI, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { ChainId, JSBI, TokenAmount, WETH } from '@uniswap/sdk'
 
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
