@@ -15,30 +15,35 @@ import {
 import { getTokenDisplay } from '../../utils'
 import ClaimConfirmationModal from '../ClaimConfirmationModal'
 import TokenLogo from '../TokenLogo'
-import { BottomGrouping, Wrapper } from '../swap/styleds'
+import { BottomGrouping } from '../swap/styleds'
 
-export const AuctionTokenWrapper = styled.div`
-  width: 100%;
+const Wrapper = styled.div`
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.border};
+`
+
+const AuctionTokenWrapper = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-flow: column wrap;
   justify-content: center;
-  box-sizing: border-box;
   padding: 0 0 16px;
+  width: 100%;
 `
 
-export const AuctionToken = styled.div`
-  display: flex;
-  padding: 0;
-  margin: 0 0 10px;
-  box-sizing: border-box;
+const AuctionToken = styled.div`
   align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  margin: 0 0 10px;
+  padding: 0;
 
   > img {
     margin: 0 10px 0 0;
   }
 `
 
-export default function Claimer() {
+const Claimer: React.FC = () => {
   const { account } = useActiveWeb3React()
 
   // toggle wallet when disconnected
@@ -81,60 +86,60 @@ export default function Claimer() {
 
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
   return (
-    <>
-      <Wrapper id="swap-page">
-        <AuctionTokenWrapper>
-          <AuctionToken>
-            <TokenLogo address={biddingToken?.address} size={'42px'} />
-            <Text fontSize={15} fontWeight={'bold'}>
-              {claimableBiddingToken
-                ? claimableBiddingToken.toSignificant(2)
-                : `0 ${biddingTokenDisplay}`}
-            </Text>
-          </AuctionToken>
+    <Wrapper id="swap-page">
+      <AuctionTokenWrapper>
+        <AuctionToken>
+          <TokenLogo address={biddingToken?.address} size={'42px'} />
+          <Text fontSize={15} fontWeight={'bold'}>
+            {claimableBiddingToken
+              ? claimableBiddingToken.toSignificant(2)
+              : `0 ${biddingTokenDisplay}`}
+          </Text>
+        </AuctionToken>
 
-          <AuctionToken>
-            <TokenLogo address={auctioningToken?.address} size={'42px'} />
-            <Text fontSize={15} fontWeight={'bold'}>
-              {claimableAuctioningToken
-                ? claimableAuctioningToken.toSignificant(2)
-                : `0 ${auctioningTokenDisplay}`}
-            </Text>
-          </AuctionToken>
-        </AuctionTokenWrapper>
+        <AuctionToken>
+          <TokenLogo address={auctioningToken?.address} size={'42px'} />
+          <Text fontSize={15} fontWeight={'bold'}>
+            {claimableAuctioningToken
+              ? claimableAuctioningToken.toSignificant(2)
+              : `0 ${auctioningTokenDisplay}`}
+          </Text>
+        </AuctionToken>
+      </AuctionTokenWrapper>
 
-        <ClaimConfirmationModal
-          hash={txHash}
-          isOpen={showConfirm}
-          onDismiss={() => {
-            resetModal()
-            setShowConfirm(false)
-          }}
-          pendingConfirmation={pendingConfirmation}
-          pendingText={pendingText}
-        />
-        <BottomGrouping>
-          {!account ? (
-            <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-          ) : error ? (
-            <ButtonPrimary disabled>{error}</ButtonPrimary>
-          ) : (
-            <ButtonError
-              disabled={!isValid}
-              error={isValid}
-              id="swap-button"
-              onClick={() => {
-                setShowConfirm(true)
-                onClaimOrder()
-              }}
-            >
-              <Text fontSize={20} fontWeight={500}>
-                {error ?? `Claim Funds`}
-              </Text>
-            </ButtonError>
-          )}
-        </BottomGrouping>
-      </Wrapper>
-    </>
+      <ClaimConfirmationModal
+        hash={txHash}
+        isOpen={showConfirm}
+        onDismiss={() => {
+          resetModal()
+          setShowConfirm(false)
+        }}
+        pendingConfirmation={pendingConfirmation}
+        pendingText={pendingText}
+      />
+      <BottomGrouping>
+        {!account ? (
+          <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+        ) : error ? (
+          <ButtonPrimary disabled>{error}</ButtonPrimary>
+        ) : (
+          <ButtonError
+            disabled={!isValid}
+            error={isValid}
+            id="swap-button"
+            onClick={() => {
+              setShowConfirm(true)
+              onClaimOrder()
+            }}
+          >
+            <Text fontSize={20} fontWeight={500}>
+              {error ?? `Claim Funds`}
+            </Text>
+          </ButtonError>
+        )}
+      </BottomGrouping>
+    </Wrapper>
   )
 }
+
+export default Claimer

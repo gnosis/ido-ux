@@ -240,18 +240,18 @@ export function useGetOrderPlacementError(): {
 }
 
 export function useDerivedAuctionInfo(): {
-  biddingTokenBalance: TokenAmount | undefined
-  parsedBiddingAmount: TokenAmount | undefined
+  auctionEndDate: number | null
   auctioningToken: Token | undefined
   biddingToken: Token | undefined
-  clearingPriceSellOrder: SellOrder | null
-  clearingPriceOrder: Order | null
+  biddingTokenBalance: TokenAmount | undefined
   clearingPrice: Fraction | undefined
-  initialAuctionOrder: SellOrder | null
-  auctionEndDate: number | null
+  clearingPriceOrder: Order | null
+  clearingPriceSellOrder: SellOrder | null
   clearingPriceVolume: BigNumber | null
+  initialAuctionOrder: SellOrder | null
   initialPrice: Fraction | undefined
   minBiddingAmountPerOrder: string | undefined
+  parsedBiddingAmount: TokenAmount | undefined
 } {
   const { account } = useActiveWeb3React()
 
@@ -263,6 +263,7 @@ export function useDerivedAuctionInfo(): {
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
   )
+
   const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId], {
     blocksPerFetch: 1,
   }).result
@@ -301,18 +302,18 @@ export function useDerivedAuctionInfo(): {
   }
 
   return {
-    biddingTokenBalance,
-    parsedBiddingAmount,
+    auctionEndDate,
     auctioningToken,
     biddingToken,
-    clearingPriceSellOrder,
-    clearingPriceOrder,
+    biddingTokenBalance,
     clearingPrice,
-    initialAuctionOrder,
-    auctionEndDate,
+    clearingPriceOrder,
+    clearingPriceSellOrder,
     clearingPriceVolume,
+    initialAuctionOrder,
     initialPrice,
     minBiddingAmountPerOrder,
+    parsedBiddingAmount,
   }
 }
 

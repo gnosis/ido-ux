@@ -9,9 +9,12 @@ import {
 
 const TIMER_SIZE = '154px'
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ progress: string }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.primary1};
+  background: conic-gradient(
+    ${({ theme }) => theme.primary1} calc(${(props) => props.progress}),
+    ${({ theme }) => theme.primary3} 0%
+  );
   border-radius: 50%;
   display: flex;
   height: ${TIMER_SIZE};
@@ -32,6 +35,13 @@ const Center = styled.div`
   width: 126px;
 `
 
+const Days = styled.div`
+  font-size: 20px;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
+`
+
 const Time = styled.div`
   color: ${({ theme }) => theme.primary1};
   flex-shrink: 1;
@@ -39,7 +49,7 @@ const Time = styled.div`
   font-weight: 700;
   letter-spacing: -1px;
   line-height: 1.2;
-  margin-bottom: -2px;
+  margin-bottom: 3px;
   min-width: 0;
   text-align: center;
   white-space: nowrap;
@@ -85,32 +95,60 @@ const Blink = styled.span`
   animation-iteration-count: infinite;
   animation-name: ${Blinker};
   animation-timing-function: linear;
+
+  &::before {
+    content: ':';
+  }
 `
 
-const formatSeconds = (seconds: number): string => {
-  const days = Math.floor(seconds / 24 / 60 / 60) % 360
-  const hours = Math.floor(seconds / 60 / 60) % 24
-  const minutes = Math.floor(seconds / 60) % 60
-  const remainderSeconds = Math.floor(seconds % 60)
-  let s = ''
+const getDays = (seconds: number): number => {
+  return Math.floor(seconds / 24 / 60 / 60) % 360
+}
 
-  if (days > 0) {
-    s += `${days}d `
-  }
-  if (hours > 0) {
-    s += `${hours}h `
-  }
-  if (minutes > 0) {
-    s += `${minutes}m `
-  }
-  if (remainderSeconds > 0 && hours < 2) {
-    s += `${remainderSeconds}s`
-  }
-  if (minutes === 0 && remainderSeconds === 0) {
-    s = '0s'
-  }
+const getHours = (seconds: number): number => {
+  return Math.floor(seconds / 60 / 60) % 24
+}
 
-  return s
+const getMinutes = (seconds: number): number => {
+  return Math.floor(seconds / 60) % 60
+}
+
+const getSeconds = (seconds: number): number => {
+  return Math.floor(seconds % 60)
+}
+
+const formatSeconds = (seconds: number): React.ReactNode => {
+  const days = getDays(seconds)
+  const hours = getHours(seconds)
+  const minutes = getMinutes(seconds)
+  const remainderSeconds = getSeconds(seconds)
+
+  return (
+    <>
+      {days > 0 && (
+        <Days>
+          {`${days} `}
+          {days === 1 ? 'Day' : 'Days'}
+        </Days>
+      )}
+      <div>
+        <>
+          {hours >= 0 && hours < 10 && `0`}
+          {hours}
+        </>
+        <>
+          <Blink />
+          {minutes >= 0 && minutes < 10 && `0`}
+          {minutes}
+        </>
+        <>
+          <Blink />
+          {remainderSeconds >= 0 && remainderSeconds < 10 && `0`}
+          {remainderSeconds}
+        </>
+      </div>
+    </>
+  )
 }
 
 const calculateTimeLeft = (auctionEndDate: number) => {
@@ -121,6 +159,17 @@ const calculateTimeLeft = (auctionEndDate: number) => {
   if (diff < 0) return -1
 
   return diff
+}
+
+const calculatePercentageLeft = (auctionEndDate: number): number => {
+  // We need to get the auction's start date somehow, or it will be impossible
+  // to calculate the auction's time progress
+  const auctionStartDate = Date.parse('02/21/2021')
+
+  const totalAuctionDays = getDays(auctionEndDate - auctionStartDate / 1000)
+  const passedAuctionDays = totalAuctionDays - getDays(auctionEndDate - Date.now() / 1000)
+
+  return Math.trunc((passedAuctionDays * 100) / totalAuctionDays)
 }
 
 export const AuctionTimer = () => {
@@ -140,7 +189,7 @@ export const AuctionTimer = () => {
   }, [auctionEndDate])
 
   return (
-    <Wrapper>
+    <Wrapper progress={`${calculatePercentageLeft(auctionEndDate)}%`}>
       <Center>
         {auctionState === undefined && <TextBig>Loading</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && <TextBig>Auction not started</TextBig>}
@@ -152,7 +201,11 @@ export const AuctionTimer = () => {
                 formatSeconds(timeLeft)
               ) : (
                 <>
-                  --<Blink>:</Blink>--<Blink>:</Blink>--
+                  --
+                  <Blink />
+                  --
+                  <Blink />
+                  --
                 </>
               )}
             </Time>

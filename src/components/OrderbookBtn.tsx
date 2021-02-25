@@ -13,6 +13,11 @@ import OrderBookWidget, { processOrderbookData } from './OrderbookWidget'
 import Modal, { useModal } from './modals/MesaModal'
 import { DEFAULT_MODAL_OPTIONS } from './modals/Modal'
 
+const Wrapper = styled.div`
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.border};
+`
+
 const ViewOrderBookBtn = styled(ButtonLight)`
   margin: 0 0 0 0;
   background: none;
@@ -28,10 +33,6 @@ const ViewOrderBookBtn = styled(ButtonLight)`
   > svg {
     margin: 0 0 0 5px;
   }
-`
-
-const Wrapper = styled.div`
-  display: block;
 `
 
 const ModalWrapper = styled.div`
@@ -95,12 +96,9 @@ interface OrderBookBtnProps {
 
 export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnProps) => {
   const { baseToken, className, quoteToken } = props
-  //   const theme = useContext(ThemeContext);
   const { chainId } = useActiveWeb3React()
   const { auctionId } = useSwapState()
-
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(baseToken), [baseToken])
-
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(quoteToken), [quoteToken])
 
   const [modalHook, toggleModal] = useModal({
@@ -136,6 +134,7 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnPro
     baseToken,
     quoteToken,
   })
+
   return (
     <Wrapper>
       <ViewOrderBookBtn className={className} onClick={toggleModal} type="button">

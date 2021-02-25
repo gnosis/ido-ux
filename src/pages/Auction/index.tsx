@@ -25,6 +25,11 @@ const Title = styled(PageTitle)`
   margin-bottom: 2px;
 `
 
+const SectionTitle = styled(PageTitle)`
+  margin-bottom: 16px;
+  margin-top: 0;
+`
+
 const SubTitleWrapper = styled.div`
   align-items: center;
   display: flex;
@@ -44,6 +49,13 @@ const CopyButton = styled(ButtonCopy)`
   position: relative;
   top: -1px;
   width: 14px;
+`
+
+const Grid = styled.div`
+  column-gap: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 0 40px;
 `
 
 const Auction = ({ location: { search } }: RouteComponentProps) => {
@@ -66,12 +78,20 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
-      {(auctionState === AuctionState.ORDER_PLACING ||
-        auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
-      {auctionState === AuctionState.CLAIMING && <Claimer />}
-      {auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED && (
-        <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
-      )}
+      <SectionTitle>
+        {(auctionState === AuctionState.ORDER_PLACING ||
+          auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
+          'Place Order'}
+        {auctionState === AuctionState.CLAIMING && 'Claim Proceedings'}
+      </SectionTitle>
+      <Grid>
+        {(auctionState === AuctionState.ORDER_PLACING ||
+          auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
+        {auctionState === AuctionState.CLAIMING && <Claimer />}
+        {auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED && (
+          <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
+        )}
+      </Grid>
       {(auctionState === undefined || auctionState === AuctionState.NOT_YET_STARTED) && (
         <>Auction not started yet.</>
       )}
