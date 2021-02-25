@@ -52,11 +52,6 @@ const TimerWrapper = styled.div`
   position: relative;
 `
 
-const TooltipStyled = styled(Tooltip)`
-  position: relative;
-  top: -1px;
-`
-
 const AuctionDetails = () => {
   const { chainId } = useActiveWeb3React()
   const {
@@ -116,7 +111,7 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>{titlePrice}</span>
-            <TooltipStyled
+            <Tooltip
               id="auctionPrice"
               text={
                 '"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled'
@@ -131,7 +126,7 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Bidding with</span>
-            <TooltipStyled id="biddingWith" text={'Bidding with tooltip'} />
+            <Tooltip id="biddingWith" text={'Bidding with tooltip'} />
           </>
         }
         itemValue={
@@ -153,7 +148,7 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Total auctioned</span>
-            <TooltipStyled id="totalAuctioned" text={'Total auctioned tooltip'} />
+            <Tooltip id="totalAuctioned" text={'Total auctioned tooltip'} />
           </>
         }
         itemValue={
@@ -176,7 +171,7 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Min Sell Price</span>
-            <TooltipStyled id="minSellPrice" text={'Min Sell Price tooltip'} />
+            <Tooltip id="minSellPrice" text={'Min Sell Price tooltip'} />
           </>
         }
         itemValue={

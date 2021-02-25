@@ -7,6 +7,8 @@ import { TooltipIcon } from '../../icons/TooltipIcon'
 
 const Wrapper = styled.span`
   cursor: pointer;
+  position: relative;
+  top: -1px;
 
   .tooltipIcon {
     .fill {

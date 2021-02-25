@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Claimer from '../../components/Claimer'
-import OrderDisplayDropdown from '../../components/OrderDropdown'
 import OrderPlacement from '../../components/OrderPlacement'
 import { OrderBookBtn } from '../../components/OrderbookBtn'
 import AuctionDetails from '../../components/auction/AuctionDetails'
+import OrdersTable from '../../components/auction/OrdersTable'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import {
@@ -60,7 +60,6 @@ const Grid = styled.div`
 
 const Auction = ({ location: { search } }: RouteComponentProps) => {
   const { auctionState } = useDerivedAuctionState()
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
   const orders: OrderState | undefined = useOrderState()
   const { auctionId } = useSwapState()
   const url = window.location.href
@@ -95,11 +94,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
       {(auctionState === undefined || auctionState === AuctionState.NOT_YET_STARTED) && (
         <>Auction not started yet.</>
       )}
-      <OrderDisplayDropdown
-        orders={orders.orders}
-        setShowAdvanced={setShowAdvanced}
-        showAdvanced={showAdvanced}
-      />
+      <OrdersTable orders={orders.orders} />
     </>
   )
 }
