@@ -9,8 +9,9 @@ import {
 
 const TIMER_SIZE = '154px'
 
-const Wrapper = styled.div<{ progress: string }>`
+const Wrapper = styled.div<{ progress?: string }>`
   align-items: center;
+  background: ${({ theme }) => theme.primary1};
   background: conic-gradient(
     ${({ theme }) => theme.primary1} calc(${(props) => props.progress}),
     ${({ theme }) => theme.primary3} 0%
@@ -22,6 +23,10 @@ const Wrapper = styled.div<{ progress: string }>`
   margin-top: -13px;
   width: ${TIMER_SIZE};
 `
+
+Wrapper.defaultProps = {
+  progress: '0%',
+}
 
 const Center = styled.div`
   align-items: center;
@@ -161,10 +166,8 @@ const calculateTimeLeft = (auctionEndDate: number) => {
   return diff
 }
 
-const calculatePercentageLeft = (auctionEndDate: number): number => {
-  // We need to get the auction's start date somehow, or it will be impossible
-  // to calculate the auction's time progress
-  const auctionStartDate = Date.parse('02/21/2021')
+const calculatePercentageLeft = (auctionStartingDate: string, auctionEndDate: number): number => {
+  const auctionStartDate = Date.parse(auctionStartingDate)
 
   const totalAuctionDays = getDays(auctionEndDate - auctionStartDate / 1000)
   const passedAuctionDays = totalAuctionDays - getDays(auctionEndDate - Date.now() / 1000)
@@ -176,6 +179,8 @@ export const AuctionTimer = () => {
   const { auctionState } = useDerivedAuctionState()
   const { auctionEndDate } = useDerivedAuctionInfo()
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(auctionEndDate))
+  // mocked date, update when we get a complete endpoint
+  const auctionStartingDate = '02/21/2021'
 
   React.useEffect(() => {
     let mounted = true
@@ -189,7 +194,7 @@ export const AuctionTimer = () => {
   }, [auctionEndDate])
 
   return (
-    <Wrapper progress={`${calculatePercentageLeft(auctionEndDate)}%`}>
+    <Wrapper progress={`${calculatePercentageLeft(auctionStartingDate, auctionEndDate)}%`}>
       <Center>
         {auctionState === undefined && <TextBig>Loading</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && <TextBig>Auction not started</TextBig>}

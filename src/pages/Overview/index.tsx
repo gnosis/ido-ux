@@ -70,7 +70,7 @@ const TitleText = styled.div`
 `
 
 export default function Overview() {
-  // Todo: think about how to get a network id without connection to metamaks
+  // We should think about how to get a network id without connection to metamaks
   const chainId = 4
   const highlightedAuctions = useInterestingAuctionInfo(4, chainId)
   const allAuctions = useAllAuctionInfo()
