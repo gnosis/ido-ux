@@ -63,8 +63,6 @@ function renderAuctionElements({ auctionState }: { auctionState: AuctionState })
 
 export default function Auction({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURLSearch(search)
-  const { account } = useActiveWeb3React()
-  const toggleWalletModal = useWalletModalToggle()
   const { auctionState } = useDerivedAuctionState()
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
   const orders: OrderState | undefined = useOrderState()
@@ -73,26 +71,19 @@ export default function Auction({ location: { search } }: RouteComponentProps) {
 
   return (
     <AppBody>
-      {!account ? (
-        <div>
-          <h3>GnosisAuction is a platform designed for fair price finding of one-time events.</h3>
-          <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-        </div>
-      ) : (
-        <>
-          <Wrapper>
-            <AuctionHeader />
-            {renderAuctionElements({
-              auctionState,
-            })}
-          </Wrapper>
-          <OrderDisplayDropdown
-            orders={orders.orders}
-            setShowAdvanced={setShowAdvanced}
-            showAdvanced={showAdvanced}
-          />
-        </>
-      )}
+      <>
+        <Wrapper>
+          <AuctionHeader />
+          {renderAuctionElements({
+            auctionState,
+          })}
+        </Wrapper>
+        <OrderDisplayDropdown
+          orders={orders.orders}
+          setShowAdvanced={setShowAdvanced}
+          showAdvanced={showAdvanced}
+        />
+      </>
     </AppBody>
   )
 }

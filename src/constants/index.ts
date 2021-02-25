@@ -8,6 +8,7 @@ import PortisIcon from '../assets/images/portisIcon.png'
 import TrustWalletIcon from '../assets/images/trustWallet.png'
 import WalletConnectIcon from '../assets/images/walletConnectIcon.png'
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
+import { CHAIN_ID } from './config'
 
 export const chainNames = {
   1: 'mainnet',
@@ -52,7 +53,7 @@ const MAINNET_WALLETS = {
   },
 }
 export const SUPPORTED_WALLETS =
-  process.env.REACT_APP_CHAIN_ID !== '1'
+  CHAIN_ID !== 1
     ? MAINNET_WALLETS
     : {
         ...MAINNET_WALLETS,
