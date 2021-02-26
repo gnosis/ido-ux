@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
+import { GOOGLE_ANALYTICS_ID } from '../../../constants/config'
 import { Button } from '../../buttons/Button'
 import { CloseIcon } from '../../icons/CloseIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
@@ -136,7 +137,6 @@ interface Props {
 }
 
 export const CookiesBanner: React.FC<Props> = (props) => {
-  const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
   const { isBannerVisible, onHide } = props
   const storage = window.localStorage
 
@@ -215,7 +215,7 @@ export const CookiesBanner: React.FC<Props> = (props) => {
       ReactGA.set({ page: location.pathname })
       ReactGA.pageview(location.pathname)
     }
-  }, [location, GOOGLE_ANALYTICS_ID])
+  }, [location])
 
   useEffect(() => {
     if (googleAnalyticsAccepted) {

@@ -4,6 +4,7 @@ import { BrowserRouter, HashRouter, Route, Switch } from 'react-router-dom'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { CookiesBanner } from '../components/common/CookiesBanner'
+// TODO: remove this when not need it anymore
 // import Footer from '../components/Footer'
 // import Header from '../components/Header'
 import { Footer } from '../components/layout/Footer'
@@ -11,13 +12,14 @@ import { Header } from '../components/layout/Header'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainScroll } from '../components/pureStyledComponents/MainScroll'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
+import { PUBLIC_URL } from '../constants/config'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import Auction from './Auction'
 import { RedirectPathToSwapOnly } from './Auction/redirects'
 import Overview from './Overview'
 
 let Router: React.ComponentType
-if (process.env.PUBLIC_URL === '.') {
+if (PUBLIC_URL === '.') {
   Router = HashRouter
 } else {
   Router = BrowserRouter

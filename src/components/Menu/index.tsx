@@ -3,6 +3,7 @@ import { Code, Info, MessageCircle } from 'react-feather'
 import styled from 'styled-components'
 
 import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
+import { GIT_COMMIT_HASH } from '../../constants/config'
 import useToggle from '../../hooks/useToggle'
 import { ExternalLink } from '../../theme'
 
@@ -85,8 +86,8 @@ const MenuItem = styled(ExternalLink)`
   }
 `
 
-const CODE_LINK = process.env.REACT_APP_GIT_COMMIT_HASH
-  ? `https://github.com/gnosis/ido-contracts/tree/${process.env.REACT_APP_GIT_COMMIT_HASH}`
+const CODE_LINK = GIT_COMMIT_HASH
+  ? `https://github.com/gnosis/ido-contracts/tree/${GIT_COMMIT_HASH}`
   : 'https://github.com/gnosis/ido-contracts'
 
 export default function Menu() {

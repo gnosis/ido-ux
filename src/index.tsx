@@ -20,11 +20,11 @@ import 'sanitize.css'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
-function getLibrary(provider: any): Web3Provider {
+const getLibrary = (provider: any): Web3Provider => {
   return new Web3Provider(provider)
 }
 
-function Updaters() {
+const Updaters = () => {
   return (
     <>
       <UserUpdater />

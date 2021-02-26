@@ -38,10 +38,10 @@ export function useEagerConnect() {
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
-    if (active) {
+    if (!tried && active) {
       setTried(true)
     }
-  }, [active])
+  }, [active, tried])
 
   return tried
 }
@@ -50,7 +50,7 @@ export function useEagerConnect() {
  * Use for network and injected - logs user in
  * and out after checking what network theyre on
  */
-export function useInactiveListener(suppress = false) {
+export const useInactiveListener = (suppress = false) => {
   const { activate, active, error } = useWeb3ReactCore() // specifically using useWeb3React because of what this hook does
 
   useEffect(() => {
@@ -84,23 +84,20 @@ export function useInactiveListener(suppress = false) {
       ethereum.on('networkChanged', handleNetworkChanged)
       ethereum.on('accountsChanged', handleAccountsChanged)
 
-      return () => {
-        if (ethereum.removeListener) {
-          ethereum.removeListener('chainChanged', handleChainChanged)
-          ethereum.removeListener('networkChanged', handleNetworkChanged)
-          ethereum.removeListener('accountsChanged', handleAccountsChanged)
-        }
+      if (ethereum.removeListener) {
+        ethereum.removeListener('chainChanged', handleChainChanged)
+        ethereum.removeListener('networkChanged', handleNetworkChanged)
+        ethereum.removeListener('accountsChanged', handleAccountsChanged)
       }
     }
-    return
   }, [active, error, suppress, activate])
 }
 
 /**
  * Hook that subscribes to some events
  */
-export function useActiveListener() {
-  const { activate, active, error } = useWeb3ReactCore()
+export const useActiveListener = () => {
+  const { active, error } = useWeb3ReactCore()
   const { onReloadFromAPI } = useOrderActionHandlers()
 
   useEffect(() => {
@@ -114,5 +111,5 @@ export function useActiveListener() {
 
       ethereum.on('accountsChanged', handleAccountsChanged)
     }
-  }, [active, error, onReloadFromAPI, activate])
+  }, [active, error, onReloadFromAPI])
 }
