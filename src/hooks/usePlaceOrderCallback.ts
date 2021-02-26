@@ -83,7 +83,7 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [previousOrder],
-          '0x', // Todo: Depending on the allowList interface, different bytes values need to be sent
+          '0x', // Depending on the allowList interface, different bytes values need to be sent
         ]
         value = null
       }
