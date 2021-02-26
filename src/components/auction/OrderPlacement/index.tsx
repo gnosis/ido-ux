@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { ChainId, Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
-import { Text } from 'rebass'
-
 import { EASY_AUCTION_NETWORKS } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
@@ -16,7 +14,6 @@ import {
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { getTokenDisplay } from '../../../utils'
-import { ButtonLight, ButtonPrimary } from '../../Button'
 import ConfirmationModal from '../../ConfirmationModal'
 import CurrencyInputPanel from '../../CurrencyInputPanel'
 import PriceInputPanel from '../../PriceInputPanel'
@@ -24,6 +21,10 @@ import { Button } from '../../buttons/Button'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
+
+const ActionButton = styled(Button)`
+  height: 52px;
+`
 
 const OrderPlacement: React.FC = () => {
   const { account, chainId } = useActiveWeb3React()
@@ -140,7 +141,6 @@ const OrderPlacement: React.FC = () => {
         token={biddingToken}
         value={sellAmount}
       />
-
       <PriceInputPanel
         auctioningToken={auctioningToken}
         biddingToken={biddingToken}
@@ -151,27 +151,24 @@ const OrderPlacement: React.FC = () => {
         value={price}
       />
       {!account ? (
-        <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+        <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
       ) : approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING ? (
-        <ButtonPrimary disabled={approval === ApprovalState.PENDING} onClick={approveCallback}>
+        <ActionButton disabled={approval === ApprovalState.PENDING} onClick={approveCallback}>
           {approval === ApprovalState.PENDING
             ? `Approving ${biddingTokenDisplay}`
             : `Approve ${biddingTokenDisplay}`}
-        </ButtonPrimary>
+        </ActionButton>
       ) : (
-        <ButtonPrimary
+        <ActionButton
           disabled={!isValid}
           id="swap-button"
           onClick={() => {
             setShowConfirm(true)
           }}
         >
-          <Text fontSize={20} fontWeight={500}>
-            {error ?? `Place Order`}
-          </Text>
-        </ButtonPrimary>
+          {error ?? `Place Order`}
+        </ActionButton>
       )}
-
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
         bottomContent={modalBottom}

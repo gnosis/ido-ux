@@ -137,6 +137,7 @@ const Value = styled.div`
 `
 
 const DisconnectButton = styled(Button)`
+  border-radius: 4px;
   font-size: 14px;
   height: 28px;
   line-height: 1;
