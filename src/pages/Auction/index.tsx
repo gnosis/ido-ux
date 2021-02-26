@@ -10,6 +10,7 @@ import OrderPlacement from '../../components/auction/OrderPlacement'
 import { OrderBookBtn } from '../../components/auction/OrderbookBtn'
 import OrdersTable from '../../components/auction/OrdersTable'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
+import { InlineLoading } from '../../components/common/InlineLoading'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import {
   AuctionState,
@@ -81,6 +82,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
+      {auctionState === undefined && <InlineLoading message="Loading..." />}
       {auctionStarted && (
         <SectionTitle as="h2">
           {(auctionState === AuctionState.ORDER_PLACING ||

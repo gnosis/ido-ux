@@ -18,12 +18,13 @@ const Wrapper = styled(BaseCard)`
 `
 
 const ViewOrderBookBtn = styled(ButtonLight)`
-  margin: 0 0 0 0;
   background: none;
+  color: ${({ theme }) => theme.text1};
   height: auto;
-  width: 100%;
+  margin: 0;
+  outline: none;
   padding: 0;
-  color: ${({ theme }) => theme.text3};
+  width: 100%;
 
   &:hover {
     background: none;
@@ -135,16 +136,18 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnPro
   })
 
   return (
-    <Wrapper>
-      <ViewOrderBookBtn className={className} onClick={toggleModal} type="button">
-        <OrderBookChartSmall
-          baseToken={baseToken}
-          data={processedOrderbook}
-          networkId={chainId}
-          quoteToken={quoteToken}
-        />
-      </ViewOrderBookBtn>
+    <>
+      <Wrapper>
+        <ViewOrderBookBtn className={className} onClick={toggleModal} type="button">
+          <OrderBookChartSmall
+            baseToken={baseToken}
+            data={processedOrderbook}
+            networkId={chainId}
+            quoteToken={quoteToken}
+          />
+        </ViewOrderBookBtn>
+      </Wrapper>
       <Modal.Modal {...modalHook} />
-    </Wrapper>
+    </>
   )
 }
