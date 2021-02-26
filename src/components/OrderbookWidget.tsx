@@ -278,7 +278,7 @@ export function findClearingPrice(
   initialAuctionOrder: PricePoint,
 ): number | undefined {
   if (userOrder) {
-    if (userOrder.price > initialAuctionOrder.price && userOrder.volume > 0) {
+    if (userOrder?.price > initialAuctionOrder?.price && userOrder.volume > 0) {
       sellOrders = sellOrders.concat(userOrder)
     }
   }
@@ -299,7 +299,7 @@ export function findClearingPrice(
       }
     }
   }
-  if (totalSellVolume >= initialAuctionOrder.volume * initialAuctionOrder.price) {
+  if (totalSellVolume >= initialAuctionOrder?.volume * initialAuctionOrder?.price) {
     return totalSellVolume / initialAuctionOrder.volume
   } else {
     return initialAuctionOrder.price
