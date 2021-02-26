@@ -69,7 +69,7 @@ function decodeSellOrder(
   orderBytes: string,
   soldToken: Token | undefined,
   boughtToken: Token | undefined,
-): SellOrder | null {
+): Maybe<SellOrder> {
   if (soldToken == undefined || boughtToken == undefined) {
     return null
   }
@@ -145,7 +145,7 @@ export function useDeriveAuctioningAndBiddingToken(
 ): { auctioningToken: Token | undefined; biddingToken: Token | undefined } {
   const { chainId } = useActiveWeb3React()
 
-  const easyAuctionInstance: Contract | null = useContract(
+  const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
   )
@@ -244,12 +244,12 @@ export function useDerivedAuctionInfo(): {
   parsedBiddingAmount: TokenAmount | undefined
   auctioningToken: Token | undefined
   biddingToken: Token | undefined
-  clearingPriceSellOrder: SellOrder | null
-  clearingPriceOrder: Order | null
+  clearingPriceSellOrder: Maybe<SellOrder>
+  clearingPriceOrder: Maybe<Order>
   clearingPrice: Fraction | undefined
-  initialAuctionOrder: SellOrder | null
-  auctionEndDate: number | null
-  clearingPriceVolume: BigNumber | null
+  initialAuctionOrder: Maybe<SellOrder>
+  auctionEndDate: Maybe<number>
+  clearingPriceVolume: Maybe<BigNumber>
   initialPrice: Fraction | undefined
   minBiddingAmountPerOrder: string | undefined
 } {
@@ -259,7 +259,7 @@ export function useDerivedAuctionInfo(): {
 
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(auctionId)
 
-  const easyAuctionInstance: Contract | null = useContract(
+  const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
   )
@@ -267,17 +267,17 @@ export function useDerivedAuctionInfo(): {
     blocksPerFetch: 1,
   }).result
 
-  const initialAuctionOrder: SellOrder | null = decodeSellOrder(
+  const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
     auctionInfo?.initialAuctionOrder,
     auctioningToken,
     biddingToken,
   )
-  const clearingPriceSellOrder: SellOrder | null = decodeSellOrder(
+  const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrder(
     auctionInfo?.clearingPriceOrder,
     biddingToken,
     auctioningToken,
   )
-  let clearingPriceOrder: Order | null = null
+  let clearingPriceOrder: Maybe<Order> = null
   if (auctionInfo?.clearingPriceOrder) {
     clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder)
   }
@@ -321,7 +321,7 @@ export function useDerivedAuctionState(): {
 } {
   const { auctionId, chainId } = useSwapState()
 
-  const easyAuctionInstance: Contract | null = useContract(
+  const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
   )
@@ -334,7 +334,7 @@ export function useDerivedAuctionState(): {
     return { auctionState: AuctionState.NOT_YET_STARTED }
   }
 
-  let clearingPriceOrder: Order | null = null
+  let clearingPriceOrder: Maybe<Order> = null
   if (auctionInfo?.clearingPriceOrder) {
     clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder)
   }
@@ -377,14 +377,14 @@ export function useDerivedClaimInfo(
   auctionId: number,
 ): {
   error?: string
-  auctioningToken?: Token | null
-  biddingToken?: Token | null
-  claimauctioningToken?: TokenAmount | null
-  claimbiddingToken?: TokenAmount | null
+  auctioningToken?: Maybe<Token>
+  biddingToken?: Maybe<Token>
+  claimauctioningToken?: Maybe<TokenAmount>
+  claimbiddingToken?: Maybe<TokenAmount>
 } {
   const { chainId } = useActiveWeb3React()
 
-  const easyAuctionInstance: Contract | null = useContract(
+  const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
   )
@@ -398,7 +398,7 @@ export function useDerivedClaimInfo(
 
   const auctioningToken = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
   const biddingToken = useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
-  const clearingPriceSellOrder: SellOrder | null = decodeSellOrder(
+  const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrder(
     auctionInfo?.clearingPriceOrder,
     biddingToken,
     auctioningToken,

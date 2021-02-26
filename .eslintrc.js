@@ -58,7 +58,7 @@ module.exports = {
       },
     ],
     semi: ['error', 'never'],
-    'no-warning-comments': 'warn',
+    'no-warning-comments': 0,
     'import/extensions': 0,
     'import/no-unresolved': 0,
     'import/no-extraneous-dependencies': [

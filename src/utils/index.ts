@@ -155,17 +155,17 @@ export async function getTokenInfoWithFallback(
         return 'UNKNOWN'
       })
   })
-  const decimalsPromise: Promise<number | null> = token.decimals().catch((e: Error) => {
+  const decimalsPromise: Promise<Maybe<number>> = token.decimals().catch((e: Error) => {
     // eslint-disable-next-line no-console
     console.debug('Failed to get decimals for token address', e, tokenAddress)
     return null
   })
 
-  const [name, symbol, decimals]: [string, string, number | null] = (await Promise.all([
+  const [name, symbol, decimals]: [string, string, Maybe<number>] = (await Promise.all([
     namePromise,
     symbolPromise,
     decimalsPromise,
-  ])) as [string, string, number | null]
+  ])) as [string, string, Maybe<number>]
   return { name, symbol, decimals }
 }
 

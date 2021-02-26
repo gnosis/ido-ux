@@ -138,7 +138,7 @@ export default function Updater() {
               chainId,
               results: outdatedCallKeys
                 .slice(firstCallKeyIndex, lastCallKeyIndex)
-                .reduce<{ [callKey: string]: string | null }>((memo, callKey, i) => {
+                .reduce<{ [callKey: string]: Maybe<string> }>((memo, callKey, i) => {
                   memo[callKey] = returnData[i] ?? null
                   return memo
                 }, {}),

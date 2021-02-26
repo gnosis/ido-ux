@@ -77,15 +77,15 @@ interface CurrencyInputPanelProps {
   showMaxButton: boolean
   label?: string
   onTokenSelection?: (tokenAddress: string) => void
-  biddingToken: Token | null
-  auctioningToken: Token | null
+  biddingToken: Maybe<Token>
+  auctioningToken: Maybe<Token>
   disableTokenSelect?: boolean
   hideBalance?: boolean
   isExchange?: boolean
-  pair?: Pair | null
+  pair?: Maybe<Pair>
   hideInput?: boolean
   showSendWithSwap?: boolean
-  otherSelectedTokenAddress?: string | null
+  otherSelectedTokenAddress?: Maybe<string>
   id: string
 }
 

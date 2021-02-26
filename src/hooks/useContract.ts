@@ -15,7 +15,7 @@ export function useContract(
   address?: string,
   ABI?: any,
   withSignerIfPossible = true,
-): Contract | null {
+): Maybe<Contract> {
   const { account, library } = useActiveWeb3React()
 
   return useMemo(() => {
@@ -34,30 +34,30 @@ export function useContract(
   }, [address, ABI, library, withSignerIfPossible, account])
 }
 
-export function useV1FactoryContract(): Contract | null {
+export function useV1FactoryContract(): Maybe<Contract> {
   const { chainId } = useActiveWeb3React()
   return useContract(chainId === 1 ? V1_FACTORY_ADDRESS : undefined, V1_FACTORY_ABI, false)
 }
 
-export function useV1ExchangeContract(address: string): Contract | null {
+export function useV1ExchangeContract(address: string): Maybe<Contract> {
   return useContract(address, V1_EXCHANGE_ABI, false)
 }
 
 export function useTokenContract(
   tokenAddress?: string,
   withSignerIfPossible = true,
-): Contract | null {
+): Maybe<Contract> {
   return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
 }
 
 export function usePairContract(
   pairAddress?: string,
   withSignerIfPossible = true,
-): Contract | null {
+): Maybe<Contract> {
   return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
 }
 
-export function useMulticallContract(): Contract | null {
+export function useMulticallContract(): Maybe<Contract> {
   const { chainId } = useActiveWeb3React()
   return useContract(MULTICALL_NETWORKS[chainId as ChainId], MULTICALL_ABI, false)
 }

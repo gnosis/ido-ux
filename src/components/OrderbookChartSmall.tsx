@@ -77,7 +77,7 @@ const Wrapper = styled.div`
 const OrderBookChartSmall: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
   const { baseToken, data, networkId, quoteToken } = props
   const mountPoint = useRef<HTMLDivElement>(null)
-  const chartRef = useRef<am4charts.XYChart | null>(null)
+  const chartRef = useRef<Maybe<am4charts.XYChart>>(null)
 
   useEffect(() => {
     if (!mountPoint.current) return

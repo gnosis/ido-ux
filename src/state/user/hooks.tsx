@@ -41,7 +41,7 @@ function deserializeToken(serializedToken: SerializedToken): Token {
 export function useIsDarkMode(): boolean {
   const { matchesDarkMode, userDarkMode } = useSelector<
     AppState,
-    { userDarkMode: boolean | null; matchesDarkMode: boolean }
+    { userDarkMode: Maybe<boolean>; matchesDarkMode: boolean }
   >(
     ({ user: { matchesDarkMode, userDarkMode } }) => ({
       userDarkMode,
@@ -64,11 +64,11 @@ export function useDarkModeManager(): [boolean, () => void] {
   return [darkMode, toggleSetDarkMode]
 }
 
-export function useFetchTokenByAddress(): (address: string) => Promise<Token | null> {
+export function useFetchTokenByAddress(): (address: string) => Promise<Maybe<Token>> {
   const { chainId, library } = useActiveWeb3React()
 
   return useCallback(
-    async (address: string): Promise<Token | null> => {
+    async (address: string): Promise<Maybe<Token>> => {
       if (!library || !chainId) return null
       const validatedAddress = isAddress(address)
       if (!validatedAddress) return null

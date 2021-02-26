@@ -7,10 +7,10 @@ import { useActiveWeb3React } from './index'
  * Does a reverse lookup for an address to find its ENS name.
  * Note this is not the same as looking up an ENS name to find an address.
  */
-export default function useENSName(address?: string): string | null {
+export default function useENSName(address?: string): Maybe<string> {
   const { library } = useActiveWeb3React()
 
-  const [ENSName, setENSName] = useState<string | null>(null)
+  const [ENSName, setENSName] = useState<Maybe<string>>(null)
 
   useEffect(() => {
     if (!library || !address) return

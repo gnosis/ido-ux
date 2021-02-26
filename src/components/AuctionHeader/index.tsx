@@ -75,8 +75,8 @@ const renderAuctionStatus = ({
   initialAuctionOrder,
 }: {
   auctionState: AuctionState
-  auctioningToken: Token | null
-  initialAuctionOrder: SellOrder | null
+  auctioningToken: Maybe<Token>
+  initialAuctionOrder: Maybe<SellOrder>
 }) => {
   switch (auctionState) {
     case AuctionState.ORDER_PLACING:

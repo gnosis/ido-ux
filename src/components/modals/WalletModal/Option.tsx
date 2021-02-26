@@ -101,13 +101,13 @@ export default function Option({
   size = null,
   subheader = null,
 }: {
-  link?: string | null
+  link?: Maybe<string>
   clickable?: boolean
-  size?: number | null
+  size?: Maybe<number>
   onClick?: null | (() => void)
   color: string
   header: React.ReactNode
-  subheader: React.ReactNode | null
+  subheader: Maybe<React.ReactNode>
   icon: string
   active?: boolean
   id: string
