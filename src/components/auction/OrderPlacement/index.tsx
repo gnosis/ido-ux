@@ -148,9 +148,15 @@ const OrderPlacement: React.FC = () => {
       <BalanceWrapper>
         <Balance>
           Your Balance:{' '}
-          <Total>{`${userTokenBalance?.toSignificant(6)} ${biddingToken.symbol}`}</Total>
+          <Total>{`${
+            account
+              ? `${userTokenBalance?.toSignificant(6)} ${biddingToken.symbol}`
+              : 'Connect your wallet'
+          } `}</Total>
         </Balance>
-        <TokenLogo address={biddingToken.address} size={'22px'} />
+        {account && biddingToken && biddingToken.address && (
+          <TokenLogo address={biddingToken.address} size={'22px'} />
+        )}
       </BalanceWrapper>
       <CurrencyInputPanel
         onMax={() => {

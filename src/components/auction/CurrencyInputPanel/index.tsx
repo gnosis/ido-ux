@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
+import { useActiveWeb3React } from '../../../hooks'
 import TokenLogo from '../../TokenLogo'
 import { ControlButton, FormLabel } from '../../form/FormLabel'
 import { Input as NumericalInput } from '../../form/NumericalInput'
@@ -45,10 +46,12 @@ export default function CurrencyInputPanel({
   token = null,
   value,
 }: CurrencyInputPanelProps) {
+  const { account } = useActiveWeb3React()
+
   return (
     <FormRow>
       <FormLabel
-        extraControls={onMax && <ControlButton onClick={onMax}>Max</ControlButton>}
+        extraControls={onMax && account && <ControlButton onClick={onMax}>Max</ControlButton>}
         text={'Amount'}
       />
       <TextfieldWrapper>
