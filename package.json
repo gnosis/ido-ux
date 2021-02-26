@@ -63,6 +63,8 @@
   },
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.13",
+    "@babel/helper-define-map": "^7.12.13",
+    "@babel/helper-regex": "^7.10.5",
     "@ethersproject/address": "^5.0.0-beta.134",
     "@ethersproject/bignumber": "^5.0.0-beta.138",
     "@ethersproject/constants": "^5.0.0-beta.133",

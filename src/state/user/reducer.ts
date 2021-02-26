@@ -2,6 +2,7 @@ import { ChainId, WETH } from 'uniswap-xdai-sdk'
 
 import { createReducer } from '@reduxjs/toolkit'
 
+import { GIT_COMMIT_HASH } from '../../constants/config'
 import {
   SerializedPair,
   SerializedToken,
@@ -62,8 +63,6 @@ const initialState: UserState = {
   timestamp: currentTimestamp(),
 }
 
-const GIT_COMMIT_HASH: string | undefined = process.env.REACT_APP_GIT_COMMIT_HASH
-
 export default createReducer(initialState, (builder) =>
   builder
     .addCase(updateVersion, (state) => {
@@ -71,6 +70,7 @@ export default createReducer(initialState, (builder) =>
         state.lastVersion = GIT_COMMIT_HASH
 
         // Wed May 20, 2020 @ ~9pm central
+        // TODO: take a look at this at some point, why this timestamp ?
         if (state.timestamp < 1590027589111) {
           // this should remove the user added token from 'eth' for mainnet
           if (state.tokens[ChainId.MAINNET]) {

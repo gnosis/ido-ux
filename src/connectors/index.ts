@@ -3,23 +3,26 @@ import { PortisConnector } from '@web3-react/portis-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
+import {
+  CHAIN_ID,
+  FORTMATIC_KEY,
+  NETWORK_URL_MAINNET,
+  NETWORK_URL_RINKEBY,
+  NETWORK_URL_XDAI,
+  PORTIS_ID,
+} from '../constants/config'
 import { FortmaticConnector } from './Fortmatic'
 import { NetworkConnector, NetworkConnectorArguments } from './NetworkConnector'
 
 const POLLING_INTERVAL = 10000
-const NETWORK_URL_RINKEBY = process.env.REACT_APP_NETWORK_URL_RINKEBY
-const NETWORK_URL_MAINNET = process.env.REACT_APP_NETWORK_URL_MAINNET
-const NETWORK_URL_XDAI = process.env.REACT_APP_NETWORK_URL_XDAI
-
-const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY
-const PORTIS_ID = process.env.REACT_APP_PORTIS_ID
 
 const networkConnectorArguments: NetworkConnectorArguments = {
   urls: [],
-  defaultChainId: 1,
+  defaultChainId: CHAIN_ID,
 }
-if (NETWORK_URL_MAINNET) networkConnectorArguments.urls[Number(1)] = NETWORK_URL_MAINNET
-if (NETWORK_URL_RINKEBY) networkConnectorArguments.urls[Number(4)] = NETWORK_URL_RINKEBY
+
+if (NETWORK_URL_MAINNET) networkConnectorArguments.urls[1] = NETWORK_URL_MAINNET
+if (NETWORK_URL_RINKEBY) networkConnectorArguments.urls[4] = NETWORK_URL_RINKEBY
 if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI
 
 export const network = new NetworkConnector(networkConnectorArguments)
@@ -29,9 +32,12 @@ export const injected = new InjectedConnector({
 })
 
 // mainnet only
+const rpcForWalletConnect: {
+  [chainId: number]: string
+} = CHAIN_ID === 4 ? { 4: NETWORK_URL_RINKEBY } : { 1: NETWORK_URL_MAINNET }
 export const walletconnect = new WalletConnectConnector({
   rpc: {
-    4: NETWORK_URL_RINKEBY,
+    ...rpcForWalletConnect,
   },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: false,
@@ -40,13 +46,13 @@ export const walletconnect = new WalletConnectConnector({
 
 // mainnet only
 export const fortmatic = new FortmaticConnector({
-  apiKey: FORMATIC_KEY ?? '',
+  apiKey: FORTMATIC_KEY,
   chainId: 1,
 })
 
 // mainnet only
 export const portis = new PortisConnector({
-  dAppId: PORTIS_ID ?? '',
+  dAppId: PORTIS_ID,
   networks: [1],
 })
 

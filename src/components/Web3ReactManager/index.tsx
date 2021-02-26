@@ -8,7 +8,6 @@ import Circle from '../../assets/images/circle.svg'
 import { network } from '../../connectors'
 import { NetworkContextName } from '../../constants'
 import { useActiveListener, useEagerConnect, useInactiveListener } from '../../hooks'
-import { useSwapState } from '../../state/orderPlacement/hooks'
 import { Spinner } from '../../theme'
 
 const MessageWrapper = styled.div`
@@ -38,7 +37,6 @@ export default function Web3ReactManager({ children }) {
   const { activate: activateNetwork, active: networkActive, error: networkError } = useWeb3React(
     NetworkContextName,
   )
-  const { chainId } = useSwapState()
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect()
@@ -46,9 +44,9 @@ export default function Web3ReactManager({ children }) {
   // after eagerly trying injected, if the network connect ever isn't active or in an error state, activate itd
   useEffect(() => {
     if (triedEager && !networkActive && !networkError && !active) {
-      activateNetwork(network[chainId])
+      activateNetwork(network)
     }
-  }, [triedEager, networkActive, networkError, activateNetwork, active, chainId])
+  }, [triedEager, networkActive, networkError, activateNetwork, active])
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager)
