@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
+import { ChainId } from 'uniswap-xdai-sdk'
 
-import { ChainId } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 
 import { useActiveWeb3React } from '../../../hooks'
