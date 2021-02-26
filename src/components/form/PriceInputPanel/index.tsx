@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
-import TokenLogo from '../../TokenLogo'
-import { ControlButton, FormLabel } from '../../form/FormLabel'
+import DoubleLogo from '../../DoubleLogo'
+import { FormLabel } from '../../form/FormLabel'
 import { Input as NumericalInput } from '../../form/NumericalInput'
 import { FormRow } from '../../pureStyledComponents/FormRow'
 import { TextfieldCSS } from '../../pureStyledComponents/Textfield'
@@ -19,48 +19,41 @@ const TokenInfo = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  justify-content: space-between;
   margin-left: 15px;
 `
 
-const TokenSymbol = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 18px;
-  font-stretch: 400;
-  font-weight: 600;
-  margin-right: 8px;
-  text-align: right;
-`
-
 interface CurrencyInputPanelProps {
-  onMax?: () => void
-  onUserSellAmountInput: (val: string) => void
-  token: Token | null
+  auctioningToken: Token | null
+  biddingToken: Token | null
+  label: string
+  onUserPriceInput: (val: string) => void
   value: string
 }
 
-export default function CurrencyInputPanel({
-  onMax,
-  onUserSellAmountInput,
-  token = null,
+export default function PriceInputPanel({
+  auctioningToken = null,
+  biddingToken = null,
+  label,
+  onUserPriceInput,
   value,
 }: CurrencyInputPanelProps) {
   return (
     <FormRow>
-      <FormLabel
-        extraControls={onMax && <ControlButton onClick={onMax}>Max</ControlButton>}
-        text={'Amount'}
-      />
+      <FormLabel text={label} />
       <TextfieldWrapper>
         <NumericalInput
           onUserSellAmountInput={(val) => {
-            onUserSellAmountInput(val)
+            onUserPriceInput(val)
           }}
           value={value}
         />
         <TokenInfo>
-          <TokenSymbol>{token?.symbol}</TokenSymbol>{' '}
-          {token?.address && <TokenLogo address={token?.address} size={'24px'} />}
+          <DoubleLogo
+            a0={biddingToken?.address}
+            a1={auctioningToken?.address}
+            margin={true}
+            size={24}
+          />
         </TokenInfo>
       </TextfieldWrapper>
     </FormRow>

@@ -4,10 +4,10 @@ import styled from 'styled-components'
 import TokenLogo from '../TokenLogo'
 
 const TokenWrapper = styled.div`
-  position: relative;
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  position: relative;
 `
 
 interface DoubleTokenLogoProps {
@@ -19,11 +19,10 @@ interface DoubleTokenLogoProps {
 
 const HigherLogo = styled(TokenLogo)`
   z-index: 2;
+  margin-right: -5px;
 `
 
-const CoveredLogo = styled(TokenLogo)`
-  margin-left: -5px;
-`
+const CoveredLogo = styled(TokenLogo)``
 
 export default function DoubleTokenLogo({ a0, a1, size = 28 }: DoubleTokenLogoProps) {
   return (

@@ -11,18 +11,14 @@ const TOKEN_ICON_API = (address) =>
 const BAD_IMAGES = {}
 
 const Image = styled.img<{ size: string }>`
-  border-radius: ${({ size }) => size};
+  border-radius: 50%;
   height: ${({ size }) => size};
   position: relative;
   top: -1px;
   width: ${({ size }) => size};
 `
 
-const StyledEthereumLogo = styled.img<{ size: string }>`
-  border-radius: 24px;
-  height: ${({ size }) => size};
-  width: ${({ size }) => size};
-`
+const StyledEthereumLogo = styled(Image)``
 
 const TokenLogo = ({
   address,

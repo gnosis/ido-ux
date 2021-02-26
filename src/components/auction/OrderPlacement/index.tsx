@@ -16,9 +16,9 @@ import {
 import { useTokenBalance } from '../../../state/wallet/hooks'
 import { getTokenDisplay } from '../../../utils'
 import ConfirmationModal from '../../ConfirmationModal'
-import PriceInputPanel from '../../PriceInputPanel'
 import TokenLogo from '../../TokenLogo'
 import { Button } from '../../buttons/Button'
+import PriceInputPanel from '../../form/PriceInputPanel'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
@@ -87,8 +87,6 @@ const OrderPlacement: React.FC = () => {
   }, [approval, approvalSubmitted])
 
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
-  const atMaxAmountInput: boolean =
-    maxAmountInput && parsedBiddingAmount ? maxAmountInput.equalTo(parsedBiddingAmount) : undefined
 
   useEffect(() => {
     if (price == '-' && initialPrice) {
@@ -96,7 +94,6 @@ const OrderPlacement: React.FC = () => {
     }
   }, [onUserPriceInput, price, initialPrice])
 
-  // reset modal state when closed
   const resetModal = () => {
     // clear input if txn submitted
     if (!pendingConfirmation) {
@@ -156,23 +153,18 @@ const OrderPlacement: React.FC = () => {
         <TokenLogo address={biddingToken.address} size={'22px'} />
       </BalanceWrapper>
       <CurrencyInputPanel
-        id="auction-input"
-        label={'Amount'}
         onMax={() => {
           maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
         }}
         onUserSellAmountInput={onUserSellAmountInput}
-        showMaxButton={!atMaxAmountInput}
         token={biddingToken}
         value={sellAmount}
       />
       <PriceInputPanel
         auctioningToken={auctioningToken}
         biddingToken={biddingToken}
-        id="price-input"
-        label={`Price — ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+        label={`${biddingTokenDisplay} per ${auctioningTokenDisplay} price`}
         onUserPriceInput={onUserPriceInput}
-        showMaxButton={false}
         value={price}
       />
       {!account ? (
