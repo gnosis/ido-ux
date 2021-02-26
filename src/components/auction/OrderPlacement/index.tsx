@@ -19,11 +19,11 @@ import ConfirmationModal from '../../ConfirmationModal'
 import TokenLogo from '../../TokenLogo'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
+import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
-import CurrencyInputPanel from '../CurrencyInputPanel'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
