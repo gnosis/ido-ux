@@ -67,8 +67,8 @@ export interface AdditionalServicesEndpoint {
   url_production: string
   url_develop?: string
 }
-function getAdditionalServiceUrl(baseUlr: string): string {
-  return `${baseUlr}${baseUlr.endsWith('/') ? '' : '/'}api/v1/`
+function getAdditionalServiceUrl(baseUrl: string): string {
+  return `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}api/v1/`
 }
 
 export type AdditionalServicesApiParams = AdditionalServicesEndpoint[]
