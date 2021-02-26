@@ -15,12 +15,11 @@ import TokenLogo from '../../TokenLogo'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
+import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { AuctionTimer } from '../AuctionTimer'
 
-const Wrapper = styled.div`
+const Wrapper = styled(BaseCard)`
   align-items: center;
-  border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.border};
   display: grid;
   grid-template-columns: 1fr 3px 1fr 154px 1fr 3px 1fr;
   margin: 0 0 50px;
@@ -106,7 +105,7 @@ const AuctionDetails = () => {
   )
 
   return (
-    <Wrapper>
+    <Wrapper noPadding>
       <Cell
         itemKey={
           <>

@@ -3,24 +3,20 @@ import styled from 'styled-components'
 
 import { Text } from 'rebass'
 
-import { ButtonError, ButtonLight, ButtonPrimary } from '../../components/Button'
-import { useActiveWeb3React } from '../../hooks'
-import { useClaimOrderCallback, useGetAuctionProceeds } from '../../hooks/useClaimOrderCallback'
-import { useWalletModalToggle } from '../../state/application/hooks'
+import { useActiveWeb3React } from '../../../hooks'
+import { useClaimOrderCallback, useGetAuctionProceeds } from '../../../hooks/useClaimOrderCallback'
+import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
   useDerivedAuctionInfo,
   useDerivedClaimInfo,
   useSwapState,
-} from '../../state/orderPlacement/hooks'
-import { getTokenDisplay } from '../../utils'
-import ClaimConfirmationModal from '../ClaimConfirmationModal'
-import TokenLogo from '../TokenLogo'
-import { BottomGrouping } from '../swap/styleds'
-
-const Wrapper = styled.div`
-  border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.border};
-`
+} from '../../../state/orderPlacement/hooks'
+import { getTokenDisplay } from '../../../utils'
+import { ButtonError, ButtonLight, ButtonPrimary } from '../../Button'
+import ClaimConfirmationModal from '../../ClaimConfirmationModal'
+import TokenLogo from '../../TokenLogo'
+import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import { BottomGrouping } from '../../swap/styleds'
 
 const AuctionTokenWrapper = styled.div`
   box-sizing: border-box;
@@ -86,7 +82,7 @@ const Claimer: React.FC = () => {
 
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
   return (
-    <Wrapper id="swap-page">
+    <BaseCard>
       <AuctionTokenWrapper>
         <AuctionToken>
           <TokenLogo address={biddingToken?.address} size={'42px'} />
@@ -96,7 +92,6 @@ const Claimer: React.FC = () => {
               : `0 ${biddingTokenDisplay}`}
           </Text>
         </AuctionToken>
-
         <AuctionToken>
           <TokenLogo address={auctioningToken?.address} size={'42px'} />
           <Text fontSize={15} fontWeight={'bold'}>
@@ -106,7 +101,6 @@ const Claimer: React.FC = () => {
           </Text>
         </AuctionToken>
       </AuctionTokenWrapper>
-
       <ClaimConfirmationModal
         hash={txHash}
         isOpen={showConfirm}
@@ -138,7 +132,7 @@ const Claimer: React.FC = () => {
           </ButtonError>
         )}
       </BottomGrouping>
-    </Wrapper>
+    </BaseCard>
   )
 }
 

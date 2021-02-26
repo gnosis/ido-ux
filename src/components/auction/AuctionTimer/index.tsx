@@ -197,7 +197,12 @@ export const AuctionTimer = () => {
     <Wrapper progress={`${calculatePercentageLeft(auctionStartingDate, auctionEndDate)}%`}>
       <Center>
         {auctionState === undefined && <TextBig>Loading</TextBig>}
-        {auctionState === AuctionState.NOT_YET_STARTED && <TextBig>Auction not started</TextBig>}
+        {auctionState === AuctionState.NOT_YET_STARTED && (
+          <TextBig>
+            Auction
+            <br /> not started
+          </TextBig>
+        )}
         {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
           auctionState === AuctionState.ORDER_PLACING) && (
           <>

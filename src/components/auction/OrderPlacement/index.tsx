@@ -4,31 +4,26 @@ import { ChainId, Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { Text } from 'rebass'
 
-import { ButtonLight, ButtonPrimary } from '../../components/Button'
-import { AutoColumn } from '../../components/Column'
-import ConfirmationModal from '../../components/ConfirmationModal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
-import PriceInputPanel from '../../components/PriceInputPanel'
-import SwapModalHeader from '../../components/swap/SwapModalHeader'
-import { BottomGrouping, Dots } from '../../components/swap/styleds'
-import { EASY_AUCTION_NETWORKS } from '../../constants'
-import { useActiveWeb3React } from '../../hooks'
-import { ApprovalState, useApproveCallback } from '../../hooks/useApproveCallback'
-import { usePlaceOrderCallback } from '../../hooks/usePlaceOrderCallback'
-import { useWalletModalToggle } from '../../state/application/hooks'
+import { EASY_AUCTION_NETWORKS } from '../../../constants'
+import { useActiveWeb3React } from '../../../hooks'
+import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
+import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
+import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
   useDerivedAuctionInfo,
   useGetOrderPlacementError,
   useSwapActionHandlers,
   useSwapState,
-} from '../../state/orderPlacement/hooks'
-import { getTokenDisplay } from '../../utils'
-import SwapModalFooter from '../swap/PlaceOrderModalFooter'
-
-const Wrapper = styled.div`
-  border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.border};
-`
+} from '../../../state/orderPlacement/hooks'
+import { getTokenDisplay } from '../../../utils'
+import { ButtonLight, ButtonPrimary } from '../../Button'
+import ConfirmationModal from '../../ConfirmationModal'
+import CurrencyInputPanel from '../../CurrencyInputPanel'
+import PriceInputPanel from '../../PriceInputPanel'
+import { Button } from '../../buttons/Button'
+import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
+import SwapModalHeader from '../../swap/SwapModalHeader'
 
 const OrderPlacement: React.FC = () => {
   const { account, chainId } = useActiveWeb3React()
@@ -129,13 +124,54 @@ const OrderPlacement: React.FC = () => {
 
   // text to show while loading
   const pendingText = `Placing order`
-
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
 
   return (
-    <Wrapper id="swap-page">
+    <BaseCard>
+      <CurrencyInputPanel
+        id="auction-input"
+        label={'Amount'}
+        onMax={() => {
+          maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
+        }}
+        onUserSellAmountInput={onUserSellAmountInput}
+        showMaxButton={!atMaxAmountInput}
+        token={biddingToken}
+        value={sellAmount}
+      />
+
+      <PriceInputPanel
+        auctioningToken={auctioningToken}
+        biddingToken={biddingToken}
+        id="price-input"
+        label={`Price — ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+        onUserPriceInput={onUserPriceInput}
+        showMaxButton={false}
+        value={price}
+      />
+      {!account ? (
+        <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+      ) : approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING ? (
+        <ButtonPrimary disabled={approval === ApprovalState.PENDING} onClick={approveCallback}>
+          {approval === ApprovalState.PENDING
+            ? `Approving ${biddingTokenDisplay}`
+            : `Approve ${biddingTokenDisplay}`}
+        </ButtonPrimary>
+      ) : (
+        <ButtonPrimary
+          disabled={!isValid}
+          id="swap-button"
+          onClick={() => {
+            setShowConfirm(true)
+          }}
+        >
+          <Text fontSize={20} fontWeight={500}>
+            {error ?? `Place Order`}
+          </Text>
+        </ButtonPrimary>
+      )}
+
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
         bottomContent={modalBottom}
@@ -150,57 +186,7 @@ const OrderPlacement: React.FC = () => {
         title="Confirm Order"
         topContent={modalHeader}
       />
-      <AutoColumn gap={'md'}>
-        <>
-          <CurrencyInputPanel
-            id="auction-input"
-            label={'Amount'}
-            onMax={() => {
-              maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
-            }}
-            onUserSellAmountInput={onUserSellAmountInput}
-            showMaxButton={!atMaxAmountInput}
-            token={biddingToken}
-            value={sellAmount}
-          />
-
-          <PriceInputPanel
-            auctioningToken={auctioningToken}
-            biddingToken={biddingToken}
-            id="price-input"
-            label={`Price — ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
-            onUserPriceInput={onUserPriceInput}
-            showMaxButton={false}
-            value={price}
-          />
-        </>
-      </AutoColumn>
-      <BottomGrouping>
-        {!account ? (
-          <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
-        ) : approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING ? (
-          <ButtonPrimary disabled={approval === ApprovalState.PENDING} onClick={approveCallback}>
-            {approval === ApprovalState.PENDING ? (
-              <Dots>Approving {biddingTokenDisplay}</Dots>
-            ) : (
-              `Approve ${biddingTokenDisplay}`
-            )}
-          </ButtonPrimary>
-        ) : (
-          <ButtonPrimary
-            disabled={!isValid}
-            id="swap-button"
-            onClick={() => {
-              setShowConfirm(true)
-            }}
-          >
-            <Text fontSize={20} fontWeight={500}>
-              {error ?? `Place Order`}
-            </Text>
-          </ButtonPrimary>
-        )}
-      </BottomGrouping>
-    </Wrapper>
+    </BaseCard>
   )
 }
 

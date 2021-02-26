@@ -149,11 +149,11 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     paddingHorizontal: '11px',
   },
   cards: {
-    backgroundColor: '#fff',
-    borderRadius: '8px ',
-    boxShadow: '0 2px 8px 0 rgba(212, 213, 211, 0.7)',
+    backgroundColor: darkMode ? '#001429' : '#F7F8FA',
+    border: `1px solid ${darkMode ? '#174172' : '#174172'}`,
+    borderRadius: '12px ',
     paddingHorizontal: '20px',
-    paddingVertical: '24px',
+    paddingVertical: '25px',
   },
   themeBreakPoints: {
     lg: '992px',

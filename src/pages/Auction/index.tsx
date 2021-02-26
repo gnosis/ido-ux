@@ -2,10 +2,12 @@ import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled from 'styled-components'
 
-import Claimer from '../../components/Claimer'
-import OrderPlacement from '../../components/OrderPlacement'
-import { OrderBookBtn } from '../../components/OrderbookBtn'
 import AuctionDetails from '../../components/auction/AuctionDetails'
+import { AuctionNotStarted } from '../../components/auction/AuctionNotStarted'
+import { AuctionPending } from '../../components/auction/AuctionPending'
+import Claimer from '../../components/auction/Claimer'
+import OrderPlacement from '../../components/auction/OrderPlacement'
+import { OrderBookBtn } from '../../components/auction/OrderbookBtn'
 import OrdersTable from '../../components/auction/OrdersTable'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
@@ -69,6 +71,8 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
   useCurrentUserOrders()
   useOrderbookDataCallback()
 
+  const auctionStarted = auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED
+
   return (
     <>
       <Title>Auction Details</Title>
@@ -77,27 +81,27 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
-      <SectionTitle>
-        {(auctionState === AuctionState.ORDER_PLACING ||
-          auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
-          'Place Order'}
-        {auctionState === AuctionState.CLAIMING && 'Claim Proceedings'}
-      </SectionTitle>
-      <Grid>
-        {(auctionState === AuctionState.ORDER_PLACING ||
-          auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
-        {auctionState === AuctionState.CLAIMING && <Claimer />}
-        {auctionState === AuctionState.PRICE_SUBMISSION && (
-          <div>Auction closed. Pending on-chain price-calculation.</div>
-        )}
-        {auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED && (
-          <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
-        )}
-      </Grid>
-      {(auctionState === undefined || auctionState === AuctionState.NOT_YET_STARTED) && (
-        <>Auction not started yet.</>
+      {auctionStarted && (
+        <SectionTitle as="h2">
+          {(auctionState === AuctionState.ORDER_PLACING ||
+            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
+            'Place Order'}
+          {auctionState === AuctionState.CLAIMING && 'Claim Proceedings'}
+        </SectionTitle>
       )}
-      <OrdersTable orders={orders.orders} />
+      {auctionStarted && (
+        <Grid>
+          {(auctionState === AuctionState.ORDER_PLACING ||
+            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
+          {auctionState === AuctionState.CLAIMING && <Claimer />}
+          {auctionState === AuctionState.PRICE_SUBMISSION && (
+            <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
+          )}
+          <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
+        </Grid>
+      )}
+      {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
+      {auctionStarted && <OrdersTable orders={orders.orders} />}
     </>
   )
 }

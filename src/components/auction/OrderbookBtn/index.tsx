@@ -2,20 +2,19 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
-// hooks
-import { useActiveWeb3React } from '../hooks'
-import { useSwapState } from '../state/orderPlacement/hooks'
-import { useOrderbookState } from '../state/orderbook/hooks'
-import { getTokenDisplay } from '../utils'
-import { ButtonLight } from './Button'
-import OrderBookChartSmall, { OrderBookError } from './OrderbookChartSmall'
-import OrderBookWidget, { processOrderbookData } from './OrderbookWidget'
-import Modal, { useModal } from './modals/MesaModal'
-import { DEFAULT_MODAL_OPTIONS } from './modals/Modal'
+import { useActiveWeb3React } from '../../../hooks'
+import { useSwapState } from '../../../state/orderPlacement/hooks'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
+import { getTokenDisplay } from '../../../utils'
+import { ButtonLight } from '../../Button'
+import OrderBookChartSmall, { OrderBookError } from '../../OrderbookChartSmall'
+import OrderBookWidget, { processOrderbookData } from '../../OrderbookWidget'
+import Modal, { useModal } from '../../modals/MesaModal'
+import { DEFAULT_MODAL_OPTIONS } from '../../modals/Modal'
+import { BaseCard } from '../../pureStyledComponents/BaseCard'
 
-const Wrapper = styled.div`
-  border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.border};
+const Wrapper = styled(BaseCard)`
+  min-width: 0;
 `
 
 const ViewOrderBookBtn = styled(ButtonLight)`
@@ -89,9 +88,9 @@ const ModalWrapper = styled.div`
 
 interface OrderBookBtnProps {
   baseToken: Token
-  quoteToken: Token
-  label?: string
   className?: string
+  label?: string
+  quoteToken: Token
 }
 
 export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnProps) => {

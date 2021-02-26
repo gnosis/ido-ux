@@ -1,11 +1,13 @@
 import styled from 'styled-components'
 
-export const EmptyContentWrapper = styled.div`
+import { BaseCard } from './BaseCard'
+
+export const EmptyContentWrapper = styled(BaseCard)`
   align-items: center;
   display: flex;
   flex-direction: column;
+  flex-grow: 0;
   font-size: 15px;
-  height: 100%;
   justify-content: center;
   min-height: 250px;
   width: 100%;
