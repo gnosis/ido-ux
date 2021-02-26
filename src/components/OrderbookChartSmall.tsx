@@ -7,8 +7,8 @@ import * as am4core from '@amcharts/amcharts4/core'
 import { DrawLabelsParams, OrderBookChartProps, createChart } from './OrderbookChart'
 
 const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): void => {
-  const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = quoteToken.symbol
+  const baseTokenLabel = baseToken?.symbol
+  const quoteTokenLabel = quoteToken?.symbol
   const market = baseTokenLabel + '-' + quoteTokenLabel
 
   const [xAxis] = chart.xAxes
