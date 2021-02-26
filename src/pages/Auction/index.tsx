@@ -4,12 +4,9 @@ import styled from 'styled-components'
 
 import AuctionDetails from '../../components/AuctionDetails'
 import AuctionHeader from '../../components/AuctionHeader'
-import { ButtonLight } from '../../components/Button'
 import Claimer from '../../components/Claimer'
 import OrderDisplayDropdown from '../../components/OrderDropdown'
 import OrderPlacement from '../../components/OrderPlacement'
-import { useActiveWeb3React } from '../../hooks'
-import { useWalletModalToggle } from '../../state/application/hooks'
 import {
   AuctionState,
   useCurrentUserOrders,
