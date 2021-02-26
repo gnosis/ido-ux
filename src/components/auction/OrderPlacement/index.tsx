@@ -8,7 +8,9 @@ import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCall
 import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
+  AuctionState,
   useDerivedAuctionInfo,
+  useDerivedAuctionState,
   useGetOrderPlacementError,
   useSwapActionHandlers,
   useSwapState,
@@ -22,6 +24,7 @@ import { ButtonType } from '../../buttons/buttonStylingTypes'
 import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
+import { ErrorLock } from '../../icons/ErrorLock'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
@@ -82,9 +85,21 @@ const ApprovalButton = styled(Button)`
 `
 
 const ErrorWrapper = styled.div`
+  margin-bottom: 20px;
+`
+
+const ErrorRow = styled.div`
   align-items: center;
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  > svg {
+    margin-bottom: auto;
+  }
 `
 
 const ErrorText = styled.div`
@@ -112,6 +127,7 @@ const OrderPlacement: React.FC = () => {
   const { error } = useGetOrderPlacementError()
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
+  const { auctionState } = useDerivedAuctionState()
 
   const isValid = !error
 
@@ -194,6 +210,7 @@ const OrderPlacement: React.FC = () => {
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
   const userTokenBalance = useTokenBalance(account, biddingToken)
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
+  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
 
   return (
     <Wrapper>
@@ -225,10 +242,23 @@ const OrderPlacement: React.FC = () => {
         onUserPriceInput={onUserPriceInput}
         value={price}
       />
-      {error && (
+      {(error || orderPlacingOnly) && (
         <ErrorWrapper>
-          <ErrorInfo />
-          <ErrorText>{error}</ErrorText>
+          {error && sellAmount !== '' && price !== '' && (
+            <ErrorRow>
+              <ErrorInfo />
+              <ErrorText>{error}</ErrorText>
+            </ErrorRow>
+          )}
+          {orderPlacingOnly && (
+            <ErrorRow>
+              <ErrorLock />
+              <ErrorText>
+                New orders can&apos;t be cancelled once you confirm the transaction in the next
+                step.
+              </ErrorText>
+            </ErrorRow>
+          )}
         </ErrorWrapper>
       )}
       {notApproved && (
