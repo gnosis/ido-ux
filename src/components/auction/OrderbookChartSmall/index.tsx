@@ -4,9 +4,9 @@ import styled from 'styled-components'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 
-import { DrawLabelsParams, OrderBookChartProps, createChart } from '../../OrderbookChart'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
+import { DrawLabelsParams, OrderBookChartProps, createChart } from '../OrderbookChart'
 
 const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): void => {
   const baseTokenLabel = baseToken?.symbol

@@ -1,14 +1,14 @@
 import React from 'react'
 import { Token } from 'uniswap-xdai-sdk'
 
-import { OrderBookData, PricePoint } from '../api/AdditionalServicesApi'
-import { useOrderbookState } from '../state/orderbook/hooks'
+import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
 import OrderBookChart, {
   Offer,
   OrderBookChartProps,
   OrderBookError,
   PricePointDetails,
-} from './OrderbookChart'
+} from '../OrderbookChart'
 
 const SMALL_VOLUME_THRESHOLD = 0.001
 
@@ -302,7 +302,7 @@ export function findClearingPrice(
   if (totalSellVolume >= initialAuctionOrder?.volume * initialAuctionOrder?.price) {
     return totalSellVolume / initialAuctionOrder.volume
   } else {
-    return initialAuctionOrder.price
+    return initialAuctionOrder?.price
   }
 }
 

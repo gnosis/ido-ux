@@ -7,21 +7,9 @@ import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
 export interface OrderBookChartProps {
-  /**
-   * Base Token for Y-axis
-   */
   baseToken: Token
-  /**
-   * Quote Token for X-axis
-   */
   quoteToken: Token
-  /**
-   * current network id
-   */
   networkId: number
-  /**
-   * price/volume data with asks and bids
-   */
   data: Maybe<PricePointDetails[]>
 }
 

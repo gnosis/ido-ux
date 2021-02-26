@@ -7,11 +7,11 @@ import { useSwapState } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getTokenDisplay } from '../../../utils'
 import { ButtonLight } from '../../Button'
-import OrderBookWidget, { processOrderbookData } from '../../OrderbookWidget'
 import Modal, { useModal } from '../../modals/MesaModal'
 import { DEFAULT_MODAL_OPTIONS } from '../../modals/Modal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import OrderBookChartSmall, { OrderBookError } from '../OrderbookChartSmall'
+import OrderBookWidget, { processOrderbookData } from '../OrderbookWidget'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
