@@ -15,7 +15,6 @@ export const LockBig: React.FC<{ className?: string }> = (props) => (
   <Wrapper
     className={`lockBig ${props.className}`}
     height="60"
-    id="locked"
     viewBox="0 0 60 60"
     width="60"
     xmlns="http://www.w3.org/2000/svg"

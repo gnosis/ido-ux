@@ -14,6 +14,8 @@ import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
 import { LockBig } from '../../icons/LockBig'
+import { OrderPending } from '../../icons/OrderPending'
+import { OrderPlaced } from '../../icons/OrderPlaced'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import CancelModalFooter from '../../swap/CancelOrderModealFooter'
@@ -121,7 +123,7 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
           <>
             <Grid>
               {Object.entries(orders).map((order, index) => (
-                <>
+                <React.Fragment key={index}>
                   <Cell
                     align="flex-start"
                     itemKey={
@@ -145,7 +147,19 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
                   <Cell
                     align="flex-start"
                     itemKey={<span>Status</span>}
-                    itemValue={order[1].status == OrderStatus.PLACED ? 'Placed' : 'Pending'}
+                    itemValue={
+                      order[1].status == OrderStatus.PLACED ? (
+                        <>
+                          <span>Placed</span>
+                          <OrderPlaced />
+                        </>
+                      ) : (
+                        <>
+                          <span>Pending</span>
+                          <OrderPending />
+                        </>
+                      )
+                    }
                   />
                   <ButtonWrapper>
                     <ActionButton
@@ -160,7 +174,7 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
                       Cancel
                     </ActionButton>
                   </ButtonWrapper>
-                </>
+                </React.Fragment>
               ))}
             </Grid>
             <ConfirmationModal
