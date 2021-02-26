@@ -16,17 +16,17 @@ export const queueStartElement =
 export const queueLastElement = '0xffffffffffffffffffffffffffffffffffffffff000000000000000000000001'
 
 export interface AuctionProceedings {
-  claimableBiddingToken: TokenAmount | null
-  claimableAuctioningToken: TokenAmount | null
+  claimableBiddingToken: Maybe<TokenAmount>
+  claimableAuctioningToken: Maybe<TokenAmount>
 }
 
 export interface ClaimInformation {
   sellOrdersFormUser: string[]
 }
-export function useGetClaimInfo(): ClaimInformation | null {
+export function useGetClaimInfo(): Maybe<ClaimInformation> {
   const { account, chainId, library } = useActiveWeb3React()
-  const [claimInfo, setClaimInfo] = useState<ClaimInformation | null>(null)
-  const [error, setError] = useState<Error | null>(null)
+  const [claimInfo, setClaimInfo] = useState<Maybe<ClaimInformation>>(null)
+  const [error, setError] = useState<Maybe<Error>>(null)
   const { auctionId } = useSwapState()
 
   useMemo(() => {
@@ -157,7 +157,7 @@ export function useClaimOrderCallback(): null | (() => Promise<string>) {
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
-        value: BigNumber | null
+        value: Maybe<BigNumber>
       {
         estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
         method = easyAuctionContract.claimFromParticipantOrder

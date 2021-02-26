@@ -16,9 +16,9 @@ export interface AuctionInfo {
   chainId: String
 }
 
-export function useAllAuctionInfo(): AuctionInfo[] | null {
-  const [auctionInfo, setAllAuctions] = useState<AuctionInfo[] | null>(null)
-  const [error, setError] = useState<Error | null>(null)
+export function useAllAuctionInfo(): Maybe<AuctionInfo[]> {
+  const [auctionInfo, setAllAuctions] = useState<Maybe<AuctionInfo[]>>(null)
+  const [error, setError] = useState<Maybe<Error>>(null)
 
   useEffect(() => {
     let cancelled = false

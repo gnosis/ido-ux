@@ -80,7 +80,7 @@ function PoolPopup({
   token0: { address?: string; symbol?: string }
   token1: { address?: string; symbol?: string }
 }) {
-  const pairAddress: string | null = useMemo(() => {
+  const pairAddress: Maybe<string> = useMemo(() => {
     if (!token0 || !token1) return null
     // just mock it out
     return Pair.getAddress(

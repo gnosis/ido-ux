@@ -6,9 +6,9 @@ import { AuctionInfo } from './useAllAuctionInfos'
 export function useInterestingAuctionInfo(
   numberOfItems: number,
   chainId: number,
-): AuctionInfo[] | null {
-  const [auctionInfo, setMostInterestingAuctions] = useState<AuctionInfo[] | null>(null)
-  const [error, setError] = useState<Error | null>(null)
+): Maybe<AuctionInfo[]> {
+  const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
+  const [error, setError] = useState<Maybe<Error>>(null)
 
   useMemo(() => {
     setMostInterestingAuctions(null)

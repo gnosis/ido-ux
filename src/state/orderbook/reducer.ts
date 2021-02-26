@@ -13,7 +13,7 @@ import {
 export interface OrderbookState {
   asks: PricePoint[]
   bids: PricePoint[]
-  error: Error | null
+  error: Maybe<Error>
   userOrderPrice: number
   userOrderVolume: number
   shouldLoad: boolean

@@ -24,7 +24,7 @@ export interface MulticallState {
   callResults: {
     [chainId: number]: {
       [callKey: string]: {
-        data?: string | null
+        data?: Maybe<string>
         blockNumber?: number
         fetchingBlockNumber?: number
       }

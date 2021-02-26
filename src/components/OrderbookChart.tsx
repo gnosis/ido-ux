@@ -22,7 +22,7 @@ export interface OrderBookChartProps {
   /**
    * price/volume data with asks and bids
    */
-  data: PricePointDetails[] | null
+  data: Maybe<PricePointDetails[]>
 }
 
 const Wrapper = styled.div`
@@ -94,10 +94,10 @@ export interface PricePointDetails {
   priceFormatted: string
   totalVolumeNumber: number
   totalVolumeFormatted: string
-  askValueY: number | null
-  bidValueY: number | null
-  newOrderValueY: number | null
-  clearingPriceValueY: number | null
+  askValueY: Maybe<number>
+  bidValueY: Maybe<number>
+  newOrderValueY: Maybe<number>
+  clearingPriceValueY: Maybe<number>
 }
 
 export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
@@ -224,7 +224,7 @@ export const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): 
 const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
   const { baseToken, data, networkId, quoteToken } = props
   const mountPoint = useRef<HTMLDivElement>(null)
-  const chartRef = useRef<am4charts.XYChart | null>(null)
+  const chartRef = useRef<Maybe<am4charts.XYChart>>(null)
 
   useEffect(() => {
     if (!mountPoint.current) return

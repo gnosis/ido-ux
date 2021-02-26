@@ -147,7 +147,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url
   }
 
-  public async getAllAuctionDetails(): Promise<AuctionInfo[] | null> {
+  public async getAllAuctionDetails(): Promise<Maybe<AuctionInfo[]>> {
     try {
       const promises: Promise<Response>[] = []
       for (const networkId in this.urlsByNetwork) {
@@ -174,7 +174,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   }
   public async getMostInterestingAuctionDetails(
     params: InterestingAuctionParams,
-  ): Promise<AuctionInfo[] | null> {
+  ): Promise<Maybe<AuctionInfo[]>> {
     try {
       const url = await this.getMostInterestingAuctionDetailsUrl(params)
 
@@ -314,7 +314,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     }
   }
 
-  private async query<T>(networkId: number, queryString: string): Promise<T | null> {
+  private async query<T>(networkId: number, queryString: string): Promise<Maybe<T>> {
     const baseUrl = this._getBaseUrl(networkId)
 
     const url = baseUrl + queryString
