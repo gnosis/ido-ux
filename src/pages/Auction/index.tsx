@@ -87,6 +87,9 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         {(auctionState === AuctionState.ORDER_PLACING ||
           auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
         {auctionState === AuctionState.CLAIMING && <Claimer />}
+        {auctionState === AuctionState.PRICE_SUBMISSION && (
+          <div>Auction closed. Pending on-chain price-calculation.</div>
+        )}
         {auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED && (
           <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
         )}
