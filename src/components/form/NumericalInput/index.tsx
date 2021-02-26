@@ -1,45 +1,23 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { escapeRegExp } from '../../utils'
+import { escapeRegExp } from '../../../utils'
+import { TexfieldPartsCSS } from '../../pureStyledComponents/Textfield'
 
-const StyledInput = styled.input<{
-  error?: boolean
-  fontSize?: string
-  align?: string
-}>`
-  color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
-  width: 0;
-  position: relative;
-  font-weight: 500;
-  outline: none;
+const StyledInput = styled.input<{ error?: boolean }>`
+  background-color: ${({ theme }) => theme.textField.backgroundColor};
   border: none;
-  flex: 1 1 auto;
-  background-color: ${({ theme }) => theme.bg1};
-  font-size: ${({ fontSize }) => fontSize ?? '24px'};
-  text-align: ${({ align }) => align && align};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0px;
-  -webkit-appearance: textfield;
+  border-radius: 0;
+  color: ${({ theme }) => (props) =>
+    props.error ? theme.textField.errorColor : theme.textField.color};
+  font-size: ${({ theme }) => theme.textField.fontSize};
+  font-weight: ${({ theme }) => theme.textField.fontWeight};
+  height: 100%;
+  outline: none;
+  padding: 0;
+  width: 100%;
 
-  ::-webkit-search-decoration {
-    -webkit-appearance: none;
-  }
-
-  [type='number'] {
-    -moz-appearance: textfield;
-  }
-
-  ::-webkit-outer-spin-button,
-  ::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-
-  ::placeholder {
-    color: ${({ theme }) => theme.text4};
-  }
+  ${TexfieldPartsCSS}
 `
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
@@ -64,7 +42,6 @@ export const Input = React.memo(function InnerInput({
 
   return (
     <StyledInput
-      {...rest}
       autoComplete="off"
       autoCorrect="off"
       // universal input options
@@ -82,10 +59,9 @@ export const Input = React.memo(function InnerInput({
       title="Token Amount"
       type="text"
       value={value}
+      {...rest}
     />
   )
 })
 
 export default Input
-
-// const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group

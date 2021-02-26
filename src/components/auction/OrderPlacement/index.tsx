@@ -16,13 +16,13 @@ import {
 import { useTokenBalance } from '../../../state/wallet/hooks'
 import { getTokenDisplay } from '../../../utils'
 import ConfirmationModal from '../../ConfirmationModal'
-import CurrencyInputPanel from '../../CurrencyInputPanel'
 import PriceInputPanel from '../../PriceInputPanel'
 import TokenLogo from '../../TokenLogo'
 import { Button } from '../../buttons/Button'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
+import CurrencyInputPanel from '../CurrencyInputPanel'
 
 const ActionButton = styled(Button)`
   height: 52px;
@@ -186,7 +186,6 @@ const OrderPlacement: React.FC = () => {
       ) : (
         <ActionButton
           disabled={!isValid}
-          id="swap-button"
           onClick={() => {
             setShowConfirm(true)
           }}

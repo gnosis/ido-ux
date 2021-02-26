@@ -13,6 +13,8 @@ const BAD_IMAGES = {}
 const Image = styled.img<{ size: string }>`
   border-radius: ${({ size }) => size};
   height: ${({ size }) => size};
+  position: relative;
+  top: -1px;
   width: ${({ size }) => size};
 `
 

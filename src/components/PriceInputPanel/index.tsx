@@ -5,8 +5,8 @@ import { Pair, Token } from 'uniswap-xdai-sdk'
 
 import { TYPE } from '../../theme'
 import DoubleLogo from '../DoubleLogo'
-import { Input as NumericalInput } from '../NumericalInput'
 import { RowBetween } from '../Row'
+import { Input as NumericalInput } from '../form/NumericalInput'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
