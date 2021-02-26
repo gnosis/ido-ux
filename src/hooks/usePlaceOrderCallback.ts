@@ -35,7 +35,7 @@ export function usePlaceOrderCallback(
   const { auctionId, price, sellAmount } = useSwapState()
   const { onNewBid } = useOrderbookActionHandlers()
 
-  const easyAuctionInstance: Contract | null = useContract(
+  const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
   )
@@ -74,7 +74,7 @@ export function usePlaceOrderCallback(
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
-        value: BigNumber | null
+        value: Maybe<BigNumber>
       {
         estimate = easyAuctionContract.estimateGas.placeSellOrders
         method = easyAuctionContract.placeSellOrders

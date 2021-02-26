@@ -23,8 +23,8 @@ const TokenInfo = styled.div`
 `
 
 interface CurrencyInputPanelProps {
-  auctioningToken: Token | null
-  biddingToken: Token | null
+  auctioningToken: Maybe<Token>
+  biddingToken: Maybe<Token>
   label: string
   onUserPriceInput: (val: string) => void
   value: string

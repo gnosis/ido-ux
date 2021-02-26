@@ -26,7 +26,7 @@ export function useOrderbookActionHandlers(): {
   onPullOrderbookData: () => void
   onResetUserPrice: (price: number) => void
   onResetUserVolume: (volume: number) => void
-  onResetOrderbookData: (orderbook: OrderBookData, error: Error | null) => void
+  onResetOrderbookData: (orderbook: OrderBookData, error: Maybe<Error>) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -59,7 +59,7 @@ export function useOrderbookActionHandlers(): {
     [dispatch],
   )
   const onResetOrderbookData = useCallback(
-    (orderbook: OrderBookData, error: Error | null) => {
+    (orderbook: OrderBookData, error: Maybe<Error>) => {
       dispatch(resetOrderbookData({ orderbook, error }))
     },
     [dispatch],

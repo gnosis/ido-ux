@@ -60,6 +60,6 @@ export const updateMulticallResults = createAction<{
   chainId: number
   blockNumber: number
   results: {
-    [callKey: string]: string | null
+    [callKey: string]: Maybe<string>
   }
 }>('updateMulticallResults')

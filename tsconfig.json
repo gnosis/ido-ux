@@ -33,5 +33,10 @@
     "**/*.js",
     "**/*.ts",
     "**/*.tsx"
+  ],
+  "files": [
+    "src/types.d.ts",
+    "src/images.d.ts",
+    "src/ethereum.d.ts"
   ]
 }

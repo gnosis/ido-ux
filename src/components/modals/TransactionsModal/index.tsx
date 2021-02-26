@@ -82,7 +82,7 @@ const TransactionListWrapper = styled.div`
 interface Props {
   isOpen: boolean
   maxHeight?: number
-  minHeight?: number | null
+  minHeight?: Maybe<number>
   onDismiss: () => void
 }
 

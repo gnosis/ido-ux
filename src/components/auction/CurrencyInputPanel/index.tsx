@@ -36,7 +36,7 @@ const TokenSymbol = styled.div`
 interface CurrencyInputPanelProps {
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
-  token: Token | null
+  token: Maybe<Token>
   value: string
 }
 

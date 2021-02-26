@@ -5,12 +5,12 @@ import { useSwapState } from '../state/orderPlacement/hooks'
 import { additionalServiceApi } from './../api'
 import { useActiveWeb3React } from './index'
 
-export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
+export function useClearingPriceInfo(): Maybe<ClearingPriceAndVolumeData> {
   const { account, chainId, library } = useActiveWeb3React()
-  const [clearingInfo, setClearingPriceAndVolume] = useState<ClearingPriceAndVolumeData | null>(
+  const [clearingInfo, setClearingPriceAndVolume] = useState<Maybe<ClearingPriceAndVolumeData>>(
     null,
   )
-  const [error, setError] = useState<Error | null>(null)
+  const [error, setError] = useState<Maybe<Error>>(null)
   const { auctionId } = useSwapState()
 
   useMemo(() => {
@@ -18,6 +18,7 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
     setError(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auctionId, chainId])
+
   useEffect(() => {
     let cancelled = false
 

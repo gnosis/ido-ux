@@ -12,10 +12,10 @@ export default function Updater() {
   const dispatch = useDispatch()
 
   const windowVisible = useIsWindowVisible()
-  const [maxBlockNumber, setMaxBlockNumber] = useState<number | null>(null)
+  const [maxBlockNumber, setMaxBlockNumber] = useState<Maybe<number>>(null)
   // because blocks arrive in bunches with longer polling periods, we just want
   // to process the latest one.
-  const debouncedMaxBlockNumber = useDebounce<number | null>(maxBlockNumber, 100)
+  const debouncedMaxBlockNumber = useDebounce<Maybe<number>>(maxBlockNumber, 100)
 
   // update block number
   useEffect(() => {

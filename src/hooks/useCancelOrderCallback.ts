@@ -28,7 +28,7 @@ export function useCancelOrderCallback(
         library,
         account,
       )
-      let estimate, method: Function, args: Array<number | string[]>, value: BigNumber | null
+      let estimate, method: Function, args: Array<number | string[]>, value: Maybe<BigNumber>
       {
         estimate = easyAuctionContract.estimateGas.cancelSellOrders
         method = easyAuctionContract.cancelSellOrders
