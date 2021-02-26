@@ -21,6 +21,7 @@ import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
+import { ErrorInfo } from '../../icons/ErrorInfo'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
@@ -78,6 +79,23 @@ const ApprovalButton = styled(Button)`
   font-weight: 600;
   height: 26px;
   padding: 0 14px;
+`
+
+const ErrorWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  margin-bottom: 20px;
+`
+
+const ErrorText = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 15px;
+  font-weight: normal;
+  line-height: 1.2;
+  margin: 0 0 0 15px;
+  position: relative;
+  text-align: left;
+  top: 1px;
 `
 
 const OrderPlacement: React.FC = () => {
@@ -207,6 +225,12 @@ const OrderPlacement: React.FC = () => {
         onUserPriceInput={onUserPriceInput}
         value={price}
       />
+      {error && (
+        <ErrorWrapper>
+          <ErrorInfo />
+          <ErrorText>{error}</ErrorText>
+        </ErrorWrapper>
+      )}
       {notApproved && (
         <ApprovalWrapper>
           <ApprovalText>
@@ -231,7 +255,7 @@ const OrderPlacement: React.FC = () => {
             setShowConfirm(true)
           }}
         >
-          {error ?? `Place Order`}
+          Place Order
         </ActionButton>
       )}
       <ConfirmationModal
