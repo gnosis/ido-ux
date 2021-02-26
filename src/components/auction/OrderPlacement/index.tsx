@@ -13,10 +13,12 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
+import { useTokenBalance } from '../../../state/wallet/hooks'
 import { getTokenDisplay } from '../../../utils'
 import ConfirmationModal from '../../ConfirmationModal'
 import CurrencyInputPanel from '../../CurrencyInputPanel'
 import PriceInputPanel from '../../PriceInputPanel'
+import TokenLogo from '../../TokenLogo'
 import { Button } from '../../buttons/Button'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
@@ -26,13 +28,28 @@ const ActionButton = styled(Button)`
   height: 52px;
 `
 
+const BalanceWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+`
+
+const Balance = styled.p`
+  color: ${({ theme }) => theme.text1};
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 10px 0 0;
+  text-align: left;
+`
+
+const Total = styled.span`
+  font-weight: 400;
+`
+
 const OrderPlacement: React.FC = () => {
   const { account, chainId } = useActiveWeb3React()
-
-  // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
-
-  // swap state
   const { price, sellAmount } = useSwapState()
   const {
     auctioningToken,
@@ -80,7 +97,7 @@ const OrderPlacement: React.FC = () => {
   }, [onUserPriceInput, price, initialPrice])
 
   // reset modal state when closed
-  function resetModal() {
+  const resetModal = () => {
     // clear input if txn submitted
     if (!pendingConfirmation) {
       onUserSellAmountInput('')
@@ -92,7 +109,7 @@ const OrderPlacement: React.FC = () => {
   // the callback to execute the swap
   const placeOrderCallback = usePlaceOrderCallback(auctioningToken, biddingToken)
 
-  function onPlaceOrder() {
+  const onPlaceOrder = () => {
     setAttemptingTxn(true)
 
     placeOrderCallback().then((hash) => {
@@ -104,11 +121,11 @@ const OrderPlacement: React.FC = () => {
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
 
-  function modalHeader() {
+  const modalHeader = () => {
     return <SwapModalHeader />
   }
 
-  function modalBottom() {
+  const modalBottom = () => {
     return (
       <SwapModalFooter
         auctioningToken={auctioningToken}
@@ -127,9 +144,17 @@ const OrderPlacement: React.FC = () => {
   const pendingText = `Placing order`
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
+  const userTokenBalance = useTokenBalance(account, biddingToken)
 
   return (
     <BaseCard>
+      <BalanceWrapper>
+        <Balance>
+          Your Balance:{' '}
+          <Total>{`${userTokenBalance?.toSignificant(6)} ${biddingToken.symbol}`}</Total>
+        </Balance>
+        <TokenLogo address={biddingToken.address} size={'22px'} />
+      </BalanceWrapper>
       <CurrencyInputPanel
         id="auction-input"
         label={'Amount'}
