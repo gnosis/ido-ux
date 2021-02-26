@@ -18,6 +18,7 @@ import { getTokenDisplay } from '../../../utils'
 import ConfirmationModal from '../../ConfirmationModal'
 import TokenLogo from '../../TokenLogo'
 import { Button } from '../../buttons/Button'
+import { ButtonType } from '../../buttons/buttonStylingTypes'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
@@ -31,6 +32,7 @@ const Wrapper = styled(BaseCard)`
 
 const ActionButton = styled(Button)`
   height: 52px;
+  margin-top: auto;
 `
 
 const BalanceWrapper = styled.div`
@@ -50,6 +52,32 @@ const Balance = styled.p`
 
 const Total = styled.span`
   font-weight: 400;
+`
+
+const ApprovalWrapper = styled.div`
+  align-items: center;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.primary1};
+  display: flex;
+  margin-bottom: 10px;
+  padding: 7px 12px;
+`
+
+const ApprovalText = styled.p`
+  color: ${({ theme }) => theme.primary1};
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.23;
+  margin: 0 25px 0 0;
+  text-align: left;
+`
+
+const ApprovalButton = styled(Button)`
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  height: 26px;
+  padding: 0 14px;
 `
 
 const OrderPlacement: React.FC = () => {
@@ -147,6 +175,7 @@ const OrderPlacement: React.FC = () => {
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
   const userTokenBalance = useTokenBalance(account, biddingToken)
+  const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
 
   return (
     <Wrapper>
@@ -155,7 +184,7 @@ const OrderPlacement: React.FC = () => {
           Your Balance:{' '}
           <Total>{`${
             account
-              ? `${userTokenBalance?.toSignificant(6)} ${biddingToken.symbol}`
+              ? `${userTokenBalance?.toSignificant(6)} ${biddingToken?.symbol}`
               : 'Connect your wallet'
           } `}</Total>
         </Balance>
@@ -178,17 +207,26 @@ const OrderPlacement: React.FC = () => {
         onUserPriceInput={onUserPriceInput}
         value={price}
       />
+      {notApproved && (
+        <ApprovalWrapper>
+          <ApprovalText>
+            You need to unlock {biddingToken.symbol} to allow the smart contract to interact with
+            it. This has to be done for each new token.
+          </ApprovalText>
+          <ApprovalButton
+            buttonType={ButtonType.primaryInverted}
+            disabled={approval === ApprovalState.PENDING}
+            onClick={approveCallback}
+          >
+            {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
+          </ApprovalButton>
+        </ApprovalWrapper>
+      )}
       {!account ? (
         <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-      ) : approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING ? (
-        <ActionButton disabled={approval === ApprovalState.PENDING} onClick={approveCallback}>
-          {approval === ApprovalState.PENDING
-            ? `Approving ${biddingTokenDisplay}`
-            : `Approve ${biddingTokenDisplay}`}
-        </ActionButton>
       ) : (
         <ActionButton
-          disabled={!isValid}
+          disabled={!isValid || notApproved}
           onClick={() => {
             setShowConfirm(true)
           }}

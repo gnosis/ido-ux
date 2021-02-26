@@ -100,12 +100,12 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     colorHover: '#001429',
   },
   buttonPrimaryInverted: {
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
     backgroundColorHover: '#e8663d',
     borderColor: '#e8663d',
     borderColorHover: '#e8663d',
     color: '#e8663d',
-    colorHover: '#fff',
+    colorHover: '#001429',
   },
   dropdown: {
     background: darkMode ? '#001429' : '#001429',
