@@ -24,6 +24,11 @@ import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
 import CurrencyInputPanel from '../CurrencyInputPanel'
 
+const Wrapper = styled(BaseCard)`
+  max-width: 100%;
+  min-width: 100%;
+`
+
 const ActionButton = styled(Button)`
   height: 52px;
 `
@@ -144,7 +149,7 @@ const OrderPlacement: React.FC = () => {
   const userTokenBalance = useTokenBalance(account, biddingToken)
 
   return (
-    <BaseCard>
+    <Wrapper>
       <BalanceWrapper>
         <Balance>
           Your Balance:{' '}
@@ -205,7 +210,7 @@ const OrderPlacement: React.FC = () => {
         title="Confirm Order"
         topContent={modalHeader}
       />
-    </BaseCard>
+    </Wrapper>
   )
 }
 

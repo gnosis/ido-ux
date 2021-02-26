@@ -7,20 +7,22 @@ import { useSwapState } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getTokenDisplay } from '../../../utils'
 import { ButtonLight } from '../../Button'
-import OrderBookChartSmall, { OrderBookError } from '../../OrderbookChartSmall'
 import OrderBookWidget, { processOrderbookData } from '../../OrderbookWidget'
 import Modal, { useModal } from '../../modals/MesaModal'
 import { DEFAULT_MODAL_OPTIONS } from '../../modals/Modal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import OrderBookChartSmall, { OrderBookError } from '../OrderbookChartSmall'
 
 const Wrapper = styled(BaseCard)`
-  min-width: 0;
+  max-width: 100%;
+  min-width: 100%;
 `
 
 const ViewOrderBookBtn = styled(ButtonLight)`
   background: none;
+  border: none;
   color: ${({ theme }) => theme.text1};
-  height: auto;
+  height: 100%;
   margin: 0;
   outline: none;
   padding: 0;
@@ -89,13 +91,12 @@ const ModalWrapper = styled.div`
 
 interface OrderBookBtnProps {
   baseToken: Token
-  className?: string
   label?: string
   quoteToken: Token
 }
 
 export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnProps) => {
-  const { baseToken, className, quoteToken } = props
+  const { baseToken, quoteToken } = props
   const { chainId } = useActiveWeb3React()
   const { auctionId } = useSwapState()
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(baseToken), [baseToken])
@@ -127,7 +128,6 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnPro
   })
   const { asks, bids, error, userOrderPrice, userOrderVolume } = useOrderbookState()
 
-  if (error || !asks || asks.length == 0) return <OrderBookError error={error} />
   const processedOrderbook = processOrderbookData({
     data: { bids, asks },
     userOrder: { price: userOrderPrice, volume: userOrderVolume },
@@ -138,14 +138,18 @@ export const OrderBookBtn: React.FC<OrderBookBtnProps> = (props: OrderBookBtnPro
   return (
     <>
       <Wrapper>
-        <ViewOrderBookBtn className={className} onClick={toggleModal} type="button">
-          <OrderBookChartSmall
-            baseToken={baseToken}
-            data={processedOrderbook}
-            networkId={chainId}
-            quoteToken={quoteToken}
-          />
-        </ViewOrderBookBtn>
+        {error || !asks || asks.length === 0 ? (
+          <OrderBookError error={error} />
+        ) : (
+          <ViewOrderBookBtn onClick={toggleModal} type="button">
+            <OrderBookChartSmall
+              baseToken={baseToken}
+              data={processedOrderbook}
+              networkId={chainId}
+              quoteToken={quoteToken}
+            />
+          </ViewOrderBookBtn>
+        )}
       </Wrapper>
       <Modal.Modal {...modalHook} />
     </>

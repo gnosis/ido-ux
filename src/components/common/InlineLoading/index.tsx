@@ -1,7 +1,7 @@
 import React, { HTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Spinner } from '../Spinner'
+import { Spinner, SpinnerSize } from '../Spinner'
 
 const FlexCSS = css`
   align-items: center;
@@ -44,7 +44,7 @@ const Text = styled.p`
 interface Props extends HTMLAttributes<HTMLDivElement> {
   absolute?: boolean
   message?: string
-  size?: string
+  size?: SpinnerSize
 }
 
 export const InlineLoading: React.FC<Props> = (props: Props) => {

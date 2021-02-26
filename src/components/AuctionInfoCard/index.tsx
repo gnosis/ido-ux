@@ -4,8 +4,7 @@ import styled from 'styled-components'
 
 import { AuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { ButtonLight } from '../Button'
-// import CountdownTimer from '../CountDown'
-import DoubleLogo from '../DoubleLogo'
+import DoubleLogo from '../common/DoubleLogo'
 
 const HeaderWrapper = styled.div`
   display: flex;

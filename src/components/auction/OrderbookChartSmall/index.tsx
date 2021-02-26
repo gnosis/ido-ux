@@ -4,7 +4,9 @@ import styled from 'styled-components'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 
-import { DrawLabelsParams, OrderBookChartProps, createChart } from './OrderbookChart'
+import { DrawLabelsParams, OrderBookChartProps, createChart } from '../../OrderbookChart'
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
 
 const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): void => {
   const baseTokenLabel = baseToken?.symbol
@@ -32,19 +34,16 @@ const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): void =>
 }
 
 const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
   align-content: center;
-  min-height: calc(70vh - 30rem);
-  min-width: 550px;
-  max-height: 260.44px;
-  padding: 26px;
-
-  text-align: center;
+  align-items: center;
   box-sizing: border-box;
   color: ${({ theme }) => theme.text2};
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  padding: 26px;
   position: relative;
+  width: 100%;
 
   .amcharts-Sprite-group {
     pointer-events: none;
@@ -104,7 +103,11 @@ const OrderBookChartSmall: React.FC<OrderBookChartProps> = (props: OrderBookChar
     })
   }, [baseToken, networkId, quoteToken, data])
 
-  return <Wrapper ref={mountPoint}>Show order book for this auction</Wrapper>
+  return (
+    <Wrapper ref={mountPoint}>
+      <InlineLoading size={SpinnerSize.small} />
+    </Wrapper>
+  )
 }
 
 interface OrderBookErrorProps {
@@ -112,7 +115,7 @@ interface OrderBookErrorProps {
 }
 
 export const OrderBookError: React.FC<OrderBookErrorProps> = ({ error }: OrderBookErrorProps) => (
-  <Wrapper>{error ? error.message : 'loading'}</Wrapper>
+  <Wrapper>{error ? error.message : <InlineLoading size={SpinnerSize.small} />}</Wrapper>
 )
 
 export default OrderBookChartSmall
