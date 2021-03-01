@@ -44,7 +44,7 @@ export function usePlaceOrderCallback(
   ]).result
   return useMemo(() => {
     return async function onPlaceOrder() {
-      if (!chainId || !library || !account) {
+      if (!chainId || !library || !account || !userId) {
         throw new Error('missing dependencies in onPlaceOrder callback')
       }
 
@@ -113,7 +113,7 @@ export function usePlaceOrderCallback(
           const order = {
             buyAmount: buyAmountScaled,
             sellAmount: sellAmountScaled,
-            userId: BigNumber.from(userId), // If many people are placing orders, this might be incorrect
+            userId: BigNumber.from(parseInt(userId.toString())), // If many people are placing orders, this might be incorrect
           }
           onNewOrder([
             {
