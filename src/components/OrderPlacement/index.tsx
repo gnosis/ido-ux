@@ -149,9 +149,7 @@ export default function OrderPlacement() {
   );
 
   const handleShowConfirm = () => {
-    const sameOrder = orders.orders.find(
-      (order) => order.sellAmount === sellAmount,
-    );
+    const sameOrder = orders.orders.find((order) => order.price === price);
 
     if (!sameOrder) {
       setShowConfirm(true);
@@ -180,7 +178,7 @@ export default function OrderPlacement() {
         <WarningModal
           isOpen={showWarning}
           title="Warning!"
-          content={`Pick a different price, you already has an order for ${sellAmount} ${biddingTokenDisplay}`}
+          content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
           onDismiss={() => {
             setShowWarning(false);
           }}
