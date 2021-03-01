@@ -188,13 +188,11 @@ export function useGetOrderPlacementError(): {
     sellAmount,
   )
   let error: string | undefined
-  if (!account) {
-    error = 'Connect Wallet'
-  }
 
   if (!sellAmount) {
     error = error ?? 'Enter an amount'
   }
+
   if (
     minBiddingAmountPerOrder &&
     biddingToken &&

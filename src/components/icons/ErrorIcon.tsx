@@ -2,6 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Wrapper = styled.svg`
+  flex-shrink: 0;
+
   .fill {
     fill: #ccc;
   }

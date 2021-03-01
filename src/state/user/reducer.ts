@@ -70,7 +70,7 @@ export default createReducer(initialState, (builder) =>
         state.lastVersion = GIT_COMMIT_HASH
 
         // Wed May 20, 2020 @ ~9pm central
-        // TODO: take a look at this at some point, why this timestamp ?
+        // Take a look at this at some point, why this timestamp ?
         if (state.timestamp < 1590027589111) {
           // this should remove the user added token from 'eth' for mainnet
           if (state.tokens[ChainId.MAINNET]) {

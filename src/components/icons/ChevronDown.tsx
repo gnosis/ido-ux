@@ -2,8 +2,12 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Wrapper = styled.svg`
+  display: block;
+  max-height: 100%;
+  max-width: 100%;
+
   .fill {
-    fill: #ccc;
+    fill: ${({ theme }) => theme.text1};
   }
 `
 

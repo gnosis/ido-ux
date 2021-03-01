@@ -155,6 +155,7 @@ function toCallState(
   if (valid && !blockNumber) return LOADING_CALL_STATE
   if (!contractInterface || !fragment || !latestBlockNumber) return LOADING_CALL_STATE
   const success = data && data.length > 2
+
   return {
     valid: true,
     loading: false,

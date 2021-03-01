@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { withTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import ReactTooltip, { TooltipProps } from 'react-tooltip'
 
@@ -7,18 +7,19 @@ import { TooltipIcon } from '../../icons/TooltipIcon'
 
 const Wrapper = styled.span`
   cursor: pointer;
+  position: relative;
+  top: -1px;
 
   .tooltipIcon {
     .fill {
-      fill: #ccc;
+      fill: ${({ theme }) => theme.text1};
+      transition: fill 0.1s linear;
     }
   }
 
   &:hover {
-    .tooltipIcon {
-      .fill {
-        fill: #ccc;
-      }
+    .fill {
+      fill: ${({ theme }) => theme.primary1};
     }
   }
 `
@@ -27,12 +28,10 @@ interface Props extends TooltipProps {
   className?: string
   id: string
   text: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  theme?: any
 }
 
-export const TooltipComponent: React.FC<Props> = (props) => {
-  const { className, delayHide = 50, delayShow = 250, id, text, theme, ...restProps } = props
+export const Tooltip: React.FC<Props> = (props) => {
+  const { className, delayHide = 50, delayShow = 250, id, text, ...restProps } = props
   const tooltipId = `tooltip_${id}`
 
   return (
@@ -46,9 +45,10 @@ export const TooltipComponent: React.FC<Props> = (props) => {
     >
       <TooltipIcon />
       <ReactTooltip
-        arrowColor={theme.colors.darkerGrey}
-        backgroundColor={theme.colors.darkerGrey}
-        border={false}
+        arrowColor={'#001429'}
+        backgroundColor={'#001429'}
+        border
+        borderColor={'#174172'}
         className="customTooltip"
         delayHide={delayHide}
         delayShow={delayShow}
@@ -60,5 +60,3 @@ export const TooltipComponent: React.FC<Props> = (props) => {
     </Wrapper>
   )
 }
-
-export const Tooltip = withTheme(TooltipComponent)

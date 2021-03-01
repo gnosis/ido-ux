@@ -10,9 +10,9 @@ import { PopupContent } from '../../state/application/actions'
 import { useActivePopups, useRemovePopup } from '../../state/application/hooks'
 import { ExternalLink } from '../../theme'
 import { AutoColumn } from '../Column'
-import DoubleTokenLogo from '../DoubleLogo'
 import Row from '../Row'
 import TxnPopup from '../TxnPopup'
+import DoubleTokenLogo from '../common/DoubleLogo'
 
 const StyledClose = styled(X)`
   position: absolute;

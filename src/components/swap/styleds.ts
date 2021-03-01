@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 import { Text } from 'rebass'
 
-import NumericalInput from '../NumericalInput'
+import NumericalInput from '../form/NumericalInput'
 
 export const Wrapper = styled.div`
   position: relative;

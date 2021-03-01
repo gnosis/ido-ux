@@ -7,52 +7,37 @@ interface TexfieldCSSProps {
 
 export interface TextfieldProps extends InputHTMLAttributes<HTMLInputElement>, TexfieldCSSProps {}
 
-export const TextfieldCSS = css<TexfieldCSSProps>`
-  background-color: ${(props) => props.theme.textField.backgroundColor};
-  border-color: ${(props) =>
-    props.error ? props.theme.textField.errorColor : props.theme.textField.borderColor};
-  border-radius: ${(props) => props.theme.textField.borderRadius};
-  border-style: ${(props) => props.theme.textField.borderStyle};
-  border-width: ${(props) => props.theme.textField.borderWidth};
-  color: ${(props) =>
-    props.error ? props.theme.textField.errorColor : props.theme.textField.color};
-  font-size: ${(props) => props.theme.textField.fontSize};
-  font-weight: ${(props) => props.theme.textField.fontWeight};
-  height: ${(props) => props.theme.textField.height};
-  outline: none;
-  padding: 0 ${(props) => props.theme.textField.paddingHorizontal};
-  transition: border-color 0.15s linear;
-  width: 100%;
-
+export const TexfieldPartsCSS = css<TexfieldCSSProps>`
   &:active,
   &:focus {
-    background-color: ${(props) => props.theme.textField.backgroundColorActive};
-    border-color: ${(props) =>
-      props.error ? props.theme.textField.errorColor : props.theme.textField.borderColorActive};
+    background-color: ${({ theme }) => theme.textField.backgroundColorActive};
+    border-color: ${({ theme }) => (props) =>
+      props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
   }
 
   &[disabled],
   &[disabled]:hover {
-    background-color: ${(props) => props.theme.textField.backgroundColor};
-    border-color: ${(props) => props.theme.textField.borderColor};
+    background-color: ${({ theme }) => theme.textField.backgroundColor};
+    border-color: ${({ theme }) => theme.textField.borderColor};
     cursor: not-allowed;
     opacity: 0.5;
   }
 
   &:disabled::placeholder {
-    color: ${(props) => props.theme.textField.color}!important;
+    color: ${({ theme }) => theme.textField.color}!important;
   }
 
   &::placeholder {
-    color: ${(props) => props.theme.textField.colorPlaceholder};
-    font-style: normal;
+    color: ${({ theme }) => theme.textField.colorPlaceholder};
+    font-style: italic;
+    font-weight: 400;
     opacity: 1;
   }
 
   &[readonly] {
-    background-color: ${(props) => props.theme.textField.backgroundColor};
-    border-color: ${(props) => props.theme.textField.borderColor};
-    color: ${(props) => props.theme.textField.colorPlaceholder};
+    background-color: ${({ theme }) => theme.textField.backgroundColor};
+    border-color: ${({ theme }) => theme.textField.borderColor};
+    color: ${({ theme }) => theme.textField.colorPlaceholder};
     cursor: default;
     font-style: italic;
   }
@@ -65,6 +50,30 @@ export const TextfieldCSS = css<TexfieldCSSProps>`
       margin: 0;
     }
   }
+
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+`
+
+export const TextfieldCSS = css<TexfieldCSSProps>`
+  background-color: ${({ theme }) => theme.textField.backgroundColor};
+  border-color: ${({ theme }) => (props) =>
+    props.error ? theme.textField.errorColor : theme.textField.borderColor};
+  border-radius: ${({ theme }) => theme.textField.borderRadius};
+  border-style: ${({ theme }) => theme.textField.borderStyle};
+  border-width: ${({ theme }) => theme.textField.borderWidth};
+  color: ${({ theme }) => (props) =>
+    props.error ? theme.textField.errorColor : theme.textField.color};
+  font-size: ${({ theme }) => theme.textField.fontSize};
+  font-weight: ${({ theme }) => theme.textField.fontWeight};
+  height: ${({ theme }) => theme.textField.height};
+  outline: none;
+  padding: 0 ${({ theme }) => theme.textField.paddingHorizontal};
+  transition: border-color 0.15s linear;
+  width: 100%;
+
+  ${TexfieldPartsCSS}
 `
 
 export const Textfield = styled.input<TextfieldProps>`

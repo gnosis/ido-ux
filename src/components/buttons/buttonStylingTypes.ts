@@ -75,7 +75,7 @@ const getButtonTypeStyles = (buttonType: ButtonType = ButtonType.primary): any =
 
 export const ButtonCSS = css<ButtonCommonProps>`
   align-items: center;
-  border-radius: 4px;
+  border-radius: 6px;
   border-style: solid;
   border-width: 1px;
   cursor: pointer;

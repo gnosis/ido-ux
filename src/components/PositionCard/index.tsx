@@ -14,9 +14,9 @@ import { ExternalLink } from '../../theme/components'
 import { ButtonSecondary } from '../Button'
 import Card, { GreyCard } from '../Card'
 import { AutoColumn } from '../Column'
-import DoubleLogo from '../DoubleLogo'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
 import TokenLogo from '../TokenLogo'
+import DoubleLogo from '../common/DoubleLogo'
 
 const FixedHeightRow = styled(RowBetween)`
   height: 24px;
