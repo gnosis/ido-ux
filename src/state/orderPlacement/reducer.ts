@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { parse } from 'qs'
 
+import { CHAIN_ID } from '../../constants/config'
 import { priceInput, sellAmountInput, setDefaultsFromURLSearch } from './actions'
 
 export interface SwapState {
@@ -11,7 +12,7 @@ export interface SwapState {
 }
 
 const initialState: SwapState = {
-  chainId: 0,
+  chainId: CHAIN_ID,
   price: '-',
   auctionId: 1,
   sellAmount: '',

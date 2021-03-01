@@ -317,12 +317,12 @@ export const processOrderbookData = ({
     const bids = processData(
       data.bids,
       userOrder,
-      data.asks[0].price,
-      data.asks[0].price,
+      data.asks[0]?.price ?? 0,
+      data.asks[0]?.price ?? 0,
       Offer.Bid,
     )
 
-    const asks = processData(data.asks, null, bids[0].price, data.asks[0].price, Offer.Ask)
+    const asks = processData(data.asks, null, bids[0].price, data.asks[0]?.price ?? 0, Offer.Ask)
     let pricePoints = bids.concat(asks)
     if (clearingPrice) {
       const priceInfo = addClearingPriceInfo(clearingPrice, pricePoints)

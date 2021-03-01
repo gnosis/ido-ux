@@ -196,7 +196,7 @@ export const CookiesBanner: React.FC<Props> = (props) => {
 
   const loadGoogleAnalytics = useCallback(() => {
     if (!GOOGLE_ANALYTICS_ID) {
-      console.error(
+      console.warn(
         'In order to use Google Analytics you need to add a trackingID using the REACT_APP_GOOGLE_ANALYTICS_ID environment variable.',
       )
       return
