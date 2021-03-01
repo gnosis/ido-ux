@@ -3,15 +3,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { ClearingPriceAndVolumeData } from '../api/AdditionalServicesApi'
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { additionalServiceApi } from './../api'
-import { useActiveWeb3React } from './index'
 
 export function useClearingPriceInfo(): Maybe<ClearingPriceAndVolumeData> {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { auctionId, chainId } = useSwapState()
   const [clearingInfo, setClearingPriceAndVolume] = useState<Maybe<ClearingPriceAndVolumeData>>(
     null,
   )
   const [error, setError] = useState<Maybe<Error>>(null)
-  const { auctionId } = useSwapState()
 
   useMemo(() => {
     setClearingPriceAndVolume(null)
@@ -24,7 +22,7 @@ export function useClearingPriceInfo(): Maybe<ClearingPriceAndVolumeData> {
 
     const fetchApiData = async (): Promise<void> => {
       try {
-        if (!chainId || !library || !account || !additionalServiceApi) {
+        if (!chainId || !additionalServiceApi) {
           throw new Error('missing dependencies in useClearingPriceInfo callback')
         }
         const clearingOrderAndVolume = await additionalServiceApi.getClearingPriceOrderAndVolume({
@@ -44,7 +42,7 @@ export function useClearingPriceInfo(): Maybe<ClearingPriceAndVolumeData> {
     return (): void => {
       cancelled = true
     }
-  }, [account, chainId, library, auctionId, setClearingPriceAndVolume])
+  }, [chainId, auctionId, setClearingPriceAndVolume])
 
   if (error) {
     console.error('error while fetching price info', error)
