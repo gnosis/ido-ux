@@ -15,6 +15,8 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
+import { useOrderState } from '../../../state/orders/hooks'
+import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalance } from '../../../state/wallet/hooks'
 import { getTokenDisplay } from '../../../utils'
 import ConfirmationModal from '../../ConfirmationModal'
@@ -25,6 +27,7 @@ import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import { ErrorLock } from '../../icons/ErrorLock'
+import WarningModal from '../../modals/WarningModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
@@ -115,6 +118,7 @@ const ErrorText = styled.div`
 
 const OrderPlacement: React.FC = () => {
   const { account, chainId } = useActiveWeb3React()
+  const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount } = useSwapState()
   const {
@@ -133,6 +137,7 @@ const OrderPlacement: React.FC = () => {
 
   // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
 
@@ -212,8 +217,26 @@ const OrderPlacement: React.FC = () => {
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
 
+  const handleShowConfirm = () => {
+    const sameOrder = orders.orders.find((order) => order.price === price)
+
+    if (!sameOrder) {
+      setShowConfirm(true)
+    } else {
+      setShowWarning(true)
+    }
+  }
+
   return (
     <Wrapper>
+      <WarningModal
+        content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+        isOpen={showWarning}
+        onDismiss={() => {
+          setShowWarning(false)
+        }}
+        title="Warning!"
+      />
       <BalanceWrapper>
         <Balance>
           Your Balance:{' '}
@@ -279,12 +302,7 @@ const OrderPlacement: React.FC = () => {
       {!account ? (
         <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
       ) : (
-        <ActionButton
-          disabled={!isValid || notApproved}
-          onClick={() => {
-            setShowConfirm(true)
-          }}
-        >
+        <ActionButton disabled={!isValid || notApproved} onClick={handleShowConfirm}>
           Place Order
         </ActionButton>
       )}

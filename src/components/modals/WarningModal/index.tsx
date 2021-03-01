@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 import { Text } from 'rebass'
 
-import { CloseIcon } from '../../theme/components'
-import { AutoColumn } from '../Column'
-import { RowBetween } from '../Row'
-import Modal from '../modals/Modal'
+import { CloseIcon } from '../../../theme/components'
+import { AutoColumn } from '../../Column'
+import { RowBetween } from '../../Row'
+import Modal from '../Modal'
 
 const Wrapper = styled.div`
   width: 100%;
