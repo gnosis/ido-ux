@@ -1,19 +1,26 @@
 import React, { Suspense } from 'react'
-import { BrowserRouter, HashRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { CookiesBanner } from '../components/common/CookiesBanner'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import { BaseCard } from '../components/pureStyledComponents/BaseCard'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainScroll } from '../components/pureStyledComponents/MainScroll'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 import { PUBLIC_URL } from '../constants/config'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
+import { About } from './About'
 import Auction from './Auction'
-import { RedirectPathToSwapOnly } from './Auction/redirects'
+import { Cookies } from './Cookies'
+import { Imprint } from './Imprint'
+import { Landing } from './Landing'
+import { Licenses } from './Licenses'
 import Overview from './Overview'
+import { Privacy } from './Privacy'
+import { Terms } from './Terms'
 
 let Router: React.ComponentType
 if (PUBLIC_URL === '.') {
@@ -36,9 +43,21 @@ export default function App() {
               <Popups />
               <Web3ReactManager>
                 <Switch>
-                  <Route component={Auction} exact path="/auction" strict />\
-                  <Route component={Overview} exact path="/overview" strict />\
-                  <Route component={RedirectPathToSwapOnly} />
+                  <Route component={Auction} exact path="/auction" strict />
+                  <Route component={Overview} exact path="/overview" strict />
+                  <Route component={Landing} exact path="/start" strict />
+                  <Route component={Terms} exact path="/terms-and-conditions" strict />
+                  <Route component={Privacy} exact path="/privacy-policy" strict />
+                  <Route component={Cookies} exact path="/cookie-policy" strict />
+                  <Route component={Licenses} exact path="/licenses" strict />
+                  <Route component={About} exact path="/about" strict />
+                  <Route component={Imprint} exact path="/imprint" strict />
+                  <Route exact path="/">
+                    <Redirect to="/start" />
+                  </Route>
+                  <Route path="*">
+                    <BaseCard>Page not found Error 404</BaseCard>
+                  </Route>
                 </Switch>
               </Web3ReactManager>
             </InnerContainer>

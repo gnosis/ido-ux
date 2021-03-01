@@ -111,7 +111,7 @@ export const Footer: React.FC<Props> = (props) => {
           <Link to="/privacy-policy">Privacy</Link>
         </Item>
         <Item>
-          <Link to="/licenses">Cookies</Link>
+          <Link to="/cookie-policy">Cookies</Link>
           <IconWrapper onClick={onCookiesBannerShow}>
             <SettingsIconStyled />
           </IconWrapper>
