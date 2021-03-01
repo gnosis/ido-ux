@@ -74,11 +74,11 @@ export function orderToPrice(
 }
 
 function decodeSellOrder(
-  orderBytes: string,
+  orderBytes: string | undefined,
   soldToken: Token | undefined,
   boughtToken: Token | undefined,
 ): SellOrder | null {
-  if (soldToken == undefined || boughtToken == undefined) {
+  if (!orderBytes || !soldToken || !boughtToken) {
     return null;
   }
   const sellAmount = new Fraction(

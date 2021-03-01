@@ -75,42 +75,50 @@ export default function Overview() {
   const highlightedAuctions = useInterestingAuctionInfo(4, chainId);
   const allAuctions = useAllAuctionInfo();
   const history = useHistory();
-
-  function handleClick(auctionId: number, chainId: number) {
-    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}`);
-  }
-  if (!highlightedAuctions || !allAuctions) return null;
   const tableData = [];
-  allAuctions.forEach((item) => {
-    tableData.push({
-      auctionId: item.auctionId,
-      chainId: chainNames[Number(item.chainId)],
-      selling: item.symbolAuctioningToken,
-      buying: item.symbolBiddingToken,
-      symbol: (
-        <DoubleLogo
-          a0={item.addressAuctioningToken}
-          a1={item.addressBiddingToken}
-          size={40}
-          margin={true}
-        />
-      ),
-      date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),
-      status:
-        new Date(item.endTimeTimestamp * 1000) > new Date()
-          ? "Ongoing"
-          : "Ended",
-      link: (
-        <ViewBtn
-          onClick={() => handleClick(item.auctionId, Number(item.chainId))}
-          type="button"
-        >
-          {" "}
-          view{" "}
-        </ViewBtn>
-      ),
+  let highlightedAuctionEntries = [];
+
+  const handleClick = (auctionId: number, chainId: number) => {
+    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}`);
+  };
+
+  if (highlightedAuctions && highlightedAuctions.length > 0) {
+    highlightedAuctionEntries = Object.entries(highlightedAuctions);
+  }
+
+  if (allAuctions && allAuctions.length > 0) {
+    allAuctions.forEach((item) => {
+      tableData.push({
+        auctionId: item.auctionId,
+        chainId: chainNames[Number(item.chainId)],
+        selling: item.symbolAuctioningToken,
+        buying: item.symbolBiddingToken,
+        symbol: (
+          <DoubleLogo
+            a0={item.addressAuctioningToken}
+            a1={item.addressBiddingToken}
+            size={40}
+            margin={true}
+          />
+        ),
+        date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),
+        status:
+          new Date(item.endTimeTimestamp * 1000) > new Date()
+            ? "Ongoing"
+            : "Ended",
+        link: (
+          <ViewBtn
+            onClick={() => handleClick(item.auctionId, Number(item.chainId))}
+            type="button"
+          >
+            {" "}
+            view{" "}
+          </ViewBtn>
+        ),
+      });
     });
-  });
+  }
+
   return (
     <>
       <ThemeHeader>
@@ -121,7 +129,7 @@ export default function Overview() {
           <h3>Highlighted auctions:</h3>
         </Wrapper>
         <Wrapper>
-          {Object.entries(highlightedAuctions).map((auctionInfo) => (
+          {highlightedAuctionEntries.map((auctionInfo) => (
             <AuctionInfoCard key={auctionInfo[0]} {...auctionInfo[1]} />
           ))}
         </Wrapper>
