@@ -9,11 +9,9 @@ export function useClearingPriceInfo(): Maybe<ClearingPriceAndVolumeData> {
   const [clearingInfo, setClearingPriceAndVolume] = useState<Maybe<ClearingPriceAndVolumeData>>(
     null,
   )
-  const [error, setError] = useState<Maybe<Error>>(null)
 
   useMemo(() => {
     setClearingPriceAndVolume(null)
-    setError(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auctionId, chainId])
 
@@ -32,9 +30,10 @@ export function useClearingPriceInfo(): Maybe<ClearingPriceAndVolumeData> {
         if (cancelled) return
         setClearingPriceAndVolume(clearingOrderAndVolume)
       } catch (error) {
-        if (cancelled) return
+        setClearingPriceAndVolume(null)
         console.error('Error getting clearing price info', error)
-        setError(error)
+
+        if (cancelled) return
       }
     }
     fetchApiData()
@@ -43,11 +42,6 @@ export function useClearingPriceInfo(): Maybe<ClearingPriceAndVolumeData> {
       cancelled = true
     }
   }, [chainId, auctionId, setClearingPriceAndVolume])
-
-  if (error) {
-    console.error('error while fetching price info', error)
-    return null
-  }
 
   return clearingInfo
 }

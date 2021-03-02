@@ -66,11 +66,11 @@ export function orderToPrice(order: SellOrder | null | undefined): Fraction | un
 }
 
 function decodeSellOrder(
-  orderBytes: string,
+  orderBytes: string | undefined,
   soldToken: Token | undefined,
   boughtToken: Token | undefined,
 ): Maybe<SellOrder> {
-  if (soldToken == undefined || boughtToken == undefined) {
+  if (!orderBytes || !soldToken || !boughtToken) {
     return null
   }
   const sellAmount = new Fraction(
@@ -464,11 +464,19 @@ export function useCurrentUserOrders() {
       if (!chainId || !account || !biddingToken || !auctioningToken) {
         return
       }
-      const sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders({
-        networkId: chainId,
-        auctionId,
-        user: account,
-      })
+
+      let sellOrdersFormUser: string[] = []
+
+      try {
+        sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders({
+          networkId: chainId,
+          auctionId,
+          user: account,
+        })
+      } catch (error) {
+        console.error('Error getting current orders: ', error)
+      }
+
       const sellOrderDisplays: OrderDisplay[] = []
       if (biddingToken && auctioningToken && sellOrdersFormUser) {
         for (const orderString of sellOrdersFormUser) {

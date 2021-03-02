@@ -95,7 +95,7 @@ export function useOrderbookDataCallback() {
       } catch (error) {
         if (isFetchingDone) return
         console.error('Error populating orderbook with data', error)
-        onResetOrderbookData({ bids: [], asks: [] }, error)
+        onResetOrderbookData({ bids: [], asks: [] }, null)
       }
     }
     if (shouldLoad && !isFetchingDone) {
