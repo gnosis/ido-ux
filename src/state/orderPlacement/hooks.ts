@@ -476,6 +476,7 @@ export function useCurrentUserOrders() {
 
           // in some of the orders the buyAmount field is zero
           if (order.buyAmount.isZero()) {
+            console.error(`Order buyAmount shouldn't be zero`)
             continue
           }
 
