@@ -1,0 +1,40 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="249"
+    height="250"
+    viewBox="0 0 249 250"
+>
+    <defs>
+        <style>
+            .cls-1 {
+                fill: none;
+                stroke: #fff;
+                stroke-miterlimit: 10
+            }
+
+        </style>
+    </defs>
+    <g
+        id="shape-2"
+        transform="translate(.5 .5)"
+    >
+        <path
+            id="Stroke_1"
+            d="M100 50A50 50 0 1 1 50 0a50 50 0 0 1 50 50z"
+            class="cls-1"
+            transform="translate(74 149)"
+        />
+        <path
+            id="Stroke_3"
+            d="M149 74.5A74.5 74.5 0 1 1 74.5 0 74.5 74.5 0 0 1 149 74.5z"
+            class="cls-1"
+            transform="translate(49)"
+        />
+        <path
+            id="Stroke_5"
+            d="M248 124A124 124 0 1 1 124 0a124 124 0 0 1 124 124z"
+            class="cls-1"
+            transform="translate(0 1)"
+        />
+    </g>
+</svg>
