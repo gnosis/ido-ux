@@ -2,9 +2,9 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { AuctionInfo } from '../../hooks/useAllAuctionInfos'
-import { ButtonLight } from '../Button'
-import DoubleLogo from '../common/DoubleLogo'
+import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
+import { ButtonLight } from '../../Button'
+import DoubleLogo from '../../common/DoubleLogo'
 
 const HeaderWrapper = styled.div`
   display: flex;
