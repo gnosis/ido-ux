@@ -473,6 +473,12 @@ export function useCurrentUserOrders() {
       if (biddingToken && auctioningToken && sellOrdersFormUser) {
         for (const orderString of sellOrdersFormUser) {
           const order = decodeOrder(orderString)
+
+          // in some of the orders the buyAmount field is zero
+          if (order.buyAmount.isZero()) {
+            continue
+          }
+
           sellOrderDisplays.push({
             id: orderString,
             sellAmount: new Fraction(
