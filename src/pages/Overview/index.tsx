@@ -71,9 +71,10 @@ export default function Overview() {
   return (
     <>
       <div style={{ display: 'flex', marginBottom: '40px' }}>
-        {Object.entries(highlightedAuctionEntries).map((auctionInfo) => (
-          <AuctionInfoCard key={auctionInfo[0]} {...auctionInfo[1]} />
-        ))}
+        {Object.entries(highlightedAuctionEntries).map((auctionInfo) => {
+          const [key, [, auction]] = auctionInfo
+          return <AuctionInfoCard auctionInfo={auction} key={key} />
+        })}
       </div>
       <DatatablePage {...tableData} />
     </>

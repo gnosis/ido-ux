@@ -139,10 +139,16 @@ const Row = styled.span`
   }
 `
 
-export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
+interface AuctionInfoCardProps {
+  auctionInfo: AuctionInfo
+}
+
+export default function AuctionInfoCard(props: AuctionInfoCardProps) {
+  const { auctionInfo } = props
+
   const history = useHistory()
 
-  function handleClick() {
+  const handleClick = () => {
     history.push(
       `/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(auctionInfo.chainId)}`,
     )
