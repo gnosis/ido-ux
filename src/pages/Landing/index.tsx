@@ -1,10 +1,71 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
+import { ButtonCSS } from '../../components/buttons/buttonStylingTypes'
+import { InlineLoading } from '../../components/common/InlineLoading'
+import { SpinnerSize } from '../../components/common/Spinner'
+import { Send } from '../../components/icons/Send'
+import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import AuctionsIcon from './img/eth.svg'
 import Shape1 from './img/shape-1.svg'
 import Shape2 from './img/shape-2.svg'
 import Shape3 from './img/shape-3.svg'
+
+const Welcome = styled.div`
+  display: flex;
+  margin: 0 0 60px;
+  padding: 50px 0 0 0;
+`
+
+const WelcomeTextBlock = styled.div`
+  padding: 0 25px 0 0;
+`
+
+const WelcomeTitle = styled.h1`
+  color: ${({ theme }) => theme.text1};
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 40px;
+`
+
+const WelcomeText = styled.p`
+  color: ${({ theme }) => theme.text1};
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+`
+
+const AuctionsBlock = styled.div`
+  align-items: center;
+  border-radius: 12px;
+  border: solid 1px ${({ theme }) => theme.border};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 0 0 auto;
+  max-width: 100%;
+  min-height: 340px;
+  padding: 25px;
+  width: 400px;
+`
+
+const AuctionsImage = styled.img`
+  display: block;
+  margin-bottom: 45px;
+`
+
+const AuctionsText = styled.p`
+  color: ${({ theme }) => theme.text1};
+  font-size: 21px;
+  font-weight: normal;
+  line-height: 1.2;
+  margin: 0 0 25px;
+  text-align: center;
+`
 
 const Featured = styled(FeaturedAuctions)`
   margin-bottom: 120px;
@@ -44,9 +105,55 @@ const ImageBlock = styled.div<{ align: string }>`
   display: flex;
 `
 
+const AuctionsButton = styled(NavLink)`
+  ${ButtonCSS}
+  height: 52px;
+`
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 0 0 100px;
+`
+
+const SendIcon = styled(Send)`
+  margin: 0 8px 0 0;
+`
+
 export const Landing: React.FC = () => {
+  const allAuctions = useAllAuctionInfo()
+
   return (
     <>
+      <Welcome>
+        <WelcomeTextBlock>
+          <WelcomeTitle>
+            The most fair mechanism
+            <br />
+            to launch assets on Ethereum
+          </WelcomeTitle>
+          <WelcomeText>
+            Gnosis Auction is a protocol that enables
+            <br /> anyone to auction-off assets with fair pricing.
+          </WelcomeText>
+        </WelcomeTextBlock>
+        <AuctionsBlock>
+          {allAuctions === undefined || allAuctions === null ? (
+            <InlineLoading message="Loading..." size={SpinnerSize.small} />
+          ) : (
+            <>
+              <AuctionsImage alt="" src={AuctionsIcon} />
+              {allAuctions && allAuctions.length > 0 && (
+                <AuctionsText>{allAuctions.length} active auctions</AuctionsText>
+              )}
+              <AuctionsButton to="/overview">
+                <SendIcon />
+                View Auctions
+              </AuctionsButton>
+            </>
+          )}
+        </AuctionsBlock>
+      </Welcome>
       <Featured />
       <BlockGrid>
         <TextBlock>
@@ -84,6 +191,12 @@ export const Landing: React.FC = () => {
           <img alt="" src={Shape3} />
         </ImageBlock>
       </BlockGrid>
+      <ButtonWrapper>
+        <AuctionsButton to="/overview">
+          <SendIcon />
+          View Auctions
+        </AuctionsButton>
+      </ButtonWrapper>
     </>
   )
 }

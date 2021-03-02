@@ -29,7 +29,7 @@ export const FeaturedAuctions: React.FC = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <SectionTitle>Featured Auctions</SectionTitle>
+      <SectionTitle as="h2">Featured Auctions</SectionTitle>
       {(highlightedAuctions === undefined || highlightedAuctions === null) && (
         <InlineLoading message="Loading..." size={SpinnerSize.small} />
       )}
