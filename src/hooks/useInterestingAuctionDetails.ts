@@ -9,11 +9,9 @@ export function useInterestingAuctionInfo(
   const [auctionInfo, setMostInterestingAuctions] = useState<
     AuctionInfo[] | null
   >(null);
-  const [error, setError] = useState<Error | null>(null);
 
   useMemo(() => {
     setMostInterestingAuctions(null);
-    setError(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId]);
   useEffect(() => {
@@ -35,9 +33,10 @@ export function useInterestingAuctionInfo(
         if (cancelled) return;
         setMostInterestingAuctions(auctionInfo);
       } catch (error) {
-        if (cancelled) return;
+        setMostInterestingAuctions(null);
         console.error("Error getting clearing price info", error);
-        setError(error);
+
+        if (cancelled) return;
       }
     };
     fetchApiData();
@@ -46,11 +45,6 @@ export function useInterestingAuctionInfo(
       cancelled = true;
     };
   }, [chainId, numberOfItems, setMostInterestingAuctions]);
-
-  if (error) {
-    console.error("error while fetching price info", error);
-    return null;
-  }
 
   return auctionInfo;
 }

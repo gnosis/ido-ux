@@ -10,12 +10,10 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
     clearingInfo,
     setClearingPriceAndVolume,
   ] = useState<ClearingPriceAndVolumeData | null>(null);
-  const [error, setError] = useState<Error | null>(null);
   const { auctionId } = useSwapState();
 
   useMemo(() => {
     setClearingPriceAndVolume(null);
-    setError(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auctionId, chainId]);
   useEffect(() => {
@@ -37,9 +35,10 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
         if (cancelled) return;
         setClearingPriceAndVolume(clearingOrderAndVolume);
       } catch (error) {
-        if (cancelled) return;
+        setClearingPriceAndVolume(null);
         console.error("Error getting clearing price info", error);
-        setError(error);
+
+        if (cancelled) return;
       }
     };
     fetchApiData();
@@ -48,11 +47,6 @@ export function useClearingPriceInfo(): ClearingPriceAndVolumeData | null {
       cancelled = true;
     };
   }, [account, chainId, library, auctionId, setClearingPriceAndVolume]);
-
-  if (error) {
-    console.error("error while fetching price info", error);
-    return null;
-  }
 
   return clearingInfo;
 }

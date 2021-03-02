@@ -45,6 +45,8 @@ export function usePlaceOrderCallback(
     [account == null ? undefined : account],
   ).result;
   return useMemo(() => {
+    let previousOrder: string;
+
     return async function onPlaceOrder() {
       if (!chainId || !library || !account) {
         throw new Error("missing dependencies in onPlaceOrder callback");
@@ -67,15 +69,23 @@ export function usePlaceOrderCallback(
         library,
         account,
       );
-      const previousOrder = await additionalServiceApi.getPreviousOrder({
-        networkId: chainId,
-        auctionId,
-        order: {
-          buyAmount: buyAmountScaled,
-          sellAmount: sellAmountScaled,
-          userId: BigNumber.from(0), // Todo: This could be optimized
-        },
-      });
+
+      try {
+        previousOrder = await additionalServiceApi.getPreviousOrder({
+          networkId: chainId,
+          auctionId,
+          order: {
+            buyAmount: buyAmountScaled,
+            sellAmount: sellAmountScaled,
+            userId: BigNumber.from(0), // Todo: This could be optimized
+          },
+        });
+      } catch (error) {
+        console.error(
+          `Error trying to get previous order for auctionId ${auctionId}`,
+        );
+      }
+
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
