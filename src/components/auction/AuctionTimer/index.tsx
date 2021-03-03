@@ -166,9 +166,7 @@ const calculateTimeLeft = (auctionEndDate: number) => {
   return diff
 }
 
-const calculatePercentageLeft = (auctionStartingDate: string, auctionEndDate: number): number => {
-  const auctionStartDate = Date.parse(auctionStartingDate)
-
+const calculatePercentageLeft = (auctionStartDate: number, auctionEndDate: number): number => {
   const totalAuctionDays = getDays(auctionEndDate - auctionStartDate / 1000)
   const passedAuctionDays = totalAuctionDays - getDays(auctionEndDate - Date.now() / 1000)
 
@@ -177,24 +175,20 @@ const calculatePercentageLeft = (auctionStartingDate: string, auctionEndDate: nu
 
 export const AuctionTimer = () => {
   const { auctionState } = useDerivedAuctionState()
-  const { auctionEndDate } = useDerivedAuctionInfo()
+  const { auctionEndDate, auctionStartDate } = useDerivedAuctionInfo()
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(auctionEndDate))
-  // mocked date, update when we get a complete endpoint
-  const auctionStartingDate = '02/21/2021'
 
   React.useEffect(() => {
-    let mounted = true
-    setTimeout(() => {
-      if (mounted) setTimeLeft(calculateTimeLeft(auctionEndDate))
+    const id = setInterval(() => {
+      setTimeLeft(calculateTimeLeft(auctionEndDate))
     }, 1000)
-
     return () => {
-      mounted = false
+      clearInterval(id)
     }
   }, [auctionEndDate])
 
   return (
-    <Wrapper progress={`${calculatePercentageLeft(auctionStartingDate, auctionEndDate)}%`}>
+    <Wrapper progress={`${calculatePercentageLeft(auctionStartDate, auctionEndDate)}%`}>
       <Center>
         {auctionState === undefined && <TextBig>Loading</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && (
