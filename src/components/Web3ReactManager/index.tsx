@@ -4,10 +4,17 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'react-i18next'
 
+import { tokenLogosServiceApi } from '../../api'
 import Circle from '../../assets/images/circle.svg'
 import { network } from '../../connectors'
 import { NetworkContextName } from '../../constants'
-import { useActiveListener, useEagerConnect, useInactiveListener } from '../../hooks'
+import {
+  useActiveListener,
+  useActiveWeb3React,
+  useEagerConnect,
+  useInactiveListener,
+} from '../../hooks'
+import { useTokenListActionHandlers } from '../../state/tokenList/hooks'
 import { Spinner } from '../../theme'
 
 const MessageWrapper = styled.div`
@@ -32,11 +39,13 @@ const SpinnerWrapper = styled(Spinner)`
 `
 
 export default function Web3ReactManager({ children }) {
+  const { chainId } = useActiveWeb3React()
   const { t } = useTranslation()
   const { active } = useWeb3React()
   const { activate: activateNetwork, active: networkActive, error: networkError } = useWeb3React(
     NetworkContextName,
   )
+  const { onLoadTokenList } = useTokenListActionHandlers()
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect()
@@ -65,6 +74,27 @@ export default function Web3ReactManager({ children }) {
       clearTimeout(timeout)
     }
   }, [])
+
+  // Fetch token logos by chain ID
+  useEffect(() => {
+    const fetchTokenList = async (): Promise<void> => {
+      try {
+        setShowLoader(true)
+
+        const data = await tokenLogosServiceApi.getTokens(chainId)
+
+        onLoadTokenList(data)
+        setShowLoader(false)
+      } catch (error) {
+        console.error('Error getting token list', error)
+
+        onLoadTokenList(null)
+        setShowLoader(false)
+      }
+    }
+
+    fetchTokenList()
+  }, [chainId, onLoadTokenList])
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {

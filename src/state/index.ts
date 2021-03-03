@@ -6,6 +6,7 @@ import multicall from './multicall/reducer'
 import swap from './orderPlacement/reducer'
 import orderbook from './orderbook/reducer'
 import orders from './orders/reducer'
+import tokenList from './tokenList/reducer'
 import transactions from './transactions/reducer'
 import { updateVersion } from './user/actions'
 import user from './user/reducer'
@@ -21,6 +22,7 @@ const store = configureStore({
     orders,
     orderbook,
     multicall,
+    tokenList,
   },
   middleware: [...getDefaultMiddleware(), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),
