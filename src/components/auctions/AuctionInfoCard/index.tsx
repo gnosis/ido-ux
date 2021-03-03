@@ -1,186 +1,237 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
-import styled from 'styled-components'
+import { NavLink } from 'react-router-dom'
+import styled, { keyframes } from 'styled-components'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
-import { ButtonLight } from '../../Button'
 import DoubleLogo from '../../common/DoubleLogo'
 
-const HeaderWrapper = styled.div`
+const Wrapper = styled(NavLink)`
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.border};
   display: flex;
-  width: 100%;
-  align-content: center;
-  text-align: center;
-  flex-flow: row nowrap;
+  flex-flow: column;
   justify-content: space-between;
-  margin: 0;
-  background: ${({ theme }) => theme.bg2};
-  border-radius: 20px;
-  padding: 16px;
-  box-sizing: border-box;
-  margin: 0 0 16px;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-flow: column wrap;
-  `};
-
-  > h3 {
-    flex: 1 1 auto;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    margin: 0 auto;
-    font-weight: normal;
-  }
-
-  > h4 {
-    flex: 1 1 auto;
-    display: flex;
-    text-align: center;
-    align-items: center;
-    margin: 0 auto;
-    font-size: 18px;
-    font-weight: normal;
-
-    ${({ theme }) => theme.mediaWidth.upToMedium`
-      margin: 0;
-      text-align: center;
-      justify-content: center;
-    `};
-  }
-
-  > h5 {
-    width: 100%;
-    margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    min-height: 150px;
-  }
-
-  > h4 > b {
-    margin: 0 5px;
-  }
-`
-
-const Wrapper = styled.div`
-  position: relative;
-  width: calc(50% - 8px);
-  background: none;
-  box-shadow: none;
-  border-radius: 20px;
-  padding: 0px;
-  flex: 0 1 auto;
-  box-sizing: border-box;
-  display: flex;
-  flex-flow: column wrap;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    width: 100%;
-  `};
-`
-
-const ViewBtn = styled(ButtonLight)`
-  background: none;
-  height: 100%;
-  width: 100%;
-  color: ${({ theme }) => theme.text3};
+  min-height: 290px;
+  padding: 12px 18px;
+  text-decoration: none;
+  transition: all 0.15s linear;
 
   &:hover {
-    background: none;
-  }
-
-  > svg {
-    margin: 0 0 0 5px;
+    box-shadow: 10px -10px 24px 0 rgba(0, 34, 73, 0.7);
   }
 `
 
-const Details = styled.div`
-  color: ${({ theme }) => theme.text1};
-  background: ${({ theme }) => theme.bg1};
-  font-size: 13px;
-  width: 100%;
-  height: 100%;
-  font-weight: normal;
+const Top = styled.span`
+  align-items: center;
   display: flex;
-  flex-flow: column wrap;
-  padding: 16px;
-  border-radius: 20px;
-  border: 1px solid ${({ theme }) => theme.bg2};
-`
-
-const Row = styled.span`
-  flex-flow: row-wrap;
-  width: 100%;
   justify-content: space-between;
-  align-items: flex;
-  margin: 0 0 4px 0;
-  font-weight: normal;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: 'label value';
+  width: 100%;
+`
 
-  > i {
-    color: ${({ theme }) => theme.text3};
-    font-style: normal;
-    text-align: left;
+const Tokens = styled.span`
+  color: ${({ theme }) => theme.text1};
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  text-transform: uppercase;
+`
+
+const Badge = styled.span`
+  align-items: center;
+  background-color: rgba(232, 102, 61, 0.3);
+  border-radius: 17px;
+  color: ${({ theme }) => theme.primary1};
+  display: flex;
+  height: 34px;
+  padding: 0 18px;
+`
+
+const Blinker = keyframes`
+  0% {
+    opacity: 1;
   }
-
-  > a {
-    text-align: right;
+  50% {
+    opacity: 1;
   }
-
-  > p {
-    margin: 0;
-    padding: 0;
-    text-align: right;
-    white-space: normal;
+  50.01% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
   }
 `
 
-export default function AuctionInfoCard(auctionInfo: AuctionInfo) {
-  const history = useHistory()
+const Blink = styled.span`
+  animation-direction: alternate;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+  animation-name: ${Blinker};
+  animation-timing-function: linear;
 
-  function handleClick() {
-    history.push(
-      `/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(auctionInfo.chainId)}`,
-    )
+  &::before {
+    content: ':';
   }
+`
+
+const Details = styled.span`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 0;
+  justify-content: center;
+  margin: auto 0;
+  padding: 10px 0;
+`
+
+const TokenIcons = styled(DoubleLogo)``
+
+const SellingText = styled.span`
+  color: ${({ theme }) => theme.text1};
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 15px 0 0 0;
+  text-align: center;
+`
+
+const PriceAndDuration = styled.span`
+  display: flex;
+  justify-content: space-between;
+  margin: auto 0 0 0;
+  width: 100%;
+`
+
+const Cell = styled.span``
+
+const Subtitle = styled.span<{ textAlign?: string }>`
+  color: ${({ theme }) => theme.text1};
+  display: block;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.2;
+  margin: 0 0 5px;
+  opacity: 0.7;
+  text-align: ${(props) => props.textAlign};
+`
+
+const Text = styled.span`
+  color: ${({ theme }) => theme.primary1};
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+`
+
+Subtitle.defaultProps = {
+  textAlign: 'left',
+}
+
+const getDays = (seconds: number): number => {
+  return Math.floor(seconds / 24 / 60 / 60) % 360
+}
+
+const getHours = (seconds: number): number => {
+  return Math.floor(seconds / 60 / 60) % 24
+}
+
+const getMinutes = (seconds: number): number => {
+  return Math.floor(seconds / 60) % 60
+}
+
+const getSeconds = (seconds: number): number => {
+  return Math.floor(seconds % 60)
+}
+
+const formatSeconds = (seconds: number): React.ReactNode => {
+  const days = getDays(seconds)
+  const hours = getHours(seconds)
+  const minutes = getMinutes(seconds)
+  const remainderSeconds = getSeconds(seconds)
 
   return (
-    <Wrapper>
-      <ViewBtn onClick={handleClick} type="button">
-        <Details>
-          <HeaderWrapper>
-            <h3>
-              Selling {auctionInfo.order.volume + ` `}
-              {auctionInfo.symbolAuctioningToken}
-            </h3>
-            <DoubleLogo
-              a0={auctionInfo.addressAuctioningToken}
-              a1={auctionInfo.addressBiddingToken}
-              margin={true}
-              size={40}
-            />
-          </HeaderWrapper>
-          <Row>
-            <i>Ends in</i>
-            {/* <CountdownTimer auctionEndDate={auctionInfo.endTimeTimestamp} showText={false} /> */}
-          </Row>
+    <>
+      {days > 0 && <>{`${days}d `}</>}
+      <>
+        {hours >= 0 && hours < 10 && `0`}
+        {hours}
+      </>
+      <>
+        <Blink />
+        {minutes >= 0 && minutes < 10 && `0`}
+        {minutes}
+      </>
+      <>
+        <Blink />
+        {remainderSeconds >= 0 && remainderSeconds < 10 && `0`}
+        {remainderSeconds}
+      </>
+    </>
+  )
+}
 
-          <Row>
-            <i>Min. price</i>
-            <p>
-              {auctionInfo.order.price} {` ` + auctionInfo.symbolBiddingToken} per{' '}
-              {auctionInfo.symbolAuctioningToken}
-            </p>
-          </Row>
-          <Row>
-            <i>Id</i> <p>{auctionInfo.auctionId}</p>
-          </Row>
-        </Details>
-      </ViewBtn>
+const calculateTimeLeft = (auctionEndDate: number) => {
+  if (isNaN(auctionEndDate)) return -1
+
+  const diff = auctionEndDate - Date.now() / 1000
+
+  if (diff < 0) return -1
+
+  return diff
+}
+
+interface Props {
+  auctionInfo: AuctionInfo
+}
+
+const AuctionInfoCard: React.FC<Props> = (props) => {
+  const { auctionInfo, ...restProps } = props
+  const endDate = auctionInfo.endTimeTimestamp
+  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endDate))
+
+  setInterval(() => {
+    setTimeLeft(calculateTimeLeft(endDate))
+  }, 1000)
+
+  return (
+    <Wrapper
+      to={`/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(auctionInfo.chainId)}`}
+      {...restProps}
+    >
+      <Top>
+        <Tokens>
+          {auctionInfo.symbolAuctioningToken}/{auctionInfo.symbolBiddingToken}
+        </Tokens>
+        <Badge>{timeLeft && timeLeft > -1 ? formatSeconds(timeLeft) : '-'}</Badge>
+      </Top>
+      <Details>
+        <TokenIcons
+          a0={auctionInfo.addressAuctioningToken}
+          a1={auctionInfo.addressBiddingToken}
+          margin={true}
+          size={68}
+        />
+        <SellingText>
+          Selling {auctionInfo.order.volume + ` `}
+          {auctionInfo.symbolAuctioningToken}
+        </SellingText>
+      </Details>
+      <PriceAndDuration>
+        <Cell>
+          <Subtitle>Current price</Subtitle>
+          <Text>
+            {auctionInfo.order.price.toFixed(2)} {` ` + auctionInfo.symbolBiddingToken} per{' '}
+            {auctionInfo.symbolAuctioningToken}
+          </Text>
+        </Cell>
+        <Cell>
+          <Subtitle textAlign="right">Duration</Subtitle>
+          {/* <CountdownTimer auctionEndDate={auctionInfo.endTimeTimestamp} showText={false} /> */}
+        </Cell>
+      </PriceAndDuration>
     </Wrapper>
   )
 }
+
+export default AuctionInfoCard

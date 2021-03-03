@@ -14,20 +14,41 @@ const Wrapper = styled.div`
 `
 
 const Row = styled.div`
-  display: flex;
+  column-gap: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
 `
 
 const SectionTitle = styled(PageTitle)`
   margin: 0 0 40px;
 `
 
-export const FeaturedAuctions: React.FC = (props) => {
-  const { ...restProps } = props
+interface Props {
+  auctionsAmount?: number
+}
+
+export const FeaturedAuctions: React.FC<Props> = (props) => {
+  const { auctionsAmount = 3, ...restProps } = props
   // We should think about how to get a network id without connection to metamask
   const chainId = 4
   const highlightedAuctions = useInterestingAuctionInfo(4, chainId)
 
-  return (
+  const getItems = () => {
+    const maxItems = !highlightedAuctions
+      ? 0
+      : auctionsAmount > highlightedAuctions.length
+      ? highlightedAuctions.length
+      : auctionsAmount
+    const items: React.ReactNodeArray = []
+
+    for (let count = 0; count < maxItems; count++) {
+      items.push(<AuctionInfoCard auctionInfo={highlightedAuctions[count]} key={count} />)
+    }
+
+    return items
+  }
+
+  return !auctionsAmount ? null : (
     <Wrapper {...restProps}>
       <SectionTitle as="h2">Featured Auctions</SectionTitle>
       {(highlightedAuctions === undefined || highlightedAuctions === null) && (
@@ -39,13 +60,7 @@ export const FeaturedAuctions: React.FC = (props) => {
           <EmptyContentText>No featured auctions.</EmptyContentText>
         </EmptyContentWrapper>
       )}
-      {highlightedAuctions && highlightedAuctions.length > 0 && (
-        <Row>
-          {Object.entries(highlightedAuctions).map((auctionInfo) => (
-            <AuctionInfoCard key={auctionInfo[0]} {...auctionInfo[1]} />
-          ))}
-        </Row>
-      )}
+      {highlightedAuctions && highlightedAuctions.length > 0 && <Row>{getItems()}</Row>}
     </Wrapper>
   )
 }
