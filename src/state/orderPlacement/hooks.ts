@@ -12,8 +12,10 @@ import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
 import { useActiveWeb3React } from '../../hooks'
 import { Order, decodeOrder, encodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
+import { useAuctionDetails } from '../../hooks/useAuctionDetails'
 import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
+import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
@@ -84,6 +86,21 @@ function decodeSellOrder(
   return {
     sellAmount: new TokenAmount(soldToken, sellAmount.toSignificant(6)),
     buyAmount: new TokenAmount(boughtToken, buyAmount.toSignificant(6)),
+  }
+}
+
+const decodeSellOrderFromAPI = (
+  sellAmount: BigNumber | undefined,
+  buyAmount: BigNumber | undefined,
+  soldToken: Token | undefined,
+  boughtToken: Token | undefined,
+): Maybe<SellOrder> => {
+  if (!sellAmount || !buyAmount || !soldToken || !boughtToken) {
+    return null
+  }
+  return {
+    sellAmount: new TokenAmount(soldToken, sellAmount.toString()),
+    buyAmount: new TokenAmount(boughtToken, buyAmount.toString()),
   }
 }
 
@@ -243,45 +260,45 @@ export function useDerivedAuctionInfo(): {
   auctioningToken: Token | undefined
   biddingToken: Token | undefined
   clearingPriceSellOrder: Maybe<SellOrder>
-  clearingPriceOrder: Maybe<Order>
+  clearingPriceOrder: Order | undefined
   clearingPrice: Fraction | undefined
   initialAuctionOrder: Maybe<SellOrder>
-  auctionEndDate: Maybe<number>
-  clearingPriceVolume: Maybe<BigNumber>
+  auctionEndDate: number | undefined
+  auctionStartDate: number | undefined
+  clearingPriceVolume: BigNumber | undefined
   initialPrice: Fraction | undefined
   minBiddingAmountPerOrder: string | undefined
 } {
   const { account } = useActiveWeb3React()
 
-  const { auctionId, chainId, sellAmount } = useSwapState()
+  const { auctionId, sellAmount } = useSwapState()
 
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(auctionId)
 
-  const easyAuctionInstance: Maybe<Contract> = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    easyAuctionABI,
-  )
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId], {
-    blocksPerFetch: 1,
-  }).result
+  const auctionDetails = useAuctionDetails(auctionId)
+  const clearingPriceInfo = useClearingPriceInfo()
+
+  const clearingPriceVolume = clearingPriceInfo?.volume
 
   const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
-    auctionInfo?.initialAuctionOrder,
+    auctionDetails?.exactOrder,
     auctioningToken,
     biddingToken,
   )
-  const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrder(
-    auctionInfo?.clearingPriceOrder,
+
+  const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
+
+  const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrderFromAPI(
+    clearingPriceOrder?.sellAmount,
+    clearingPriceOrder?.buyAmount,
     biddingToken,
     auctioningToken,
   )
-  let clearingPriceOrder: Maybe<Order> = null
-  if (auctionInfo?.clearingPriceOrder) {
-    clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder)
-  }
-  const clearingPriceVolume = auctionInfo?.volumeClearingPriceOrder
-  const auctionEndDate = auctionInfo?.auctionEndDate
-  const minBiddingAmountPerOrder = auctionInfo?.minimumBiddingAmountPerOrder
+
+  const minBiddingAmountPerOrder = BigNumber.from(
+    auctionDetails?.minimumBiddingAmountPerOrder ?? 0,
+  ).toString()
+
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [biddingToken])
   const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
@@ -307,7 +324,8 @@ export function useDerivedAuctionInfo(): {
     clearingPriceOrder,
     clearingPrice,
     initialAuctionOrder,
-    auctionEndDate,
+    auctionStartDate: auctionDetails?.startingTimestamp,
+    auctionEndDate: auctionDetails?.endTimeTimestamp,
     clearingPriceVolume,
     initialPrice,
     minBiddingAmountPerOrder,
