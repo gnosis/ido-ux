@@ -15,7 +15,7 @@ export default createReducer<TokenListState>(initialState, (builder) =>
   builder.addCase(loadTokenListFromAPI, (state: TokenListState, { payload: { tokenList } }) => {
     return {
       ...state,
-      tokens: tokenList?.tokens ?? [],
+      tokens: tokenList ?? [],
     }
   }),
 )

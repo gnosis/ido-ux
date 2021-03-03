@@ -8,12 +8,7 @@ import { tokenLogosServiceApi } from '../../api'
 import Circle from '../../assets/images/circle.svg'
 import { network } from '../../connectors'
 import { NetworkContextName } from '../../constants'
-import {
-  useActiveListener,
-  useActiveWeb3React,
-  useEagerConnect,
-  useInactiveListener,
-} from '../../hooks'
+import { useActiveListener, useEagerConnect, useInactiveListener } from '../../hooks'
 import { useTokenListActionHandlers } from '../../state/tokenList/hooks'
 import { Spinner } from '../../theme'
 
@@ -39,7 +34,6 @@ const SpinnerWrapper = styled(Spinner)`
 `
 
 export default function Web3ReactManager({ children }) {
-  const { chainId } = useActiveWeb3React()
   const { t } = useTranslation()
   const { active } = useWeb3React()
   const { activate: activateNetwork, active: networkActive, error: networkError } = useWeb3React(
@@ -81,7 +75,7 @@ export default function Web3ReactManager({ children }) {
       try {
         setShowLoader(true)
 
-        const data = await tokenLogosServiceApi.getTokens(chainId)
+        const data = await tokenLogosServiceApi.getAllTokens()
 
         onLoadTokenList(data)
         setShowLoader(false)
@@ -94,7 +88,7 @@ export default function Web3ReactManager({ children }) {
     }
 
     fetchTokenList()
-  }, [chainId, onLoadTokenList])
+  }, [onLoadTokenList])
 
   // on page load, do nothing until we've tried to connect to the injected connector
   if (!triedEager) {
