@@ -2,6 +2,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
 import { AuctionInfo } from '../hooks/useAllAuctionInfos'
+import { AuctionInfoDetail } from '../hooks/useAuctionDetails'
+
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string
   getOrderBookData(params: OrderBookParams): Promise<OrderBookData>
@@ -17,6 +19,7 @@ export interface AdditionalServicesApi {
   getAllAuctionDetails(): Promise<AuctionInfo[]>
   getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string
   getClearingPriceOrderAndVolume(params: OrderBookParams): Promise<ClearingPriceAndVolumeData>
+  getAuctionDetails(params: AuctionDetailParams): Promise<AuctionInfoDetail>
 }
 
 interface OrderBookParams {
@@ -39,6 +42,11 @@ interface UserOrderParams {
   networkId: number
   auctionId: number
   user: string
+}
+
+interface AuctionDetailParams {
+  networkId: number
+  auctionId: number
 }
 
 /**
@@ -131,11 +139,19 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     const url = `${baseUrl}get_details_of_most_interesting_auctions/${numberOfAuctions}`
     return url
   }
+
   public getAllAuctionDetailsUrl(networkId: number): string {
     const baseUrl = this._getBaseUrl(networkId)
 
     const url = `${baseUrl}get_all_auction_with_details/`
     return url
+  }
+
+  public getAuctionDetailsUrl(params: AuctionDetailParams): string {
+    const { auctionId, networkId } = params
+    const baseUrl = this._getBaseUrl(networkId)
+
+    return `${baseUrl}get_auction_with_details/${auctionId}`
   }
 
   public getCurrentUserOrdersUrl(params: UserOrderParams): string {
@@ -172,6 +188,29 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       throw new Error(`Failed to query all auctions: ${error.message}`)
     }
   }
+
+  public async getAuctionDetails(params: AuctionDetailParams): Promise<AuctionInfoDetail> {
+    try {
+      const url = await this.getAuctionDetailsUrl(params)
+
+      const res = await fetch(url)
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json()
+      }
+      return res.json()
+    } catch (error) {
+      console.error(error)
+
+      const { auctionId } = params
+
+      throw new Error(
+        `Failed to query auction details for auction  id ${auctionId} : ${error.message}`,
+      )
+    }
+  }
+
   public async getMostInterestingAuctionDetails(
     params: InterestingAuctionParams,
   ): Promise<Maybe<AuctionInfo[]>> {
@@ -280,7 +319,6 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
         clearingOrder: decodeOrder(result[0]),
         volume: BigNumber.from(result[1]),
       }
-      return await res.json()
     } catch (error) {
       console.error(error)
 
