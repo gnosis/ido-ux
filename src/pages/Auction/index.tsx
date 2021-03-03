@@ -72,7 +72,10 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
   useCurrentUserOrders()
   useOrderbookDataCallback()
 
-  const auctionStarted = auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED
+  const auctionStarted = React.useMemo(
+    () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
+    [auctionState],
+  )
 
   return (
     <>
@@ -82,7 +85,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
-      {auctionState === undefined && <InlineLoading message="Loading..." />}
+      {!auctionState && <InlineLoading message="Loading..." />}
       {auctionStarted && (
         <SectionTitle as="h2">
           {(auctionState === AuctionState.ORDER_PLACING ||
