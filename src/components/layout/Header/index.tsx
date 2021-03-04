@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { HashLink } from 'react-router-hash-link'
 
 import useENSName from '../../../hooks/useENSName'
 import { useWalletModalToggle } from '../../../state/application/hooks'
@@ -36,7 +36,7 @@ const Inner = styled(InnerContainer)`
   padding-right: ${(props) => props.theme.layout.horizontalPadding};
 `
 
-const LogoLink = styled(Link)`
+const LogoLink = styled(HashLink)`
   left: 50%;
   position: absolute;
   text-decoration: none;
@@ -151,7 +151,7 @@ export const Header: React.FC = (props) => {
         <Inner>
           <ButtonMenuStyled onClick={mobileMenuToggle} />
           {mobileMenuVisible && <MobilemenuStyled onClose={() => setMobileMenuVisible(false)} />}
-          <LogoLink className="logoLink" to="/">
+          <LogoLink className="logoLink" to="/#topAnchor">
             <Logo />
           </LogoLink>
           <Menu />

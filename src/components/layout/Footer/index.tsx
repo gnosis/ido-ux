@@ -105,22 +105,22 @@ export const Footer: React.FC<Props> = (props) => {
           </ExternalLink>
         </Item>
         <Item>
-          <Link to="/terms-and-conditions">Terms</Link>
+          <Link to="/terms-and-conditions#topAnchor">Terms</Link>
         </Item>
         <Item>
-          <Link to="/privacy-policy">Privacy</Link>
+          <Link to="/privacy-policy#topAnchor">Privacy</Link>
         </Item>
         <Item>
-          <Link to="/cookie-policy">Cookies</Link>
+          <Link to="/cookie-policy#topAnchor">Cookies</Link>
           <IconWrapper onClick={onCookiesBannerShow}>
             <SettingsIconStyled />
           </IconWrapper>
         </Item>
         <Item>
-          <Link to="/licenses">Licenses</Link>
+          <Link to="/licenses#topAnchor">Licenses</Link>
         </Item>
         <Item>
-          <Link to="/imprint">Imprint</Link>
+          <Link to="/imprint#topAnchor">Imprint</Link>
         </Item>
       </Inner>
     </Wrapper>

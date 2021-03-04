@@ -1,6 +1,7 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
+
+import { HashLink } from 'react-router-hash-link'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import {
@@ -13,7 +14,7 @@ import {
 } from '../../../utils/tools'
 import DoubleLogo from '../../common/DoubleLogo'
 
-const Wrapper = styled(NavLink)`
+const Wrapper = styled(HashLink)`
   align-items: center;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.border};
@@ -202,7 +203,9 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
 
   return (
     <Wrapper
-      to={`/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(auctionInfo.chainId)}`}
+      to={`/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(
+        auctionInfo.chainId,
+      )}#topAnchor`}
       {...restProps}
     >
       <Top>

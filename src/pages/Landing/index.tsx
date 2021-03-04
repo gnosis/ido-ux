@@ -1,6 +1,7 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
+
+import { HashLink } from 'react-router-hash-link'
 
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import { ButtonCSS } from '../../components/buttons/buttonStylingTypes'
@@ -105,7 +106,7 @@ const ImageBlock = styled.div<{ align: string }>`
   display: flex;
 `
 
-const AuctionsButton = styled(NavLink)`
+const AuctionsButton = styled(HashLink)`
   ${ButtonCSS}
   height: 52px;
 `
@@ -146,7 +147,7 @@ export const Landing: React.FC = () => {
               {allAuctions && allAuctions.length > 0 && (
                 <AuctionsText>{allAuctions.length} active auctions</AuctionsText>
               )}
-              <AuctionsButton to="/overview">
+              <AuctionsButton to="/overview#topAnchor">
                 <SendIcon />
                 View Auctions
               </AuctionsButton>
@@ -192,7 +193,7 @@ export const Landing: React.FC = () => {
         </ImageBlock>
       </BlockGrid>
       <ButtonWrapper>
-        <AuctionsButton to="/overview">
+        <AuctionsButton to="/overview#topAnchor">
           <SendIcon />
           View Auctions
         </AuctionsButton>

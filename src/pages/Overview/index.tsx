@@ -35,7 +35,7 @@ export default function Overview() {
   const history = useHistory()
 
   const handleClick = (auctionId: number, chainId: number) => {
-    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}`)
+    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}#topAnchor`)
   }
 
   const tableData = []

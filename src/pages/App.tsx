@@ -39,6 +39,7 @@ export default function App() {
         <MainWrapper>
           <Header />
           <MainScroll>
+            <span id="topAnchor" />
             <InnerContainer>
               <Popups />
               <Web3ReactManager>
