@@ -3,6 +3,14 @@ import { NavLink } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
+import {
+  calculateTimeLeft,
+  calculateTimeProgress,
+  getDays,
+  getHours,
+  getMinutes,
+  getSeconds,
+} from '../../../utils/tools'
 import DoubleLogo from '../../common/DoubleLogo'
 
 const Wrapper = styled(NavLink)`
@@ -152,22 +160,6 @@ const Progress = styled.span<{ width: string }>`
   width: ${(props) => props.width};
 `
 
-const getDays = (seconds: number): number => {
-  return Math.floor(seconds / 24 / 60 / 60) % 360
-}
-
-const getHours = (seconds: number): number => {
-  return Math.floor(seconds / 60 / 60) % 24
-}
-
-const getMinutes = (seconds: number): number => {
-  return Math.floor(seconds / 60) % 60
-}
-
-const getSeconds = (seconds: number): number => {
-  return Math.floor(seconds % 60)
-}
-
 const formatSeconds = (seconds: number): React.ReactNode => {
   const days = getDays(seconds)
   const hours = getHours(seconds)
@@ -193,25 +185,6 @@ const formatSeconds = (seconds: number): React.ReactNode => {
       </>
     </>
   )
-}
-
-const calculateTimeLeft = (auctionEndDate: number) => {
-  if (isNaN(auctionEndDate)) return -1
-
-  const diff = auctionEndDate - Date.now() / 1000
-
-  if (diff < 0) return -1
-
-  return diff
-}
-
-const calculateTimeProgress = (auctionStartDate: number, auctionEndDate: number): string => {
-  const totalTime = auctionEndDate - auctionStartDate
-  const now = Math.trunc(Date.now() / 1000)
-  const passedTime = auctionEndDate - now
-  const percentage = Math.trunc((passedTime * 100) / totalTime)
-
-  return `${percentage > 100 ? 100 : percentage < 0 ? 0 : percentage}%`
 }
 
 interface Props {

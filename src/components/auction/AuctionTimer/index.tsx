@@ -6,6 +6,14 @@ import {
   useDerivedAuctionInfo,
   useDerivedAuctionState,
 } from '../../../state/orderPlacement/hooks'
+import {
+  calculateTimeLeft,
+  calculateTimeProgress,
+  getDays,
+  getHours,
+  getMinutes,
+  getSeconds,
+} from '../../../utils/tools'
 
 const TIMER_SIZE = '154px'
 
@@ -106,22 +114,6 @@ const Blink = styled.span`
   }
 `
 
-const getDays = (seconds: number): number => {
-  return Math.floor(seconds / 24 / 60 / 60) % 360
-}
-
-const getHours = (seconds: number): number => {
-  return Math.floor(seconds / 60 / 60) % 24
-}
-
-const getMinutes = (seconds: number): number => {
-  return Math.floor(seconds / 60) % 60
-}
-
-const getSeconds = (seconds: number): number => {
-  return Math.floor(seconds % 60)
-}
-
 const formatSeconds = (seconds: number): React.ReactNode => {
   const days = getDays(seconds)
   const hours = getHours(seconds)
@@ -156,23 +148,6 @@ const formatSeconds = (seconds: number): React.ReactNode => {
   )
 }
 
-const calculateTimeLeft = (auctionEndDate: number) => {
-  if (isNaN(auctionEndDate)) return -1
-
-  const diff = auctionEndDate - Date.now() / 1000
-
-  if (diff < 0) return -1
-
-  return diff
-}
-
-const calculatePercentageLeft = (auctionStartDate: number, auctionEndDate: number): number => {
-  const totalAuctionDays = getDays(auctionEndDate - auctionStartDate / 1000)
-  const passedAuctionDays = totalAuctionDays - getDays(auctionEndDate - Date.now() / 1000)
-
-  return Math.trunc((passedAuctionDays * 100) / totalAuctionDays)
-}
-
 export const AuctionTimer = () => {
   const { auctionState } = useDerivedAuctionState()
   const { auctionEndDate, auctionStartDate } = useDerivedAuctionInfo()
@@ -188,13 +163,15 @@ export const AuctionTimer = () => {
   }, [auctionEndDate])
 
   return (
-    <Wrapper progress={`${calculatePercentageLeft(auctionStartDate, auctionEndDate)}%`}>
+    <Wrapper progress={calculateTimeProgress(auctionStartDate, auctionEndDate)}>
       <Center>
         {auctionState === undefined && <TextBig>Loading</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && (
           <TextBig>
             Auction
-            <br /> not started
+            <br /> not
+            <br />
+            started
           </TextBig>
         )}
         {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
