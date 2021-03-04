@@ -104,7 +104,10 @@ const PriceAndDuration = styled.span`
   width: 100%;
 `
 
-const Cell = styled.span``
+const Cell = styled.span`
+  display: flex;
+  flex-direction: column;
+`
 
 const Subtitle = styled.span<{ textAlign?: string }>`
   color: ${({ theme }) => theme.text1};
@@ -112,21 +115,42 @@ const Subtitle = styled.span<{ textAlign?: string }>`
   font-size: 13px;
   font-weight: normal;
   line-height: 1.2;
-  margin: 0 0 5px;
+  margin: 0;
   opacity: 0.7;
+  padding: 0 0 5px;
   text-align: ${(props) => props.textAlign};
 `
+
+Subtitle.defaultProps = {
+  textAlign: 'left',
+}
 
 const Text = styled.span`
   color: ${({ theme }) => theme.primary1};
   font-size: 13px;
   font-weight: 700;
   line-height: 1.2;
+  margin-top: auto;
 `
 
-Subtitle.defaultProps = {
-  textAlign: 'left',
-}
+const ProgressBar = styled.span`
+  background-color: rgba(232, 102, 61, 0.15);
+  border-radius: 5px;
+  display: block;
+  height: 5px;
+  margin-bottom: 3px;
+  margin-top: auto;
+  width: 120px;
+`
+
+const Progress = styled.span<{ width: string }>`
+  background-color: ${({ theme }) => theme.primary1};
+  border-radius: 5px;
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  width: ${(props) => props.width};
+`
 
 const getDays = (seconds: number): number => {
   return Math.floor(seconds / 24 / 60 / 60) % 360
@@ -181,17 +205,26 @@ const calculateTimeLeft = (auctionEndDate: number) => {
   return diff
 }
 
+const calculateTimeProgress = (auctionStartDate: number, auctionEndDate: number): string => {
+  const totalTime = auctionEndDate - auctionStartDate
+  const now = Math.trunc(Date.now() / 1000)
+  const passedTime = auctionEndDate - now
+  const percentage = Math.trunc((passedTime * 100) / totalTime)
+
+  return `${percentage > 100 ? 100 : percentage < 0 ? 0 : percentage}%`
+}
+
 interface Props {
   auctionInfo: AuctionInfo
 }
 
 const AuctionInfoCard: React.FC<Props> = (props) => {
   const { auctionInfo, ...restProps } = props
-  const endDate = auctionInfo.endTimeTimestamp
-  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endDate))
+  const { endTimeTimestamp, startingTimestamp } = auctionInfo
+  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endTimeTimestamp))
 
   setInterval(() => {
-    setTimeLeft(calculateTimeLeft(endDate))
+    setTimeLeft(calculateTimeLeft(endTimeTimestamp))
   }, 1000)
 
   return (
@@ -227,7 +260,9 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         </Cell>
         <Cell>
           <Subtitle textAlign="right">Duration</Subtitle>
-          {/* <CountdownTimer auctionEndDate={auctionInfo.endTimeTimestamp} showText={false} /> */}
+          <ProgressBar>
+            <Progress width={calculateTimeProgress(startingTimestamp, endTimeTimestamp)} />
+          </ProgressBar>
         </Cell>
       </PriceAndDuration>
     </Wrapper>

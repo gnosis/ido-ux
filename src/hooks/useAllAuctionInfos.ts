@@ -4,16 +4,17 @@ import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
 
 export interface AuctionInfo {
-  auctionId: number
-  order: PricePoint
-  symbolAuctioningToken: string
-  symbolBiddingToken: string
   addressAuctioningToken: string
   addressBiddingToken: string
+  auctionId: number
+  chainId: String
   decimalsAuctioningToken: number
   decimalsBiddingToken: number
   endTimeTimestamp: number
-  chainId: String
+  order: PricePoint
+  startingTimestamp: number
+  symbolAuctioningToken: string
+  symbolBiddingToken: string
 }
 
 export function useAllAuctionInfo(): Maybe<AuctionInfo[]> {
