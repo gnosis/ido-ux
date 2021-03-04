@@ -188,7 +188,6 @@ export default function Modal({
                       }}
                     >
                       <StyledDialogContent
-                        ariaLabel="test"
                         hidden={true}
                         maxHeight={maxHeight}
                         minHeight={minHeight}

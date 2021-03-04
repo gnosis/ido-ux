@@ -18,7 +18,6 @@ export interface AuctionInfo {
 
 export function useAllAuctionInfo(): Maybe<AuctionInfo[]> {
   const [auctionInfo, setAllAuctions] = useState<Maybe<AuctionInfo[]>>(null)
-  const [error, setError] = useState<Maybe<Error>>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -32,9 +31,10 @@ export function useAllAuctionInfo(): Maybe<AuctionInfo[]> {
         if (cancelled) return
         setAllAuctions(auctionInfo)
       } catch (error) {
-        if (cancelled) return
+        setAllAuctions(null)
         console.error('Error getting clearing price info', error)
-        setError(error)
+
+        if (cancelled) return
       }
     }
     fetchApiData()
@@ -43,11 +43,6 @@ export function useAllAuctionInfo(): Maybe<AuctionInfo[]> {
       cancelled = true
     }
   }, [setAllAuctions])
-
-  if (error) {
-    console.error('error while fetching auction info', error)
-    return null
-  }
 
   return auctionInfo
 }

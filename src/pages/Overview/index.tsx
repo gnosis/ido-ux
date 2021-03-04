@@ -34,7 +34,7 @@ export default function Overview() {
   const allAuctions = useAllAuctionInfo()
   const history = useHistory()
 
-  function handleClick(auctionId: number, chainId: number) {
+  const handleClick = (auctionId: number, chainId: number) => {
     history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}`)
   }
 

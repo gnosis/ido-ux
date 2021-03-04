@@ -11,6 +11,7 @@ import {
   AdditionalServicesApiImpl,
   AdditionalServicesEndpoint,
 } from './AdditionalServicesApi'
+import { TokenLogosServiceApi, TokenLogosServiceApiInterface } from './TokenLogosServiceApi'
 
 function createAdditionalServiceApi(): AdditionalServicesApi {
   const config: AdditionalServicesEndpoint[] = [
@@ -38,3 +39,4 @@ function createAdditionalServiceApi(): AdditionalServicesApi {
 
 // Build APIs
 export const additionalServiceApi: AdditionalServicesApi = createAdditionalServiceApi()
+export const tokenLogosServiceApi: TokenLogosServiceApiInterface = new TokenLogosServiceApi()

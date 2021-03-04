@@ -8,11 +8,9 @@ export function useInterestingAuctionInfo(
   chainId: number,
 ): Maybe<AuctionInfo[]> {
   const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
-  const [error, setError] = useState<Maybe<Error>>(null)
 
   useMemo(() => {
     setMostInterestingAuctions(null)
-    setError(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId])
   useEffect(() => {
@@ -30,9 +28,10 @@ export function useInterestingAuctionInfo(
         if (cancelled) return
         setMostInterestingAuctions(auctionInfo)
       } catch (error) {
-        if (cancelled) return
+        setMostInterestingAuctions(null)
         console.error('Error getting clearing price info', error)
-        setError(error)
+
+        if (cancelled) return
       }
     }
     fetchApiData()
@@ -41,11 +40,6 @@ export function useInterestingAuctionInfo(
       cancelled = true
     }
   }, [chainId, numberOfItems, setMostInterestingAuctions])
-
-  if (error) {
-    console.error('error while fetching price info', error)
-    return null
-  }
 
   return auctionInfo
 }
