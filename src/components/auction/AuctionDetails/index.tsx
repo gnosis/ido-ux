@@ -11,6 +11,7 @@ import {
   useDerivedAuctionState,
 } from '../../../state/orderPlacement/hooks'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
+import { normalizePrice } from '../../../utils/tools'
 import TokenLogo from '../../TokenLogo'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
@@ -82,8 +83,12 @@ const AuctionDetails = () => {
       orderToSellOrder(clearingPriceInfo.clearingOrder, biddingToken, auctioningToken)
     let clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
 
-    if (clearingPrice) {
-      clearingPriceNumber = clearingPrice && clearingPrice.toSignificant(4)
+    if (clearingPrice && auctioningToken && biddingToken) {
+      clearingPriceNumber = normalizePrice(
+        auctioningToken,
+        biddingToken,
+        clearingPrice,
+      ).toSignificant(4)
     }
 
     return clearingPriceNumber
@@ -103,6 +108,14 @@ const AuctionDetails = () => {
         : 'Closing price',
     [auctionState],
   )
+
+  const initialPriceToDisplay = useMemo(() => {
+    if (initialPrice && auctioningToken && biddingToken) {
+      return normalizePrice(auctioningToken, biddingToken, initialPrice)
+    } else {
+      return initialPrice
+    }
+  }, [initialPrice, auctioningToken, biddingToken])
 
   return (
     <Wrapper noPadding>
@@ -174,10 +187,12 @@ const AuctionDetails = () => {
           </>
         }
         itemValue={
-          initialPrice && auctioningTokenDisplay && auctioningTokenDisplay
-            ? `${initialPrice ? initialPrice?.toSignificant(2) : ' - '}
-          ${biddingTokenDisplay}/${auctioningTokenDisplay}`
-            : '-'
+          <>
+            {initialPriceToDisplay ? initialPriceToDisplay?.toSignificant(2) : ' - '}
+            {initialPriceToDisplay && auctioningTokenDisplay
+              ? `${biddingTokenDisplay}/${auctioningTokenDisplay}`
+              : '-'}
+          </>
         }
       />
     </Wrapper>
