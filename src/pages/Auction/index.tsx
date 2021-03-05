@@ -62,7 +62,7 @@ const Grid = styled.div`
 `
 
 const Auction = ({ location: { search } }: RouteComponentProps) => {
-  const { auctionState } = useDerivedAuctionState()
+  const { auctionState, loading } = useDerivedAuctionState()
   const orders: OrderState | undefined = useOrderState()
   const { auctionId } = useSwapState()
   const url = window.location.href
@@ -77,6 +77,8 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
     [auctionState],
   )
 
+  const isNotLoading = React.useMemo(() => auctionState && !loading, [loading, auctionState])
+
   return (
     <>
       <Title>Auction Details</Title>
@@ -85,8 +87,8 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
-      {!auctionState && <InlineLoading message="Loading..." />}
-      {auctionStarted && (
+      {!isNotLoading && <InlineLoading message="Loading..." />}
+      {auctionStarted && isNotLoading && (
         <SectionTitle as="h2">
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
@@ -94,7 +96,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
           {auctionState === AuctionState.CLAIMING && 'Claim Proceedings'}
         </SectionTitle>
       )}
-      {auctionStarted && (
+      {auctionStarted && isNotLoading && (
         <Grid>
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
@@ -106,7 +108,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
-      {auctionStarted && <OrdersTable orders={orders.orders} />}
+      {auctionStarted && isNotLoading && <OrdersTable orders={orders.orders} />}
     </>
   )
 }
