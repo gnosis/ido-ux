@@ -77,8 +77,10 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
     [auctionState],
   )
 
-  const isNotLoading = React.useMemo(() => auctionState && !loading, [loading, auctionState])
-
+  const isNotLoading = React.useMemo(() => auctionState !== null && !loading, [
+    loading,
+    auctionState,
+  ])
   return (
     <>
       <Title>Auction Details</Title>

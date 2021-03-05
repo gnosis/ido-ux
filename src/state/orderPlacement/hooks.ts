@@ -347,7 +347,7 @@ export function useDerivedAuctionState(): {
   useEffect(() => {
     const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
     setLoading(true)
-    if (auctioningTokenAddress == '0x0000000000000000000000000000000000000000') {
+    if (!auctioningTokenAddress) {
       setAuctionState(AuctionState.NOT_YET_STARTED)
     } else {
       const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
