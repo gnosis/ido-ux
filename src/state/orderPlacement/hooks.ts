@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ChainId, Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -333,59 +333,63 @@ export function useDerivedAuctionInfo(): {
 }
 
 export function useDerivedAuctionState(): {
-  auctionState: AuctionState | undefined
+  auctionState: Maybe<AuctionState>
+  loading: boolean
 } {
-  const { auctionId, chainId } = useSwapState()
+  const { auctionId } = useSwapState()
 
-  const easyAuctionInstance: Maybe<Contract> = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    easyAuctionABI,
-  )
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId], {
-    blocksPerFetch: 1,
-  }).result
-  const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
+  const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
-  if (auctioningTokenAddress == '0x0000000000000000000000000000000000000000') {
-    return { auctionState: AuctionState.NOT_YET_STARTED }
-  }
+  const auctionDetails = useAuctionDetails(auctionId)
+  const clearingPriceInfo = useClearingPriceInfo()
 
-  let clearingPriceOrder: Maybe<Order> = null
-  if (auctionInfo?.clearingPriceOrder) {
-    clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder)
-  }
-  const auctionEndDate = auctionInfo?.auctionEndDate
-  const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate
-
-  let clearingPrice: Fraction | undefined
-  if (
-    !clearingPriceOrder ||
-    clearingPriceOrder.buyAmount == undefined ||
-    clearingPriceOrder.sellAmount == undefined
-  ) {
-    clearingPrice = undefined
-  } else {
-    clearingPrice = new Fraction(
-      clearingPriceOrder.sellAmount.toString(),
-      clearingPriceOrder.buyAmount.toString(),
-    )
-  }
-
-  let auctionState = undefined
-  if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
-    auctionState = AuctionState.ORDER_PLACING
-    if (orderCancellationEndDate >= new Date().getTime() / 1000) {
-      auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
-    }
-  } else {
-    if (clearingPrice?.toSignificant(1) == '0') {
-      auctionState = AuctionState.PRICE_SUBMISSION
+  useEffect(() => {
+    const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
+    setLoading(true)
+    if (!auctioningTokenAddress) {
+      setAuctionState(AuctionState.NOT_YET_STARTED)
     } else {
-      if (clearingPrice) auctionState = AuctionState.CLAIMING
+      const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
+
+      const auctionEndDate = auctionDetails?.endTimeTimestamp
+      const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
+
+      let clearingPrice: Fraction | undefined
+      if (
+        !clearingPriceOrder ||
+        clearingPriceOrder.buyAmount == undefined ||
+        clearingPriceOrder.sellAmount == undefined
+      ) {
+        clearingPrice = undefined
+      } else {
+        clearingPrice = new Fraction(
+          clearingPriceOrder.sellAmount.toString(),
+          clearingPriceOrder.buyAmount.toString(),
+        )
+      }
+
+      let auctionState: Maybe<AuctionState> = null
+      if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
+        auctionState = AuctionState.ORDER_PLACING
+        if (orderCancellationEndDate && orderCancellationEndDate >= new Date().getTime() / 1000) {
+          auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
+        }
+      } else {
+        if (clearingPrice?.toSignificant(1) == '0') {
+          auctionState = AuctionState.PRICE_SUBMISSION
+        } else {
+          if (clearingPrice) auctionState = AuctionState.CLAIMING
+        }
+      }
+      setAuctionState(auctionState)
     }
-  }
+    setLoading(false)
+  }, [auctionDetails, clearingPriceInfo])
+
   return {
     auctionState,
+    loading,
   }
 }
 

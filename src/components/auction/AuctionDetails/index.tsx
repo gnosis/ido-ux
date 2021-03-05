@@ -151,7 +151,7 @@ const AuctionDetails = () => {
           </>
         }
         itemValue={
-          auctioningToken ? (
+          auctioningToken && initialAuctionOrder ? (
             <>
               <TokenLogo address={auctioningToken.address} size={'20px'} />
               <span>{`${initialAuctionOrder?.sellAmount.toSignificant(

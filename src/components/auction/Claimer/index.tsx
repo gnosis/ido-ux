@@ -88,7 +88,7 @@ const Claimer: React.FC = () => {
           <TokenLogo address={biddingToken?.address} size={'42px'} />
           <Text fontSize={15} fontWeight={'bold'}>
             {claimableBiddingToken
-              ? claimableBiddingToken.toSignificant(2)
+              ? `${claimableBiddingToken.toSignificant(2)} ${biddingTokenDisplay}`
               : `0 ${biddingTokenDisplay}`}
           </Text>
         </AuctionToken>
@@ -96,7 +96,7 @@ const Claimer: React.FC = () => {
           <TokenLogo address={auctioningToken?.address} size={'42px'} />
           <Text fontSize={15} fontWeight={'bold'}>
             {claimableAuctioningToken
-              ? claimableAuctioningToken.toSignificant(2)
+              ? `${claimableAuctioningToken.toSignificant(2)} ${auctioningTokenDisplay}`
               : `0 ${auctioningTokenDisplay}`}
           </Text>
         </AuctionToken>

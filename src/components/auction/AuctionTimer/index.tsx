@@ -149,7 +149,7 @@ const formatSeconds = (seconds: number): React.ReactNode => {
 }
 
 export const AuctionTimer = () => {
-  const { auctionState } = useDerivedAuctionState()
+  const { auctionState, loading } = useDerivedAuctionState()
   const { auctionEndDate, auctionStartDate } = useDerivedAuctionInfo()
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(auctionEndDate))
 
@@ -165,13 +165,19 @@ export const AuctionTimer = () => {
   return (
     <Wrapper progress={calculateTimeProgress(auctionStartDate, auctionEndDate)}>
       <Center>
-        {auctionState === undefined && <TextBig>Loading</TextBig>}
+        {(auctionState === null || loading) && <TextBig>Loading</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && (
           <TextBig>
             Auction
             <br /> not
             <br />
             started
+          </TextBig>
+        )}
+        {auctionState === AuctionState.CLAIMING && (
+          <TextBig>
+            Auction
+            <br /> claiming
           </TextBig>
         )}
         {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
@@ -199,7 +205,7 @@ export const AuctionTimer = () => {
           auctionState !== AuctionState.ORDER_PLACING &&
           auctionState !== AuctionState.PRICE_SUBMISSION &&
           auctionState !== AuctionState.CLAIMING &&
-          auctionState !== undefined && <TextBig>Auction Settled</TextBig>}
+          auctionState !== null && <TextBig>Auction Settled</TextBig>}
       </Center>
     </Wrapper>
   )
