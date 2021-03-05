@@ -17,6 +17,7 @@ export interface AuctionInfoDetail {
   startingTimestamp: number
   chainId: String
   minimumBiddingAmountPerOrder: string
+  orderCancellationEndDate: number | undefined
   exactOrder: string
 }
 
