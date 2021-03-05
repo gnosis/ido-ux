@@ -14,7 +14,7 @@ export interface AdditionalServicesApi {
   getAllUserOrdersUrl(params: UserOrderParams): string
   getAllUserOrders(params: UserOrderParams): Promise<string[]>
   getMostInterestingAuctionDetailsUrl(params: InterestingAuctionParams): string
-  getMostInterestingAuctionDetails(params: InterestingAuctionParams): Promise<AuctionInfo[]>
+  getMostInterestingAuctionDetails(): Promise<AuctionInfo[]>
   getAllAuctionDetailsUrl(networkId: number): string
   getAllAuctionDetails(): Promise<AuctionInfo[]>
   getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string
@@ -211,27 +211,35 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     }
   }
 
-  public async getMostInterestingAuctionDetails(
-    params: InterestingAuctionParams,
-  ): Promise<Maybe<AuctionInfo[]>> {
+  public async getMostInterestingAuctionDetails(): Promise<Maybe<AuctionInfo[]>> {
     try {
-      const url = await this.getMostInterestingAuctionDetailsUrl(params)
+      const promises: Promise<Response>[] = []
+      for (const networkId in this.urlsByNetwork) {
+        const url = await this.getMostInterestingAuctionDetailsUrl({
+          networkId: Number(networkId),
+          numberOfAuctions: 3,
+        })
 
-      const res = await fetch(url)
-      if (!res.ok) {
-        // backend returns {"message":"invalid url query"}
-        // for bad requests
-        throw await res.json()
+        promises.push(fetch(url))
       }
-      return await res.json()
+      const results = await Promise.all(promises)
+      const allInterestingAuctions = []
+      for (const res of results) {
+        if (!res.ok) {
+          // backend returns {"message":"invalid url query"}
+          // for bad requests
+          throw await res.json()
+        }
+        allInterestingAuctions.push(await res.json())
+      }
+
+      const allInterestingAuctionsOrdered = allInterestingAuctions.sort(
+        (auctionA, auctionB) => auctionB.interestScore - auctionA.interestScore,
+      )
+      return allInterestingAuctionsOrdered.flat()
     } catch (error) {
       console.error(error)
-
-      const { networkId } = params
-
-      throw new Error(
-        `Failed to query interesting auctions for network ${networkId}: ${error.message}`,
-      )
+      throw new Error(`Failed to query interesting auctions: ${error.message}`)
     }
   }
 

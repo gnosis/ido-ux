@@ -23,33 +23,26 @@ const SectionTitle = styled(PageTitle)`
   margin: 0 0 40px;
 `
 
-interface Props {
-  auctionsAmount?: number
-}
+export const FeaturedAuctions = () => {
+  const highlightedAuctions = useInterestingAuctionInfo()
 
-export const FeaturedAuctions: React.FC<Props> = (props) => {
-  const { auctionsAmount = 3, ...restProps } = props
-  // We should think about how to get a network id without connection to metamask
-  const chainId = 4
-  const highlightedAuctions = useInterestingAuctionInfo(4, chainId)
-
-  const getItems = () => {
-    const maxItems = !highlightedAuctions
-      ? 0
-      : auctionsAmount > highlightedAuctions.length
-      ? highlightedAuctions.length
-      : auctionsAmount
+  const auctions = React.useMemo(() => {
     const items: React.ReactNodeArray = []
 
-    for (let count = 0; count < maxItems; count++) {
-      items.push(<AuctionInfoCard auctionInfo={highlightedAuctions[count]} key={count} />)
+    if (highlightedAuctions && highlightedAuctions.length > 0) {
+      const highlightedAuctionsFirstThree = highlightedAuctions.slice(0, 3)
+      for (const highlightedAuction of highlightedAuctionsFirstThree) {
+        items.push(
+          <AuctionInfoCard auctionInfo={highlightedAuction} key={highlightedAuction.auctionId} />,
+        )
+      }
     }
 
     return items
-  }
+  }, [highlightedAuctions])
 
-  return !auctionsAmount ? null : (
-    <Wrapper {...restProps}>
+  return (
+    <Wrapper>
       <SectionTitle as="h2">Featured Auctions</SectionTitle>
       {(highlightedAuctions === undefined || highlightedAuctions === null) && (
         <InlineLoading message="Loading..." size={SpinnerSize.small} />
@@ -60,7 +53,7 @@ export const FeaturedAuctions: React.FC<Props> = (props) => {
           <EmptyContentText>No featured auctions.</EmptyContentText>
         </EmptyContentWrapper>
       )}
-      {highlightedAuctions && highlightedAuctions.length > 0 && <Row>{getItems()}</Row>}
+      {highlightedAuctions && highlightedAuctions.length > 0 && <Row>{auctions}</Row>}
     </Wrapper>
   )
 }
