@@ -5,15 +5,15 @@ import { SendIcon } from '../icons/SendIcon'
 export const navItems = [
   {
     title: 'Auctions',
-    url: '/overview',
+    url: '/overview#topAnchor',
     icon: <SendIcon />,
   },
   {
     title: 'About',
-    url: '/about',
+    url: '/about#topAnchor',
   },
   {
     title: 'Docs',
-    url: '/documentation',
+    url: '/documentation#topAnchor',
   },
 ]

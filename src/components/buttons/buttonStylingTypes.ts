@@ -88,6 +88,7 @@ export const ButtonCSS = css<ButtonCommonProps>`
   outline: none;
   padding: 0 25px;
   text-align: center;
+  text-decoration: none;
   transition: all 0.15s ease-out;
   user-select: none;
   white-space: nowrap;
