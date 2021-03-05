@@ -1,3 +1,7 @@
+import { Fraction, Token } from 'uniswap-xdai-sdk'
+
+import { BigNumber } from '@ethersproject/bignumber'
+
 export const truncateStringInTheMiddle = (
   str: string,
   strPositionStart: number,
@@ -51,4 +55,14 @@ export const calculateTimeProgress = (auctionStartDate: number, auctionEndDate: 
       : Math.trunc((passedTime * 100) / totalTime)
 
   return isNaN(auctionStartDate) || isNaN(auctionEndDate) ? `0%` : `${percentage}%`
+}
+
+export const normalizePrice = (auctioningToken: Token, biddingToken: Token, price: Fraction) => {
+  if (auctioningToken.decimals === 18 && biddingToken.decimals === 18) {
+    return price
+  }
+  const decimals =
+    auctioningToken.decimals !== 18 ? auctioningToken.decimals : biddingToken.decimals
+  const fixedPoint = BigNumber.from(10).pow(decimals).toString()
+  return price?.multiply(fixedPoint)
 }
