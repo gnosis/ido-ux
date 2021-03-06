@@ -1,30 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { additionalServiceApi } from './../api'
 import { AuctionInfo } from './useAllAuctionInfos'
 
-export function useInterestingAuctionInfo(
-  numberOfItems: number,
-  chainId: number,
-): Maybe<AuctionInfo[]> {
+export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
   const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
 
-  useMemo(() => {
-    setMostInterestingAuctions(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId])
   useEffect(() => {
     let cancelled = false
 
     const fetchApiData = async (): Promise<void> => {
       try {
-        if (!chainId || !additionalServiceApi) {
+        if (!additionalServiceApi) {
           throw new Error('missing dependencies in useInterestingAuctionInfo callback')
         }
-        const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails({
-          networkId: chainId,
-          numberOfAuctions: numberOfItems,
-        })
+        const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails()
         if (cancelled) return
         setMostInterestingAuctions(auctionInfo)
       } catch (error) {
@@ -39,7 +29,7 @@ export function useInterestingAuctionInfo(
     return (): void => {
       cancelled = true
     }
-  }, [chainId, numberOfItems, setMostInterestingAuctions])
+  }, [setMostInterestingAuctions])
 
   return auctionInfo
 }
