@@ -424,13 +424,8 @@ export function useDerivedClaimInfo(
     auctioningToken,
   )
 
-  let error: string | undefined
-  if (clearingPriceSellOrder?.buyAmount.raw.toString() == '0') {
-    error = 'Price not yet supplied to auction'
-  }
-  if (auctionEndDate >= new Date().getTime() / 1000) {
-    error = 'auction has not yet ended'
-  }
+  let error: string | undefined = ''
+
   const claimableOrders = useGetClaimInfo()?.sellOrdersFormUser
   const claimed = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
     auctionId,
@@ -442,14 +437,17 @@ export function useDerivedClaimInfo(
         })
       : claimableOrders[0],
   ]).result
-  if (claimableOrders == undefined || claimableOrders?.length > 0) {
-    if (!claimed || !claimed[0]) {
-      error = 'Already claimed'
-    }
-  }
 
-  if (claimableOrders?.length == 0) {
-    error = 'No participation'
+  if (clearingPriceSellOrder?.buyAmount.raw.toString() === '0') {
+    error = 'Price not yet supplied to auction.'
+  } else if (auctionEndDate >= new Date().getTime() / 1000) {
+    error = 'Auction has not yet ended.'
+  } else if (claimableOrders === undefined || claimableOrders?.length > 0) {
+    if (!claimed || !claimed[0]) {
+      error = 'You already claimed your funds.'
+    }
+  } else if (claimableOrders?.length === 0) {
+    error = 'You had no participation on this auction.'
   }
 
   return {
