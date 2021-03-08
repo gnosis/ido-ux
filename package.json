@@ -12,9 +12,9 @@
     "ipfs-build": "cross-env PUBLIC_URL=\".\" react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
-    "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
-    "prettier:fix": "prettier --write './src/**/*.{js,jsx,ts,tsx}'",
+    "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
+    "prettier:fix": "prettier --write \"./src/**/*.{js,jsx,ts,tsx}\"",
     "cy:run": "cypress run",
     "serve:build": "serve -s build -l 3000",
     "integration-test": "yarn build && start-server-and-test 'yarn run serve:build' http://localhost:3000 cy:run"
