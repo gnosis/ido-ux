@@ -29,6 +29,7 @@ import { ErrorInfo } from '../../icons/ErrorInfo'
 import { ErrorLock } from '../../icons/ErrorLock'
 import WarningModal from '../../modals/WarningModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 import SwapModalHeader from '../../swap/SwapModalHeader'
 
@@ -87,35 +88,6 @@ const ApprovalButton = styled(Button)`
   padding: 0 14px;
 `
 
-const ErrorWrapper = styled.div`
-  margin-bottom: 20px;
-`
-
-const ErrorRow = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 5px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  > svg {
-    margin-bottom: auto;
-  }
-`
-
-const ErrorText = styled.div`
-  color: ${({ theme }) => theme.text1};
-  font-size: 15px;
-  font-weight: normal;
-  line-height: 1.2;
-  margin: 0 0 0 15px;
-  position: relative;
-  text-align: left;
-  top: 1px;
-`
-
 const OrderPlacement: React.FC = () => {
   const { account, chainId } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
@@ -135,17 +107,13 @@ const OrderPlacement: React.FC = () => {
 
   const isValid = !error
 
-  // modal and loading
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
-
-  // txn values
   const [txHash, setTxHash] = useState<string>('')
-
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
-  // check whether the user has approved the EasyAuction Contract
+
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -167,7 +135,6 @@ const OrderPlacement: React.FC = () => {
   }, [onUserPriceInput, price, initialPrice])
 
   const resetModal = () => {
-    // clear input if txn submitted
     if (!pendingConfirmation) {
       onUserSellAmountInput('')
     }
@@ -175,7 +142,6 @@ const OrderPlacement: React.FC = () => {
     setAttemptingTxn(false)
   }
 
-  // the callback to execute the swap
   const placeOrderCallback = usePlaceOrderCallback(auctioningToken, biddingToken)
 
   const onPlaceOrder = () => {
@@ -187,7 +153,6 @@ const OrderPlacement: React.FC = () => {
     })
   }
 
-  // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
 
   const modalHeader = () => {
@@ -209,7 +174,6 @@ const OrderPlacement: React.FC = () => {
     )
   }
 
-  // text to show while loading
   const pendingText = `Placing order`
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
   const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
@@ -229,14 +193,6 @@ const OrderPlacement: React.FC = () => {
 
   return (
     <Wrapper>
-      <WarningModal
-        content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
-        isOpen={showWarning}
-        onDismiss={() => {
-          setShowWarning(false)
-        }}
-        title="Warning!"
-      />
       <BalanceWrapper>
         <Balance>
           Your Balance:{' '}
@@ -306,6 +262,14 @@ const OrderPlacement: React.FC = () => {
           Place Order
         </ActionButton>
       )}
+      <WarningModal
+        content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+        isOpen={showWarning}
+        onDismiss={() => {
+          setShowWarning(false)
+        }}
+        title="Warning!"
+      />
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
         bottomContent={modalBottom}
