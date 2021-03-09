@@ -30,7 +30,7 @@ const Wrapper = styled.div`
 
   .amcharts-Label {
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: 1.2rem;
     letter-spacing: 1px;
     color: ${({ theme }) => theme.text4};
     margin: 10px;
@@ -88,9 +88,19 @@ export interface PricePointDetails {
   clearingPriceValueY: Maybe<number>
 }
 
-export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
+export const createChart = (
+  chartElement: HTMLElement,
+  baseToken: Token,
+  quoteToken: Token,
+): am4charts.XYChart => {
+  const baseTokenLabel = baseToken.symbol
+  const quoteTokenLabel = quoteToken.symbol
+  const market = quoteTokenLabel + '-' + baseTokenLabel
+
+  const priceTitle = ` Price (${baseTokenLabel})`
+  const volumeTitle = ` Volume (${quoteTokenLabel})`
+
   am4core.useTheme(am4themesSpiritedaway)
-  am4core.options.autoSetClassName = true
   const chart = am4core.create(chartElement, am4charts.XYChart)
   chart.paddingTop = 20
   chart.marginTop = 20
@@ -111,16 +121,21 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   // Create axes
   const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
   const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
-  priceAxis.renderer.labels.template.disabled = true
-  volumeAxis.renderer.labels.template.disabled = true
-  priceAxis.renderer.grid.template.disabled = true
-  volumeAxis.renderer.tooltip.getFillFromObject = false
-  priceAxis.renderer.tooltip.getFillFromObject = false
+  volumeAxis.renderer.grid.template.stroke = am4core.color(colors.white)
+  volumeAxis.renderer.grid.template.strokeWidth = 0.5
+  volumeAxis.renderer.grid.template.strokeOpacity = 0.5
+  volumeAxis.title.text = volumeTitle
+  volumeAxis.title.fill = am4core.color(colors.white)
+  volumeAxis.renderer.labels.template.fill = am4core.color(colors.white)
 
-  volumeAxis.renderer.grid.template.disabled = true
-  priceAxis.renderer.minGridDistance = 10
-  volumeAxis.renderer.minGridDistance = 10
-  // Create series
+  priceAxis.renderer.grid.template.stroke = am4core.color(colors.white)
+  priceAxis.renderer.grid.template.strokeWidth = 0.5
+  priceAxis.renderer.grid.template.strokeOpacity = 0.5
+  priceAxis.title.text = priceTitle
+  priceAxis.title.fill = am4core.color(colors.white)
+  priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
+
+  // Create serie, green line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
@@ -128,7 +143,13 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   bidSeries.stroke = am4core.color(colors.green)
   bidSeries.fill = bidSeries.stroke
   bidSeries.fillOpacity = 0.2
+  bidSeries.dummyData = {
+    description:
+      'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
+  }
+  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
 
+  // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
@@ -136,7 +157,12 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   askSeries.stroke = am4core.color(colors.red)
   askSeries.fill = askSeries.stroke
   askSeries.fillOpacity = 0.1
+  askSeries.dummyData = {
+    description: 'Shows the minimum sell price (x axis) the auctioneer is willing to accept',
+  }
+  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
 
+  // New order to be placed
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
@@ -144,7 +170,12 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   inputSeries.stroke = am4core.color(colors.orange)
   inputSeries.fill = inputSeries.stroke
   inputSeries.fillOpacity = 0.1
+  inputSeries.dummyData = {
+    description: 'New orders to be placed',
+  }
 
+  // Dotted white line -> shows the Current price, which is the closing price of the auction if
+  // no more bids are submitted or canceled and the auction ends
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
@@ -153,9 +184,14 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
   priceSeries.stroke = am4core.color(colors.white)
   priceSeries.fill = inputSeries.stroke
   priceSeries.fillOpacity = 0.1
+  priceSeries.dummyData = {
+    description:
+      'Shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends',
+  }
 
   // Add cursor
   chart.cursor = new am4charts.XYCursor()
+  chart.cursor.snapToSeries = [bidSeries, askSeries]
   chart.cursor.lineX.stroke = am4core.color(colors.white)
   chart.cursor.lineX.strokeWidth = 1
   chart.cursor.lineX.strokeOpacity = 0.6
@@ -168,60 +204,32 @@ export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
 
   // Button configuration
   chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
-  chart.zoomOutButton.background.fill = am4core.color('#25283D')
+  chart.zoomOutButton.background.fill = am4core.color(colors.grey)
   chart.zoomOutButton.icon.stroke = am4core.color(colors.white)
   chart.zoomOutButton.icon.strokeWidth = 2
+  chart.zoomOutButton.tooltip.text = 'Zoom out'
 
-  // Add default empty data array
-  chart.data = []
+  // Legend
+  chart.legend = new am4charts.Legend()
+  chart.legend.labels.template.fill = am4core.color(colors.white)
+  chart.legend.itemContainers.template.tooltipText = '{dataContext.dummyData.description}'
 
   return chart
 }
 
-export interface DrawLabelsParams {
-  chart: am4charts.XYChart
-  baseToken: Token
-  quoteToken: Token
-  networkId: number
-}
-
-export const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): void => {
-  const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = quoteToken.symbol
-  const market = baseTokenLabel + '-' + quoteTokenLabel
-
-  const [xAxis] = chart.xAxes
-  const [yAxis] = chart.yAxes
-  xAxis.title.text = ` Price (${baseTokenLabel})`
-  yAxis.title.text = ` Volume (${quoteTokenLabel})`
-
-  xAxis.tooltip.background.cornerRadius = 0
-  xAxis.tooltip.background.fill = am4core.color('green')
-  yAxis.tooltip.background.cornerRadius = 0
-  yAxis.tooltip.background.fill = am4core.color('red')
-
-  xAxis.title.fill = am4core.color('white')
-  yAxis.title.fill = am4core.color('white')
-
-  const [bidSeries, askSeries] = chart.series
-
-  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
-  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
-}
-
 const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
-  const { baseToken, data, networkId, quoteToken } = props
+  const { baseToken, data, quoteToken } = props
   const mountPoint = useRef<HTMLDivElement>(null)
   const chartRef = useRef<Maybe<am4charts.XYChart>>(null)
 
   useEffect(() => {
     if (!mountPoint.current) return
-    const chart = createChart(mountPoint.current)
+    const chart = createChart(mountPoint.current, baseToken, quoteToken)
     chartRef.current = chart
 
     // dispose on mount only
     return (): void => chart.dispose()
-  }, [])
+  }, [baseToken, quoteToken])
 
   useEffect(() => {
     if (!chartRef.current || data === null) return
@@ -231,16 +239,8 @@ const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProp
       return
     }
 
-    // go on with the update when data is ready
-    drawLabels({
-      chart: chartRef.current,
-      baseToken,
-      quoteToken,
-      networkId,
-    })
-
     chartRef.current.data = data
-  }, [baseToken, networkId, quoteToken, data])
+  }, [data, baseToken, quoteToken])
 
   return <Wrapper ref={mountPoint}>Show order book for auction</Wrapper>
 }

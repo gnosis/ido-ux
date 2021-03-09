@@ -7,7 +7,7 @@ import { AuctionNotStarted } from '../../components/auction/AuctionNotStarted'
 import { AuctionPending } from '../../components/auction/AuctionPending'
 import Claimer from '../../components/auction/Claimer'
 import OrderPlacement from '../../components/auction/OrderPlacement'
-import { OrderBookBtn } from '../../components/auction/OrderbookBtn'
+import { OrderBook } from '../../components/auction/Orderbook'
 import OrdersTable from '../../components/auction/OrdersTable'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
@@ -106,7 +106,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
           {auctionState === AuctionState.PRICE_SUBMISSION && (
             <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
           )}
-          <OrderBookBtn baseToken={auctioningToken} quoteToken={biddingToken} />
+          <OrderBook baseToken={auctioningToken} quoteToken={biddingToken} />
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}

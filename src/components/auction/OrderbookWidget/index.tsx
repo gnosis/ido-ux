@@ -314,25 +314,21 @@ export const processOrderbookData = ({
 }: ProcessRawDataParams): PricePointDetails[] => {
   try {
     const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0])
-    const bids = processData(
-      data.bids,
-      userOrder,
-      data.asks[0]?.price ?? 0,
-      data.asks[0]?.price ?? 0,
-      Offer.Bid,
-    )
+    const value = data.asks[0]?.price ?? 0
+    const bids = processData(data.bids, userOrder, value, value, Offer.Bid)
 
-    const asks = processData(data.asks, null, bids[0].price, data.asks[0]?.price ?? 0, Offer.Ask)
+    const asks = processData(data.asks, null, bids[0].price, value, Offer.Ask)
     let pricePoints = bids.concat(asks)
+
     if (clearingPrice) {
       const priceInfo = addClearingPriceInfo(clearingPrice, pricePoints)
       pricePoints = pricePoints.concat(priceInfo)
     }
+
     // Sort points by price
     pricePoints.sort((lhs, rhs) => lhs.price - rhs.price)
     const debug = false
     if (debug) _printOrderBook(pricePoints, baseToken.symbol, quoteToken.symbol)
-
     return pricePoints
   } catch (error) {
     console.error('Error processing data', error)
