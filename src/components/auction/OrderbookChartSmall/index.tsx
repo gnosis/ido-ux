@@ -52,7 +52,7 @@ const OrderBookChartSmall: React.FC<OrderBookChartProps> = (props: OrderBookChar
   const chartRef = useRef<Maybe<am4charts.XYChart>>(null)
 
   useEffect(() => {
-    if (!mountPoint.current) return
+    if (!mountPoint.current || !baseToken || !quoteToken) return
     const chart = createChart(mountPoint.current, baseToken, quoteToken)
     chartRef.current = chart
 
