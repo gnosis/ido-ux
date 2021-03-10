@@ -134,15 +134,13 @@ export const Header: React.FC = (props) => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
 
-  let web3Status = <ButtonConnectStyled onClick={toggleWalletModal} />
-
-  if (isConnected) {
-    web3Status = <UserDropdownStyled />
-  }
-
-  if (wrongNetwork) {
-    web3Status = <Error>Invalid network</Error>
-  }
+  const web3Status = isConnected ? (
+    <UserDropdownStyled />
+  ) : wrongNetwork ? (
+    <Error>Invalid network</Error>
+  ) : (
+    <ButtonConnectStyled onClick={toggleWalletModal} />
+  )
 
   return (
     <>

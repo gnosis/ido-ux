@@ -7,12 +7,14 @@ import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import {
   calculateTimeLeft,
   calculateTimeProgress,
+  getChainName,
   getDays,
   getHours,
   getMinutes,
   getSeconds,
 } from '../../../utils/tools'
 import DoubleLogo from '../../common/DoubleLogo'
+import { NetworkIcon } from '../../icons/NetworkIcon'
 
 const Wrapper = styled(HashLink)`
   align-items: center;
@@ -161,6 +163,21 @@ const Progress = styled.span<{ width: string }>`
   width: ${(props) => props.width};
 `
 
+const Network = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  opacity: 0.7;
+  padding-top: 4px;
+`
+
+const NetworkName = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 5px;
+`
+
 const formatSeconds = (seconds: number): React.ReactNode => {
   const days = getDays(seconds)
   const hours = getHours(seconds)
@@ -194,7 +211,7 @@ interface Props {
 
 const AuctionInfoCard: React.FC<Props> = (props) => {
   const { auctionInfo, ...restProps } = props
-  const { endTimeTimestamp, startingTimestamp } = auctionInfo
+  const { chainId, endTimeTimestamp, startingTimestamp } = auctionInfo
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endTimeTimestamp))
 
   setInterval(() => {
@@ -230,6 +247,10 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
           Selling {auctionInfo.order.volume + ` `}
           {auctionInfo.symbolAuctioningToken}
         </SellingText>
+        <Network>
+          <NetworkIcon />
+          <NetworkName>{getChainName(parseInt(chainId.toString()))}</NetworkName>
+        </Network>
       </Details>
       <PriceAndDuration>
         <Cell>

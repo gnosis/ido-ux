@@ -1,4 +1,4 @@
-import { Fraction, Token } from 'uniswap-xdai-sdk'
+import { ChainId, Fraction, Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
@@ -65,4 +65,14 @@ export const normalizePrice = (auctioningToken: Token, biddingToken: Token, pric
     auctioningToken.decimals !== 18 ? auctioningToken.decimals : biddingToken.decimals
   const fixedPoint = BigNumber.from(10).pow(decimals).toString()
   return price?.multiply(fixedPoint)
+}
+
+export const getChainName = (chainId: number) => {
+  return (
+    (chainId === ChainId.ROPSTEN && 'Ropsten') ||
+    (chainId === ChainId.RINKEBY && 'Rinkeby') ||
+    (chainId === ChainId.GÖRLI && 'Görli') ||
+    (chainId === ChainId.KOVAN && 'Kovan') ||
+    'Unknown Network'
+  )
 }
