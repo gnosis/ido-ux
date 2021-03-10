@@ -123,7 +123,6 @@ export const Header: React.FC = (props) => {
   const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
   const wrongNetwork = error instanceof UnsupportedChainIdError || errorWrongNetwork !== undefined
-  console.log(error, errorWrongNetwork, wrongNetwork)
 
   const toggleWalletModal = useWalletModalToggle()
   const allTransactions = useAllTransactions()
