@@ -1,12 +1,8 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import {
-  AuctionState,
-  useDerivedAuctionInfo,
-  useDerivedAuctionState,
-} from '../../../state/orderPlacement/hooks'
+import { useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderActionHandlers } from '../../../state/orders/hooks'
 import { OrderDisplay, OrderStatus } from '../../../state/orders/reducer'
 import ConfirmationModal from '../../ConfirmationModal'
@@ -65,8 +61,7 @@ const ButtonWrapper = styled.div`
 
 const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
   const { orders } = props
-  const { auctionState } = useDerivedAuctionState()
-  const { biddingToken } = useDerivedAuctionInfo()
+  const { biddingToken, orderCancellationEndDate } = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
 
@@ -80,12 +75,12 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
   const [orderId, setOrderId] = useState<string>('')
 
   // reset modal state when closed
-  function resetModal() {
+  const resetModal = useCallback(() => {
     setPendingConfirmation(true)
     setAttemptingTxn(false)
-  }
+  }, [setPendingConfirmation, setAttemptingTxn])
 
-  function onCancelOrder() {
+  const onCancelOrder = useCallback(() => {
     setAttemptingTxn(true)
 
     cancelOrderCallback(orderId).then((hash) => {
@@ -93,13 +88,20 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
       setTxHash(hash)
       setPendingConfirmation(false)
     })
-  }
+  }, [
+    setAttemptingTxn,
+    setTxHash,
+    setPendingConfirmation,
+    onDeleteOrder,
+    orderId,
+    cancelOrderCallback,
+  ])
 
-  function modalHeader() {
+  const modalHeader = () => {
     return <SwapModalHeader />
   }
 
-  function modalBottom() {
+  const modalBottom = () => {
     return (
       <CancelModalFooter
         biddingToken={biddingToken}
@@ -109,8 +111,10 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
       />
     )
   }
+
   const pendingText = `Canceling Order`
-  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
+  const now = Math.trunc(Date.now() / 1000)
+  const isOrderCancelationAllowed = now < orderCancellationEndDate
   const ordersEmpty = !orders || orders.length == 0
 
   return (
@@ -166,9 +170,9 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
                 />
                 <ButtonWrapper>
                   <ActionButton
-                    disabled={orderPlacingOnly}
+                    disabled={!isOrderCancelationAllowed}
                     onClick={() => {
-                      if (!orderPlacingOnly) {
+                      if (isOrderCancelationAllowed) {
                         setOrderId(order[1].id)
                         setShowConfirm(true)
                       }
