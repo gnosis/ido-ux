@@ -95,7 +95,20 @@ function PoolPopup({
         Pool Imported
       </Text>
       <Row>
-        <DoubleTokenLogo a0={token0?.address ?? ''} a1={token1?.address ?? ''} margin={true} />
+        {token0 && token1 ? (
+          <DoubleTokenLogo
+            auctioningToken={{
+              address: token0.address,
+              symbol: token0.symbol,
+            }}
+            biddingToken={{
+              address: token1.address,
+              symbol: token1.symbol,
+            }}
+          />
+        ) : (
+          '-'
+        )}
         <Text fontSize={16} fontWeight={500}>
           UNI {token0?.symbol} / {token1?.symbol}
         </Text>

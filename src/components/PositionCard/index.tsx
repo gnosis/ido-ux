@@ -15,8 +15,8 @@ import { ButtonSecondary } from '../Button'
 import Card, { GreyCard } from '../Card'
 import { AutoColumn } from '../Column'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
-import TokenLogo from '../TokenLogo'
 import DoubleLogo from '../common/DoubleLogo'
+import TokenLogo from '../common/TokenLogo'
 
 const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -80,12 +80,21 @@ function PositionCard({ border, history, minimal = false, pair }: PositionCardPr
               </FixedHeightRow>
               <FixedHeightRow onClick={() => setShowMore(!showMore)}>
                 <RowFixed>
-                  <DoubleLogo
-                    a0={token0?.address || ''}
-                    a1={token1?.address || ''}
-                    margin={true}
-                    size={20}
-                  />
+                  {token0 && token1 ? (
+                    <DoubleLogo
+                      auctioningToken={{
+                        address: token0.address,
+                        symbol: token0.symbol,
+                      }}
+                      biddingToken={{
+                        address: token1.address,
+                        symbol: token1.symbol,
+                      }}
+                      size="20px"
+                    />
+                  ) : (
+                    '-'
+                  )}
                   <Text fontSize={20} fontWeight={500}>
                     {token0?.symbol}/{token1?.symbol}
                   </Text>
@@ -103,7 +112,9 @@ function PositionCard({ border, history, minimal = false, pair }: PositionCardPr
                   </Text>
                   {token0Deposited ? (
                     <RowFixed>
-                      {!minimal && <TokenLogo address={token0?.address} />}
+                      {!minimal && token0 && (
+                        <TokenLogo token={{ address: token0.address, symbol: token0.symbol }} />
+                      )}
                       <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
                         {token0Deposited?.toSignificant(6)}
                       </Text>
@@ -118,7 +129,9 @@ function PositionCard({ border, history, minimal = false, pair }: PositionCardPr
                   </Text>
                   {token1Deposited ? (
                     <RowFixed>
-                      {!minimal && <TokenLogo address={token1?.address} />}
+                      {!minimal && token1 && (
+                        <TokenLogo token={{ address: token1.address, symbol: token1.symbol }} />
+                      )}
                       <Text color="#888D9B" fontSize={16} fontWeight={500} marginLeft={'6px'}>
                         {token1Deposited?.toSignificant(6)}
                       </Text>
@@ -139,12 +152,21 @@ function PositionCard({ border, history, minimal = false, pair }: PositionCardPr
         <AutoColumn gap="12px">
           <FixedHeightRow onClick={() => setShowMore(!showMore)} style={{ cursor: 'pointer' }}>
             <RowFixed>
-              <DoubleLogo
-                a0={token0?.address || ''}
-                a1={token1?.address || ''}
-                margin={true}
-                size={20}
-              />
+              {token0 && token1 ? (
+                <DoubleLogo
+                  auctioningToken={{
+                    address: token0.address,
+                    symbol: token0.symbol,
+                  }}
+                  biddingToken={{
+                    address: token1.address,
+                    symbol: token1.symbol,
+                  }}
+                  size="20px"
+                />
+              ) : (
+                '-'
+              )}
               <Text fontSize={20} fontWeight={500}>
                 {token0?.symbol}/{token1?.symbol}
               </Text>
@@ -170,11 +192,10 @@ function PositionCard({ border, history, minimal = false, pair }: PositionCardPr
                     <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                       {token0Deposited?.toSignificant(6)}
                     </Text>
-                    {!minimal && (
+                    {!minimal && token0 && (
                       <TokenLogo
-                        address={token0?.address}
                         size="20px"
-                        style={{ marginLeft: '8px' }}
+                        token={{ address: token0.address, symbol: token0.symbol }}
                       />
                     )}
                   </RowFixed>
@@ -194,11 +215,10 @@ function PositionCard({ border, history, minimal = false, pair }: PositionCardPr
                     <Text fontSize={16} fontWeight={500} marginLeft={'6px'}>
                       {token1Deposited?.toSignificant(6)}
                     </Text>
-                    {!minimal && (
+                    {!minimal && token1 && (
                       <TokenLogo
-                        address={token1?.address}
                         size="20px"
-                        style={{ marginLeft: '8px' }}
+                        token={{ address: token1.address, symbol: token1.symbol }}
                       />
                     )}
                   </RowFixed>

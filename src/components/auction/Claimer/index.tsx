@@ -11,8 +11,8 @@ import {
 } from '../../../state/orderPlacement/hooks'
 import { getTokenDisplay } from '../../../utils'
 import ClaimConfirmationModal from '../../ClaimConfirmationModal'
-import TokenLogo from '../../TokenLogo'
 import { Button } from '../../buttons/Button'
+import TokenLogo from '../../common/TokenLogo'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
@@ -97,8 +97,17 @@ const Claimer: React.FC = () => {
       <TokensWrapper>
         <TokenItem>
           <Token>
-            <TokenLogo address={biddingToken?.address} size={'34px'} />
-            <Text>{biddingTokenDisplay}</Text>
+            {biddingToken && biddingTokenDisplay ? (
+              <>
+                <TokenLogo
+                  size={'34px'}
+                  token={{ address: biddingToken.address, symbol: biddingTokenDisplay }}
+                />
+                <Text>{biddingTokenDisplay}</Text>
+              </>
+            ) : (
+              '-'
+            )}
           </Token>
           <Text>
             {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(2)} ` : `0.00`}
@@ -106,8 +115,17 @@ const Claimer: React.FC = () => {
         </TokenItem>
         <TokenItem>
           <Token>
-            <TokenLogo address={auctioningToken?.address} size={'34px'} />
-            <Text>{auctioningTokenDisplay}</Text>
+            {auctioningToken && auctioningTokenDisplay ? (
+              <>
+                <TokenLogo
+                  size={'34px'}
+                  token={{ address: auctioningToken.address, symbol: auctioningTokenDisplay }}
+                />
+                <Text>{auctioningTokenDisplay}</Text>
+              </>
+            ) : (
+              '-'
+            )}
           </Token>
           <Text>
             {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(2)}` : `0.00`}

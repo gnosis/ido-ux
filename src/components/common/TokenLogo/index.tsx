@@ -20,21 +20,23 @@ const Image = styled.img`
   width: 100%;
 `
 
-const Placeholder = styled.div`
+const Placeholder = styled.div<{ size?: string }>`
   align-items: center;
   color: #fff;
   display: flex;
-  font-size: 18px;
+  font-size: calc(${(props) => props.size} * 0.24);
   font-weight: bold;
   height: 100%;
   justify-content: center;
+  letter-spacing: 0px;
   line-height: 1.3;
   text-align: center;
   width: 100%;
+  white-space: nowrap;
 `
 
 interface TokenLogoProps {
-  token: { address: string; symbol: string }
+  token: { address: string; symbol?: string }
   size?: string
 }
 
@@ -50,7 +52,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
 
   return (
     <Wrapper size={size} {...restProps}>
-      {imageURL ? <Image src={imageURL} /> : <Placeholder>{tokenSymbol}</Placeholder>}
+      {imageURL ? <Image src={imageURL} /> : <Placeholder size={size}>{tokenSymbol}</Placeholder>}
     </Wrapper>
   )
 }

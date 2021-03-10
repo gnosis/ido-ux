@@ -20,9 +20,9 @@ import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalance } from '../../../state/wallet/hooks'
 import { getTokenDisplay } from '../../../utils'
 import ConfirmationModal from '../../ConfirmationModal'
-import TokenLogo from '../../TokenLogo'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
+import TokenLogo from '../../common/TokenLogo'
 import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
@@ -203,7 +203,10 @@ const OrderPlacement: React.FC = () => {
           } `}</Total>
         </Balance>
         {account && biddingToken && biddingToken.address && (
-          <TokenLogo address={biddingToken.address} size={'22px'} />
+          <TokenLogo
+            size={'22px'}
+            token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
+          />
         )}
       </BalanceWrapper>
       <CurrencyInputPanel

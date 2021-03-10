@@ -216,10 +216,15 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
       </Top>
       <Details>
         <TokenIcons
-          a0={auctionInfo.addressAuctioningToken}
-          a1={auctionInfo.addressBiddingToken}
-          margin={true}
-          size={68}
+          auctioningToken={{
+            address: auctionInfo.addressAuctioningToken,
+            symbol: auctionInfo.symbolAuctioningToken,
+          }}
+          biddingToken={{
+            address: auctionInfo.addressBiddingToken,
+            symbol: auctionInfo.symbolBiddingToken,
+          }}
+          size="68px"
         />
         <SellingText>
           Selling {auctionInfo.order.volume + ` `}
