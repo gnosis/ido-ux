@@ -37,21 +37,7 @@ const Inner = styled(InnerContainer)`
   padding-right: ${(props) => props.theme.layout.horizontalPadding};
 `
 
-const LogoLink = styled(HashLink)`
-  left: 50%;
-  position: absolute;
-  text-decoration: none;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  z-index: 1;
-
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
-    left: auto;
-    position: relative;
-    top: auto;
-    transform: none;
-  }
-`
+const LogoLink = styled(HashLink)``
 
 const ButtonMenuStyled = styled(ButtonMenu)`
   display: block;
