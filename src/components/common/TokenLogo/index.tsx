@@ -24,7 +24,7 @@ const Placeholder = styled.div<{ size?: string }>`
   align-items: center;
   color: #fff;
   display: flex;
-  font-size: calc(${(props) => props.size} * 0.24);
+  font-size: calc(${(props) => props.size} * 0.26);
   font-weight: bold;
   height: 100%;
   justify-content: center;
