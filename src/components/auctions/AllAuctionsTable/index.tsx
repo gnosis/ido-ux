@@ -6,7 +6,7 @@ import { useGlobalFilter, useTable } from 'react-table'
 const Styles = styled.div`
   padding: 1rem;
   width: 100%;
-  height: 100%
+  height: 100%;
   align-items: end;
   text-align: center;
   flex: 0 1 auto;

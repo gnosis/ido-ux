@@ -6,13 +6,13 @@ import { ChainId, Pair, Token } from 'uniswap-xdai-sdk'
 import { Text } from 'rebass'
 import { useMediaLayout } from 'use-media'
 
-import { PopupContent } from '../../state/application/actions'
-import { useActivePopups, useRemovePopup } from '../../state/application/hooks'
-import { ExternalLink } from '../../theme'
-import { AutoColumn } from '../Column'
-import Row from '../Row'
+import { PopupContent } from '../../../state/application/actions'
+import { useActivePopups, useRemovePopup } from '../../../state/application/hooks'
+import { ExternalLink } from '../../../theme'
+import { AutoColumn } from '../../Column'
+import Row from '../../Row'
+import DoubleTokenLogo from '../../common/DoubleLogo'
 import TxnPopup from '../TxnPopup'
-import DoubleTokenLogo from '../common/DoubleLogo'
 
 const StyledClose = styled(X)`
   position: absolute;
