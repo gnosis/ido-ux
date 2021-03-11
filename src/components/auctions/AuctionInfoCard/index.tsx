@@ -249,7 +249,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         </SellingText>
         <Network>
           <NetworkIcon />
-          <NetworkName>{getChainName(parseInt(chainId.toString()))}</NetworkName>
+          <NetworkName>Selling on {getChainName(parseInt(chainId.toString()))}</NetworkName>
         </Network>
       </Details>
       <PriceAndDuration>

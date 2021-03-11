@@ -113,7 +113,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <SubTitle>
           <Network>
             <NetworkIconStyled />
-            <NetworkName>{getChainName(chainId)} -</NetworkName>
+            <NetworkName>Selling on {getChainName(chainId)} -</NetworkName>
           </Network>
           <AuctionId>Auction Id #{auctionId}</AuctionId>
         </SubTitle>
