@@ -6,60 +6,8 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
-export interface OrderBookChartProps {
-  baseToken: Token
-  quoteToken: Token
-  networkId: number
-  data: Maybe<PricePointDetails[]>
-}
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  min-height: calc(60vh - 30rem);
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  min-width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-
-  .amcharts-Sprite-group {
-    font-size: 1rem;
-  }
-
-  .amcharts-Label {
-    text-transform: uppercase;
-    font-size: 10px;
-    letter-spacing: 1px;
-    color: ${({ theme }) => theme.text4};
-    margin: 10px;
-  }
-
-  .amcharts-ZoomOutButton-group > .amcharts-RoundedRectangle-group {
-    fill: var(--color-text-active);
-    opacity: 0.6;
-    transition: 0.3s ease-in-out;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  .amcharts-AxisLabel,
-  .amcharts-CategoryAxis .amcharts-Label-group > .amcharts-Label,
-  .amcharts-ValueAxis-group .amcharts-Label-group > .amcharts-Label {
-    fill: ${({ theme }) => theme.text3};
-  }
-`
-
-interface OrderBookErrorProps {
-  error: Error
-}
-
-export const OrderBookError: React.FC<OrderBookErrorProps> = ({ error }: OrderBookErrorProps) => (
-  <Wrapper>{error ? error.message : 'loading'}</Wrapper>
-)
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
 
 export enum Offer {
   Bid,
@@ -88,161 +36,251 @@ export interface PricePointDetails {
   clearingPriceValueY: Maybe<number>
 }
 
-export const createChart = (chartElement: HTMLElement): am4charts.XYChart => {
-  am4core.useTheme(am4themesSpiritedaway)
-  am4core.options.autoSetClassName = true
-  const chart = am4core.create(chartElement, am4charts.XYChart)
-  chart.paddingTop = 20
-  chart.marginTop = 20
-  chart.paddingBottom = 0
-  chart.paddingLeft = 0
-  chart.paddingRight = 0
-  chart.marginBottom = 0
-
-  // Colors
-  const colors = {
-    green: '#28a745',
-    red: '#dc3545',
-    white: '#FFFFFF',
-    grey: '#565A69',
-    orange: '#FF6347',
-  }
-
-  // Create axes
-  const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
-  const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
-  priceAxis.renderer.labels.template.disabled = true
-  volumeAxis.renderer.labels.template.disabled = true
-  priceAxis.renderer.grid.template.disabled = true
-  volumeAxis.renderer.tooltip.getFillFromObject = false
-  priceAxis.renderer.tooltip.getFillFromObject = false
-
-  volumeAxis.renderer.grid.template.disabled = true
-  priceAxis.renderer.minGridDistance = 10
-  volumeAxis.renderer.minGridDistance = 10
-  // Create series
-  const bidSeries = chart.series.push(new am4charts.StepLineSeries())
-  bidSeries.dataFields.valueX = 'priceNumber'
-  bidSeries.dataFields.valueY = 'bidValueY'
-  bidSeries.strokeWidth = 2
-  bidSeries.stroke = am4core.color(colors.green)
-  bidSeries.fill = bidSeries.stroke
-  bidSeries.fillOpacity = 0.2
-
-  const askSeries = chart.series.push(new am4charts.LineSeries())
-  askSeries.dataFields.valueX = 'priceNumber'
-  askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 2
-  askSeries.stroke = am4core.color(colors.red)
-  askSeries.fill = askSeries.stroke
-  askSeries.fillOpacity = 0.1
-
-  const inputSeries = chart.series.push(new am4charts.LineSeries())
-  inputSeries.dataFields.valueX = 'priceNumber'
-  inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.strokeWidth = 4
-  inputSeries.stroke = am4core.color(colors.orange)
-  inputSeries.fill = inputSeries.stroke
-  inputSeries.fillOpacity = 0.1
-
-  const priceSeries = chart.series.push(new am4charts.LineSeries())
-  priceSeries.dataFields.valueX = 'priceNumber'
-  priceSeries.dataFields.valueY = 'clearingPriceValueY'
-  priceSeries.strokeWidth = 2
-  priceSeries.strokeDasharray = '3,3'
-  priceSeries.stroke = am4core.color(colors.white)
-  priceSeries.fill = inputSeries.stroke
-  priceSeries.fillOpacity = 0.1
-
-  // Add cursor
-  chart.cursor = new am4charts.XYCursor()
-  chart.cursor.lineX.stroke = am4core.color(colors.white)
-  chart.cursor.lineX.strokeWidth = 1
-  chart.cursor.lineX.strokeOpacity = 0.6
-  chart.cursor.lineX.strokeDasharray = '4'
-
-  chart.cursor.lineY.stroke = am4core.color(colors.white)
-  chart.cursor.lineY.strokeWidth = 1
-  chart.cursor.lineY.strokeOpacity = 0.6
-  chart.cursor.lineY.strokeDasharray = '4'
-
-  // Button configuration
-  chart.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
-  chart.zoomOutButton.background.fill = am4core.color('#25283D')
-  chart.zoomOutButton.icon.stroke = am4core.color(colors.white)
-  chart.zoomOutButton.icon.strokeWidth = 2
-
-  // Add default empty data array
-  chart.data = []
-
-  return chart
-}
-
-export interface DrawLabelsParams {
-  chart: am4charts.XYChart
+export interface OrderBookChartProps {
   baseToken: Token
   quoteToken: Token
   networkId: number
+  data: Maybe<PricePointDetails[]>
 }
 
-export const drawLabels = ({ baseToken, chart, quoteToken }: DrawLabelsParams): void => {
-  const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = quoteToken.symbol
-  const market = baseTokenLabel + '-' + quoteTokenLabel
+const Wrapper = styled.div`
+  align-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.text2};
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  width: 100%;
 
-  const [xAxis] = chart.xAxes
-  const [yAxis] = chart.yAxes
-  xAxis.title.text = ` Price (${baseTokenLabel})`
-  yAxis.title.text = ` Volume (${quoteTokenLabel})`
+  .amcharts-Sprite-group {
+    pointer-events: none;
+  }
 
-  xAxis.tooltip.background.cornerRadius = 0
-  xAxis.tooltip.background.fill = am4core.color('green')
-  yAxis.tooltip.background.cornerRadius = 0
-  yAxis.tooltip.background.fill = am4core.color('red')
+  .amcharts-Label {
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: ${({ theme }) => theme.text4};
+    margin: 10px;
+  }
 
-  xAxis.title.fill = am4core.color('white')
-  yAxis.title.fill = am4core.color('white')
+  .amcharts-ZoomOutButton-group > .amcharts-RoundedRectangle-group {
+    fill: var(--color-text-active);
+    opacity: 0.6;
+    transition: 0.3s ease-in-out;
 
-  const [bidSeries, askSeries] = chart.series
+    &:hover {
+      opacity: 1;
+    }
+  }
 
-  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
-  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
-}
+  .amcharts-CategoryAxis .amcharts-Label-group > .amcharts-Label,
+  .amcharts-ValueAxis-group .amcharts-Label-group > .amcharts-Label {
+    fill: ${({ theme }) => theme.text3};
+  }
+`
+
+am4core.useTheme(am4themesSpiritedaway)
 
 const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
-  const { baseToken, data, networkId, quoteToken } = props
-  const mountPoint = useRef<HTMLDivElement>(null)
-  const chartRef = useRef<Maybe<am4charts.XYChart>>(null)
+  const { baseToken, data, quoteToken } = props
+  const chartRef = useRef(null)
 
   useEffect(() => {
-    if (!mountPoint.current) return
-    const chart = createChart(mountPoint.current)
-    chartRef.current = chart
+    if (!baseToken || !quoteToken || !data) return
 
-    // dispose on mount only
-    return (): void => chart.dispose()
+    if (chartRef.current) return
+
+    const baseTokenLabel = baseToken.symbol
+    const quoteTokenLabel = quoteToken.symbol
+    const market = quoteTokenLabel + '-' + baseTokenLabel
+
+    const priceTitle = ` Price (${baseTokenLabel})`
+    const volumeTitle = ` Volume (${quoteTokenLabel})`
+
+    chartRef.current = am4core.create('chartdiv', am4charts.XYChart)
+    // Add data
+    chartRef.current.data = data
+
+    chartRef.current.paddingTop = 20
+    chartRef.current.marginTop = 20
+    chartRef.current.paddingBottom = 0
+    chartRef.current.paddingLeft = 0
+    chartRef.current.paddingRight = 0
+    chartRef.current.marginBottom = 0
+
+    // Colors
+    const colors = {
+      green: '#28a745',
+      red: '#dc3545',
+      white: '#FFFFFF',
+      grey: '#565A69',
+      orange: '#FF6347',
+    }
+
+    // Create axes
+    const priceAxis = chartRef.current.xAxes.push(new am4charts.ValueAxis())
+    const volumeAxis = chartRef.current.yAxes.push(new am4charts.ValueAxis())
+    volumeAxis.renderer.grid.template.stroke = am4core.color(colors.white)
+    volumeAxis.renderer.grid.template.strokeWidth = 0.5
+    volumeAxis.renderer.grid.template.strokeOpacity = 0.5
+    volumeAxis.title.text = volumeTitle
+    volumeAxis.title.fill = am4core.color(colors.white)
+    volumeAxis.renderer.labels.template.fill = am4core.color(colors.white)
+
+    priceAxis.renderer.grid.template.stroke = am4core.color(colors.white)
+    priceAxis.renderer.grid.template.strokeWidth = 0.5
+    priceAxis.renderer.grid.template.strokeOpacity = 0.5
+    priceAxis.title.text = priceTitle
+    priceAxis.title.fill = am4core.color(colors.white)
+    priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
+
+    const min = Math.min.apply(
+      0,
+      data.map((order) => order.priceNumber),
+    )
+    // Reduce the min in a 5%
+    priceAxis.min = min - min * 0.05
+
+    const max = Math.max.apply(
+      0,
+      data.map((order) => order.priceNumber),
+    )
+    // Reduce the max in a 5%
+    priceAxis.max = max + max * 0.05
+
+    priceAxis.strictMinMax = true
+    priceAxis.renderer.grid.template.disabled = true
+    priceAxis.renderer.labels.template.disabled = true
+
+    const createGrid = (value) => {
+      const range = priceAxis.axisRanges.create()
+      range.value = value
+      range.label.text = '{value}'
+    }
+
+    const factor = (priceAxis.max - priceAxis.min) / 5
+
+    const firstGrid = priceAxis.min + factor
+    const secondGrid = priceAxis.min + factor * 2
+    const thirdGrid = priceAxis.min + factor * 3
+    const fourGrid = priceAxis.min + factor * 4
+    const fiveGrid = priceAxis.min + factor * 5
+
+    createGrid(firstGrid.toFixed(2))
+    createGrid(secondGrid.toFixed(2))
+    createGrid(thirdGrid.toFixed(2))
+    createGrid(fourGrid.toFixed(2))
+    createGrid(fiveGrid.toFixed(2))
+
+    // Create serie, green line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
+    const bidSeries = chartRef.current.series.push(new am4charts.StepLineSeries())
+    bidSeries.dataFields.valueX = 'priceNumber'
+    bidSeries.dataFields.valueY = 'bidValueY'
+    bidSeries.strokeWidth = 2
+    bidSeries.stroke = am4core.color(colors.green)
+    bidSeries.fill = bidSeries.stroke
+    bidSeries.fillOpacity = 0.2
+    bidSeries.dummyData = {
+      description:
+        'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
+    }
+    bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
+
+    // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
+    const askSeries = chartRef.current.series.push(new am4charts.LineSeries())
+    askSeries.dataFields.valueX = 'priceNumber'
+    askSeries.dataFields.valueY = 'askValueY'
+    askSeries.strokeWidth = 2
+    askSeries.stroke = am4core.color(colors.red)
+    askSeries.fill = askSeries.stroke
+    askSeries.fillOpacity = 0.1
+    askSeries.dummyData = {
+      description: 'Shows the minimum sell price (x axis) the auctioneer is willing to accept',
+    }
+    askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
+
+    // New order to be placed
+    const inputSeries = chartRef.current.series.push(new am4charts.LineSeries())
+    inputSeries.dataFields.valueX = 'priceNumber'
+    inputSeries.dataFields.valueY = 'newOrderValueY'
+    inputSeries.strokeWidth = 4
+    inputSeries.stroke = am4core.color(colors.orange)
+    inputSeries.fill = inputSeries.stroke
+    inputSeries.fillOpacity = 0.1
+    inputSeries.dummyData = {
+      description: 'New orders to be placed',
+    }
+
+    // Dotted white line -> shows the Current price, which is the closing price of the auction if
+    // no more bids are submitted or canceled and the auction ends
+    const priceSeries = chartRef.current.series.push(new am4charts.LineSeries())
+    priceSeries.dataFields.valueX = 'priceNumber'
+    priceSeries.dataFields.valueY = 'clearingPriceValueY'
+    priceSeries.strokeWidth = 2
+    priceSeries.strokeDasharray = '3,3'
+    priceSeries.stroke = am4core.color(colors.white)
+    priceSeries.fill = inputSeries.stroke
+    priceSeries.fillOpacity = 0.1
+    priceSeries.dummyData = {
+      description:
+        'Shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends',
+    }
+
+    // Add cursor
+    chartRef.current.cursor = new am4charts.XYCursor()
+    chartRef.current.cursor.snapToSeries = [bidSeries, askSeries]
+    chartRef.current.cursor.lineX.stroke = am4core.color(colors.white)
+    chartRef.current.cursor.lineX.strokeWidth = 1
+    chartRef.current.cursor.lineX.strokeOpacity = 0.6
+    chartRef.current.cursor.lineX.strokeDasharray = '4'
+
+    chartRef.current.cursor.lineY.stroke = am4core.color(colors.white)
+    chartRef.current.cursor.lineY.strokeWidth = 1
+    chartRef.current.cursor.lineY.strokeOpacity = 0.6
+    chartRef.current.cursor.lineY.strokeDasharray = '4'
+
+    // Button configuration
+    chartRef.current.zoomOutButton.background.cornerRadius(5, 5, 5, 5)
+    chartRef.current.zoomOutButton.background.fill = am4core.color(colors.grey)
+    chartRef.current.zoomOutButton.icon.stroke = am4core.color(colors.white)
+    chartRef.current.zoomOutButton.icon.strokeWidth = 2
+    chartRef.current.zoomOutButton.tooltip.text = 'Zoom out'
+
+    // Legend
+    chartRef.current.legend = new am4charts.Legend()
+    chartRef.current.legend.labels.template.fill = am4core.color(colors.white)
+    chartRef.current.legend.itemContainers.template.tooltipText =
+      '{dataContext.dummyData.description}'
+  }, [data, baseToken, quoteToken])
+
+  // Handle component unmounting, dispose chart
+  useEffect(() => {
+    return () => {
+      chartRef.current && chartRef.current.dispose()
+    }
   }, [])
 
   useEffect(() => {
     if (!chartRef.current || data === null) return
+    chartRef.current.data = data.length === 0 ? [] : data
+  }, [data])
 
-    if (data.length === 0) {
-      chartRef.current.data = []
-      return
-    }
-
-    // go on with the update when data is ready
-    drawLabels({
-      chart: chartRef.current,
-      baseToken,
-      quoteToken,
-      networkId,
-    })
-
-    chartRef.current.data = data
-  }, [baseToken, networkId, quoteToken, data])
-
-  return <Wrapper ref={mountPoint}>Show order book for auction</Wrapper>
+  return (
+    <Wrapper id="chartdiv">
+      <InlineLoading size={SpinnerSize.small} />
+    </Wrapper>
+  )
 }
+
+interface OrderBookErrorProps {
+  error: Error
+}
+
+export const OrderBookError: React.FC<OrderBookErrorProps> = ({ error }: OrderBookErrorProps) => (
+  <Wrapper>{error ? error.message : <InlineLoading size={SpinnerSize.small} />}</Wrapper>
+)
 
 export default OrderBookChart
