@@ -115,7 +115,7 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
             <NetworkIconStyled />
             <NetworkName>{getChainName(chainId)} -</NetworkName>
           </Network>
-          <AuctionId>Auction Id #{auctionId ? auctionId : 'Loading...'}</AuctionId>
+          <AuctionId>Auction Id #{auctionId}</AuctionId>
         </SubTitle>
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
