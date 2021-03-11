@@ -11,6 +11,7 @@ import { OrderBookBtn } from '../../components/auction/OrderbookBtn'
 import OrdersTable from '../../components/auction/OrdersTable'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
+import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import {
   AuctionState,
@@ -23,6 +24,7 @@ import {
 import { useOrderbookDataCallback } from '../../state/orderbook/hooks'
 import { useOrderState } from '../../state/orders/hooks'
 import { OrderState } from '../../state/orders/reducer'
+import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
@@ -40,11 +42,18 @@ const SubTitleWrapper = styled.div`
 `
 
 const SubTitle = styled.h2`
+  align-items: center;
   color: ${({ theme }) => theme.text1};
+  display: flex;
   font-size: 15px;
   font-weight: 400;
   line-height: 1.2;
   margin: 0 6px 0 0;
+`
+
+const AuctionId = styled.span`
+  align-items: center;
+  display: flex;
 `
 
 const CopyButton = styled(ButtonCopy)`
@@ -52,6 +61,22 @@ const CopyButton = styled(ButtonCopy)`
   position: relative;
   top: -1px;
   width: 14px;
+`
+
+const Network = styled.span`
+  align-items: center;
+  display: flex;
+  margin-right: 5px;
+`
+
+const NetworkIconStyled = styled(NetworkIcon)`
+  height: 14px;
+  width: 14px;
+`
+
+const NetworkName = styled.span`
+  margin-left: 8px;
+  text-transform: capitalize;
 `
 
 const Grid = styled.div`
@@ -64,7 +89,7 @@ const Grid = styled.div`
 const Auction = ({ location: { search } }: RouteComponentProps) => {
   const { auctionState, loading } = useDerivedAuctionState()
   const orders: OrderState | undefined = useOrderState()
-  const { auctionId } = useSwapState()
+  const { auctionId, chainId } = useSwapState()
   const url = window.location.href
   const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
 
@@ -85,7 +110,13 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
     <>
       <Title>Auction Details</Title>
       <SubTitleWrapper>
-        <SubTitle>Auction Id #{auctionId}</SubTitle>
+        <SubTitle>
+          <Network>
+            <NetworkIconStyled />
+            <NetworkName>{getChainName(chainId)} -</NetworkName>
+          </Network>
+          <AuctionId>Auction Id #{auctionId ? auctionId : 'Loading...'}</AuctionId>
+        </SubTitle>
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails />
