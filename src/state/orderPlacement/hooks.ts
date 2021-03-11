@@ -268,6 +268,7 @@ export function useDerivedAuctionInfo(): {
   clearingPriceVolume: BigNumber | undefined
   initialPrice: Fraction | undefined
   minBiddingAmountPerOrder: string | undefined
+  orderCancellationEndDate: number | undefined
 } {
   const { account } = useActiveWeb3React()
 
@@ -329,6 +330,7 @@ export function useDerivedAuctionInfo(): {
     clearingPriceVolume,
     initialPrice,
     minBiddingAmountPerOrder,
+    orderCancellationEndDate: auctionDetails?.orderCancellationEndDate,
   }
 }
 
