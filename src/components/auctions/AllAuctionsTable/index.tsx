@@ -1,28 +1,37 @@
 import React, { useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { useGlobalFilter, useTable } from 'react-table'
 
-const Styles = styled.div`
-  padding: 1rem;
-  width: 100%;
-  height: 100%;
-  align-items: end;
-  text-align: center;
-  flex: 0 1 auto;
+import { KeyValue } from '../../common/KeyValue'
+import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
-  table {
-    text-align: center;
-    width: 100%;
-    padding: 2px;
-    th,
-    td {
-      margin: 0.2;
-      padding: 0.5rem;
-      text-align: center;
-      border-bottom: 1px solid black;
-    }
+const Wrapper = styled(BaseCard)`
+  padding: 4px 0;
+`
+
+const SectionTitle = styled(PageTitle)`
+  margin-bottom: 16px;
+  margin-top: 0;
+`
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+`
+
+const CommonCellCSS = css`
+  border-bottom: 1px solid ${({ theme }) => theme.border};
+  padding: 13px 15px;
+
+  &:nth-last-child(-n + 4) {
+    border-bottom: none;
   }
+`
+
+const Cell = styled(KeyValue)`
+  ${CommonCellCSS}
 `
 
 // value and onChange function
@@ -38,7 +47,7 @@ const GlobalFilter = ({ globalFilter, setGlobalFilter }: any) => {
   )
 }
 
-export default function DatatablePage(allAuctions: any[]) {
+const DatatablePage = (allAuctions: any[]) => {
   const columns = useMemo(
     () => [
       {
@@ -86,57 +95,42 @@ export default function DatatablePage(allAuctions: any[]) {
   )
   const data = useMemo(() => Object.values(allAuctions), [allAuctions])
 
-  const {
-    getTableBodyProps,
-    getTableProps,
-    headerGroups,
-    prepareRow,
-    rows,
-    setGlobalFilter,
-    state,
-  } = useTable(
+  const { headerGroups, prepareRow, rows, setGlobalFilter, state } = useTable(
     {
       columns,
       data,
     },
     useGlobalFilter,
   )
+  console.log(headerGroups[0].headers)
   return (
     <>
-      <Styles>
-        <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
-      </Styles>
-      <Styles>
-        <table {...getTableProps()}>
-          <thead>
-            {headerGroups.map((headerGroup, i) => (
-              <tr {...headerGroup.getHeaderGroupProps()} key={i}>
-                {headerGroup.headers.map((column, j) => (
-                  <th {...column.getHeaderProps()} key={j}>
-                    {column.render('Header')}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row, i) => {
-              prepareRow(row)
-              return (
-                <tr {...row.getRowProps()} key={i}>
-                  {row.cells.map((cell, j) => {
-                    return (
-                      <td {...cell.getCellProps()} key={j}>
-                        {cell.render('Cell')}
-                      </td>
-                    )
-                  })}
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </Styles>
+      <SectionTitle>Auctions</SectionTitle>
+      <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
+      <Wrapper>
+        <Grid>
+          {/* {headerGroups.map((headerGroup) =>
+            headerGroup.headers.map((column, j) => (
+              <Cell itemKey="asd" itemValue="asd" key={j}>
+                {column.render('Header')}
+              </Cell>
+            )),
+          )} */}
+
+          {rows.map((row) => {
+            prepareRow(row)
+            return row.cells.map((cell, j) => (
+              <Cell
+                itemKey={headerGroups[0].headers[j]['Header']}
+                itemValue={cell.render('Cell')}
+                key={j}
+              ></Cell>
+            ))
+          })}
+        </Grid>
+      </Wrapper>
     </>
   )
 }
+
+export default DatatablePage
