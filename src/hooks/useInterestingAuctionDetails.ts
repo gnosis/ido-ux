@@ -1,50 +1,35 @@
-import { useEffect, useMemo, useState } from "react";
-import { additionalServiceApi } from "./../api";
-import { AuctionInfo } from "./useAllAuctionInfos";
+import { useEffect, useState } from 'react'
 
-export function useInterestingAuctionInfo(
-  numberOfItems: number,
-  chainId: number,
-): AuctionInfo[] | null {
-  const [auctionInfo, setMostInterestingAuctions] = useState<
-    AuctionInfo[] | null
-  >(null);
+import { additionalServiceApi } from './../api'
+import { AuctionInfo } from './useAllAuctionInfos'
 
-  useMemo(() => {
-    setMostInterestingAuctions(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId]);
+export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
+  const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
+
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
     const fetchApiData = async (): Promise<void> => {
       try {
-        if (!chainId || !additionalServiceApi) {
-          throw new Error(
-            "missing dependencies in useInterestingAuctionInfo callback",
-          );
+        if (!additionalServiceApi) {
+          throw new Error('missing dependencies in useInterestingAuctionInfo callback')
         }
-        const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails(
-          {
-            networkId: chainId,
-            numberOfAuctions: numberOfItems,
-          },
-        );
-        if (cancelled) return;
-        setMostInterestingAuctions(auctionInfo);
+        const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails()
+        if (cancelled) return
+        setMostInterestingAuctions(auctionInfo)
       } catch (error) {
-        setMostInterestingAuctions(null);
-        console.error("Error getting clearing price info", error);
+        setMostInterestingAuctions(null)
+        console.error('Error getting clearing price info', error)
 
-        if (cancelled) return;
+        if (cancelled) return
       }
-    };
-    fetchApiData();
+    }
+    fetchApiData()
 
     return (): void => {
-      cancelled = true;
-    };
-  }, [chainId, numberOfItems, setMostInterestingAuctions]);
+      cancelled = true
+    }
+  }, [setMostInterestingAuctions])
 
-  return auctionInfo;
+  return auctionInfo
 }

@@ -1,14 +1,15 @@
-import { BigNumber } from "@ethersproject/bignumber";
-import { TransactionResponse } from "@ethersproject/providers";
-import { WETH, TokenAmount, JSBI, ChainId } from "uniswap-xdai-sdk";
-import { useMemo } from "react";
-import { useTransactionAdder } from "../state/transactions/hooks";
-import { useTokenBalanceTreatingWETHasETH } from "../state/wallet/hooks";
+import { useMemo } from 'react'
+import { ChainId, JSBI, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
-import { calculateGasMargin, getSigner, isAddress } from "../utils";
-import { useTokenContract } from "./useContract";
-import { useActiveWeb3React } from "./index";
-import useENSName from "./useENSName";
+import { BigNumber } from '@ethersproject/bignumber'
+import { TransactionResponse } from '@ethersproject/providers'
+
+import { useTransactionAdder } from '../state/transactions/hooks'
+import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
+import { calculateGasMargin, getSigner, isAddress } from '../utils'
+import { useActiveWeb3React } from './index'
+import { useTokenContract } from './useContract'
+import useENSName from './useENSName'
 
 // returns a callback for sending a token amount, treating WETH as ETH
 // returns null with invalid arguments
@@ -16,27 +17,24 @@ export function useSendCallback(
   amount?: TokenAmount,
   recipient?: string,
 ): null | (() => Promise<string>) {
-  const { library, account, chainId } = useActiveWeb3React();
-  const addTransaction = useTransactionAdder();
-  const ensName = useENSName(recipient);
-  const tokenContract = useTokenContract(amount?.token?.address);
-  const balance = useTokenBalanceTreatingWETHasETH(
-    account ?? undefined,
-    amount?.token,
-  );
+  const { account, chainId, library } = useActiveWeb3React()
+  const addTransaction = useTransactionAdder()
+  const ensName = useENSName(recipient)
+  const tokenContract = useTokenContract(amount?.token?.address)
+  const balance = useTokenBalanceTreatingWETHasETH(account ?? undefined, amount?.token)
 
   return useMemo(() => {
-    if (!amount) return null;
-    if (!amount.greaterThan(JSBI.BigInt(0))) return null;
-    if (!isAddress(recipient)) return null;
-    if (!balance) return null;
-    if (balance.lessThan(amount)) return null;
+    if (!amount) return null
+    if (!amount.greaterThan(JSBI.BigInt(0))) return null
+    if (!isAddress(recipient)) return null
+    if (!balance) return null
+    if (balance.lessThan(amount)) return null
 
-    const token = amount?.token;
+    const token = amount?.token
 
     return async function onSend(): Promise<string> {
       if (!chainId || !library || !account || !tokenContract) {
-        throw new Error("missing dependencies in onSend callback");
+        throw new Error('missing dependencies in onSend callback')
       }
       if (token.equals(WETH[chainId as ChainId])) {
         return getSigner(library, account)
@@ -47,19 +45,19 @@ export function useSendCallback(
           .then((response: TransactionResponse) => {
             addTransaction(response, {
               summary:
-                "Send " +
+                'Send ' +
                 amount.toSignificant(3) +
-                " " +
+                ' ' +
                 token?.symbol +
-                " to " +
+                ' to ' +
                 (ensName ?? recipient),
-            });
-            return response.hash;
+            })
+            return response.hash
           })
           .catch((error: Error) => {
-            console.error("Failed to transfer ETH", error);
-            throw error;
-          });
+            console.error('Failed to transfer ETH', error)
+            throw error
+          })
       } else {
         return tokenContract.estimateGas
           .transfer(recipient, amount.raw.toString())
@@ -71,22 +69,22 @@ export function useSendCallback(
               .then((response: TransactionResponse) => {
                 addTransaction(response, {
                   summary:
-                    "Send " +
+                    'Send ' +
                     amount.toSignificant(3) +
-                    " " +
+                    ' ' +
                     token.symbol +
-                    " to " +
+                    ' to ' +
                     (ensName ?? recipient),
-                });
-                return response.hash;
+                })
+                return response.hash
               }),
           )
           .catch((error) => {
-            console.error("Failed token transfer", error);
-            throw error;
-          });
+            console.error('Failed token transfer', error)
+            throw error
+          })
       }
-    };
+    }
   }, [
     addTransaction,
     library,
@@ -97,5 +95,5 @@ export function useSendCallback(
     recipient,
     tokenContract,
     balance,
-  ]);
+  ])
 }

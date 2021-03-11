@@ -1,43 +1,30 @@
-import { Web3Provider } from "@ethersproject/providers";
-import { createWeb3ReactRoot, Web3ReactProvider } from "@web3-react/core";
-import "inter-ui";
-import React from "react";
-import { isMobile } from "react-device-detect";
-import ReactDOM from "react-dom";
-import ReactGA from "react-ga";
-import { Provider } from "react-redux";
-import { NetworkContextName } from "./constants";
-import "./i18n";
-import App from "./pages/App";
-import store from "./state";
-import ApplicationUpdater from "./state/application/updater";
-import TransactionUpdater from "./state/transactions/updater";
-import UserUpdater from "./state/user/updater";
-import MulticallUpdater from "./state/multicall/updater";
-import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from "./theme";
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
+import { Web3Provider } from '@ethersproject/providers'
+import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
+import 'inter-ui'
+import { Provider } from 'react-redux'
 
-function getLibrary(provider: any): Web3Provider {
-  return new Web3Provider(provider);
+import { NetworkContextName } from './constants'
+import './i18n'
+import App from './pages/App'
+import store from './state'
+import ApplicationUpdater from './state/application/updater'
+import MulticallUpdater from './state/multicall/updater'
+import TransactionUpdater from './state/transactions/updater'
+import UserUpdater from './state/user/updater'
+import ThemeProvider from './theme'
+import { GlobalStyle, ThemedGlobalStyle } from './theme/globalStyle'
+import 'sanitize.css'
+
+const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+
+const getLibrary = (provider: any): Web3Provider => {
+  return new Web3Provider(provider)
 }
 
-const GOOGLE_ANALYTICS_ID: string | undefined =
-  process.env.REACT_APP_GOOGLE_ANALYTICS_ID;
-if (typeof GOOGLE_ANALYTICS_ID === "string") {
-  ReactGA.initialize(GOOGLE_ANALYTICS_ID);
-  ReactGA.set({
-    customBrowserType: !isMobile
-      ? "desktop"
-      : "web3" in window || "ethereum" in window
-      ? "mobileWeb3"
-      : "mobileRegular",
-  });
-} else {
-  ReactGA.initialize("test", { testMode: true, debug: true });
-}
-
-function Updaters() {
+const Updaters = () => {
   return (
     <>
       <UserUpdater />
@@ -45,25 +32,23 @@ function Updaters() {
       <TransactionUpdater />
       <MulticallUpdater />
     </>
-  );
+  )
 }
 
 ReactDOM.render(
   <>
-    <FixedGlobalStyle />
     <Web3ReactProvider getLibrary={getLibrary}>
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Provider store={store}>
           <Updaters />
           <ThemeProvider>
-            <>
-              <ThemedGlobalStyle />
-              <App />
-            </>
+            <GlobalStyle />
+            <ThemedGlobalStyle />
+            <App />
           </ThemeProvider>
         </Provider>
       </Web3ProviderNetwork>
     </Web3ReactProvider>
   </>,
-  document.getElementById("root"),
-);
+  document.getElementById('root'),
+)

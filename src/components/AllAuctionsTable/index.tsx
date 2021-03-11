@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
-import { useTable, useGlobalFilter } from "react-table";
-import styled from "styled-components";
+import React, { useMemo } from 'react'
+import styled from 'styled-components'
+
+import { useGlobalFilter, useTable } from 'react-table'
 
 const Styles = styled.div`
   padding: 1rem;
@@ -22,91 +23,88 @@ const Styles = styled.div`
       border-bottom: 1px solid black;
     }
   }
-`;
+`
 
 // value and onChange function
 const GlobalFilter = ({ globalFilter, setGlobalFilter }: any) => {
   return (
     <input
-      value={globalFilter || ""}
       onChange={(e) => {
-        setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
+        setGlobalFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
       }}
       placeholder={`Search All ...`}
+      value={globalFilter || ''}
     />
-  );
-};
+  )
+}
 
 export default function DatatablePage(allAuctions: any[]) {
   const columns = useMemo(
     () => [
       {
-        Header: "Pair",
-        accessor: "symbol",
+        Header: 'Pair',
+        accessor: 'symbol',
         minWidth: 300,
       },
       {
-        Header: "#AuctionId",
-        accessor: "auctionId",
+        Header: '#AuctionId',
+        accessor: 'auctionId',
         minWidth: 50,
       },
       {
-        Header: "Network",
-        accessor: "chainId",
+        Header: 'Network',
+        accessor: 'chainId',
         minWidth: 50,
       },
       {
-        Header: "Selling",
-        accessor: "selling",
+        Header: 'Selling',
+        accessor: 'selling',
         minWidth: 50,
       },
       {
-        Header: "Buying",
-        accessor: "buying",
+        Header: 'Buying',
+        accessor: 'buying',
         minWidth: 50,
       },
       {
-        Header: "Status",
-        accessor: "status",
+        Header: 'Status',
+        accessor: 'status',
         minWidth: 100,
       },
       {
-        Header: "End date",
-        accessor: "date",
+        Header: 'End date',
+        accessor: 'date',
         minWidth: 50,
       },
       {
-        Header: "Link",
-        accessor: "link",
+        Header: 'Link',
+        accessor: 'link',
         minWidth: 50,
       },
     ],
     [],
-  );
-  const data = useMemo(() => Object.values(allAuctions), [allAuctions]);
+  )
+  const data = useMemo(() => Object.values(allAuctions), [allAuctions])
 
   const {
-    getTableProps,
     getTableBodyProps,
+    getTableProps,
     headerGroups,
-    rows,
     prepareRow,
-    state,
+    rows,
     setGlobalFilter,
+    state,
   } = useTable(
     {
       columns,
       data,
     },
     useGlobalFilter,
-  );
+  )
   return (
     <>
       <Styles>
-        <GlobalFilter
-          globalFilter={state.globalFilter}
-          setGlobalFilter={setGlobalFilter}
-        />
+        <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
       </Styles>
       <Styles>
         <table {...getTableProps()}>
@@ -115,7 +113,7 @@ export default function DatatablePage(allAuctions: any[]) {
               <tr {...headerGroup.getHeaderGroupProps()} key={i}>
                 {headerGroup.headers.map((column, j) => (
                   <th {...column.getHeaderProps()} key={j}>
-                    {column.render("Header")}
+                    {column.render('Header')}
                   </th>
                 ))}
               </tr>
@@ -123,22 +121,22 @@ export default function DatatablePage(allAuctions: any[]) {
           </thead>
           <tbody {...getTableBodyProps()}>
             {rows.map((row, i) => {
-              prepareRow(row);
+              prepareRow(row)
               return (
                 <tr {...row.getRowProps()} key={i}>
                   {row.cells.map((cell, j) => {
                     return (
                       <td {...cell.getCellProps()} key={j}>
-                        {cell.render("Cell")}
+                        {cell.render('Cell')}
                       </td>
-                    );
+                    )
                   })}
                 </tr>
-              );
+              )
             })}
           </tbody>
         </table>
       </Styles>
     </>
-  );
+  )
 }

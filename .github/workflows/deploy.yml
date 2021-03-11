@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
         REPO_NAME_SLUG: idoux
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

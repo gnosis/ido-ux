@@ -1,10 +1,12 @@
-import { Placement } from "@popperjs/core";
-import { transparentize } from "polished";
-import React, { useState } from "react";
-import { usePopper } from "react-popper";
-import styled, { keyframes } from "styled-components";
-import useInterval from "../../hooks/useInterval";
-import Portal from "@reach/portal";
+import { transparentize } from 'polished'
+import React, { useState } from 'react'
+import styled, { keyframes } from 'styled-components'
+
+import { Placement } from '@popperjs/core'
+import Portal from '@reach/portal'
+import { usePopper } from 'react-popper'
+
+import useInterval from '../../hooks/useInterval'
 
 const fadeIn = keyframes`
   from {
@@ -14,7 +16,7 @@ const fadeIn = keyframes`
   to {
     opacity : 1;
   }
-`;
+`
 
 const fadeOut = keyframes`
   from {
@@ -24,12 +26,12 @@ const fadeOut = keyframes`
   to {
     opacity : 0;
   }
-`;
+`
 
 const PopoverContainer = styled.div<{ show: boolean }>`
   z-index: 9999;
 
-  visibility: ${(props) => (!props.show ? "hidden" : "visible")};
+  visibility: ${(props) => (!props.show ? 'hidden' : 'visible')};
   animation: ${(props) => (!props.show ? fadeOut : fadeIn)} 150ms linear;
   transition: visibility 150ms linear;
 
@@ -38,11 +40,11 @@ const PopoverContainer = styled.div<{ show: boolean }>`
   box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.9, theme.shadow1)};
   color: ${({ theme }) => theme.text2};
   border-radius: 8px;
-`;
+`
 
 const ReferenceElement = styled.div`
   display: inline-block;
-`;
+`
 
 const Arrow = styled.div`
   width: 8px;
@@ -55,7 +57,7 @@ const Arrow = styled.div`
     height: 8px;
     z-index: 9998;
 
-    content: "";
+    content: '';
     border: 1px solid ${({ theme }) => theme.bg3};
     transform: rotate(45deg);
     background: ${({ theme }) => theme.bg2};
@@ -93,55 +95,42 @@ const Arrow = styled.div`
       border-top: none;
     }
   }
-`;
+`
 
 export interface PopoverProps {
-  content: React.ReactNode;
-  show: boolean;
-  children: React.ReactNode;
-  placement?: Placement;
+  content: React.ReactNode
+  show: boolean
+  children: React.ReactNode
+  placement?: Placement
 }
 
-export default function Popover({
-  content,
-  show,
-  children,
-  placement = "auto",
-}: PopoverProps) {
-  const [referenceElement, setReferenceElement] = useState<HTMLDivElement>(
-    null,
-  );
-  const [popperElement, setPopperElement] = useState<HTMLDivElement>(null);
-  const [arrowElement, setArrowElement] = useState<HTMLDivElement>(null);
-  const { styles, update, attributes } = usePopper(
-    referenceElement,
-    popperElement,
-    {
-      placement,
-      strategy: "fixed",
-      modifiers: [
-        { name: "offset", options: { offset: [8, 8] } },
-        { name: "arrow", options: { element: arrowElement } },
-      ],
-    },
-  );
-  useInterval(update, show ? 100 : null);
+export default function Popover({ children, content, placement = 'auto', show }: PopoverProps) {
+  const [referenceElement, setReferenceElement] = useState<HTMLDivElement>(null)
+  const [popperElement, setPopperElement] = useState<HTMLDivElement>(null)
+  const [arrowElement, setArrowElement] = useState<HTMLDivElement>(null)
+  const { attributes, styles, update } = usePopper(referenceElement, popperElement, {
+    placement,
+    strategy: 'fixed',
+    modifiers: [
+      { name: 'offset', options: { offset: [8, 8] } },
+      { name: 'arrow', options: { element: arrowElement } },
+    ],
+  })
+  useInterval(update, show ? 100 : null)
 
   return (
     <>
       <ReferenceElement ref={setReferenceElement}>{children}</ReferenceElement>
       <Portal>
         <PopoverContainer
-          show={show}
           ref={setPopperElement}
+          show={show}
           style={styles.popper}
           {...attributes.popper}
         >
           {content}
           <Arrow
-            className={`arrow-${
-              attributes.popper?.["data-popper-placement"] ?? ""
-            }`}
+            className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
             ref={setArrowElement}
             style={styles.arrow}
             {...attributes.arrow}
@@ -149,5 +138,5 @@ export default function Popover({
         </PopoverContainer>
       </Portal>
     </>
-  );
+  )
 }

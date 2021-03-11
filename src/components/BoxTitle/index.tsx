@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const BoxTitle = styled.div`
   text-align: center;
@@ -10,4 +10,4 @@ export const BoxTitle = styled.div`
   text-decoration: none;
   color: ${({ theme }) => theme.text1};
   font-size: 20px;
-`;
+`

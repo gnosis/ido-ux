@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from 'react'
 
 // modified from https://usehooks.com/useKeyPress/
 export default function useBodyKeyDown(
@@ -9,21 +9,21 @@ export default function useBodyKeyDown(
   const downHandler = useCallback(
     (event) => {
       const {
-        target: { tagName },
         key,
-      } = event;
-      if (key === targetKey && tagName === "BODY" && !suppressOnKeyDown) {
-        event.preventDefault();
-        onKeyDown();
+        target: { tagName },
+      } = event
+      if (key === targetKey && tagName === 'BODY' && !suppressOnKeyDown) {
+        event.preventDefault()
+        onKeyDown()
       }
     },
     [targetKey, onKeyDown, suppressOnKeyDown],
-  );
+  )
 
   useEffect(() => {
-    window.addEventListener("keydown", downHandler);
+    window.addEventListener('keydown', downHandler)
     return () => {
-      window.removeEventListener("keydown", downHandler);
-    };
-  }, [downHandler]);
+      window.removeEventListener('keydown', downHandler)
+    }
+  }, [downHandler])
 }

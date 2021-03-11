@@ -1,35 +1,34 @@
-import { Contract } from "@ethersproject/contracts";
-import { parseUnits } from "@ethersproject/units";
-import { ChainId, Fraction, JSBI, Token, TokenAmount } from "uniswap-xdai-sdk";
-import { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { convertPriceIntoBuyAndSellAmount } from "../../utils/prices";
-import { additionalServiceApi } from "../../api";
+import { useCallback, useEffect, useState } from 'react'
+import { ChainId, Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
-import { EASY_AUCTION_NETWORKS } from "../../constants";
-import { useContract } from "../../hooks/useContract";
-import { useSingleCallResult } from "../multicall/hooks";
-import easyAuctionABI from "../../constants/abis/easyAuction/easyAuction.json";
-import { useGetClaimInfo } from "../../hooks/useClaimOrderCallback";
-import { useActiveWeb3React } from "../../hooks";
-import { useTokenByAddressAndAutomaticallyAdd } from "../../hooks/Tokens";
-import { AppDispatch, AppState } from "../index";
-import { useTokenBalances } from "../wallet/hooks";
-import { encodeOrder, decodeOrder, Order } from "../../hooks/Order";
-import {
-  setDefaultsFromURLSearch,
-  sellAmountInput,
-  priceInput,
-} from "./actions";
-import { BigNumber } from "@ethersproject/bignumber";
-import { OrderDisplay, OrderStatus } from "../orders/reducer";
-import { useOrderbookActionHandlers } from "../orderbook/hooks";
-import { resetUserPrice, resetUserVolume } from "../orderbook/actions";
-import { useOrderActionHandlers, useOrderState } from "../orders/hooks";
+import { BigNumber } from '@ethersproject/bignumber'
+import { Contract } from '@ethersproject/contracts'
+import { parseUnits } from '@ethersproject/units'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { additionalServiceApi } from '../../api'
+import { EASY_AUCTION_NETWORKS } from '../../constants'
+import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
+import { useActiveWeb3React } from '../../hooks'
+import { Order, decodeOrder, encodeOrder } from '../../hooks/Order'
+import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
+import { useAuctionDetails } from '../../hooks/useAuctionDetails'
+import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
+import { useContract } from '../../hooks/useContract'
+import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
+import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
+import { AppDispatch, AppState } from '../index'
+import { useSingleCallResult } from '../multicall/hooks'
+import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
+import { useOrderbookActionHandlers } from '../orderbook/hooks'
+import { useOrderActionHandlers, useOrderState } from '../orders/hooks'
+import { OrderDisplay, OrderStatus } from '../orders/reducer'
+import { useTokenBalances } from '../wallet/hooks'
+import { priceInput, sellAmountInput, setDefaultsFromURLSearch } from './actions'
 
 export interface SellOrder {
-  sellAmount: TokenAmount;
-  buyAmount: TokenAmount;
+  sellAmount: TokenAmount
+  buyAmount: TokenAmount
 }
 
 export enum AuctionState {
@@ -49,27 +48,22 @@ export function orderToSellOrder(
     return {
       sellAmount: new TokenAmount(biddingToken, order.sellAmount.toString()),
       buyAmount: new TokenAmount(auctioningToken, order.buyAmount.toString()),
-    };
+    }
   } else {
-    return undefined;
+    return undefined
   }
 }
 
-export function orderToPrice(
-  order: SellOrder | null | undefined,
-): Fraction | undefined {
+export function orderToPrice(order: SellOrder | null | undefined): Fraction | undefined {
   if (
     !order ||
     order.buyAmount == undefined ||
-    order.buyAmount.raw.toString() == "0" ||
+    order.buyAmount.raw.toString() == '0' ||
     order.sellAmount == undefined
   ) {
-    return undefined;
+    return undefined
   } else {
-    return new Fraction(
-      order.sellAmount.raw.toString(),
-      order.buyAmount.raw.toString(),
-    );
+    return new Fraction(order.sellAmount.raw.toString(), order.buyAmount.raw.toString())
   }
 }
 
@@ -77,114 +71,116 @@ function decodeSellOrder(
   orderBytes: string | undefined,
   soldToken: Token | undefined,
   boughtToken: Token | undefined,
-): SellOrder | null {
+): Maybe<SellOrder> {
   if (!orderBytes || !soldToken || !boughtToken) {
-    return null;
+    return null
   }
   const sellAmount = new Fraction(
-    BigNumber.from("0x" + orderBytes.substring(43, 66)).toString(),
-    "1",
-  );
+    BigNumber.from('0x' + orderBytes.substring(43, 66)).toString(),
+    '1',
+  )
   const buyAmount = new Fraction(
-    BigNumber.from("0x" + orderBytes.substring(19, 42)).toString(),
-    "1",
-  );
+    BigNumber.from('0x' + orderBytes.substring(19, 42)).toString(),
+    '1',
+  )
   return {
     sellAmount: new TokenAmount(soldToken, sellAmount.toSignificant(6)),
     buyAmount: new TokenAmount(boughtToken, buyAmount.toSignificant(6)),
-  };
+  }
 }
 
-export function useSwapState(): AppState["swap"] {
-  return useSelector<AppState, AppState["swap"]>((state) => state.swap);
+const decodeSellOrderFromAPI = (
+  sellAmount: BigNumber | undefined,
+  buyAmount: BigNumber | undefined,
+  soldToken: Token | undefined,
+  boughtToken: Token | undefined,
+): Maybe<SellOrder> => {
+  if (!sellAmount || !buyAmount || !soldToken || !boughtToken) {
+    return null
+  }
+  return {
+    sellAmount: new TokenAmount(soldToken, sellAmount.toString()),
+    buyAmount: new TokenAmount(boughtToken, buyAmount.toString()),
+  }
+}
+
+export function useSwapState(): AppState['swap'] {
+  return useSelector<AppState, AppState['swap']>((state) => state.swap)
 }
 
 export function useSwapActionHandlers(): {
-  onUserSellAmountInput: (sellAmount: string) => void;
-  onUserPriceInput: (price: string) => void;
+  onUserSellAmountInput: (sellAmount: string) => void
+  onUserPriceInput: (price: string) => void
 } {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>()
 
   const onUserSellAmountInput = useCallback(
     (sellAmount: string) => {
-      if (isNumeric(sellAmount))
-        dispatch(resetUserVolume({ volume: parseFloat(sellAmount) }));
-      dispatch(sellAmountInput({ sellAmount }));
+      if (isNumeric(sellAmount)) dispatch(resetUserVolume({ volume: parseFloat(sellAmount) }))
+      dispatch(sellAmountInput({ sellAmount }))
     },
     [dispatch],
-  );
+  )
   const onUserPriceInput = useCallback(
     (price: string) => {
       if (isNumeric(price)) {
-        dispatch(resetUserPrice({ price: parseFloat(price) }));
+        dispatch(resetUserPrice({ price: parseFloat(price) }))
       }
-      dispatch(priceInput({ price }));
+      dispatch(priceInput({ price }))
     },
     [dispatch],
-  );
+  )
 
-  return { onUserPriceInput, onUserSellAmountInput };
+  return { onUserPriceInput, onUserSellAmountInput }
 }
 
 function isNumeric(str: string) {
-  return str != "" && str != "-";
+  return str != '' && str != '-'
 }
 
 // try to parse a user entered amount for a given token
-export function tryParseAmount(
-  value?: string,
-  token?: Token,
-): TokenAmount | undefined {
+export function tryParseAmount(value?: string, token?: Token): TokenAmount | undefined {
   if (!value || !token) {
-    return;
+    return
   }
   try {
-    const sellAmountParsed = parseUnits(value, token.decimals).toString();
-    if (sellAmountParsed !== "0") {
-      return new TokenAmount(token, JSBI.BigInt(sellAmountParsed));
+    const sellAmountParsed = parseUnits(value, token.decimals).toString()
+    if (sellAmountParsed !== '0') {
+      return new TokenAmount(token, JSBI.BigInt(sellAmountParsed))
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
-    console.debug(`Failed to parse input amount: "${value}"`, error);
+    // eslint-disable-next-line no-console
+    console.debug(`Failed to parse input amount: "${value}"`, error)
   }
   // necessary for all paths to return a value
-  return;
+  return
 }
 
 export function useDeriveAuctioningAndBiddingToken(
   auctionId: number,
 ): { auctioningToken: Token | undefined; biddingToken: Token | undefined } {
-  const { chainId } = useActiveWeb3React();
+  const { chainId } = useActiveWeb3React()
 
-  const easyAuctionInstance: Contract | null = useContract(
+  const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
-  );
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
-    auctionId,
-  ]).result;
-  const auctioningTokenAddress:
-    | string
-    | undefined = auctionInfo?.auctioningToken.toString();
+  )
+  const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId]).result
+  const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
 
-  const biddingTokenAddress:
-    | string
-    | undefined = auctionInfo?.biddingToken.toString();
+  const biddingTokenAddress: string | undefined = auctionInfo?.biddingToken.toString()
 
-  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(
-    auctioningTokenAddress,
-  );
-  const biddingToken = useTokenByAddressAndAutomaticallyAdd(
-    biddingTokenAddress,
-  );
+  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
+  const biddingToken = useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
   return {
     auctioningToken,
     biddingToken,
-  };
+  }
 }
 
 export function useGetOrderPlacementError(): {
-  error?: string;
+  error?: string
 } {
   const {
     auctioningToken,
@@ -192,58 +188,49 @@ export function useGetOrderPlacementError(): {
     initialAuctionOrder,
     initialPrice,
     minBiddingAmountPerOrder,
-  } = useDerivedAuctionInfo();
+  } = useDerivedAuctionInfo()
 
-  const { account } = useActiveWeb3React();
+  const { account } = useActiveWeb3React()
 
-  const { sellAmount, price } = useSwapState();
+  const { price, sellAmount } = useSwapState()
 
-  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
-    biddingToken,
-  ]);
-  const biddingTokenBalance =
-    relevantTokenBalances?.[biddingToken?.address ?? ""];
-  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken);
+  const relevantTokenBalances = useTokenBalances(account ?? undefined, [biddingToken])
+  const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
+  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
 
-  const {
-    sellAmountScaled,
-    buyAmountScaled,
-  } = convertPriceIntoBuyAndSellAmount(
+  const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
     auctioningToken,
     biddingToken,
-    price == "-" ? "1" : price,
+    price == '-' ? '1' : price,
     sellAmount,
-  );
-  let error: string | undefined;
-  if (!account) {
-    error = "Connect Wallet";
-  }
+  )
+  let error: string | undefined
 
   if (!sellAmount) {
-    error = error ?? "Enter an amount";
+    error = error ?? 'Enter an amount'
   }
+
   if (
     minBiddingAmountPerOrder &&
     biddingToken &&
     sellAmount &&
-    ((sellAmountScaled &&
-      BigNumber.from(minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
+    ((sellAmountScaled && BigNumber.from(minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
       parseFloat(sellAmount) == 0)
   ) {
     const errorMsg =
-      "Amount must be bigger than " +
+      'Amount must be bigger than ' +
       new Fraction(
         minBiddingAmountPerOrder,
         BigNumber.from(10).pow(biddingToken.decimals).toString(),
-      ).toSignificant(2);
-    error = error ?? errorMsg;
+      ).toSignificant(2)
+    error = error ?? errorMsg
   }
 
   if (!price) {
-    error = error ?? "Enter a price";
+    error = error ?? 'Enter a price'
   }
   if (auctioningToken == undefined || biddingToken == undefined) {
-    error = "Please wait a sec";
+    error = 'Please wait a sec'
   }
   if (
     initialAuctionOrder != null &&
@@ -254,91 +241,79 @@ export function useGetOrderPlacementError(): {
       ?.mul(initialAuctionOrder?.sellAmount.raw.toString())
       .lte(buyAmountScaled.mul(initialAuctionOrder?.buyAmount.raw.toString()))
   ) {
-    error =
-      error ?? "Price must be higher than " + initialPrice?.toSignificant(5);
+    error = error ?? 'Price must be higher than ' + initialPrice?.toSignificant(5)
   }
 
-  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount];
+  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    error = "Insufficient " + amountIn.token.symbol + " balance";
+    error = 'Insufficient ' + amountIn.token.symbol + ' balance'
   }
 
   return {
     error,
-  };
+  }
 }
 
 export function useDerivedAuctionInfo(): {
-  biddingTokenBalance: TokenAmount | undefined;
-  parsedBiddingAmount: TokenAmount | undefined;
-  auctioningToken: Token | undefined;
-  biddingToken: Token | undefined;
-  clearingPriceSellOrder: SellOrder | null;
-  clearingPriceOrder: Order | null;
-  clearingPrice: Fraction | undefined;
-  initialAuctionOrder: SellOrder | null;
-  auctionEndDate: number | null;
-  clearingPriceVolume: BigNumber | null;
-  initialPrice: Fraction | undefined;
-  minBiddingAmountPerOrder: string | undefined;
+  biddingTokenBalance: TokenAmount | undefined
+  parsedBiddingAmount: TokenAmount | undefined
+  auctioningToken: Token | undefined
+  biddingToken: Token | undefined
+  clearingPriceSellOrder: Maybe<SellOrder>
+  clearingPriceOrder: Order | undefined
+  clearingPrice: Fraction | undefined
+  initialAuctionOrder: Maybe<SellOrder>
+  auctionEndDate: number | undefined
+  auctionStartDate: number | undefined
+  clearingPriceVolume: BigNumber | undefined
+  initialPrice: Fraction | undefined
+  minBiddingAmountPerOrder: string | undefined
+  orderCancellationEndDate: number | undefined
 } {
-  const { account } = useActiveWeb3React();
+  const { account } = useActiveWeb3React()
 
-  const { chainId, auctionId, sellAmount } = useSwapState();
+  const { auctionId, sellAmount } = useSwapState()
 
-  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
-    auctionId,
-  );
+  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(auctionId)
 
-  const easyAuctionInstance: Contract | null = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    easyAuctionABI,
-  );
-  const auctionInfo = useSingleCallResult(
-    easyAuctionInstance,
-    "auctionData",
-    [auctionId],
-    {
-      blocksPerFetch: 1,
-    },
-  ).result;
+  const auctionDetails = useAuctionDetails(auctionId)
+  const clearingPriceInfo = useClearingPriceInfo()
 
-  const initialAuctionOrder: SellOrder | null = decodeSellOrder(
-    auctionInfo?.initialAuctionOrder,
+  const clearingPriceVolume = clearingPriceInfo?.volume
+
+  const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
+    auctionDetails?.exactOrder,
     auctioningToken,
     biddingToken,
-  );
-  const clearingPriceSellOrder: SellOrder | null = decodeSellOrder(
-    auctionInfo?.clearingPriceOrder,
+  )
+
+  const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
+
+  const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrderFromAPI(
+    clearingPriceOrder?.sellAmount,
+    clearingPriceOrder?.buyAmount,
     biddingToken,
     auctioningToken,
-  );
-  let clearingPriceOrder: Order | null = null;
-  if (auctionInfo?.clearingPriceOrder) {
-    clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder);
-  }
-  const clearingPriceVolume = auctionInfo?.volumeClearingPriceOrder;
-  const auctionEndDate = auctionInfo?.auctionEndDate;
-  const minBiddingAmountPerOrder = auctionInfo?.minimumBiddingAmountPerOrder;
-  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
-    biddingToken,
-  ]);
-  const biddingTokenBalance =
-    relevantTokenBalances?.[biddingToken?.address ?? ""];
-  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken);
+  )
 
-  const clearingPrice: Fraction | undefined = orderToPrice(
-    clearingPriceSellOrder,
-  );
+  const minBiddingAmountPerOrder = BigNumber.from(
+    auctionDetails?.minimumBiddingAmountPerOrder ?? 0,
+  ).toString()
 
-  let initialPrice: Fraction | undefined;
+  const relevantTokenBalances = useTokenBalances(account ?? undefined, [biddingToken])
+  const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
+  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
+
+  const clearingPrice: Fraction | undefined = orderToPrice(clearingPriceSellOrder)
+
+  let initialPrice: Fraction | undefined
   if (initialAuctionOrder?.buyAmount == undefined) {
-    initialPrice = undefined;
+    initialPrice = undefined
   } else {
     initialPrice = new Fraction(
       initialAuctionOrder?.buyAmount?.raw.toString(),
       initialAuctionOrder?.sellAmount?.raw.toString(),
-    );
+    )
   }
 
   return {
@@ -350,127 +325,111 @@ export function useDerivedAuctionInfo(): {
     clearingPriceOrder,
     clearingPrice,
     initialAuctionOrder,
-    auctionEndDate,
+    auctionStartDate: auctionDetails?.startingTimestamp,
+    auctionEndDate: auctionDetails?.endTimeTimestamp,
     clearingPriceVolume,
     initialPrice,
     minBiddingAmountPerOrder,
-  };
+    orderCancellationEndDate: auctionDetails?.orderCancellationEndDate,
+  }
 }
 
 export function useDerivedAuctionState(): {
-  auctionState: AuctionState | undefined;
+  auctionState: Maybe<AuctionState>
+  loading: boolean
 } {
-  const { chainId, auctionId } = useSwapState();
+  const { auctionId } = useSwapState()
 
-  const easyAuctionInstance: Contract | null = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    easyAuctionABI,
-  );
-  const auctionInfo = useSingleCallResult(
-    easyAuctionInstance,
-    "auctionData",
-    [auctionId],
-    {
-      blocksPerFetch: 1,
-    },
-  ).result;
-  const auctioningTokenAddress:
-    | string
-    | undefined = auctionInfo?.auctioningToken.toString();
+  const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
-  if (auctioningTokenAddress == "0x0000000000000000000000000000000000000000") {
-    return { auctionState: AuctionState.NOT_YET_STARTED };
-  }
+  const auctionDetails = useAuctionDetails(auctionId)
+  const clearingPriceInfo = useClearingPriceInfo()
 
-  let clearingPriceOrder: Order | null = null;
-  if (auctionInfo?.clearingPriceOrder) {
-    clearingPriceOrder = decodeOrder(auctionInfo?.clearingPriceOrder);
-  }
-  const auctionEndDate = auctionInfo?.auctionEndDate;
-  const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate;
-
-  let clearingPrice: Fraction | undefined;
-  if (
-    !clearingPriceOrder ||
-    clearingPriceOrder.buyAmount == undefined ||
-    clearingPriceOrder.sellAmount == undefined
-  ) {
-    clearingPrice = undefined;
-  } else {
-    clearingPrice = new Fraction(
-      clearingPriceOrder.sellAmount.toString(),
-      clearingPriceOrder.buyAmount.toString(),
-    );
-  }
-
-  let auctionState = undefined;
-  if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
-    auctionState = AuctionState.ORDER_PLACING;
-    if (orderCancellationEndDate >= new Date().getTime() / 1000) {
-      auctionState = AuctionState.ORDER_PLACING_AND_CANCELING;
-    }
-  } else {
-    if (clearingPrice?.toSignificant(1) == "0") {
-      auctionState = AuctionState.PRICE_SUBMISSION;
+  useEffect(() => {
+    const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
+    setLoading(true)
+    if (!auctioningTokenAddress) {
+      setAuctionState(AuctionState.NOT_YET_STARTED)
     } else {
-      if (clearingPrice) auctionState = AuctionState.CLAIMING;
+      const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
+
+      const auctionEndDate = auctionDetails?.endTimeTimestamp
+      const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
+
+      let clearingPrice: Fraction | undefined
+      if (
+        !clearingPriceOrder ||
+        clearingPriceOrder.buyAmount == undefined ||
+        clearingPriceOrder.sellAmount == undefined
+      ) {
+        clearingPrice = undefined
+      } else {
+        clearingPrice = new Fraction(
+          clearingPriceOrder.sellAmount.toString(),
+          clearingPriceOrder.buyAmount.toString(),
+        )
+      }
+
+      let auctionState: Maybe<AuctionState> = null
+      if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
+        auctionState = AuctionState.ORDER_PLACING
+        if (orderCancellationEndDate && orderCancellationEndDate >= new Date().getTime() / 1000) {
+          auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
+        }
+      } else {
+        if (clearingPrice?.toSignificant(1) == '0') {
+          auctionState = AuctionState.PRICE_SUBMISSION
+        } else {
+          if (clearingPrice) auctionState = AuctionState.CLAIMING
+        }
+      }
+      setAuctionState(auctionState)
     }
-  }
+    setLoading(false)
+  }, [auctionDetails, clearingPriceInfo])
+
   return {
     auctionState,
-  };
+    loading,
+  }
 }
 
 export function useDerivedClaimInfo(
   auctionId: number,
 ): {
-  error?: string;
-  auctioningToken?: Token | null;
-  biddingToken?: Token | null;
-  claimauctioningToken?: TokenAmount | null;
-  claimbiddingToken?: TokenAmount | null;
+  error?: string
+  auctioningToken?: Maybe<Token>
+  biddingToken?: Maybe<Token>
+  claimauctioningToken?: Maybe<TokenAmount>
+  claimbiddingToken?: Maybe<TokenAmount>
 } {
-  const { chainId } = useActiveWeb3React();
+  const { chainId } = useActiveWeb3React()
 
-  const easyAuctionInstance: Contract | null = useContract(
+  const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
-  );
+  )
 
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, "auctionData", [
-    auctionId,
-  ]).result;
-  const auctioningTokenAddress:
-    | string
-    | undefined = auctionInfo?.auctioningToken.toString();
+  const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId]).result
+  const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
 
-  const auctionEndDate = auctionInfo?.auctionEndDate;
+  const auctionEndDate = auctionInfo?.auctionEndDate
 
-  const biddingTokenAddress:
-    | string
-    | undefined = auctionInfo?.biddingToken.toString();
+  const biddingTokenAddress: string | undefined = auctionInfo?.biddingToken.toString()
 
-  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(
-    auctioningTokenAddress,
-  );
-  const biddingToken = useTokenByAddressAndAutomaticallyAdd(
-    biddingTokenAddress,
-  );
-  const clearingPriceSellOrder: SellOrder | null = decodeSellOrder(
+  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
+  const biddingToken = useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
+  const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrder(
     auctionInfo?.clearingPriceOrder,
     biddingToken,
     auctioningToken,
-  );
+  )
 
-  let error: string | undefined;
-  if (clearingPriceSellOrder?.buyAmount.raw.toString() == "0") {
-    error = "Price not yet supplied to auction";
-  }
-  if (auctionEndDate >= new Date().getTime() / 1000) {
-    error = "auction has not yet ended";
-  }
-  const claimableOrders = useGetClaimInfo()?.sellOrdersFormUser;
-  const claimed = useSingleCallResult(easyAuctionInstance, "containsOrder", [
+  let error: string | undefined = ''
+
+  const claimableOrders = useGetClaimInfo()?.sellOrdersFormUser
+  const claimed = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
     auctionId,
     claimableOrders == undefined || claimableOrders[0] == undefined
       ? encodeOrder({
@@ -479,70 +438,78 @@ export function useDerivedClaimInfo(
           userId: BigNumber.from(0),
         })
       : claimableOrders[0],
-  ]).result;
-  if (claimableOrders == undefined || claimableOrders?.length > 0) {
-    if (!claimed || !claimed[0]) {
-      error = "Already claimed";
-    }
-  }
+  ]).result
 
-  if (claimableOrders?.length == 0) {
-    error = "No participation";
+  if (clearingPriceSellOrder?.buyAmount.raw.toString() === '0') {
+    error = 'Price not yet supplied to auction.'
+  } else if (auctionEndDate >= new Date().getTime() / 1000) {
+    error = 'Auction has not yet ended.'
+  } else if (claimableOrders === undefined || claimableOrders?.length > 0) {
+    if (!claimed || !claimed[0]) {
+      error = 'You already claimed your funds.'
+    }
+  } else if (claimableOrders?.length === 0) {
+    error = 'You had no participation on this auction.'
   }
 
   return {
     error,
     auctioningToken,
     biddingToken,
-  };
+  }
 }
 
 // updates the swap state to use the defaults for a given network whenever the query
 // string updates
 export function useDefaultsFromURLSearch(search?: string) {
-  const { chainId } = useActiveWeb3React();
-  const { onPullOrderbookData } = useOrderbookActionHandlers();
-  const { onReloadFromAPI } = useOrderActionHandlers();
-  const dispatch = useDispatch<AppDispatch>();
+  const { chainId } = useActiveWeb3React()
+  const { onPullOrderbookData } = useOrderbookActionHandlers()
+  const { onReloadFromAPI } = useOrderActionHandlers()
+  const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
-    if (!chainId) return;
-    dispatch(setDefaultsFromURLSearch({ chainId, queryString: search }));
-    onPullOrderbookData();
-    onReloadFromAPI();
-  }, [dispatch, search, chainId, onReloadFromAPI, onPullOrderbookData]);
+    if (!chainId) return
+    dispatch(setDefaultsFromURLSearch({ chainId, queryString: search }))
+    onPullOrderbookData()
+    onReloadFromAPI()
+  }, [dispatch, search, chainId, onReloadFromAPI, onPullOrderbookData])
 }
 
 export function useCurrentUserOrders() {
-  const { account, chainId } = useActiveWeb3React();
-  const { auctionId } = useSwapState();
-  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(
-    auctionId,
-  );
-  const { onNewOrder } = useOrderActionHandlers();
-  const { shouldLoad } = useOrderState();
+  const { account, chainId } = useActiveWeb3React()
+  const { auctionId } = useSwapState()
+  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(auctionId)
+  const { onNewOrder } = useOrderActionHandlers()
+  const { shouldLoad } = useOrderState()
 
   useEffect(() => {
     async function fetchData() {
       if (!chainId || !account || !biddingToken || !auctioningToken) {
-        return;
+        return
       }
 
-      let sellOrdersFormUser: string[] = [];
+      let sellOrdersFormUser: string[] = []
 
       try {
         sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders({
           networkId: chainId,
           auctionId,
           user: account,
-        });
+        })
       } catch (error) {
-        console.error("Error getting current orders: ", error);
+        console.error('Error getting current orders: ', error)
       }
 
-      const sellOrderDisplays: OrderDisplay[] = [];
+      const sellOrderDisplays: OrderDisplay[] = []
       if (biddingToken && auctioningToken && sellOrdersFormUser) {
         for (const orderString of sellOrdersFormUser) {
-          const order = decodeOrder(orderString);
+          const order = decodeOrder(orderString)
+
+          // in some of the orders the buyAmount field is zero
+          if (order.buyAmount.isZero()) {
+            console.error(`Order buyAmount shouldn't be zero`)
+            continue
+          }
+
           sellOrderDisplays.push({
             id: orderString,
             sellAmount: new Fraction(
@@ -550,29 +517,17 @@ export function useCurrentUserOrders() {
               BigNumber.from(10).pow(biddingToken.decimals).toString(),
             ).toSignificant(6),
             price: new Fraction(
-              order.sellAmount
-                .mul(BigNumber.from(10).pow(auctioningToken.decimals))
-                .toString(),
-              order.buyAmount
-                .mul(BigNumber.from(10).pow(biddingToken.decimals))
-                .toString(),
+              order.sellAmount.mul(BigNumber.from(10).pow(auctioningToken.decimals)).toString(),
+              order.buyAmount.mul(BigNumber.from(10).pow(biddingToken.decimals)).toString(),
             ).toSignificant(6),
             status: OrderStatus.PLACED,
-          });
+          })
         }
       }
-      onNewOrder(sellOrderDisplays);
+      onNewOrder(sellOrderDisplays)
     }
     if (shouldLoad) {
-      fetchData();
+      fetchData()
     }
-  }, [
-    chainId,
-    account,
-    auctionId,
-    onNewOrder,
-    auctioningToken,
-    biddingToken,
-    shouldLoad,
-  ]);
+  }, [chainId, account, auctionId, onNewOrder, auctioningToken, biddingToken, shouldLoad])
 }

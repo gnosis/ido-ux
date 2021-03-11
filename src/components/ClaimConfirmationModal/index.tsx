@@ -1,49 +1,50 @@
-import React, { useContext } from "react";
-import styled, { ThemeContext } from "styled-components";
-import Modal from "../Modal";
-import Loader from "../Loader";
-import { ExternalLink } from "../../theme";
-import { Text } from "rebass";
-import { CloseIcon } from "../../theme/components";
-import { RowBetween } from "../Row";
-import { ArrowUpCircle } from "react-feather";
-import { ButtonPrimary } from "../Button";
-import { AutoColumn, ColumnCenter } from "../Column";
+import React, { useContext } from 'react'
+import { ArrowUpCircle } from 'react-feather'
+import styled, { ThemeContext } from 'styled-components'
 
-import { useActiveWeb3React } from "../../hooks";
-import { getEtherscanLink } from "../../utils";
+import { Text } from 'rebass'
+
+import { useActiveWeb3React } from '../../hooks'
+import { ExternalLink } from '../../theme'
+import { CloseIcon } from '../../theme/components'
+import { getEtherscanLink } from '../../utils'
+import { ButtonPrimary } from '../Button'
+import { AutoColumn, ColumnCenter } from '../Column'
+import Loader from '../Loader'
+import { RowBetween } from '../Row'
+import Modal from '../modals/Modal'
 
 const Wrapper = styled.div`
   width: 100%;
-`;
+`
 const Section = styled(AutoColumn)`
   padding: 24px;
-`;
+`
 
 const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
-`;
+`
 
 interface ConfirmationModalProps {
-  isOpen: boolean;
-  onDismiss: () => void;
-  hash: string;
-  pendingConfirmation: boolean;
-  pendingText: string;
+  isOpen: boolean
+  onDismiss: () => void
+  hash: string
+  pendingConfirmation: boolean
+  pendingText: string
 }
 
 export default function ClaimConfirmationModal({
+  hash,
   isOpen,
   onDismiss,
-  hash,
   pendingConfirmation,
   pendingText,
 }: ConfirmationModalProps) {
-  const { chainId } = useActiveWeb3React();
-  const theme = useContext(ThemeContext);
+  const { chainId } = useActiveWeb3React()
+  const theme = useContext(ThemeContext)
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
+    <Modal isOpen={isOpen} maxHeight={90} onDismiss={onDismiss}>
       {
         <Wrapper>
           <Section>
@@ -55,43 +56,27 @@ export default function ClaimConfirmationModal({
               {pendingConfirmation ? (
                 <Loader size="90px" />
               ) : (
-                <ArrowUpCircle
-                  strokeWidth={0.5}
-                  size={90}
-                  color={theme.primary1}
-                />
+                <ArrowUpCircle color={theme.primary1} size={90} strokeWidth={0.5} />
               )}
             </ConfirmedIcon>
-            <AutoColumn gap="12px" justify={"center"}>
-              <Text fontWeight={500} fontSize={20}>
-                {!pendingConfirmation
-                  ? "Transaction Submitted"
-                  : "Waiting For Confirmation"}
+            <AutoColumn gap="12px" justify={'center'}>
+              <Text fontSize={20} fontWeight={500}>
+                {!pendingConfirmation ? 'Transaction Submitted' : 'Waiting For Confirmation'}
               </Text>
-              <AutoColumn gap="12px" justify={"center"}>
-                <Text
-                  fontWeight={600}
-                  fontSize={14}
-                  color=""
-                  textAlign="center"
-                >
+              <AutoColumn gap="12px" justify={'center'}>
+                <Text color="" fontSize={14} fontWeight={600} textAlign="center">
                   {pendingText}
                 </Text>
               </AutoColumn>
               {!pendingConfirmation && (
                 <>
-                  <ExternalLink
-                    href={getEtherscanLink(chainId, hash, "transaction")}
-                  >
-                    <Text fontWeight={500} fontSize={14} color={theme.primary1}>
+                  <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
+                    <Text color={theme.primary1} fontSize={14} fontWeight={500}>
                       View on Etherscan
                     </Text>
                   </ExternalLink>
-                  <ButtonPrimary
-                    onClick={onDismiss}
-                    style={{ margin: "20px 0 0 0" }}
-                  >
-                    <Text fontWeight={500} fontSize={20}>
+                  <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
+                    <Text fontSize={20} fontWeight={500}>
                       Close
                     </Text>
                   </ButtonPrimary>
@@ -99,7 +84,7 @@ export default function ClaimConfirmationModal({
               )}
 
               {pendingConfirmation && (
-                <Text fontSize={12} color="#565A69" textAlign="center">
+                <Text color="#565A69" fontSize={12} textAlign="center">
                   Confirm this transaction in your wallet
                 </Text>
               )}
@@ -108,5 +93,5 @@ export default function ClaimConfirmationModal({
         </Wrapper>
       }
     </Modal>
-  );
+  )
 }

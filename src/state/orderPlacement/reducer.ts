@@ -1,29 +1,25 @@
-import { parse } from "qs";
-import { createReducer } from "@reduxjs/toolkit";
-import {
-  setDefaultsFromURLSearch,
-  sellAmountInput,
-  priceInput,
-} from "./actions";
+import { createReducer } from '@reduxjs/toolkit'
+import { parse } from 'qs'
+
+import { CHAIN_ID } from '../../constants/config'
+import { priceInput, sellAmountInput, setDefaultsFromURLSearch } from './actions'
 
 export interface SwapState {
-  readonly chainId: number;
-  readonly price: string;
-  readonly sellAmount: string;
-  readonly auctionId: number;
+  readonly chainId: number
+  readonly price: string
+  readonly sellAmount: string
+  readonly auctionId: number
 }
 
 const initialState: SwapState = {
-  chainId: 0,
-  price: "-",
+  chainId: CHAIN_ID,
+  price: '-',
   auctionId: 1,
-  sellAmount: "",
-};
+  sellAmount: '',
+}
 
 function parseAuctionIdParameter(urlParam: any): number {
-  return typeof urlParam === "string" && !isNaN(parseInt(urlParam))
-    ? parseInt(urlParam)
-    : 1;
+  return typeof urlParam === 'string' && !isNaN(parseInt(urlParam)) ? parseInt(urlParam) : 1
 }
 
 export default createReducer<SwapState>(initialState, (builder) =>
@@ -33,30 +29,30 @@ export default createReducer<SwapState>(initialState, (builder) =>
         const parsedQs = parse(queryString, {
           parseArrays: false,
           ignoreQueryPrefix: true,
-        });
+        })
 
         return {
           ...initialState,
           chainId: parseAuctionIdParameter(parsedQs.chainId),
           auctionId: parseAuctionIdParameter(parsedQs.auctionId),
-        };
+        }
       }
 
       return {
         ...initialState,
         auctionId: 1,
-      };
+      }
     })
     .addCase(sellAmountInput, (state, { payload: { sellAmount } }) => {
       return {
         ...state,
         sellAmount,
-      };
+      }
     })
     .addCase(priceInput, (state, { payload: { price } }) => {
       return {
         ...state,
         price,
-      };
+      }
     }),
-);
+)

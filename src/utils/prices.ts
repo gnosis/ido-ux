@@ -1,7 +1,8 @@
-import { BigNumber } from "@ethersproject/bignumber";
-import { tryParseAmount } from "../state/orderPlacement/hooks";
+import { Token } from 'uniswap-xdai-sdk'
 
-import { Token } from "uniswap-xdai-sdk";
+import { BigNumber } from '@ethersproject/bignumber'
+
+import { tryParseAmount } from '../state/orderPlacement/hooks'
 
 export function convertPriceIntoBuyAndSellAmount(
   auctioningToken: Token | undefined,
@@ -9,31 +10,28 @@ export function convertPriceIntoBuyAndSellAmount(
   price: string,
   sellAmount: string,
 ): {
-  sellAmountScaled: BigNumber | undefined;
-  buyAmountScaled: BigNumber | undefined;
+  sellAmountScaled: BigNumber | undefined
+  buyAmountScaled: BigNumber | undefined
 } {
   if (auctioningToken == undefined || biddingToken == undefined) {
     return {
       sellAmountScaled: undefined,
       buyAmountScaled: undefined,
-    };
+    }
   }
-  const sellAmountScaled = tryParseAmount(sellAmount, biddingToken);
+  const sellAmountScaled = tryParseAmount(sellAmount, biddingToken)
   if (sellAmountScaled == undefined) {
-    return { sellAmountScaled: undefined, buyAmountScaled: undefined };
+    return { sellAmountScaled: undefined, buyAmountScaled: undefined }
   }
-  const inversePriceAdjustedBybiddingToken = tryParseAmount(
-    price,
-    biddingToken,
-  );
+  const inversePriceAdjustedBybiddingToken = tryParseAmount(price, biddingToken)
   if (inversePriceAdjustedBybiddingToken == undefined) {
-    return { sellAmountScaled: undefined, buyAmountScaled: undefined };
+    return { sellAmountScaled: undefined, buyAmountScaled: undefined }
   }
   const buyAmountScaled = BigNumber.from(sellAmountScaled.raw.toString())
     .mul(BigNumber.from(10).pow(auctioningToken.decimals))
-    .div(inversePriceAdjustedBybiddingToken.raw.toString());
+    .div(inversePriceAdjustedBybiddingToken.raw.toString())
   return {
     sellAmountScaled: BigNumber.from(sellAmountScaled.raw.toString()),
     buyAmountScaled,
-  };
+  }
 }

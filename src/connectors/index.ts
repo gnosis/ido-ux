@@ -1,61 +1,65 @@
-import { InjectedConnector } from "@web3-react/injected-connector";
-import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
-import { WalletLinkConnector } from "@web3-react/walletlink-connector";
-import { PortisConnector } from "@web3-react/portis-connector";
-import { NetworkConnectorArguments } from "./NetworkConnector";
-import { FortmaticConnector } from "./Fortmatic";
-import { NetworkConnector } from "./NetworkConnector";
+import { InjectedConnector } from '@web3-react/injected-connector'
+import { PortisConnector } from '@web3-react/portis-connector'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
+import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
-const POLLING_INTERVAL = 10000;
-const NETWORK_URL_RINKEBY = process.env.REACT_APP_NETWORK_URL_RINKEBY;
-const NETWORK_URL_MAINNET = process.env.REACT_APP_NETWORK_URL_MAINNET;
-const NETWORK_URL_XDAI = process.env.REACT_APP_NETWORK_URL_XDAI;
+import {
+  CHAIN_ID,
+  FORTMATIC_KEY,
+  NETWORK_URL_MAINNET,
+  NETWORK_URL_RINKEBY,
+  NETWORK_URL_XDAI,
+  PORTIS_ID,
+} from '../constants/config'
+import { FortmaticConnector } from './Fortmatic'
+import { NetworkConnector, NetworkConnectorArguments } from './NetworkConnector'
 
-const FORMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY;
-const PORTIS_ID = process.env.REACT_APP_PORTIS_ID;
+const POLLING_INTERVAL = 10000
 
 const networkConnectorArguments: NetworkConnectorArguments = {
   urls: [],
-  defaultChainId: 1,
-};
-if (NETWORK_URL_MAINNET)
-  networkConnectorArguments.urls[Number(1)] = NETWORK_URL_MAINNET;
-if (NETWORK_URL_RINKEBY)
-  networkConnectorArguments.urls[Number(4)] = NETWORK_URL_RINKEBY;
-if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI;
+  defaultChainId: CHAIN_ID,
+}
 
-export const network = new NetworkConnector(networkConnectorArguments);
+if (NETWORK_URL_MAINNET) networkConnectorArguments.urls[1] = NETWORK_URL_MAINNET
+if (NETWORK_URL_RINKEBY) networkConnectorArguments.urls[4] = NETWORK_URL_RINKEBY
+if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI
+
+export const network = new NetworkConnector(networkConnectorArguments)
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42, 100, 5777],
-});
+})
 
 // mainnet only
+const rpcForWalletConnect: {
+  [chainId: number]: string
+} = CHAIN_ID === 4 ? { 4: NETWORK_URL_RINKEBY } : { 1: NETWORK_URL_MAINNET }
 export const walletconnect = new WalletConnectConnector({
   rpc: {
-    4: NETWORK_URL_RINKEBY,
+    ...rpcForWalletConnect,
   },
-  bridge: "https://bridge.walletconnect.org",
+  bridge: 'https://bridge.walletconnect.org',
   qrcode: false,
   pollingInterval: POLLING_INTERVAL,
-});
+})
 
 // mainnet only
 export const fortmatic = new FortmaticConnector({
-  apiKey: FORMATIC_KEY ?? "",
+  apiKey: FORTMATIC_KEY,
   chainId: 1,
-});
+})
 
 // mainnet only
 export const portis = new PortisConnector({
-  dAppId: PORTIS_ID ?? "",
+  dAppId: PORTIS_ID,
   networks: [1],
-});
+})
 
 // mainnet only
 export const walletlink = new WalletLinkConnector({
   url: NETWORK_URL_MAINNET,
-  appName: "Uniswap",
+  appName: 'Uniswap',
   appLogoUrl:
-    "https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg",
-});
+    'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg',
+})

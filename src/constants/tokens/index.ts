@@ -1,12 +1,11 @@
-import { ChainId, Token, WETH } from "uniswap-xdai-sdk";
-import KOVAN_TOKENS from "./kovan";
-import MAINNET_TOKENS from "./mainnet";
-import RINKEBY_TOKENS from "./rinkeby";
-import ROPSTEN_TOKENS from "./ropsten";
+import { ChainId, Token, WETH } from 'uniswap-xdai-sdk'
 
-type AllTokens = Readonly<
-  { [chainId in ChainId]: Readonly<{ [tokenAddress: string]: Token }> }
->;
+import KOVAN_TOKENS from './kovan'
+import MAINNET_TOKENS from './mainnet'
+import RINKEBY_TOKENS from './rinkeby'
+import ROPSTEN_TOKENS from './ropsten'
+
+type AllTokens = Readonly<{ [chainId in ChainId]: Readonly<{ [tokenAddress: string]: Token }> }>
 export const ALL_TOKENS: AllTokens = [
   // WETH on all chains
   ...Object.values(WETH),
@@ -20,15 +19,14 @@ export const ALL_TOKENS: AllTokens = [
   // put into an object
   .reduce<AllTokens>(
     (tokenMap, token) => {
-      if (tokenMap[token.chainId][token.address] !== undefined)
-        throw Error("Duplicate tokens.");
+      if (tokenMap[token.chainId][token.address] !== undefined) throw Error('Duplicate tokens.')
       return {
         ...tokenMap,
         [token.chainId]: {
           ...tokenMap[token.chainId],
           [token.address]: token,
         },
-      };
+      }
     },
     {
       [ChainId.MAINNET]: {},
@@ -38,4 +36,4 @@ export const ALL_TOKENS: AllTokens = [
       [ChainId.KOVAN]: {},
       [ChainId.XDAI]: {},
     },
-  );
+  )

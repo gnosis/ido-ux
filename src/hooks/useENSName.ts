@@ -1,45 +1,46 @@
-import { useEffect, useState } from "react";
-import { isAddress } from "../utils";
-import { useActiveWeb3React } from "./index";
+import { useEffect, useState } from 'react'
+
+import { isAddress } from '../utils'
+import { useActiveWeb3React } from './index'
 
 /**
  * Does a reverse lookup for an address to find its ENS name.
  * Note this is not the same as looking up an ENS name to find an address.
  */
-export default function useENSName(address?: string): string | null {
-  const { library } = useActiveWeb3React();
+export default function useENSName(address?: string): Maybe<string> {
+  const { library } = useActiveWeb3React()
 
-  const [ENSName, setENSName] = useState<string | null>(null);
+  const [ENSName, setENSName] = useState<Maybe<string>>(null)
 
   useEffect(() => {
-    if (!library || !address) return;
-    const validated = isAddress(address);
+    if (!library || !address) return
+    const validated = isAddress(address)
     if (validated) {
-      let stale = false;
+      let stale = false
       library
         .lookupAddress(validated)
         .then((name) => {
           if (!stale) {
             if (name) {
-              setENSName(name);
+              setENSName(name)
             } else {
-              setENSName(null);
+              setENSName(null)
             }
           }
         })
         .catch(() => {
           if (!stale) {
-            setENSName(null);
+            setENSName(null)
           }
-        });
+        })
 
       return () => {
-        stale = true;
-        setENSName(null);
-      };
+        stale = true
+        setENSName(null)
+      }
     }
-    return;
-  }, [library, address]);
+    return
+  }, [library, address])
 
-  return ENSName;
+  return ENSName
 }

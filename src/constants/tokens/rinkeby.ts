@@ -1,25 +1,13 @@
-import { Token, ChainId } from "uniswap-xdai-sdk";
+import { ChainId, Token } from 'uniswap-xdai-sdk'
 
 export default [
   new Token(
     ChainId.RINKEBY,
-    "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa",
+    '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa',
     18,
-    "DAI",
-    "Dai Stablecoin",
+    'DAI',
+    'Dai Stablecoin',
   ),
-  new Token(
-    ChainId.RINKEBY,
-    "0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85",
-    18,
-    "MKR",
-    "Maker",
-  ),
-  new Token(
-    ChainId.RINKEBY,
-    "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b",
-    6,
-    "USDC",
-    "USDC",
-  ),
-];
+  new Token(ChainId.RINKEBY, '0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85', 18, 'MKR', 'Maker'),
+  new Token(ChainId.RINKEBY, '0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b', 6, 'USDC', 'USDC'),
+]

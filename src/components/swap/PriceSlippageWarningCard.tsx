@@ -1,39 +1,32 @@
-import { Percent } from "uniswap-xdai-sdk";
-import React, { useContext } from "react";
-import { Text } from "rebass";
-import { ThemeContext } from "styled-components";
-import { YellowCard } from "../Card";
-import { AutoColumn } from "../Column";
-import { RowBetween, RowFixed } from "../Row";
+import React, { useContext } from 'react'
+import { ThemeContext } from 'styled-components'
+import { Percent } from 'uniswap-xdai-sdk'
 
-export function PriceSlippageWarningCard({
-  priceSlippage,
-}: {
-  priceSlippage: Percent;
-}) {
-  const theme = useContext(ThemeContext);
+import { Text } from 'rebass'
+
+import { YellowCard } from '../Card'
+import { AutoColumn } from '../Column'
+import { RowBetween, RowFixed } from '../Row'
+
+export function PriceSlippageWarningCard({ priceSlippage }: { priceSlippage: Percent }) {
+  const theme = useContext(ThemeContext)
   return (
-    <YellowCard style={{ padding: "20px", paddingTop: "10px" }}>
+    <YellowCard style={{ padding: '20px', paddingTop: '10px' }}>
       <AutoColumn gap="md">
         <RowBetween>
-          <RowFixed style={{ paddingTop: "8px" }}>
-            <span role="img" aria-label="warning">
+          <RowFixed style={{ paddingTop: '8px' }}>
+            <span aria-label="warning" role="img">
               ⚠️
-            </span>{" "}
-            <Text fontWeight={500} marginLeft="4px" color={theme.text1}>
+            </span>{' '}
+            <Text color={theme.text1} fontWeight={500} marginLeft="4px">
               Price Warning
             </Text>
           </RowFixed>
         </RowBetween>
-        <Text
-          lineHeight="145.23%;"
-          fontSize={16}
-          fontWeight={400}
-          color={theme.text1}
-        >
+        <Text color={theme.text1} fontSize={16} fontWeight={400} lineHeight="145.23%;">
           This trade will move the price by ~{priceSlippage.toFixed(2)}%.
         </Text>
       </AutoColumn>
     </YellowCard>
-  );
+  )
 }
