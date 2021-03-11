@@ -5,7 +5,7 @@ import { Token } from 'uniswap-xdai-sdk'
 import { useActiveWeb3React } from '../../../hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import OrderBookChartSmall, { OrderBookError } from '../OrderbookChartSmall'
+import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
 
 const Wrapper = styled(BaseCard)`
@@ -38,7 +38,7 @@ export const OrderBook: React.FC<OrderBookProps> = (props: OrderBookProps) => {
         {error || !asks || asks.length === 0 ? (
           <OrderBookError error={error} />
         ) : (
-          <OrderBookChartSmall
+          <OrderBookChart
             baseToken={baseToken}
             data={processedOrderbook}
             networkId={chainId}
