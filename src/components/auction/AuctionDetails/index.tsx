@@ -12,8 +12,8 @@ import {
 } from '../../../state/orderPlacement/hooks'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
 import { normalizePrice } from '../../../utils/tools'
-import TokenLogo from '../../TokenLogo'
 import { KeyValue } from '../../common/KeyValue'
+import TokenLogo from '../../common/TokenLogo'
 import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
@@ -144,7 +144,10 @@ const AuctionDetails = () => {
         itemValue={
           biddingToken ? (
             <>
-              <TokenLogo address={biddingToken.address} size={'20px'} />
+              <TokenLogo
+                size={'20px'}
+                token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
+              />
               <span>{biddingTokenDisplay}</span>
               <ExternalLink href={biddingTokenAddress} />
             </>
@@ -166,7 +169,10 @@ const AuctionDetails = () => {
         itemValue={
           auctioningToken && initialAuctionOrder ? (
             <>
-              <TokenLogo address={auctioningToken.address} size={'20px'} />
+              <TokenLogo
+                size={'20px'}
+                token={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}
+              />
               <span>{`${initialAuctionOrder?.sellAmount.toSignificant(
                 2,
               )} ${auctioningTokenDisplay}`}</span>

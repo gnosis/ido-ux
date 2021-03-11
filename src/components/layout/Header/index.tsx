@@ -37,21 +37,7 @@ const Inner = styled(InnerContainer)`
   padding-right: ${(props) => props.theme.layout.horizontalPadding};
 `
 
-const LogoLink = styled(HashLink)`
-  left: 50%;
-  position: absolute;
-  text-decoration: none;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
-  z-index: 1;
-
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
-    left: auto;
-    position: relative;
-    top: auto;
-    transform: none;
-  }
-`
+const LogoLink = styled(HashLink)``
 
 const ButtonMenuStyled = styled(ButtonMenu)`
   display: block;
@@ -148,15 +134,13 @@ export const Header: React.FC = (props) => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
 
-  let web3Status = <ButtonConnectStyled onClick={toggleWalletModal} />
-
-  if (isConnected) {
-    web3Status = <UserDropdownStyled />
-  }
-
-  if (wrongNetwork) {
-    web3Status = <Error>Invalid network</Error>
-  }
+  const web3Status = isConnected ? (
+    <UserDropdownStyled />
+  ) : wrongNetwork ? (
+    <Error>Invalid network</Error>
+  ) : (
+    <ButtonConnectStyled onClick={toggleWalletModal} />
+  )
 
   return (
     <>

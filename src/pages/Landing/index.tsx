@@ -121,6 +121,13 @@ const SendIcon = styled(Send)`
   margin: 0 8px 0 0;
 `
 
+const TextGradient = styled.span`
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: linear-gradient(to right, #e8663d 0%, #05896f 54%, #349ebd);
+  color: transparent;
+`
+
 export const Landing: React.FC = () => {
   const allAuctions = useAllAuctionInfo()
 
@@ -131,7 +138,7 @@ export const Landing: React.FC = () => {
           <WelcomeTitle>
             The most fair mechanism
             <br />
-            to launch assets on Ethereum
+            <TextGradient>to launch assets on Ethereum</TextGradient>
           </WelcomeTitle>
           <WelcomeText>
             Gnosis Auction is a protocol that enables

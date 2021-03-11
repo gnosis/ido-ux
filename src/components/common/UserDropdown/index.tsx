@@ -1,12 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
-import { ChainId } from 'uniswap-xdai-sdk'
 
 import { useWeb3React } from '@web3-react/core'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useDarkModeManager } from '../../../state/user/hooks'
-import { truncateStringInTheMiddle } from '../../../utils/tools'
+import { getChainName, truncateStringInTheMiddle } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
@@ -158,12 +157,7 @@ const UserDropdownButton = () => {
       </Address>
       <Connection>
         <ConnectionStatus />
-        <ConnectionText>
-          {chainId === ChainId.ROPSTEN && 'Ropsten'}
-          {chainId === ChainId.RINKEBY && 'Rinkeby'}
-          {chainId === ChainId.GÖRLI && 'Görli'}
-          {chainId === ChainId.KOVAN && 'Kovan'}
-        </ConnectionText>
+        <ConnectionText>{getChainName(chainId)}</ConnectionText>
       </Connection>
     </DropdownButton>
   )

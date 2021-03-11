@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import { useActiveWeb3React } from '../../../hooks'
-import TokenLogo from '../../TokenLogo'
+import TokenLogo from '../../common/TokenLogo'
 import { ControlButton, FormLabel } from '../../form/FormLabel'
 import { Input as NumericalInput } from '../../form/NumericalInput'
 import { FormRow } from '../../pureStyledComponents/FormRow'
@@ -62,8 +62,10 @@ export default function CurrencyInputPanel({
           value={value}
         />
         <TokenInfo>
-          <TokenSymbol>{token?.symbol}</TokenSymbol>{' '}
-          {token?.address && <TokenLogo address={token?.address} size={'24px'} />}
+          {token && token.symbol && <TokenSymbol>{token.symbol}</TokenSymbol>}{' '}
+          {token && token.address && (
+            <TokenLogo size={'24px'} token={{ address: token.address, symbol: token.symbol }} />
+          )}
         </TokenInfo>
       </TextfieldWrapper>
     </FormRow>

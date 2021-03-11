@@ -9,7 +9,7 @@ import { getEtherscanLink } from '../../utils'
 import Copy from '../AccountDetails/Copy'
 import { AutoColumn } from '../Column'
 import { AutoRow, RowBetween } from '../Row'
-import TokenLogo from '../TokenLogo'
+import TokenLogo from '../common/TokenLogo'
 
 export function TransferModalHeader({
   ENSName,
@@ -27,7 +27,12 @@ export function TransferModalHeader({
         <Text fontSize={36} fontWeight={500}>
           {amount?.toSignificant(6)} {amount?.token?.symbol}
         </Text>
-        <TokenLogo address={amount?.token?.address} size={'30px'} />
+        {amount && amount.token && (
+          <TokenLogo
+            size={'30px'}
+            token={{ address: amount.token.address, symbol: amount.token.symbol }}
+          />
+        )}
       </RowBetween>
       <TYPE.darkGray fontSize={20}>To</TYPE.darkGray>
       {ENSName ? (

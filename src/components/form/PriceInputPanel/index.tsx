@@ -48,12 +48,21 @@ export default function PriceInputPanel({
           value={value}
         />
         <TokenInfo>
-          <DoubleLogo
-            a0={biddingToken?.address}
-            a1={auctioningToken?.address}
-            margin={true}
-            size={24}
-          />
+          {auctioningToken && biddingToken ? (
+            <DoubleLogo
+              auctioningToken={{
+                address: auctioningToken.address,
+                symbol: auctioningToken.symbol,
+              }}
+              biddingToken={{
+                address: biddingToken.address,
+                symbol: biddingToken.symbol,
+              }}
+              size="24px"
+            />
+          ) : (
+            '-'
+          )}
         </TokenInfo>
       </TextfieldWrapper>
     </FormRow>

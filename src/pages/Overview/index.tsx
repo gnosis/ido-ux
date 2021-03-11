@@ -47,10 +47,15 @@ export default function Overview() {
       buying: item.symbolBiddingToken,
       symbol: (
         <DoubleLogo
-          a0={item.addressAuctioningToken}
-          a1={item.addressBiddingToken}
-          margin={true}
-          size={40}
+          auctioningToken={{
+            address: item.addressAuctioningToken,
+            symbol: item.symbolAuctioningToken,
+          }}
+          biddingToken={{
+            address: item.addressBiddingToken,
+            symbol: item.symbolBiddingToken,
+          }}
+          size="40px"
         />
       ),
       date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),

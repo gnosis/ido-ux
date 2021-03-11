@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import TokenLogo from '../../TokenLogo'
+import TokenLogo from '../TokenLogo'
 
 const TokenWrapper = styled.div`
   align-items: center;
@@ -10,25 +10,34 @@ const TokenWrapper = styled.div`
   position: relative;
 `
 
-interface DoubleTokenLogoProps {
-  margin?: boolean
-  size?: number
-  a0: string
-  a1: string
-}
-
-const HigherLogo = styled(TokenLogo)`
-  z-index: 2;
-  margin-right: -5px;
+const Logo = styled(TokenLogo)`
+  border: 3px solid #001429;
 `
 
-const CoveredLogo = styled(TokenLogo)``
+const HigherLogo = styled(Logo)`
+  margin-right: calc(-${(props) => props.size} / 3);
+  z-index: 5;
+`
 
-export default function DoubleTokenLogo({ a0, a1, size = 28 }: DoubleTokenLogoProps) {
+const CoveredLogo = styled(Logo)`
+  z-index: 1;
+`
+
+interface DoubleTokenLogoProps {
+  auctioningToken: { address: string; symbol: string }
+  biddingToken: { address: string; symbol: string }
+  size?: string
+}
+
+const DoubleLogo: React.FC<DoubleTokenLogoProps> = (props) => {
+  const { auctioningToken, biddingToken, size = '24px', ...restProps } = props
+
   return (
-    <TokenWrapper>
-      <HigherLogo address={a0} size={size.toString() + 'px'} />
-      <CoveredLogo address={a1} size={size.toString() + 'px'} />
+    <TokenWrapper {...restProps}>
+      <HigherLogo size={size} token={auctioningToken} />
+      <CoveredLogo size={size} token={biddingToken} />
     </TokenWrapper>
   )
 }
+
+export default DoubleLogo
