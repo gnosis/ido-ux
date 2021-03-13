@@ -162,8 +162,30 @@ export const AuctionTimer = () => {
     }
   }, [auctionEndDate])
 
+  const auctionStateTitle = React.useMemo(() => {
+    if (auctionState === AuctionState.PRICE_SUBMISSION) {
+      return <TextBig>Auction Closed</TextBig>
+    } else if (
+      auctionState !== AuctionState.NOT_YET_STARTED &&
+      auctionState !== AuctionState.ORDER_PLACING_AND_CANCELING &&
+      auctionState !== AuctionState.ORDER_PLACING &&
+      auctionState !== AuctionState.CLAIMING &&
+      auctionState !== null
+    ) {
+      return <TextBig>Auction Settled</TextBig>
+    } else {
+      return null
+    }
+  }, [auctionState])
+
+  const progress = React.useMemo(() => {
+    const progress = calculateTimeProgress(auctionStartDate, auctionEndDate)
+    // we do this so that the graph is in the same direction as a clock
+    return `${100 - progress}%`
+  }, [auctionStartDate, auctionEndDate])
+
   return (
-    <Wrapper progress={calculateTimeProgress(auctionStartDate, auctionEndDate)}>
+    <Wrapper progress={progress}>
       <Center>
         {(auctionState === null || loading) && <TextBig>Loading</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && (
@@ -199,13 +221,7 @@ export const AuctionTimer = () => {
             <Text>Ends in</Text>
           </>
         )}
-        {auctionState === AuctionState.PRICE_SUBMISSION && <TextBig>Auction Closed</TextBig>}
-        {auctionState !== AuctionState.NOT_YET_STARTED &&
-          auctionState !== AuctionState.ORDER_PLACING_AND_CANCELING &&
-          auctionState !== AuctionState.ORDER_PLACING &&
-          auctionState !== AuctionState.PRICE_SUBMISSION &&
-          auctionState !== AuctionState.CLAIMING &&
-          auctionState !== null && <TextBig>Auction Settled</TextBig>}
+        {auctionStateTitle}
       </Center>
     </Wrapper>
   )
