@@ -74,7 +74,7 @@ export const getChainName = (chainId: number) => {
     (chainId === ChainId.GÖRLI && 'Görli') ||
     (chainId === ChainId.KOVAN && 'Kovan') ||
     (chainId === ChainId.MAINNET && 'Mainnet') ||
-    (chainId === ChainId.KOVAN && 'Kovan') ||
+    (chainId === ChainId.XDAI && 'xDai') ||
     'Unknown Network'
   )
 }
