@@ -4,6 +4,8 @@ import styled from 'styled-components'
 
 import { useGlobalFilter, useTable } from 'react-table'
 
+import { ButtonSelect } from '../../buttons/ButtonSelect'
+import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
 import { KeyValue } from '../../common/KeyValue'
 import { Delete } from '../../icons/Delete'
 import { Magnifier } from '../../icons/Magnifier'
@@ -175,6 +177,27 @@ const AllAuctions = (allAuctions: any[]) => {
     useGlobalFilter,
   )
 
+  const filterOptions = [
+    {
+      title: 'All Auctions',
+      onClick: () => {
+        setGlobalFilter(undefined)
+      },
+    },
+    {
+      title: 'Participation "Yes"',
+      onClick: () => {
+        setGlobalFilter('Yes')
+      },
+    },
+    {
+      title: 'Participation "No"',
+      onClick: () => {
+        setGlobalFilter('No')
+      },
+    },
+  ]
+
   return (
     <>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
@@ -197,6 +220,16 @@ const AllAuctions = (allAuctions: any[]) => {
             <Delete />
           </DeleteSearchTerm>
         </SearchWrapper>
+        <Dropdown
+          activeItemHighlight={false}
+          dropdownButtonContent={<ButtonSelect content={<span>adsd</span>} />}
+          dropdownPosition={DropdownPosition.right}
+          items={filterOptions.map((item, index) => (
+            <DropdownItem key={index} onClick={item.onClick}>
+              {item.title}
+            </DropdownItem>
+          ))}
+        />
       </TableControls>
       <Wrapper>
         {rows.map((row, i) => {
