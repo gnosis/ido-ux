@@ -90,7 +90,6 @@ const ConnectionText = styled.div`
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: -2px;
-  text-transform: capitalize;
 `
 
 const Content = styled.div`
