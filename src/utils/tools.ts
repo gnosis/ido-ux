@@ -43,7 +43,7 @@ export const calculateTimeLeft = (auctionEndDate: number) => {
   return diff
 }
 
-export const calculateTimeProgress = (auctionStartDate: number, auctionEndDate: number): string => {
+export const calculateTimeProgress = (auctionStartDate: number, auctionEndDate: number): number => {
   const totalTime = auctionEndDate - auctionStartDate
   const now = Math.trunc(Date.now() / 1000)
   const passedTime = auctionEndDate - now
@@ -54,7 +54,7 @@ export const calculateTimeProgress = (auctionStartDate: number, auctionEndDate: 
       ? 0
       : Math.trunc((passedTime * 100) / totalTime)
 
-  return isNaN(auctionStartDate) || isNaN(auctionEndDate) ? `0%` : `${percentage}%`
+  return isNaN(auctionStartDate) || isNaN(auctionEndDate) ? 0 : percentage
 }
 
 export const normalizePrice = (auctioningToken: Token, biddingToken: Token, price: Fraction) => {

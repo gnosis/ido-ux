@@ -218,6 +218,11 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     setTimeLeft(calculateTimeLeft(endTimeTimestamp))
   }, 1000)
 
+  const progressWidth = React.useMemo(() => {
+    const progress = calculateTimeProgress(startingTimestamp, endTimeTimestamp)
+    return `${100 - progress}%`
+  }, [startingTimestamp, endTimeTimestamp])
+
   return (
     <Wrapper
       to={`/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(
@@ -263,7 +268,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         <Cell>
           <Subtitle textAlign="right">Duration</Subtitle>
           <ProgressBar>
-            <Progress width={calculateTimeProgress(startingTimestamp, endTimeTimestamp)} />
+            <Progress width={progressWidth} />
           </ProgressBar>
         </Cell>
       </PriceAndDuration>
