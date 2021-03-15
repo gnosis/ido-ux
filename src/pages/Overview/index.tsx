@@ -5,6 +5,7 @@ import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import DoubleLogo from '../../components/common/DoubleLogo'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { SpinnerSize } from '../../components/common/Spinner'
+import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { InfoIcon } from '../../components/icons/InfoIcon'
 import {
@@ -24,7 +25,15 @@ const Overview = () => {
       buying: item.symbolBiddingToken,
       chainId: getChainName(Number(item.chainId)),
       chevron: <ChevronRightBig />,
-      date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),
+      date: (
+        <>
+          <span>{new Date(item.endTimeTimestamp * 1000).toLocaleDateString()}</span>
+          <Tooltip
+            id={`auction_date${item.auctionId}`}
+            text={new Date(item.endTimeTimestamp * 1000).toString()}
+          />
+        </>
+      ),
       selling: item.symbolAuctioningToken,
       status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       symbol: (

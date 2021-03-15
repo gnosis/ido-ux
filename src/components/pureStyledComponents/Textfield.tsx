@@ -32,6 +32,9 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
     font-style: italic;
     font-weight: 400;
     opacity: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &[readonly] {
@@ -69,8 +72,11 @@ export const TextfieldCSS = css<TexfieldCSSProps>`
   font-weight: ${({ theme }) => theme.textField.fontWeight};
   height: ${({ theme }) => theme.textField.height};
   outline: none;
+  overflow: hidden;
   padding: 0 ${({ theme }) => theme.textField.paddingHorizontal};
+  text-overflow: ellipsis;
   transition: border-color 0.15s linear;
+  white-space: nowrap;
   width: 100%;
 
   ${TexfieldPartsCSS}

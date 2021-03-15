@@ -52,6 +52,12 @@ const SearchWrapper = styled.div`
   max-width: 100%;
   padding-right: 0;
   width: 565px;
+
+  &:focus-within {
+    background-color: ${({ theme }) => theme.textField.backgroundColorActive};
+    border-color: ${({ theme }) => (props) =>
+      props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
+  }
 `
 
 const SearchInput = styled.input`
@@ -64,9 +70,12 @@ const SearchInput = styled.input`
   font-size: ${({ theme }) => theme.textField.fontSize};
   font-weight: ${({ theme }) => theme.textField.fontWeight};
   height: ${({ theme }) => theme.textField.height};
-  margin: 0 10px;
+  margin: 0 0 0 10px;
   outline: none;
+  overflow: hidden;
   padding: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const DeleteSearchTerm = styled.button`
@@ -127,15 +136,15 @@ const AllAuctions = (allAuctions: any[]) => {
         style: {},
       },
       {
-        Header: 'End date',
-        accessor: 'date',
+        Header: 'Network',
+        accessor: 'chainId',
         align: 'flex-start',
         show: true,
         style: {},
       },
       {
-        Header: 'Network',
-        accessor: 'chainId',
+        Header: 'End date',
+        accessor: 'date',
         align: 'flex-start',
         show: true,
         style: {},
