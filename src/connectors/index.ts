@@ -1,4 +1,5 @@
 import { InjectedConnector } from '@web3-react/injected-connector'
+import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
@@ -12,7 +13,11 @@ import {
   PORTIS_ID,
 } from '../constants/config'
 import { FortmaticConnector } from './Fortmatic'
-import { NetworkConnector, NetworkConnectorArguments } from './NetworkConnector'
+
+interface NetworkConnectorArguments {
+  urls: { [chainId: number]: string }
+  defaultChainId?: number
+}
 
 const POLLING_INTERVAL = 10000
 
@@ -35,6 +40,7 @@ export const injected = new InjectedConnector({
 const rpcForWalletConnect: {
   [chainId: number]: string
 } = CHAIN_ID === 4 ? { 4: NETWORK_URL_RINKEBY } : { 1: NETWORK_URL_MAINNET }
+
 export const walletconnect = new WalletConnectConnector({
   rpc: {
     ...rpcForWalletConnect,
