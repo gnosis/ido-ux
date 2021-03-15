@@ -4,7 +4,7 @@ import Ajv from 'ajv'
 
 const TOKEN_LIST_RESOURCES = [
   'https://tokens.coingecko.com/uniswap/all.json',
-  'https://raw.githubusercontent.com/gnosis/ido-ux/develop/src/custom/tokens/rinkeby-token-list.json',
+  'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
   'https://tokens.honeyswap.org',
 ]
 const tokenListValidator = new Ajv({ allErrors: true }).compile(schema)
