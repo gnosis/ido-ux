@@ -1,50 +1,32 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
-import styled from 'styled-components'
 
-import { ButtonLight } from '../../components/Button'
-import DatatablePage from '../../components/auctions/AllAuctionsTable'
+import AllAuctions from '../../components/auctions/AllAuctions'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import DoubleLogo from '../../components/common/DoubleLogo'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { SpinnerSize } from '../../components/common/Spinner'
+import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { InfoIcon } from '../../components/icons/InfoIcon'
 import {
   EmptyContentText,
   EmptyContentWrapper,
 } from '../../components/pureStyledComponents/EmptyContent'
-import { chainNames } from '../../constants'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { getChainName } from '../../utils/tools'
 
-const ViewBtn = styled(ButtonLight)`
-  background: none;
-  color: ${({ theme }) => theme.text3};
-  width: 100%;
-
-  &:hover {
-    background: none;
-  }
-
-  > svg {
-    margin: 0 0 0 5px;
-  }
-`
-
-export default function Overview() {
+const Overview = () => {
   const allAuctions = useAllAuctionInfo()
-  const history = useHistory()
-
-  const handleClick = (auctionId: number, chainId: number) => {
-    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}#topAnchor`)
-  }
-
   const tableData = []
+
   allAuctions?.forEach((item) => {
     tableData.push({
-      auctionId: item.auctionId,
-      chainId: chainNames[Number(item.chainId)],
-      selling: item.symbolAuctioningToken,
+      auctionId: `#${item.auctionId}`,
       buying: item.symbolBiddingToken,
+      chainId: getChainName(Number(item.chainId)),
+      chevron: <ChevronRightBig />,
+      date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),
+      selling: item.symbolAuctioningToken,
+      status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       symbol: (
         <DoubleLogo
           auctioningToken={{
@@ -55,17 +37,10 @@ export default function Overview() {
             address: item.addressBiddingToken,
             symbol: item.symbolBiddingToken,
           }}
-          size="40px"
+          size="32px"
         />
       ),
-      date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),
-      status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
-      link: (
-        <ViewBtn onClick={() => handleClick(item.auctionId, Number(item.chainId))} type="button">
-          {' '}
-          view{' '}
-        </ViewBtn>
-      ),
+      url: `/auction?auctionId=${item.auctionId}&chainId=${Number(item.chainId)}#topAnchor`,
     })
   })
 
@@ -81,7 +56,9 @@ export default function Overview() {
           <EmptyContentText>No auctions.</EmptyContentText>
         </EmptyContentWrapper>
       )}
-      {allAuctions && allAuctions.length > 0 && <DatatablePage {...tableData} />}
+      {allAuctions && allAuctions.length > 0 && <AllAuctions {...tableData} />}
     </>
   )
 }
+
+export default Overview
