@@ -12,7 +12,7 @@ const Value = styled.div<{ align: string }>`
   display: flex;
   flex-grow: 1;
   flex-shrink: 0;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   justify-content: ${(props) => props.align};
   line-height: 1;
@@ -35,7 +35,7 @@ const Key = styled.div<{ align: string }>`
   align-items: center;
   color: ${({ theme }) => theme.text1};
   display: flex;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   justify-content: ${(props) => props.align};
   line-height: 1.3;

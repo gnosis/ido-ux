@@ -5,9 +5,12 @@ import styled from 'styled-components'
 import { useGlobalFilter, useTable } from 'react-table'
 
 import { KeyValue } from '../../common/KeyValue'
+import { Delete } from '../../icons/Delete'
+import { Magnifier } from '../../icons/Magnifier'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRowCSS, CellRowProps } from '../../pureStyledComponents/Cell'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
+import { TexfieldPartsCSS, TextfieldCSS } from '../../pureStyledComponents/Textfield'
 
 const Wrapper = styled(BaseCard)`
   padding: 0;
@@ -35,18 +38,55 @@ const RowLink = styled(NavLink)<CellRowProps>`
   }
 `
 
-// value and onChange function
-const GlobalFilter = ({ globalFilter, setGlobalFilter }: any) => {
-  return (
-    <input
-      onChange={(e) => {
-        setGlobalFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
-      }}
-      placeholder={`Search All ...`}
-      value={globalFilter || ''}
-    />
-  )
-}
+const TableControls = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`
+
+const SearchWrapper = styled.div`
+  ${TextfieldCSS};
+  align-items: center;
+  display: flex;
+  max-width: 100%;
+  padding-right: 0;
+  width: 565px;
+`
+
+const SearchInput = styled.input`
+  ${TexfieldPartsCSS};
+  background: none;
+  border: none;
+  color: ${({ theme }) => (props) =>
+    props.error ? theme.textField.errorColor : theme.textField.color};
+  flex-grow: 1;
+  font-size: ${({ theme }) => theme.textField.fontSize};
+  font-weight: ${({ theme }) => theme.textField.fontWeight};
+  height: ${({ theme }) => theme.textField.height};
+  margin: 0 10px;
+  outline: none;
+  padding: 0;
+`
+
+const DeleteSearchTerm = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: none;
+  height: 100%;
+  justify-content: center;
+  margin: 0;
+  outline: none;
+  padding: 0;
+  width: 38px;
+
+  &[disabled] {
+    opacity: 0.5;
+  }
+`
 
 const AllAuctions = (allAuctions: any[]) => {
   const columns = useMemo(
@@ -61,13 +101,6 @@ const AllAuctions = (allAuctions: any[]) => {
       {
         Header: 'Auction Id',
         accessor: 'auctionId',
-        align: 'flex-start',
-        show: true,
-        style: {},
-      },
-      {
-        Header: 'Network',
-        accessor: 'chainId',
         align: 'flex-start',
         show: true,
         style: {},
@@ -101,6 +134,13 @@ const AllAuctions = (allAuctions: any[]) => {
         style: {},
       },
       {
+        Header: 'Network',
+        accessor: 'chainId',
+        align: 'flex-start',
+        show: true,
+        style: {},
+      },
+      {
         Header: '',
         accessor: 'chevron',
         align: 'flex-end',
@@ -126,11 +166,29 @@ const AllAuctions = (allAuctions: any[]) => {
     useGlobalFilter,
   )
 
-  // console.log(data)
   return (
     <>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
-      <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
+      <TableControls>
+        <SearchWrapper>
+          <Magnifier />
+          <SearchInput
+            onChange={(e) => {
+              setGlobalFilter(e.target.value || undefined)
+            }}
+            placeholder={`Search by auction Id, selling token, buying token, status, date…`}
+            value={state.globalFilter || ''}
+          />
+          <DeleteSearchTerm
+            disabled={!state.globalFilter}
+            onClick={() => {
+              setGlobalFilter(undefined)
+            }}
+          >
+            <Delete />
+          </DeleteSearchTerm>
+        </SearchWrapper>
+      </TableControls>
       <Wrapper>
         {rows.map((row, i) => {
           prepareRow(row)
