@@ -6,12 +6,21 @@ import { PricePoint } from '../api/AdditionalServicesApi'
 export interface AuctionInfo {
   addressAuctioningToken: string
   addressBiddingToken: string
+  allowListManager: string
+  allowListSigner: string
   auctionId: number
   chainId: String
+  currentClearingPrice: number
   decimalsAuctioningToken: number
   decimalsBiddingToken: number
   endTimeTimestamp: number
+  exactOrder: string
+  interestScore: number
+  isPrivateAuction: boolean
+  minFundingThreshold: string
+  minimumBiddingAmountPerOrder: string
   order: PricePoint
+  orderCancellationEndDate: number
   startingTimestamp: number
   symbolAuctioningToken: string
   symbolBiddingToken: string

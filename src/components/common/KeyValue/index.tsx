@@ -71,8 +71,14 @@ export const KeyValue: React.FC<Props> = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <Value align={align}>{itemValue}</Value>
-      {itemKey && <Key align={align}>{itemKey}</Key>}
+      <Value align={align} className="itemValue">
+        {itemValue}
+      </Value>
+      {itemKey && (
+        <Key align={align} className="itemKey">
+          {itemKey}
+        </Key>
+      )}
     </Wrapper>
   )
 }

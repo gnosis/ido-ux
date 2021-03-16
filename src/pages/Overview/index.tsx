@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 
 import AllAuctions from '../../components/auctions/AllAuctions'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
@@ -8,6 +9,8 @@ import { SpinnerSize } from '../../components/common/Spinner'
 import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { InfoIcon } from '../../components/icons/InfoIcon'
+import { Private } from '../../components/icons/Private'
+import { YesIcon } from '../../components/icons/YesIcon'
 import {
   EmptyContentText,
   EmptyContentWrapper,
@@ -15,16 +18,26 @@ import {
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { getChainName } from '../../utils/tools'
 
+const Chevron = styled(ChevronRightBig)`
+  flex-shrink: 0;
+  min-width: 11px;
+`
+
+const Featured = styled(FeaturedAuctions)`
+  margin-top: 40px;
+`
+
 const Overview = () => {
   const allAuctions = useAllAuctionInfo()
   const tableData = []
+  const mockedParticipation = 'Yes'
 
   allAuctions?.forEach((item) => {
     tableData.push({
       auctionId: `#${item.auctionId}`,
       buying: item.symbolBiddingToken,
       chainId: getChainName(Number(item.chainId)),
-      chevron: <ChevronRightBig />,
+      chevron: <Chevron />,
       date: (
         <>
           <span>{new Date(item.endTimeTimestamp * 1000).toLocaleDateString()}</span>
@@ -34,6 +47,15 @@ const Overview = () => {
           />
         </>
       ),
+      participation:
+        mockedParticipation === 'Yes' ? (
+          <>
+            <span>Yes</span>
+            <YesIcon />
+          </>
+        ) : (
+          'No'
+        ),
       selling: item.symbolAuctioningToken,
       status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       symbol: (
@@ -49,13 +71,21 @@ const Overview = () => {
           size="32px"
         />
       ),
+      type: item.isPrivateAuction ? (
+        <>
+          <span>Private</span>
+          <Private />
+        </>
+      ) : (
+        'Public'
+      ),
       url: `/auction?auctionId=${item.auctionId}&chainId=${Number(item.chainId)}#topAnchor`,
     })
   })
 
   return (
     <>
-      <FeaturedAuctions />
+      <Featured />
       {(allAuctions === undefined || allAuctions === null) && (
         <InlineLoading message="Loading..." size={SpinnerSize.small} />
       )}

@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { useGlobalFilter, useTable } from 'react-table'
+import { useFilters, useGlobalFilter, useTable } from 'react-table'
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
@@ -37,6 +37,13 @@ const RowLink = styled(NavLink)<CellRowProps>`
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
+  }
+`
+
+const KeyValueStyled = styled(KeyValue)`
+  .itemKey,
+  .itemValue {
+    white-space: nowrap;
   }
 `
 
@@ -138,6 +145,20 @@ const AllAuctions = (allAuctions: any[]) => {
         style: {},
       },
       {
+        Header: 'Type',
+        accessor: 'type',
+        align: 'flex-start',
+        show: true,
+        style: {},
+      },
+      {
+        Header: 'Participation',
+        accessor: 'participation',
+        align: 'flex-start',
+        show: true,
+        style: {},
+      },
+      {
         Header: 'Network',
         accessor: 'chainId',
         align: 'flex-start',
@@ -175,7 +196,9 @@ const AllAuctions = (allAuctions: any[]) => {
       data,
     },
     useGlobalFilter,
+    useFilters,
   )
+  const [currentDropdownFilter, setCurrentDropdownFilter] = useState<string | undefined>()
 
   const filterOptions = [
     {
@@ -194,6 +217,18 @@ const AllAuctions = (allAuctions: any[]) => {
       title: 'Participation "No"',
       onClick: () => {
         setGlobalFilter('No')
+      },
+    },
+    {
+      title: 'Ongoing',
+      onClick: () => {
+        setGlobalFilter('Ongoing')
+      },
+    },
+    {
+      title: 'Ended',
+      onClick: () => {
+        setGlobalFilter('Ended')
       },
     },
   ]
@@ -222,7 +257,15 @@ const AllAuctions = (allAuctions: any[]) => {
         </SearchWrapper>
         <Dropdown
           activeItemHighlight={false}
-          dropdownButtonContent={<ButtonSelect content={<span>adsd</span>} />}
+          dropdownButtonContent={
+            <ButtonSelect
+              content={
+                <span>
+                  {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
+                </span>
+              }
+            />
+          }
           dropdownPosition={DropdownPosition.right}
           items={filterOptions.map((item, index) => (
             <DropdownItem key={index} onClick={item.onClick}>
@@ -236,7 +279,7 @@ const AllAuctions = (allAuctions: any[]) => {
           prepareRow(row)
           return (
             <RowLink
-              columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 50px'}
+              columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
               key={i}
               to={row.original['url'] ? row.original['url'] : '#'}
             >
@@ -244,7 +287,7 @@ const AllAuctions = (allAuctions: any[]) => {
                 (cell, j) =>
                   cell.render('show') && (
                     <Cell key={j}>
-                      <KeyValue
+                      <KeyValueStyled
                         align={cell.render('align')}
                         itemKey={cell.render('Header')}
                         itemValue={cell.render('Cell')}

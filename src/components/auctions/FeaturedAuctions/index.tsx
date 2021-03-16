@@ -23,7 +23,8 @@ const SectionTitle = styled(PageTitle)`
   margin: 0 0 40px;
 `
 
-export const FeaturedAuctions = () => {
+export const FeaturedAuctions: React.FC = (props) => {
+  const { ...restProps } = props
   const highlightedAuctions = useInterestingAuctionInfo()
 
   const auctions = React.useMemo(() => {
@@ -42,7 +43,7 @@ export const FeaturedAuctions = () => {
   }, [highlightedAuctions])
 
   return (
-    <Wrapper>
+    <Wrapper {...restProps}>
       <SectionTitle as="h2">Featured Auctions</SectionTitle>
       {(highlightedAuctions === undefined || highlightedAuctions === null) && (
         <InlineLoading message="Loading..." size={SpinnerSize.small} />
