@@ -236,26 +236,11 @@ export function useGetOrderPlacementError(): {
   }
 }
 
-export function useDerivedAuctionInfo(): {
-  biddingTokenBalance: TokenAmount | undefined
-  parsedBiddingAmount: TokenAmount | undefined
+export function useDeriveAuctioningAndBiddingToken(): {
   auctioningToken: Token | undefined
   biddingToken: Token | undefined
-  clearingPriceSellOrder: Maybe<SellOrder>
-  clearingPriceOrder: Order | undefined
-  clearingPrice: Fraction | undefined
-  initialAuctionOrder: Maybe<SellOrder>
-  auctionEndDate: number | undefined
-  auctionStartDate: number | undefined
-  clearingPriceVolume: BigNumber | undefined
-  initialPrice: Fraction | undefined
-  minBiddingAmountPerOrder: string | undefined
-  orderCancellationEndDate: number | undefined
 } {
-  const { account } = useActiveWeb3React()
-
-  const { chainId, sellAmount } = useSwapState()
-
+  const { chainId } = useSwapState()
   const auctionDetails = useAuctionDetails()
 
   const auctioningToken = useMemo(
@@ -284,6 +269,33 @@ export function useDerivedAuctionInfo(): {
     [chainId, auctionDetails],
   )
 
+  return {
+    auctioningToken,
+    biddingToken,
+  }
+}
+
+export function useDerivedAuctionInfo(): {
+  biddingTokenBalance: TokenAmount | undefined
+  parsedBiddingAmount: TokenAmount | undefined
+  auctioningToken: Token | undefined
+  biddingToken: Token | undefined
+  clearingPriceSellOrder: Maybe<SellOrder>
+  clearingPriceOrder: Order | undefined
+  clearingPrice: Fraction | undefined
+  initialAuctionOrder: Maybe<SellOrder>
+  auctionEndDate: number | undefined
+  auctionStartDate: number | undefined
+  clearingPriceVolume: BigNumber | undefined
+  initialPrice: Fraction | undefined
+  minBiddingAmountPerOrder: string | undefined
+  orderCancellationEndDate: number | undefined
+} {
+  const { account } = useActiveWeb3React()
+
+  const { sellAmount } = useSwapState()
+  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken()
+  const auctionDetails = useAuctionDetails()
   const clearingPriceInfo = useClearingPriceInfo()
 
   const clearingPriceVolume = clearingPriceInfo?.volume
