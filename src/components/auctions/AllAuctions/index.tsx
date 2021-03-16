@@ -190,7 +190,9 @@ const AllAuctions = (allAuctions: any[]) => {
     [],
   )
   const data = useMemo(() => Object.values(allAuctions), [allAuctions])
-  const { prepareRow, rows, setGlobalFilter, state } = useTable(
+  const [currentDropdownFilter, setCurrentDropdownFilter] = useState<string | undefined>()
+
+  const { prepareRow, rows, setAllFilters, setFilter, setGlobalFilter, state } = useTable(
     {
       columns,
       data,
@@ -198,39 +200,54 @@ const AllAuctions = (allAuctions: any[]) => {
     useGlobalFilter,
     useFilters,
   )
-  const [currentDropdownFilter, setCurrentDropdownFilter] = useState<string | undefined>()
+
+  const updateFilter = (column?: string | undefined, value?: string | undefined) => {
+    setAllFilters([])
+    if (column && value) {
+      setFilter(column, value)
+    }
+  }
 
   const filterOptions = [
     {
+      onClick: updateFilter,
       title: 'All Auctions',
-      onClick: () => {
-        setGlobalFilter(undefined)
-      },
     },
     {
+      column: 'participation',
+      onClick: updateFilter,
       title: 'Participation "Yes"',
-      onClick: () => {
-        setGlobalFilter('Yes')
-        setCurrentDropdownFilter('dummy')
-      },
+      value: 'yes',
     },
     {
+      column: 'participation',
+      onClick: updateFilter,
       title: 'Participation "No"',
-      onClick: () => {
-        setGlobalFilter('No')
-      },
+      value: 'no',
     },
     {
+      column: 'status',
+      onClick: updateFilter,
       title: 'Ongoing',
-      onClick: () => {
-        setGlobalFilter('Ongoing')
-      },
+      value: 'ongoing',
     },
     {
+      column: 'status',
+      onClick: updateFilter,
       title: 'Ended',
-      onClick: () => {
-        setGlobalFilter('Ended')
-      },
+      value: 'ended',
+    },
+    {
+      column: 'type',
+      onClick: updateFilter,
+      title: 'Private',
+      value: 'private',
+    },
+    {
+      column: 'type',
+      onClick: updateFilter,
+      title: 'Public',
+      value: 'public',
     },
   ]
 
@@ -269,7 +286,13 @@ const AllAuctions = (allAuctions: any[]) => {
           }
           dropdownPosition={DropdownPosition.right}
           items={filterOptions.map((item, index) => (
-            <DropdownItem key={index} onClick={item.onClick}>
+            <DropdownItem
+              key={index}
+              onClick={() => {
+                item.onClick(item.column, item.value)
+                setCurrentDropdownFilter(item.title)
+              }}
+            >
               {item.title}
             </DropdownItem>
           ))}

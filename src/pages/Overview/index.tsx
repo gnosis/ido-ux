@@ -30,7 +30,7 @@ const Featured = styled(FeaturedAuctions)`
 const Overview = () => {
   const allAuctions = useAllAuctionInfo()
   const tableData = []
-  const mockedParticipation = 'Yes'
+  const mockedParticipation = 'yes'
 
   allAuctions?.forEach((item) => {
     tableData.push({
@@ -48,7 +48,7 @@ const Overview = () => {
         </>
       ),
       participation:
-        mockedParticipation === 'Yes' ? (
+        mockedParticipation === 'yes' ? (
           <>
             <span>Yes</span>
             <YesIcon />

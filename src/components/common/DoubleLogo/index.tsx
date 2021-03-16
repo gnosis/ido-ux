@@ -3,10 +3,11 @@ import styled from 'styled-components'
 
 import TokenLogo from '../TokenLogo'
 
-const TokenWrapper = styled.div`
+const Wrapper = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  flex-shrink: 0;
   position: relative;
 `
 
@@ -33,10 +34,10 @@ const DoubleLogo: React.FC<DoubleTokenLogoProps> = (props) => {
   const { auctioningToken, biddingToken, size = '24px', ...restProps } = props
 
   return (
-    <TokenWrapper {...restProps}>
+    <Wrapper {...restProps}>
       <HigherLogo size={size} token={auctioningToken} />
       <CoveredLogo size={size} token={biddingToken} />
-    </TokenWrapper>
+    </Wrapper>
   )
 }
 
