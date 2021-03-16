@@ -211,6 +211,7 @@ const AllAuctions = (allAuctions: any[]) => {
       title: 'Participation "Yes"',
       onClick: () => {
         setGlobalFilter('Yes')
+        setCurrentDropdownFilter('dummy')
       },
     },
     {
