@@ -15,13 +15,11 @@ import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import {
   AuctionState,
-  useCurrentUserOrders,
   useDefaultsFromURLSearch,
   useDerivedAuctionInfo,
   useDerivedAuctionState,
   useSwapState,
 } from '../../state/orderPlacement/hooks'
-import { useOrderbookDataCallback } from '../../state/orderbook/hooks'
 import { useOrderState } from '../../state/orders/hooks'
 import { OrderState } from '../../state/orders/reducer'
 import { getChainName } from '../../utils/tools'
@@ -94,9 +92,6 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
   const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
 
   useDefaultsFromURLSearch(search)
-  useCurrentUserOrders()
-  useOrderbookDataCallback()
-
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],

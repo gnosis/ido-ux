@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-import { useActiveWeb3React } from '../../../hooks'
 import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import {
   AuctionState,
@@ -9,6 +8,7 @@ import {
   orderToSellOrder,
   useDerivedAuctionInfo,
   useDerivedAuctionState,
+  useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
 import { normalizePrice } from '../../../utils/tools'
@@ -53,7 +53,7 @@ const TimerWrapper = styled.div`
 `
 
 const AuctionDetails = () => {
-  const { chainId } = useActiveWeb3React()
+  const { chainId } = useSwapState()
   const {
     auctioningToken,
     biddingToken,

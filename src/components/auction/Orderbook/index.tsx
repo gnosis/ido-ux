@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import { useActiveWeb3React } from '../../../hooks'
-import { useOrderbookState } from '../../../state/orderbook/hooks'
+import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
@@ -20,6 +20,7 @@ interface OrderBookProps {
 }
 
 export const OrderBook: React.FC<OrderBookProps> = (props: OrderBookProps) => {
+  useOrderbookDataCallback()
   const { baseToken, quoteToken } = props
   const { chainId } = useActiveWeb3React()
 

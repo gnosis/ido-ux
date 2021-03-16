@@ -15,6 +15,7 @@ import {
 } from '../../components/pureStyledComponents/EmptyContent'
 import { chainNames } from '../../constants'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 
 const ViewBtn = styled(ButtonLight)`
   background: none;
@@ -33,6 +34,7 @@ const ViewBtn = styled(ButtonLight)`
 export default function Overview() {
   const allAuctions = useAllAuctionInfo()
   const history = useHistory()
+  useSetNoDefaultNetworkId()
 
   const handleClick = (auctionId: number, chainId: number) => {
     history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}#topAnchor`)

@@ -1,14 +1,7 @@
-import React from 'react'
 import { Token } from 'uniswap-xdai-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
-import { useOrderbookState } from '../../../state/orderbook/hooks'
-import OrderBookChart, {
-  Offer,
-  OrderBookChartProps,
-  OrderBookError,
-  PricePointDetails,
-} from '../OrderbookChart'
+import { Offer, OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
 
 const SMALL_VOLUME_THRESHOLD = 0.001
 
@@ -339,26 +332,3 @@ export const processOrderbookData = ({
 export interface OrderBookProps extends Omit<OrderBookChartProps, 'data'> {
   auctionId?: number
 }
-
-const OrderBookWidget: React.FC<OrderBookProps> = (props: OrderBookProps) => {
-  const { baseToken, networkId, quoteToken } = props
-  const { asks, bids, error, userOrderPrice, userOrderVolume } = useOrderbookState()
-
-  if (error || !asks || asks.length == 0) return <OrderBookError error={error} />
-  const processedOrderbook = processOrderbookData({
-    data: { bids, asks },
-    userOrder: { price: userOrderPrice, volume: userOrderVolume },
-    baseToken,
-    quoteToken,
-  })
-  return (
-    <OrderBookChart
-      baseToken={baseToken}
-      data={processedOrderbook}
-      networkId={networkId}
-      quoteToken={quoteToken}
-    />
-  )
-}
-
-export default OrderBookWidget

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { useCurrentUserOrders, useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderActionHandlers } from '../../../state/orders/hooks'
 import { OrderDisplay, OrderStatus } from '../../../state/orders/reducer'
 import ConfirmationModal from '../../ConfirmationModal'
@@ -61,6 +61,7 @@ const ButtonWrapper = styled.div`
 
 const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
   const { orders } = props
+  useCurrentUserOrders()
   const { biddingToken, orderCancellationEndDate } = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()

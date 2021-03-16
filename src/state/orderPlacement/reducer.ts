@@ -1,18 +1,22 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { parse } from 'qs'
 
-import { CHAIN_ID } from '../../constants/config'
-import { priceInput, sellAmountInput, setDefaultsFromURLSearch } from './actions'
+import {
+  priceInput,
+  sellAmountInput,
+  setDefaultsFromURLSearch,
+  setNoDefaultNetworkId,
+} from './actions'
 
 export interface SwapState {
-  readonly chainId: number
+  readonly chainId: number | undefined
   readonly price: string
   readonly sellAmount: string
   readonly auctionId: number
 }
 
 const initialState: SwapState = {
-  chainId: CHAIN_ID,
+  chainId: undefined,
   price: '-',
   auctionId: 1,
   sellAmount: '',
@@ -41,6 +45,11 @@ export default createReducer<SwapState>(initialState, (builder) =>
       return {
         ...initialState,
         auctionId: 1,
+      }
+    })
+    .addCase(setNoDefaultNetworkId, () => {
+      return {
+        ...initialState,
       }
     })
     .addCase(sellAmountInput, (state, { payload: { sellAmount } }) => {

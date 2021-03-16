@@ -138,9 +138,9 @@ export function useNetworkCheck(): { errorWrongNetwork: string | undefined } {
   const { chainId: injectedChainId } = useActiveWeb3React()
   const { chainId } = useSwapState()
   const errorWrongNetwork =
-    injectedChainId == undefined || chainId == injectedChainId || chainId == 0
+    injectedChainId == undefined || chainId == injectedChainId || chainId == undefined
       ? undefined
-      : `Please make sure you connect to the network: ${chainNames[chainId]} in your wallet`
+      : `Please connect to the network: ${chainNames[chainId]}`
   return {
     errorWrongNetwork,
   }
