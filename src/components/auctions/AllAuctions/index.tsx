@@ -150,6 +150,7 @@ const AllAuctions = (allAuctions: any[]) => {
         align: 'flex-start',
         show: true,
         style: {},
+        filter: 'searchInTags',
       },
       {
         Header: 'Participation',
@@ -157,6 +158,7 @@ const AllAuctions = (allAuctions: any[]) => {
         align: 'flex-start',
         show: true,
         style: {},
+        filter: 'searchInTags',
       },
       {
         Header: 'Network',
@@ -192,10 +194,46 @@ const AllAuctions = (allAuctions: any[]) => {
   const data = useMemo(() => Object.values(allAuctions), [allAuctions])
   const [currentDropdownFilter, setCurrentDropdownFilter] = useState<string | undefined>()
 
+  const searchValue = React.useCallback((element: any, filterValue: string) => {
+    const isReactElement = element && element.props && element.props.children
+    const isString = !isReactElement && typeof element === 'string'
+    const value = isReactElement
+      ? element.props.children[0].props.children
+      : isString
+      ? element
+      : ''
+
+    return filterValue.length === 0
+      ? true
+      : String(value).toLowerCase().includes(String(filterValue).toLowerCase())
+  }, [])
+
+  const filterTypes = React.useMemo(
+    () => ({
+      searchInTags: (rows, id, filterValue) =>
+        rows.filter((row) => searchValue(row.values[id], filterValue)),
+    }),
+    [searchValue],
+  )
+
+  const globalFilter = React.useMemo(
+    () => (rows, columns, filterValue) =>
+      rows.filter((row) => {
+        let searchResult = false
+        for (const column of columns) {
+          searchResult = searchResult || searchValue(row.values[column], filterValue)
+        }
+        return searchResult
+      }),
+    [searchValue],
+  )
+
   const { prepareRow, rows, setAllFilters, setFilter, setGlobalFilter, state } = useTable(
     {
       columns,
       data,
+      filterTypes,
+      globalFilter,
     },
     useGlobalFilter,
     useFilters,
@@ -259,9 +297,9 @@ const AllAuctions = (allAuctions: any[]) => {
           <Magnifier />
           <SearchInput
             onChange={(e) => {
-              setGlobalFilter(e.target.value || undefined)
+              setGlobalFilter(e.target.value)
             }}
-            placeholder={`Search by auction Id, selling token, buying token, status, date…`}
+            placeholder={`Search by auction Id, selling token, buying token, date…`}
             value={state.globalFilter || ''}
           />
           <DeleteSearchTerm
