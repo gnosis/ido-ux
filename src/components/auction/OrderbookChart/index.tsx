@@ -39,7 +39,6 @@ export interface PricePointDetails {
 export interface OrderBookChartProps {
   baseToken: Token
   quoteToken: Token
-  networkId: number
   data: Maybe<PricePointDetails[]>
 }
 

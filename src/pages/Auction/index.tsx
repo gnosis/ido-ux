@@ -16,12 +16,9 @@ import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import {
   AuctionState,
   useDefaultsFromURLSearch,
-  useDerivedAuctionInfo,
   useDerivedAuctionState,
   useSwapState,
 } from '../../state/orderPlacement/hooks'
-import { useOrderState } from '../../state/orders/hooks'
-import { OrderState } from '../../state/orders/reducer'
 import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
@@ -86,10 +83,8 @@ const Grid = styled.div`
 
 const Auction = ({ location: { search } }: RouteComponentProps) => {
   const { auctionState, loading } = useDerivedAuctionState()
-  const orders: OrderState | undefined = useOrderState()
   const { auctionId, chainId } = useSwapState()
   const url = window.location.href
-  const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
 
   useDefaultsFromURLSearch(search)
   const auctionStarted = React.useMemo(
@@ -132,11 +127,11 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
           {auctionState === AuctionState.PRICE_SUBMISSION && (
             <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
           )}
-          <OrderBook baseToken={auctioningToken} quoteToken={biddingToken} />
+          <OrderBook />
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
-      {auctionStarted && isNotLoading && <OrdersTable orders={orders.orders} />}
+      {auctionStarted && isNotLoading && <OrdersTable />}
     </>
   )
 }

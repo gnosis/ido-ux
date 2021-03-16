@@ -91,9 +91,9 @@ export function useOrderbookDataCallback() {
           onResetOrderbookData(rawData, null)
         }
       } catch (error) {
-        if (cancelled) return
         console.error('Error populating orderbook with data', error)
         onResetOrderbookData({ bids: [], asks: [] }, null)
+        if (cancelled) return
       }
     }
     fetchData()
