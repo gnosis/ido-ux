@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { useOrderActionHandlers } from '../../../state/orders/hooks'
-import { OrderDisplay, OrderStatus } from '../../../state/orders/reducer'
+import { useCurrentUserOrders, useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
+import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import ConfirmationModal from '../../ConfirmationModal'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
@@ -59,8 +59,9 @@ const ButtonWrapper = styled.div`
   justify-content: flex-end;
 `
 
-const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
-  const { orders } = props
+const OrderTable: React.FC = () => {
+  const orders: OrderState | undefined = useOrderState()
+  useCurrentUserOrders()
   const { biddingToken, orderCancellationEndDate } = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
@@ -115,7 +116,7 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < orderCancellationEndDate
-  const ordersEmpty = !orders || orders.length == 0
+  const ordersEmpty = !orders.orders || orders.orders.length == 0
 
   return (
     <>

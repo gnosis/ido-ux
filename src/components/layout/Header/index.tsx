@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
 import useENSName from '../../../hooks/useENSName'
@@ -104,11 +104,10 @@ const Error = styled.span`
 `
 
 export const Header: React.FC = (props) => {
-  const { account, error } = useWeb3React()
+  const { account } = useWeb3React()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
-  const wrongNetwork = error instanceof UnsupportedChainIdError || errorWrongNetwork !== undefined
 
   const toggleWalletModal = useWalletModalToggle()
   const allTransactions = useAllTransactions()
@@ -133,14 +132,14 @@ export const Header: React.FC = (props) => {
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
-
-  const web3Status = isConnected ? (
-    <UserDropdownStyled />
-  ) : wrongNetwork ? (
-    <Error>Invalid network</Error>
-  ) : (
-    <ButtonConnectStyled onClick={toggleWalletModal} />
-  )
+  const web3Status =
+    isConnected && errorWrongNetwork == undefined ? (
+      <UserDropdownStyled />
+    ) : errorWrongNetwork ? (
+      <Error>{errorWrongNetwork}</Error>
+    ) : (
+      <ButtonConnectStyled onClick={toggleWalletModal} />
+    )
 
   return (
     <>

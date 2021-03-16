@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChainId, Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -20,11 +20,15 @@ import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
-import { useOrderbookActionHandlers } from '../orderbook/hooks'
-import { useOrderActionHandlers, useOrderState } from '../orders/hooks'
+import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
 import { useTokenBalances } from '../wallet/hooks'
-import { priceInput, sellAmountInput, setDefaultsFromURLSearch } from './actions'
+import {
+  priceInput,
+  sellAmountInput,
+  setDefaultsFromURLSearch,
+  setNoDefaultNetworkId,
+} from './actions'
 
 export interface SellOrder {
   sellAmount: TokenAmount
@@ -157,28 +161,6 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
   return
 }
 
-export function useDeriveAuctioningAndBiddingToken(
-  auctionId: number,
-): { auctioningToken: Token | undefined; biddingToken: Token | undefined } {
-  const { chainId } = useActiveWeb3React()
-
-  const easyAuctionInstance: Maybe<Contract> = useContract(
-    EASY_AUCTION_NETWORKS[chainId as ChainId],
-    easyAuctionABI,
-  )
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId]).result
-  const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
-
-  const biddingTokenAddress: string | undefined = auctionInfo?.biddingToken.toString()
-
-  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
-  const biddingToken = useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
-  return {
-    auctioningToken,
-    biddingToken,
-  }
-}
-
 export function useGetOrderPlacementError(): {
   error?: string
 } {
@@ -254,6 +236,45 @@ export function useGetOrderPlacementError(): {
   }
 }
 
+export function useDeriveAuctioningAndBiddingToken(): {
+  auctioningToken: Token | undefined
+  biddingToken: Token | undefined
+} {
+  const { chainId } = useSwapState()
+  const auctionDetails = useAuctionDetails()
+
+  const auctioningToken = useMemo(
+    () =>
+      chainId == undefined || !auctionDetails
+        ? undefined
+        : new Token(
+            chainId as ChainId,
+            auctionDetails.addressAuctioningToken,
+            parseInt(auctionDetails.decimalsAuctioningToken, 16),
+            auctionDetails.symbolAuctioningToken,
+          ),
+    [chainId, auctionDetails],
+  )
+
+  const biddingToken = useMemo(
+    () =>
+      chainId == undefined || !auctionDetails
+        ? undefined
+        : new Token(
+            chainId as ChainId,
+            auctionDetails.addressBiddingToken,
+            parseInt(auctionDetails.decimalsBiddingToken, 16),
+            auctionDetails.symbolBiddingToken,
+          ),
+    [chainId, auctionDetails],
+  )
+
+  return {
+    auctioningToken,
+    biddingToken,
+  }
+}
+
 export function useDerivedAuctionInfo(): {
   biddingTokenBalance: TokenAmount | undefined
   parsedBiddingAmount: TokenAmount | undefined
@@ -272,11 +293,9 @@ export function useDerivedAuctionInfo(): {
 } {
   const { account } = useActiveWeb3React()
 
-  const { auctionId, sellAmount } = useSwapState()
-
-  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(auctionId)
-
-  const auctionDetails = useAuctionDetails(auctionId)
+  const { sellAmount } = useSwapState()
+  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken()
+  const auctionDetails = useAuctionDetails()
   const clearingPriceInfo = useClearingPriceInfo()
 
   const clearingPriceVolume = clearingPriceInfo?.volume
@@ -315,7 +334,6 @@ export function useDerivedAuctionInfo(): {
       initialAuctionOrder?.sellAmount?.raw.toString(),
     )
   }
-
   return {
     biddingTokenBalance,
     parsedBiddingAmount,
@@ -338,12 +356,10 @@ export function useDerivedAuctionState(): {
   auctionState: Maybe<AuctionState>
   loading: boolean
 } {
-  const { auctionId } = useSwapState()
-
   const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
-  const auctionDetails = useAuctionDetails(auctionId)
+  const auctionDetails = useAuctionDetails()
   const clearingPriceInfo = useClearingPriceInfo()
 
   useEffect(() => {
@@ -461,27 +477,32 @@ export function useDerivedClaimInfo(
 
 // updates the swap state to use the defaults for a given network whenever the query
 // string updates
-export function useDefaultsFromURLSearch(search?: string) {
+export function useDefaultsFromURLSearch(search: string) {
   const { chainId } = useActiveWeb3React()
-  const { onPullOrderbookData } = useOrderbookActionHandlers()
-  const { onReloadFromAPI } = useOrderActionHandlers()
   const dispatch = useDispatch<AppDispatch>()
   useEffect(() => {
     if (!chainId) return
-    dispatch(setDefaultsFromURLSearch({ chainId, queryString: search }))
-    onPullOrderbookData()
-    onReloadFromAPI()
-  }, [dispatch, search, chainId, onReloadFromAPI, onPullOrderbookData])
+    dispatch(setDefaultsFromURLSearch({ queryString: search }))
+  }, [dispatch, search, chainId])
+}
+
+// updates the swap state to use the defaults for a given network whenever the query
+// string updates
+export function useSetNoDefaultNetworkId() {
+  const dispatch = useDispatch<AppDispatch>()
+  useEffect(() => {
+    dispatch(setNoDefaultNetworkId())
+  }, [dispatch])
 }
 
 export function useCurrentUserOrders() {
-  const { account, chainId } = useActiveWeb3React()
-  const { auctionId } = useSwapState()
-  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken(auctionId)
+  const { account } = useActiveWeb3React()
+  const { auctionId, chainId } = useSwapState()
+  const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
   const { onNewOrder } = useOrderActionHandlers()
-  const { shouldLoad } = useOrderState()
 
   useEffect(() => {
+    let cancelled = false
     async function fetchData() {
       if (!chainId || !account || !biddingToken || !auctioningToken) {
         return
@@ -524,10 +545,14 @@ export function useCurrentUserOrders() {
           })
         }
       }
-      onNewOrder(sellOrderDisplays)
+      if (!cancelled) onNewOrder(sellOrderDisplays)
+      return (): void => {
+        cancelled = true
+      }
     }
-    if (shouldLoad) {
-      fetchData()
+    fetchData()
+    return (): void => {
+      cancelled = true
     }
-  }, [chainId, account, auctionId, onNewOrder, auctioningToken, biddingToken, shouldLoad])
+  }, [chainId, account, auctionId, onNewOrder, auctioningToken, biddingToken])
 }

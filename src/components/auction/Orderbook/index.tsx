@@ -1,9 +1,8 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { Token } from 'uniswap-xdai-sdk'
 
-import { useActiveWeb3React } from '../../../hooks'
-import { useOrderbookState } from '../../../state/orderbook/hooks'
+import { useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
@@ -13,24 +12,21 @@ const Wrapper = styled(BaseCard)`
   min-width: 100%;
 `
 
-interface OrderBookProps {
-  baseToken: Token
-  label?: string
-  quoteToken: Token
-}
-
-export const OrderBook: React.FC<OrderBookProps> = (props: OrderBookProps) => {
-  const { baseToken, quoteToken } = props
-  const { chainId } = useActiveWeb3React()
+export const OrderBook: React.FC = () => {
+  useOrderbookDataCallback()
+  const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
 
   const { asks, bids, error, userOrderPrice, userOrderVolume } = useOrderbookState()
-
-  const processedOrderbook = processOrderbookData({
-    data: { bids, asks },
-    userOrder: { price: userOrderPrice, volume: userOrderVolume },
-    baseToken,
-    quoteToken,
-  })
+  const processedOrderbook = useMemo(
+    () =>
+      processOrderbookData({
+        data: { bids, asks },
+        userOrder: { price: userOrderPrice, volume: userOrderVolume },
+        baseToken: auctioningToken,
+        quoteToken: biddingToken,
+      }),
+    [bids, asks, auctioningToken, biddingToken, userOrderPrice, userOrderVolume],
+  )
 
   return (
     <>
@@ -39,10 +35,9 @@ export const OrderBook: React.FC<OrderBookProps> = (props: OrderBookProps) => {
           <OrderBookError error={error} />
         ) : (
           <OrderBookChart
-            baseToken={baseToken}
+            baseToken={auctioningToken}
             data={processedOrderbook}
-            networkId={chainId}
-            quoteToken={quoteToken}
+            quoteToken={biddingToken}
           />
         )}
       </Wrapper>

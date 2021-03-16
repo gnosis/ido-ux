@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
-import { useActiveWeb3React } from './index'
+import { useSwapState } from '../state/orderPlacement/hooks'
 
 export interface AuctionInfoDetail {
   auctionId: number
@@ -11,8 +11,8 @@ export interface AuctionInfoDetail {
   symbolBiddingToken: string
   addressAuctioningToken: string
   addressBiddingToken: string
-  decimalsAuctioningToken: number
-  decimalsBiddingToken: number
+  decimalsAuctioningToken: string
+  decimalsBiddingToken: string
   endTimeTimestamp: number
   startingTimestamp: number
   chainId: String
@@ -21,9 +21,8 @@ export interface AuctionInfoDetail {
   exactOrder: string
 }
 
-export const useAuctionDetails = (auctionId: number): Maybe<AuctionInfoDetail> => {
-  const { chainId } = useActiveWeb3React()
-
+export const useAuctionDetails = (): Maybe<AuctionInfoDetail> => {
+  const { auctionId, chainId } = useSwapState()
   const [auctionInfo, setAuctionInfo] = useState<Maybe<AuctionInfoDetail>>(null)
 
   useEffect(() => {
@@ -31,8 +30,8 @@ export const useAuctionDetails = (auctionId: number): Maybe<AuctionInfoDetail> =
 
     const fetchApiData = async () => {
       try {
-        if (!chainId) {
-          throw new Error('missing dependencies in useAuctionDetails callback')
+        if (!chainId || !auctionId) {
+          return
         }
 
         const params = {
@@ -45,6 +44,7 @@ export const useAuctionDetails = (auctionId: number): Maybe<AuctionInfoDetail> =
           setAuctionInfo(auctionInfo)
         }
       } catch (error) {
+        if (cancelled) return
         setAuctionInfo(null)
         console.error('Error getting auction details', error)
       }

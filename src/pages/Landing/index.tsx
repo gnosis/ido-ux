@@ -9,6 +9,7 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { SpinnerSize } from '../../components/common/Spinner'
 import { Send } from '../../components/icons/Send'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import AuctionsIcon from './img/eth.svg'
 import Shape1 from './img/shape-1.svg'
 import Shape2 from './img/shape-2.svg'
@@ -130,6 +131,7 @@ const TextGradient = styled.span`
 
 export const Landing: React.FC = () => {
   const allAuctions = useAllAuctionInfo()
+  useSetNoDefaultNetworkId()
 
   return (
     <>
