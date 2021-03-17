@@ -154,7 +154,14 @@ export const Landing: React.FC = () => {
             <>
               <AuctionsImage alt="" src={AuctionsIcon} />
               {allAuctions && allAuctions.length > 0 && (
-                <AuctionsText>{allAuctions.length} active auctions</AuctionsText>
+                <AuctionsText>
+                  {
+                    allAuctions.filter(
+                      (auction) => new Date(auction.endTimeTimestamp * 1000) > new Date(),
+                    ).length
+                  }{' '}
+                  active auctions
+                </AuctionsText>
               )}
               <AuctionsButton to="/overview#topAnchor">
                 <SendIcon />
