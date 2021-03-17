@@ -179,6 +179,10 @@ const PagesSelect = styled.select`
   -ms-appearance: none;
 `
 
+const Loading = styled(InlineLoading)`
+  min-height: 290px;
+`
+
 interface Props {
   tableData: any[]
   isLoading: boolean
@@ -393,63 +397,66 @@ const AllAuctions: React.FC<Props> = (props) => {
   ]
 
   const { pageIndex, pageSize } = state
+  const noData = tableData.length === 0
 
   return (
     <Wrapper {...restProps}>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
+      <TableControls>
+        <SearchWrapper>
+          <Magnifier />
+          <SearchInput
+            disabled={noData || isLoading}
+            onChange={(e) => {
+              setGlobalFilter(e.target.value)
+            }}
+            placeholder={`Search by auction Id, selling token, buying token, date…`}
+            value={state.globalFilter || ''}
+          />
+          <DeleteSearchTerm
+            disabled={!state.globalFilter || noData || isLoading}
+            onClick={() => {
+              setGlobalFilter(undefined)
+            }}
+          >
+            <Delete />
+          </DeleteSearchTerm>
+        </SearchWrapper>
+        <Dropdown
+          activeItemHighlight={false}
+          disabled={noData || isLoading}
+          dropdownButtonContent={
+            <ButtonSelect
+              content={
+                <span>
+                  {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
+                </span>
+              }
+            />
+          }
+          dropdownPosition={DropdownPosition.right}
+          items={filterOptions.map((item, index) => (
+            <DropdownItem
+              key={index}
+              onClick={() => {
+                item.onClick(item.column, item.value)
+                setCurrentDropdownFilter(item.title)
+              }}
+            >
+              {item.title}
+            </DropdownItem>
+          ))}
+        />
+      </TableControls>
       {isLoading ? (
-        <InlineLoading message="Loading..." size={SpinnerSize.small} />
-      ) : tableData.length === 0 ? (
+        <Loading message="Loading..." size={SpinnerSize.small} />
+      ) : noData ? (
         <EmptyContentWrapper>
           <InfoIcon />
           <EmptyContentText>No auctions.</EmptyContentText>
         </EmptyContentWrapper>
       ) : (
         <>
-          <TableControls>
-            <SearchWrapper>
-              <Magnifier />
-              <SearchInput
-                onChange={(e) => {
-                  setGlobalFilter(e.target.value)
-                }}
-                placeholder={`Search by auction Id, selling token, buying token, date…`}
-                value={state.globalFilter || ''}
-              />
-              <DeleteSearchTerm
-                disabled={!state.globalFilter}
-                onClick={() => {
-                  setGlobalFilter(undefined)
-                }}
-              >
-                <Delete />
-              </DeleteSearchTerm>
-            </SearchWrapper>
-            <Dropdown
-              activeItemHighlight={false}
-              dropdownButtonContent={
-                <ButtonSelect
-                  content={
-                    <span>
-                      {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
-                    </span>
-                  }
-                />
-              }
-              dropdownPosition={DropdownPosition.right}
-              items={filterOptions.map((item, index) => (
-                <DropdownItem
-                  key={index}
-                  onClick={() => {
-                    item.onClick(item.column, item.value)
-                    setCurrentDropdownFilter(item.title)
-                  }}
-                >
-                  {item.title}
-                </DropdownItem>
-              ))}
-            />
-          </TableControls>
           <Table>
             {page.map((row, i) => {
               prepareRow(row)

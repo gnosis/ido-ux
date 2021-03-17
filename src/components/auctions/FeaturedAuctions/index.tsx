@@ -23,6 +23,10 @@ const SectionTitle = styled(PageTitle)`
   margin: 0 0 40px;
 `
 
+const Loading = styled(InlineLoading)`
+  min-height: 290px;
+`
+
 export const FeaturedAuctions: React.FC = (props) => {
   const { ...restProps } = props
   const highlightedAuctions = useInterestingAuctionInfo()
@@ -48,7 +52,7 @@ export const FeaturedAuctions: React.FC = (props) => {
         Featured Auctions
       </SectionTitle>
       {(highlightedAuctions === undefined || highlightedAuctions === null) && (
-        <InlineLoading message="Loading..." size={SpinnerSize.small} />
+        <Loading message="Loading..." size={SpinnerSize.small} />
       )}
       {highlightedAuctions && highlightedAuctions.length === 0 && (
         <EmptyContentWrapper>
