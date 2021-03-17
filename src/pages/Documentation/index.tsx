@@ -174,28 +174,28 @@ export const Documentation: React.FC = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <Title id="pageTop">Gnosis Auction Documentation</Title>
+      <Title>Gnosis Auction Documentation</Title>
       <Grid>
         <Sidebar>
-          <IndexLink activeClassName="isActive" exact to="/docs#pageTop">
+          <IndexLink activeClassName="isActive" exact to="/docs#topAnchor">
             Overview
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/batch-auctions#pageTop">
+          <IndexLink activeClassName="isActive" to="/docs/batch-auctions#topAnchor">
             How do Batch Auctions work?
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/use-cases#pageTop">
+          <IndexLink activeClassName="isActive" to="/docs/use-cases#topAnchor">
             Use Cases
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/user-flow#pageTop">
+          <IndexLink activeClassName="isActive" to="/docs/user-flow#topAnchor">
             User flow
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/participate-as-a-bidder#pageTop">
+          <IndexLink activeClassName="isActive" to="/docs/participate-as-a-bidder#topAnchor">
             Participate as a bidder
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/participate-as-auctioneer#pageTop">
+          <IndexLink activeClassName="isActive" to="/docs/participate-as-auctioneer#topAnchor">
             Participate as auctioneer
           </IndexLink>
-          <IndexLink activeClassName="isActive" to="/docs/faq#pageTop">
+          <IndexLink activeClassName="isActive" to="/docs/faq#topAnchor">
             Faq
           </IndexLink>
         </Sidebar>
