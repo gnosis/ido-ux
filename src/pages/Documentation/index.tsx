@@ -1,8 +1,9 @@
 import React from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import ReactMarkdown from 'react-markdown'
+import { NavHashLink } from 'react-router-hash-link'
 
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import overviewDocMarkdown from '../../docs/files/devguide01.md'
@@ -28,6 +29,7 @@ const Grid = styled.div`
 `
 
 const Sidebar = styled.div`
+  color: ${({ theme }) => theme.text1};
   display: flex;
   flex-direction: column;
   height: fit-content;
@@ -38,11 +40,101 @@ const Sidebar = styled.div`
 `
 
 const Content = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
   overflow: auto;
   padding: 24px 24px 0 24px;
+
+  a {
+    color: ${({ theme }) => theme.primary1};
+    font-size: 14px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  h3 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0.2rem;
+    line-height: 1.4;
+    margin: 0 0 40px;
+  }
+
+  h4 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 16px;
+  }
+
+  > ul,
+  > ol,
+  > p {
+    margin: 0 0 36px 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  > ul,
+  > ol {
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  > span {
+    display: block;
+    margin-bottom: 36px;
+    width: 100%;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+  }
+
+  > pre {
+    background-color: rgb(246, 248, 250);
+    border-radius: 6px;
+    color: rgb(7, 12, 17);
+    display: block;
+    font-family: ${({ theme }) => theme.fonts.fontFamilyCode};
+    font-size: 14px;
+    line-height: 1.45;
+    margin-bottom: 36px;
+    overflow: auto;
+    padding: 16px;
+    width: 100%;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 `
 
-const IndexLink = styled(NavLink)`
+const IndexLink = styled(NavHashLink)`
   color: ${({ theme }) => theme.text1};
   font-size: 14px;
   line-height: 1.6;
@@ -82,18 +174,30 @@ export const Documentation: React.FC = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <Title>Gnosis Auction Documentation</Title>
+      <Title id="pageTop">Gnosis Auction Documentation</Title>
       <Grid>
         <Sidebar>
-          <IndexLink activeClassName="isActive" to="/docs">
+          <IndexLink activeClassName="isActive" exact to="/docs#pageTop">
             Overview
           </IndexLink>
-          <IndexLink to="/docs/batch-auctions">How do Batch Auctions work?</IndexLink>
-          <IndexLink to="/docs/use-cases">Use Cases</IndexLink>
-          <IndexLink to="/docs/user-flow">User flow</IndexLink>
-          <IndexLink to="/docs/participate-as-a-bidder">Participate as a bidder</IndexLink>
-          <IndexLink to="/docs/participate-as-auctioneer">Participate as auctioneer</IndexLink>
-          <IndexLink to="/docs/faq">Faq</IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/batch-auctions#pageTop">
+            How do Batch Auctions work?
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/use-cases#pageTop">
+            Use Cases
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/user-flow#pageTop">
+            User flow
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/participate-as-a-bidder#pageTop">
+            Participate as a bidder
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/participate-as-auctioneer#pageTop">
+            Participate as auctioneer
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/faq#pageTop">
+            Faq
+          </IndexLink>
         </Sidebar>
         <Content>
           <ReactMarkdown escapeHtml={false} source={content} />
