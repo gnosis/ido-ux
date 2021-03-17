@@ -14,6 +14,6 @@ export const navItems = [
   },
   {
     title: 'Docs',
-    url: '/docs#pageTop',
+    url: '/docs#topAnchor',
   },
 ]
