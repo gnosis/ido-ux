@@ -93,13 +93,7 @@ const OrderPlacement: React.FC = () => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount } = useSwapState()
-  const {
-    auctioningToken,
-    biddingToken,
-    biddingTokenBalance,
-    initialPrice,
-    parsedBiddingAmount,
-  } = useDerivedAuctionInfo()
+  const derivedAuctionInfo = useDerivedAuctionInfo()
   const { error } = useGetOrderPlacementError()
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
@@ -112,7 +106,7 @@ const OrderPlacement: React.FC = () => {
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
-  const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
+  const approvalTokenAmount: TokenAmount | undefined = derivedAuctionInfo?.parsedBiddingAmount
 
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -126,13 +120,17 @@ const OrderPlacement: React.FC = () => {
     }
   }, [approval, approvalSubmitted])
 
-  const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
+  const maxAmountInput: TokenAmount = derivedAuctionInfo?.biddingTokenBalance
+    ? derivedAuctionInfo?.biddingTokenBalance
+    : undefined
 
   useEffect(() => {
-    if (price == '-' && initialPrice) {
-      onUserPriceInput(initialPrice.multiply(new Fraction('1001', '1000')).toSignificant(4))
+    if (price == '-' && derivedAuctionInfo?.initialPrice) {
+      onUserPriceInput(
+        derivedAuctionInfo?.initialPrice.multiply(new Fraction('1001', '1000')).toSignificant(4),
+      )
     }
-  }, [onUserPriceInput, price, initialPrice])
+  }, [onUserPriceInput, price, derivedAuctionInfo])
 
   const resetModal = () => {
     if (!pendingConfirmation) {
@@ -142,7 +140,10 @@ const OrderPlacement: React.FC = () => {
     setAttemptingTxn(false)
   }
 
-  const placeOrderCallback = usePlaceOrderCallback(auctioningToken, biddingToken)
+  const placeOrderCallback = usePlaceOrderCallback(
+    derivedAuctionInfo?.auctioningToken,
+    derivedAuctionInfo?.biddingToken,
+  )
 
   const onPlaceOrder = () => {
     setAttemptingTxn(true)
@@ -162,8 +163,8 @@ const OrderPlacement: React.FC = () => {
   const modalBottom = () => {
     return (
       <SwapModalFooter
-        auctioningToken={auctioningToken}
-        biddingToken={biddingToken}
+        auctioningToken={derivedAuctionInfo?.auctioningToken}
+        biddingToken={derivedAuctionInfo?.biddingToken}
         confirmText={'Confirm Order'}
         onPlaceOrder={onPlaceOrder}
         price={price}
@@ -175,9 +176,14 @@ const OrderPlacement: React.FC = () => {
   }
 
   const pendingText = `Placing order`
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
-  const userTokenBalance = useTokenBalance(account, biddingToken)
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
+    derivedAuctionInfo,
+  ])
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
+    [derivedAuctionInfo],
+  )
+  const userTokenBalance = useTokenBalance(account, derivedAuctionInfo?.biddingToken)
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
 
@@ -198,14 +204,17 @@ const OrderPlacement: React.FC = () => {
           Your Balance:{' '}
           <Total>{`${
             account
-              ? `${userTokenBalance?.toSignificant(6)} ${biddingToken?.symbol}`
+              ? `${userTokenBalance?.toSignificant(6)} ${derivedAuctionInfo?.biddingToken?.symbol}`
               : 'Connect your wallet'
           } `}</Total>
         </Balance>
-        {account && biddingToken && biddingToken.address && (
+        {account && derivedAuctionInfo?.biddingToken && derivedAuctionInfo?.biddingToken.address && (
           <TokenLogo
             size={'22px'}
-            token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
+            token={{
+              address: derivedAuctionInfo?.biddingToken.address,
+              symbol: derivedAuctionInfo?.biddingToken.symbol,
+            }}
           />
         )}
       </BalanceWrapper>
@@ -214,12 +223,12 @@ const OrderPlacement: React.FC = () => {
           maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
         }}
         onUserSellAmountInput={onUserSellAmountInput}
-        token={biddingToken}
+        token={derivedAuctionInfo?.biddingToken}
         value={sellAmount}
       />
       <PriceInputPanel
-        auctioningToken={auctioningToken}
-        biddingToken={biddingToken}
+        auctioningToken={derivedAuctionInfo?.auctioningToken}
+        biddingToken={derivedAuctionInfo?.biddingToken}
         label={`${biddingTokenDisplay} per ${auctioningTokenDisplay} price`}
         onUserPriceInput={onUserPriceInput}
         value={price}
@@ -246,8 +255,8 @@ const OrderPlacement: React.FC = () => {
       {notApproved && (
         <ApprovalWrapper>
           <ApprovalText>
-            You need to unlock {biddingToken.symbol} to allow the smart contract to interact with
-            it. This has to be done for each new token.
+            You need to unlock {derivedAuctionInfo?.biddingToken.symbol} to allow the smart contract
+            to interact with it. This has to be done for each new token.
           </ApprovalText>
           <ApprovalButton
             buttonType={ButtonType.primaryInverted}

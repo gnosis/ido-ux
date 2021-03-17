@@ -4,11 +4,15 @@ import { ClearingPriceAndVolumeData } from '../api/AdditionalServicesApi'
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { additionalServiceApi } from './../api'
 
-export const useClearingPriceInfo = (): Maybe<ClearingPriceAndVolumeData> => {
+export const useClearingPriceInfo = (): {
+  clearingPriceInfo: Maybe<ClearingPriceAndVolumeData>
+  loadingClearingPrice: boolean
+} => {
   const { auctionId, chainId } = useSwapState()
   const [clearingInfo, setClearingPriceAndVolume] = useState<Maybe<ClearingPriceAndVolumeData>>(
     null,
   )
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     setClearingPriceAndVolume(null)
@@ -17,7 +21,7 @@ export const useClearingPriceInfo = (): Maybe<ClearingPriceAndVolumeData> => {
 
   useEffect(() => {
     let cancelled = false
-
+    setLoading(true)
     const fetchApiData = async () => {
       try {
         if (!chainId || !auctionId || !additionalServiceApi) {
@@ -28,9 +32,11 @@ export const useClearingPriceInfo = (): Maybe<ClearingPriceAndVolumeData> => {
           auctionId,
         })
         if (!cancelled) {
+          setLoading(false)
           setClearingPriceAndVolume(clearingOrderAndVolume)
         }
       } catch (error) {
+        setLoading(false)
         setClearingPriceAndVolume(null)
         console.error('Error getting clearing price info', error)
       }
@@ -42,5 +48,8 @@ export const useClearingPriceInfo = (): Maybe<ClearingPriceAndVolumeData> => {
     }
   }, [chainId, auctionId, setClearingPriceAndVolume])
 
-  return clearingInfo
+  return {
+    clearingPriceInfo: clearingInfo,
+    loadingClearingPrice: loading,
+  }
 }
