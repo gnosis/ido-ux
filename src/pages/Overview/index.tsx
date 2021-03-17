@@ -4,17 +4,10 @@ import styled from 'styled-components'
 import AllAuctions from '../../components/auctions/AllAuctions'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import DoubleLogo from '../../components/common/DoubleLogo'
-import { InlineLoading } from '../../components/common/InlineLoading'
-import { SpinnerSize } from '../../components/common/Spinner'
 import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
-import { InfoIcon } from '../../components/icons/InfoIcon'
 import { Private } from '../../components/icons/Private'
 import { YesIcon } from '../../components/icons/YesIcon'
-import {
-  EmptyContentText,
-  EmptyContentWrapper,
-} from '../../components/pureStyledComponents/EmptyContent'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { getChainName } from '../../utils/tools'
@@ -93,16 +86,10 @@ const Overview = () => {
   return (
     <>
       <Featured />
-      {(allAuctions === undefined || allAuctions === null) && (
-        <InlineLoading message="Loading..." size={SpinnerSize.small} />
-      )}
-      {allAuctions && allAuctions.length === 0 && (
-        <EmptyContentWrapper>
-          <InfoIcon />
-          <EmptyContentText>No auctions.</EmptyContentText>
-        </EmptyContentWrapper>
-      )}
-      {allAuctions && allAuctions.length > 0 && <AllAuctions {...tableData} />}
+      <AllAuctions
+        isLoading={allAuctions === undefined || allAuctions === null}
+        tableData={tableData}
+      />
     </>
   )
 }

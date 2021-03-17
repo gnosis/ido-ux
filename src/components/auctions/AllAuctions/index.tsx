@@ -1,20 +1,29 @@
 import React, { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { useFilters, useGlobalFilter, useTable } from 'react-table'
+import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
+import { InlineLoading } from '../../common/InlineLoading'
 import { KeyValue } from '../../common/KeyValue'
+import { SpinnerSize } from '../../common/Spinner'
+import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
+import { InfoIcon } from '../../icons/InfoIcon'
 import { Magnifier } from '../../icons/Magnifier'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRowCSS, CellRowProps } from '../../pureStyledComponents/Cell'
+import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { TexfieldPartsCSS, TextfieldCSS } from '../../pureStyledComponents/Textfield'
 
-const Wrapper = styled(BaseCard)`
+const Wrapper = styled.div`
+  padding-bottom: 60px;
+`
+
+const Table = styled(BaseCard)`
   padding: 0;
 `
 
@@ -106,7 +115,77 @@ const DeleteSearchTerm = styled.button`
   }
 `
 
-const AllAuctions = (allAuctions: any[]) => {
+const Pagination = styled.div`
+  align-items: center;
+  border-top: 1px solid ${({ theme }) => theme.border};
+  display: flex;
+  height: 56px;
+  justify-content: flex-end;
+  padding: 0 15px;
+`
+
+const PaginationTextCSS = css`
+  color: ${({ theme }) => theme.text1};
+  font-size: 13px;
+  font-weight: normal;
+`
+
+const PaginationText = styled.span`
+  ${PaginationTextCSS}
+`
+
+const PaginationBreak = styled.span`
+  ${PaginationTextCSS}
+  margin: 0 12px;
+`
+
+const PaginationButton = styled.button`
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  height: 35px;
+  outline: none;
+  padding: 0;
+  user-select: none;
+  width: 35px;
+
+  &:hover {
+    .fill {
+      color: ${({ theme }) => theme.primary1};
+    }
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    cursor: not-allowed;
+    opacity: 0.5;
+
+    .fill {
+      color: ${({ theme }) => theme.text1};
+    }
+  }
+`
+
+const ChevronLeft = styled(ChevronRight)`
+  transform: translateZ(90deg);
+`
+
+const PagesSelect = styled.select`
+  border: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -ms-appearance: none;
+`
+
+interface Props {
+  tableData: any[]
+  isLoading: boolean
+}
+
+const AllAuctions: React.FC<Props> = (props) => {
+  const { isLoading = true, tableData, ...restProps } = props
   const columns = useMemo(
     () => [
       {
@@ -191,14 +270,14 @@ const AllAuctions = (allAuctions: any[]) => {
     ],
     [],
   )
-  const data = useMemo(() => Object.values(allAuctions), [allAuctions])
+  const data = useMemo(() => Object.values(tableData), [tableData])
   const [currentDropdownFilter, setCurrentDropdownFilter] = useState<string | undefined>()
 
   const searchValue = React.useCallback((element: any, filterValue: string) => {
     const isReactElement = element && element.props && element.props.children
     const isString = !isReactElement && typeof element === 'string'
     /**
-     * this will work only for strings and react elements like
+     * this will work only for strings, and react elements like
      * <>
      *   <span>some text</span>
      *   <Icon />
@@ -237,15 +316,30 @@ const AllAuctions = (allAuctions: any[]) => {
     [searchValue],
   )
 
-  const { prepareRow, rows, setAllFilters, setFilter, setGlobalFilter, state } = useTable(
+  const {
+    canNextPage,
+    canPreviousPage,
+    nextPage,
+    page,
+    prepareRow,
+    previousPage,
+    rows,
+    setAllFilters,
+    setFilter,
+    setGlobalFilter,
+    setPageSize,
+    state,
+  } = useTable(
     {
       columns,
       data,
       filterTypes,
       globalFilter,
+      initialState: { pageIndex: 0, pageSize: 5 },
     },
     useGlobalFilter,
     useFilters,
+    usePagination,
   )
 
   const updateFilter = (column?: string | undefined, value?: string | undefined) => {
@@ -298,80 +392,119 @@ const AllAuctions = (allAuctions: any[]) => {
     },
   ]
 
+  const { pageIndex, pageSize } = state
+
   return (
-    <>
+    <Wrapper {...restProps}>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
-      <TableControls>
-        <SearchWrapper>
-          <Magnifier />
-          <SearchInput
-            onChange={(e) => {
-              setGlobalFilter(e.target.value)
-            }}
-            placeholder={`Search by auction Id, selling token, buying token, date…`}
-            value={state.globalFilter || ''}
-          />
-          <DeleteSearchTerm
-            disabled={!state.globalFilter}
-            onClick={() => {
-              setGlobalFilter(undefined)
-            }}
-          >
-            <Delete />
-          </DeleteSearchTerm>
-        </SearchWrapper>
-        <Dropdown
-          activeItemHighlight={false}
-          dropdownButtonContent={
-            <ButtonSelect
-              content={
-                <span>
-                  {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
-                </span>
+      {isLoading ? (
+        <InlineLoading message="Loading..." size={SpinnerSize.small} />
+      ) : tableData.length === 0 ? (
+        <EmptyContentWrapper>
+          <InfoIcon />
+          <EmptyContentText>No auctions.</EmptyContentText>
+        </EmptyContentWrapper>
+      ) : (
+        <>
+          <TableControls>
+            <SearchWrapper>
+              <Magnifier />
+              <SearchInput
+                onChange={(e) => {
+                  setGlobalFilter(e.target.value)
+                }}
+                placeholder={`Search by auction Id, selling token, buying token, date…`}
+                value={state.globalFilter || ''}
+              />
+              <DeleteSearchTerm
+                disabled={!state.globalFilter}
+                onClick={() => {
+                  setGlobalFilter(undefined)
+                }}
+              >
+                <Delete />
+              </DeleteSearchTerm>
+            </SearchWrapper>
+            <Dropdown
+              activeItemHighlight={false}
+              dropdownButtonContent={
+                <ButtonSelect
+                  content={
+                    <span>
+                      {!currentDropdownFilter ? filterOptions[0].title : currentDropdownFilter}
+                    </span>
+                  }
+                />
               }
+              dropdownPosition={DropdownPosition.right}
+              items={filterOptions.map((item, index) => (
+                <DropdownItem
+                  key={index}
+                  onClick={() => {
+                    item.onClick(item.column, item.value)
+                    setCurrentDropdownFilter(item.title)
+                  }}
+                >
+                  {item.title}
+                </DropdownItem>
+              ))}
             />
-          }
-          dropdownPosition={DropdownPosition.right}
-          items={filterOptions.map((item, index) => (
-            <DropdownItem
-              key={index}
-              onClick={() => {
-                item.onClick(item.column, item.value)
-                setCurrentDropdownFilter(item.title)
-              }}
-            >
-              {item.title}
-            </DropdownItem>
-          ))}
-        />
-      </TableControls>
-      <Wrapper>
-        {rows.map((row, i) => {
-          prepareRow(row)
-          return (
-            <RowLink
-              columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
-              key={i}
-              to={row.original['url'] ? row.original['url'] : '#'}
-            >
-              {row.cells.map(
-                (cell, j) =>
-                  cell.render('show') && (
-                    <Cell key={j}>
-                      <KeyValueStyled
-                        align={cell.render('align')}
-                        itemKey={cell.render('Header')}
-                        itemValue={cell.render('Cell')}
-                        style={cell.render('style')}
-                      />
-                    </Cell>
-                  ),
-              )}
-            </RowLink>
-          )
-        })}
-      </Wrapper>
-    </>
+          </TableControls>
+          <Table>
+            {page.map((row, i) => {
+              prepareRow(row)
+              return (
+                <RowLink
+                  columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
+                  key={i}
+                  to={row.original['url'] ? row.original['url'] : '#'}
+                >
+                  {row.cells.map(
+                    (cell, j) =>
+                      cell.render('show') && (
+                        <Cell key={j}>
+                          <KeyValueStyled
+                            align={cell.render('align')}
+                            itemKey={cell.render('Header')}
+                            itemValue={cell.render('Cell')}
+                            style={cell.render('style')}
+                          />
+                        </Cell>
+                      ),
+                  )}
+                </RowLink>
+              )
+            })}
+            <Pagination>
+              <PaginationText>Items per page</PaginationText>{' '}
+              <PagesSelect
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value))
+                }}
+                value={pageSize}
+              >
+                {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    {pageSize}
+                  </option>
+                ))}
+              </PagesSelect>
+              <PaginationBreak>|</PaginationBreak>
+              <PaginationText>
+                {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} - {(pageIndex + 1) * pageSize}{' '}
+                of {rows.length} transactions
+              </PaginationText>{' '}
+              <PaginationButton disabled={!canPreviousPage} onClick={() => previousPage()}>
+                <ChevronLeft />
+              </PaginationButton>
+              <PaginationButton disabled={!canNextPage} onClick={() => nextPage()}>
+                <ChevronRight />
+              </PaginationButton>
+            </Pagination>
+          </Table>
+        </>
+      )}
+    </Wrapper>
   )
 }
 
