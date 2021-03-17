@@ -25,6 +25,10 @@ const Chevron = styled(ChevronRightBig)`
 
 const Featured = styled(FeaturedAuctions)`
   margin-top: 40px;
+
+  .featuredAutionsTitle {
+    margin-bottom: 25px;
+  }
 `
 
 const Overview = () => {

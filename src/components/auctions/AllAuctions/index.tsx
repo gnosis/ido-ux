@@ -197,6 +197,15 @@ const AllAuctions = (allAuctions: any[]) => {
   const searchValue = React.useCallback((element: any, filterValue: string) => {
     const isReactElement = element && element.props && element.props.children
     const isString = !isReactElement && typeof element === 'string'
+    /**
+     * this will work only for strings and react elements like
+     * <>
+     *   <span>some text</span>
+     *   <Icon />
+     * </>
+     *
+     * maybe make it better in the future?
+     */
     const value = isReactElement
       ? element.props.children[0].props.children
       : isString
