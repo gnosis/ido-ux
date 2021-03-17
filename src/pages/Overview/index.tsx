@@ -16,6 +16,7 @@ import {
   EmptyContentWrapper,
 } from '../../components/pureStyledComponents/EmptyContent'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { getChainName } from '../../utils/tools'
 
 const Chevron = styled(ChevronRightBig)`
@@ -26,7 +27,7 @@ const Chevron = styled(ChevronRightBig)`
 const Featured = styled(FeaturedAuctions)`
   margin-top: 40px;
 
-  .featuredAutionsTitle {
+  .featuredAuctionsTitle {
     margin-bottom: 25px;
   }
 `
@@ -35,6 +36,8 @@ const Overview = () => {
   const allAuctions = useAllAuctionInfo()
   const tableData = []
   const mockedParticipation = 'yes'
+
+  useSetNoDefaultNetworkId()
 
   allAuctions?.forEach((item) => {
     tableData.push({

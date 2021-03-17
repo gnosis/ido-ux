@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { useOrderActionHandlers } from '../../../state/orders/hooks'
-import { OrderDisplay, OrderStatus } from '../../../state/orders/reducer'
+import { useCurrentUserOrders, useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
+import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
@@ -42,22 +42,21 @@ const ButtonWrapper = styled.div`
   justify-content: flex-end;
 `
 
-const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
-  const { orders } = props
+const OrderTable: React.FC = () => {
+  const orders: OrderState | undefined = useOrderState()
   const { biddingToken, orderCancellationEndDate } = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
 
-  // modal and loading
+  useCurrentUserOrders()
+
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
 
-  // txn values
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
 
-  // reset modal state when closed
   const resetModal = useCallback(() => {
     setPendingConfirmation(true)
     setAttemptingTxn(false)
@@ -98,7 +97,7 @@ const OrderTable: React.FC<{ orders: OrderDisplay[] }> = (props) => {
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < orderCancellationEndDate
-  const ordersEmpty = !orders || orders.length == 0
+  const ordersEmpty = !orders.orders || orders.orders.length == 0
 
   return (
     <>

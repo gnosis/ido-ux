@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
 import { additionalServiceApi } from '../../api'
 import { OrderBookData, PricePoint } from '../../api/AdditionalServicesApi'
-import { useActiveWeb3React } from '../../hooks'
 import { useSwapState } from '../orderPlacement/hooks'
 import {
   appendBid,
@@ -75,31 +74,31 @@ export function useOrderbookActionHandlers(): {
   }
 }
 export function useOrderbookDataCallback() {
-  const { chainId } = useActiveWeb3React()
-  const { auctionId } = useSwapState()
-  const [isFetchingDone, setFetchingDone] = useState<boolean>()
-  const { shouldLoad } = useOrderbookState()
+  const { auctionId, chainId } = useSwapState()
   const { onResetOrderbookData } = useOrderbookActionHandlers()
   useEffect(() => {
+    let cancelled = false
     async function fetchData() {
       try {
-        if (chainId == undefined || !auctionId) {
+        if (!chainId || !auctionId) {
           return
         }
         const rawData = await additionalServiceApi.getOrderBookData({
           networkId: chainId,
           auctionId,
         })
-        onResetOrderbookData(rawData, null)
-        setFetchingDone(true)
+        if (!cancelled) {
+          onResetOrderbookData(rawData, null)
+        }
       } catch (error) {
-        if (isFetchingDone) return
         console.error('Error populating orderbook with data', error)
         onResetOrderbookData({ bids: [], asks: [] }, null)
+        if (cancelled) return
       }
     }
-    if (shouldLoad && !isFetchingDone) {
-      fetchData()
+    fetchData()
+    return (): void => {
+      cancelled = true
     }
-  }, [chainId, auctionId, shouldLoad, onResetOrderbookData, setFetchingDone, isFetchingDone])
+  }, [chainId, auctionId, onResetOrderbookData])
 }

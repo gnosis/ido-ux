@@ -20,8 +20,8 @@ export const useClearingPriceInfo = (): Maybe<ClearingPriceAndVolumeData> => {
 
     const fetchApiData = async () => {
       try {
-        if (!chainId || !additionalServiceApi) {
-          throw new Error('missing dependencies in useClearingPriceInfo callback')
+        if (!chainId || !auctionId || !additionalServiceApi) {
+          return
         }
         const clearingOrderAndVolume = await additionalServiceApi.getClearingPriceOrderAndVolume({
           networkId: chainId,
