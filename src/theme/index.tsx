@@ -167,6 +167,19 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     xxl: '1280px',
     xxxl: '1366px',
   },
+  modal: {
+    overlay: {
+      backgroundColor: darkMode ? 'rgba(0, 20, 41, 0.8)' : 'rgba(0, 20, 41, 0.8)',
+    },
+    body: {
+      backgroundColor: darkMode ? '#001429' : '#F7F8FA',
+      borderColor: `${darkMode ? '#174172' : '#174172'}`,
+      borderRadius: '12px ',
+      boxShadow: darkMode ? '0 0 24px 0 #002249' : '0 0 24px 0 #002249',
+      paddingHorizontal: '30px',
+      paddingVertical: '20px',
+    },
+  },
 })
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {

@@ -20,94 +20,21 @@ import Modal from '../Modal'
 import Option from './Option'
 import PendingView from './PendingView'
 
-const CloseIcon = styled.div`
-  position: absolute;
-  right: 1rem;
-  top: 14px;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-`
+const CloseIcon = styled.div``
 
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.text4};
-  }
-`
+const CloseColor = styled(Close)``
 
-const Wrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  margin: 0;
-  padding: 0;
-  width: 100%;
-`
+const HeaderRow = styled.div``
 
-const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-`
+const ContentWrapper = styled.div``
 
-const ContentWrapper = styled.div`
-  background-color: ${({ theme }) => theme.bg2};
-  padding: 2rem;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+const UpperSection = styled.div``
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
-`
+const Blurb = styled.div``
 
-const UpperSection = styled.div`
-  position: relative;
+const OptionGrid = styled.div``
 
-  h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  h5:last-child {
-    margin-bottom: 0px;
-  }
-
-  h4 {
-    margin-top: 0;
-    font-weight: 500;
-  }
-`
-
-const Blurb = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin: 1rem;
-    font-size: 12px;
-  `};
-`
-
-const OptionGrid = styled.div`
-  display: grid;
-  grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
-`
-
-const HoverText = styled.div`
-  :hover {
-    cursor: pointer;
-  }
-`
+const HoverText = styled.div``
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
@@ -116,39 +43,28 @@ const WALLET_VIEWS = {
   PENDING: 'pending',
 }
 
-export default function WalletModal({
-  ENSName,
-  confirmedTransactions,
-  pendingTransactions,
-}: {
-  pendingTransactions: string[] // hashes of pending
-  confirmedTransactions: string[] // hashes of confirmed
+interface Props {
   ENSName?: string
-}) {
-  // important that these are destructed from the account-specific web3-react context
+  confirmedTransactions: string[]
+  pendingTransactions: string[]
+}
+
+const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingTransactions }) => {
   const { account, activate, active, connector, error } = useWeb3React()
-
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-
   const [pendingWallet, setPendingWallet] = useState()
-
   const [pendingError, setPendingError] = useState<boolean>()
-
   const walletModalOpen = useWalletModalOpen()
   const toggleWalletModal = useWalletModalToggle()
-
   const previousAccount = usePrevious(account)
-
   const { errorWrongNetwork } = useNetworkCheck()
 
-  // close on connection, when logged out before
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
       toggleWalletModal()
     }
   }, [account, previousAccount, toggleWalletModal, walletModalOpen])
 
-  // always reset to account view
   useEffect(() => {
     if (walletModalOpen) {
       setPendingError(false)
@@ -156,12 +72,10 @@ export default function WalletModal({
     }
   }, [walletModalOpen])
 
-  // set up uri listener for walletconnect
   const [uri, setUri] = useState()
   useEffect(() => {
     const activateWC = (uri) => {
       setUri(uri)
-      // setWalletView(WALLET_VIEWS.PENDING)
     }
     walletconnect.on(URI_AVAILABLE, activateWC)
     return () => {
@@ -169,9 +83,9 @@ export default function WalletModal({
     }
   }, [])
 
-  // close modal when a connection is successful
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
+
   useEffect(() => {
     if (
       walletModalOpen &&
@@ -199,13 +113,12 @@ export default function WalletModal({
       }
       return true
     })
-    // log selected wallet
     ReactGA.event({
       category: 'Wallet',
       action: 'Change Wallet',
       label: name,
     })
-    setPendingWallet(connector) // set wallet for pending view
+    setPendingWallet(connector)
     setWalletView(WALLET_VIEWS.PENDING)
     activate(connector, undefined, true).catch((error) => {
       if (error instanceof UnsupportedChainIdError) {
@@ -216,21 +129,18 @@ export default function WalletModal({
     })
   }
 
-  // close wallet modal if fortmatic modal is active
   useEffect(() => {
     fortmatic.on(OVERLAY_READY, () => {
       toggleWalletModal()
     })
   }, [toggleWalletModal])
 
-  // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
-      // check for mobile options
+
       if (isMobile) {
-        //disable portis on mobile for now
         if (option.connector === portis) {
           return null
         }
@@ -255,9 +165,7 @@ export default function WalletModal({
         return null
       }
 
-      // overwrite injected when needed
       if (option.connector === injected) {
-        // don't show injected if there's no injected provider
         if (!(window.web3 || window.ethereum)) {
           if (option.name === 'MetaMask') {
             return (
@@ -274,18 +182,13 @@ export default function WalletModal({
           } else {
             return null //dont want to return install twice
           }
-        }
-        // don't return metamask if injected provider isn't metamask
-        else if (option.name === 'MetaMask' && !isMetamask) {
+        } else if (option.name === 'MetaMask' && !isMetamask) {
           return null
-        }
-        // likewise for generic
-        else if (option.name === 'Injected' && isMetamask) {
+        } else if (option.name === 'Injected' && isMetamask) {
           return null
         }
       }
 
-      // return rest of options
       return (
         !isMobile &&
         !option.mobileOnly && (
@@ -301,7 +204,7 @@ export default function WalletModal({
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
                 : !option.href && tryActivation(option.connector)
-            }} //use option.descriptio to bring back multi-line
+            }} //use option.description to bring back multi-line
             subheader={null}
           />
         )
@@ -309,7 +212,7 @@ export default function WalletModal({
     })
   }
 
-  function getModalContent() {
+  const getModalContent = () => {
     if (error || errorWrongNetwork) {
       return (
         <UpperSection>
@@ -393,8 +296,10 @@ export default function WalletModal({
   }
 
   return (
-    <Modal isOpen={walletModalOpen} maxHeight={90} minHeight={null} onDismiss={toggleWalletModal}>
-      <Wrapper>{getModalContent()}</Wrapper>
+    <Modal isOpen={walletModalOpen} minHeight={null} onDismiss={toggleWalletModal}>
+      {getModalContent()}
     </Modal>
   )
 }
+
+export default WalletModal
