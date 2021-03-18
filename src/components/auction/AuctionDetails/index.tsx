@@ -54,49 +54,61 @@ const TimerWrapper = styled.div`
 
 const AuctionDetails = () => {
   const { chainId } = useSwapState()
-  const {
-    auctioningToken,
-    biddingToken,
-    clearingPrice,
-    initialAuctionOrder,
-    initialPrice,
-  } = useDerivedAuctionInfo()
+  const derivedAuctionInfo = useDerivedAuctionInfo()
   const { auctionState } = useDerivedAuctionState()
 
   const auctionTokenAddress = useMemo(
-    () => getEtherscanLink(chainId, auctioningToken?.address, 'address'),
-    [chainId, auctioningToken],
+    () => getEtherscanLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
+    [chainId, derivedAuctionInfo?.auctioningToken],
   )
 
   const biddingTokenAddress = useMemo(
-    () => getEtherscanLink(chainId, biddingToken?.address, 'address'),
-    [chainId, biddingToken],
+    () => getEtherscanLink(chainId, derivedAuctionInfo?.biddingToken?.address, 'address'),
+    [chainId, derivedAuctionInfo?.biddingToken],
   )
 
-  const clearingPriceInfo = useClearingPriceInfo()
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
+  const { clearingPriceInfo } = useClearingPriceInfo()
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
+    derivedAuctionInfo?.biddingToken,
+  ])
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
+    [derivedAuctionInfo?.auctioningToken],
+  )
 
   const clearingPriceDisplay = useMemo(() => {
     const clearingPriceInfoAsSellOrder =
       clearingPriceInfo &&
-      orderToSellOrder(clearingPriceInfo.clearingOrder, biddingToken, auctioningToken)
+      orderToSellOrder(
+        clearingPriceInfo.clearingOrder,
+        derivedAuctionInfo?.biddingToken,
+        derivedAuctionInfo?.auctioningToken,
+      )
     let clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
 
-    if (clearingPrice && auctioningToken && biddingToken) {
+    if (
+      derivedAuctionInfo?.clearingPrice &&
+      derivedAuctionInfo?.auctioningToken &&
+      derivedAuctionInfo?.biddingToken
+    ) {
       clearingPriceNumber = normalizePrice(
-        auctioningToken,
-        biddingToken,
-        clearingPrice,
+        derivedAuctionInfo?.auctioningToken,
+        derivedAuctionInfo?.biddingToken,
+        derivedAuctionInfo?.clearingPrice,
       ).toSignificant(4)
     }
 
     return clearingPriceNumber
-      ? `${clearingPriceNumber} ${getTokenDisplay(biddingToken)}/${getTokenDisplay(
-          auctioningToken,
-        )}`
+      ? `${clearingPriceNumber} ${getTokenDisplay(
+          derivedAuctionInfo?.biddingToken,
+        )}/${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}`
       : '-'
-  }, [auctioningToken, biddingToken, clearingPrice, clearingPriceInfo])
+  }, [
+    derivedAuctionInfo?.auctioningToken,
+    derivedAuctionInfo?.biddingToken,
+    derivedAuctionInfo?.clearingPrice,
+    clearingPriceInfo,
+  ])
 
   const titlePrice = useMemo(
     () =>
@@ -110,12 +122,20 @@ const AuctionDetails = () => {
   )
 
   const initialPriceToDisplay = useMemo(() => {
-    if (initialPrice && auctioningToken && biddingToken) {
-      return normalizePrice(auctioningToken, biddingToken, initialPrice)
+    if (
+      derivedAuctionInfo?.initialPrice &&
+      derivedAuctionInfo?.auctioningToken &&
+      derivedAuctionInfo?.biddingToken
+    ) {
+      return normalizePrice(
+        derivedAuctionInfo?.auctioningToken,
+        derivedAuctionInfo?.biddingToken,
+        derivedAuctionInfo?.initialPrice,
+      )
     } else {
-      return initialPrice
+      return derivedAuctionInfo?.initialPrice
     }
-  }, [initialPrice, auctioningToken, biddingToken])
+  }, [derivedAuctionInfo])
 
   return (
     <Wrapper noPadding>
@@ -142,11 +162,14 @@ const AuctionDetails = () => {
           </>
         }
         itemValue={
-          biddingToken ? (
+          derivedAuctionInfo?.biddingToken ? (
             <>
               <TokenLogo
                 size={'20px'}
-                token={{ address: biddingToken.address, symbol: biddingToken.symbol }}
+                token={{
+                  address: derivedAuctionInfo?.biddingToken.address,
+                  symbol: derivedAuctionInfo?.biddingToken.symbol,
+                }}
               />
               <span>{biddingTokenDisplay}</span>
               <ExternalLink href={biddingTokenAddress} />
@@ -167,13 +190,16 @@ const AuctionDetails = () => {
           </>
         }
         itemValue={
-          auctioningToken && initialAuctionOrder ? (
+          derivedAuctionInfo?.auctioningToken && derivedAuctionInfo?.initialAuctionOrder ? (
             <>
               <TokenLogo
                 size={'20px'}
-                token={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}
+                token={{
+                  address: derivedAuctionInfo?.auctioningToken.address,
+                  symbol: derivedAuctionInfo?.auctioningToken.symbol,
+                }}
               />
-              <span>{`${initialAuctionOrder?.sellAmount.toSignificant(
+              <span>{`${derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(
                 2,
               )} ${auctioningTokenDisplay}`}</span>
               <ExternalLink href={auctionTokenAddress} />

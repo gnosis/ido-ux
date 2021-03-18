@@ -65,7 +65,7 @@ const Claimer: React.FC = () => {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const { auctionId } = useSwapState()
-  const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
+  const derivedAuctionInfo = useDerivedAuctionInfo()
   const { error } = useDerivedClaimInfo(auctionId)
 
   const isValid = !error
@@ -89,19 +89,27 @@ const Claimer: React.FC = () => {
   }
 
   const pendingText = `Claiming Funds`
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
+    derivedAuctionInfo,
+  ])
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
+    [derivedAuctionInfo],
+  )
 
   return (
     <Wrapper>
       <TokensWrapper>
         <TokenItem>
           <Token>
-            {biddingToken && biddingTokenDisplay ? (
+            {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
               <>
                 <TokenLogo
                   size={'34px'}
-                  token={{ address: biddingToken.address, symbol: biddingTokenDisplay }}
+                  token={{
+                    address: derivedAuctionInfo?.biddingToken.address,
+                    symbol: biddingTokenDisplay,
+                  }}
                 />
                 <Text>{biddingTokenDisplay}</Text>
               </>
@@ -115,11 +123,14 @@ const Claimer: React.FC = () => {
         </TokenItem>
         <TokenItem>
           <Token>
-            {auctioningToken && auctioningTokenDisplay ? (
+            {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
               <>
                 <TokenLogo
                   size={'34px'}
-                  token={{ address: auctioningToken.address, symbol: auctioningTokenDisplay }}
+                  token={{
+                    address: derivedAuctionInfo?.auctioningToken.address,
+                    symbol: auctioningTokenDisplay,
+                  }}
                 />
                 <Text>{auctioningTokenDisplay}</Text>
               </>

@@ -21,13 +21,17 @@ export interface AuctionInfoDetail {
   exactOrder: string
 }
 
-export const useAuctionDetails = (): Maybe<AuctionInfoDetail> => {
+export const useAuctionDetails = (): {
+  auctionDetails: Maybe<AuctionInfoDetail>
+  auctionInfoLoading: boolean
+} => {
   const { auctionId, chainId } = useSwapState()
   const [auctionInfo, setAuctionInfo] = useState<Maybe<AuctionInfoDetail>>(null)
+  const [auctionInfoLoading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     let cancelled = false
-
+    setLoading(true)
     const fetchApiData = async () => {
       try {
         if (!chainId || !auctionId) {
@@ -41,10 +45,13 @@ export const useAuctionDetails = (): Maybe<AuctionInfoDetail> => {
 
         const auctionInfo = await additionalServiceApi.getAuctionDetails(params)
         if (!cancelled) {
+          setLoading(false)
+
           setAuctionInfo(auctionInfo)
         }
       } catch (error) {
         if (cancelled) return
+        setLoading(false)
         setAuctionInfo(null)
         console.error('Error getting auction details', error)
       }
@@ -56,5 +63,5 @@ export const useAuctionDetails = (): Maybe<AuctionInfoDetail> => {
     }
   }, [setAuctionInfo, auctionId, chainId])
 
-  return auctionInfo
+  return { auctionDetails: auctionInfo, auctionInfoLoading }
 }

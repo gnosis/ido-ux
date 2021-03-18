@@ -150,17 +150,19 @@ const formatSeconds = (seconds: number): React.ReactNode => {
 
 export const AuctionTimer = () => {
   const { auctionState, loading } = useDerivedAuctionState()
-  const { auctionEndDate, auctionStartDate } = useDerivedAuctionInfo()
-  const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(auctionEndDate))
+  const derivedAuctionInfo = useDerivedAuctionInfo()
+  const [timeLeft, setTimeLeft] = React.useState(
+    calculateTimeLeft(derivedAuctionInfo?.auctionEndDate),
+  )
 
   React.useEffect(() => {
     const id = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(auctionEndDate))
+      setTimeLeft(calculateTimeLeft(derivedAuctionInfo?.auctionEndDate))
     }, 1000)
     return () => {
       clearInterval(id)
     }
-  }, [auctionEndDate])
+  }, [derivedAuctionInfo?.auctionEndDate])
 
   const auctionStateTitle = React.useMemo(() => {
     if (auctionState === AuctionState.PRICE_SUBMISSION) {
@@ -179,10 +181,13 @@ export const AuctionTimer = () => {
   }, [auctionState])
 
   const progress = React.useMemo(() => {
-    const progress = calculateTimeProgress(auctionStartDate, auctionEndDate)
+    const progress = calculateTimeProgress(
+      derivedAuctionInfo?.auctionStartDate,
+      derivedAuctionInfo?.auctionEndDate,
+    )
     // we do this so that the graph is in the same direction as a clock
     return `${100 - progress}%`
-  }, [auctionStartDate, auctionEndDate])
+  }, [derivedAuctionInfo])
 
   return (
     <Wrapper progress={progress}>
