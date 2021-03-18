@@ -10,8 +10,8 @@ export enum DropdownPosition {
 }
 
 export enum DropdownDirection {
-  downwards,
-  upwards,
+  downwards = 'down',
+  upwards = 'up',
 }
 
 const Wrapper = styled.div<{ isOpen: boolean; disabled: boolean }>`
@@ -64,7 +64,7 @@ const Items = styled(BaseCard)<{
   isOpen: boolean
 }>`
   background: ${({ theme }) => theme.dropdown.background};
-  border-radius: 1px solid ${({ theme }) => theme.dropdown.borderRadius};
+  border-radius: ${({ theme }) => theme.dropdown.borderRadius};
   border: 1px solid ${({ theme }) => theme.dropdown.border};
   box-shadow: ${({ theme }) => theme.dropdown.boxShadow};
   display: ${(props) => (props.isOpen ? 'block' : 'none')};

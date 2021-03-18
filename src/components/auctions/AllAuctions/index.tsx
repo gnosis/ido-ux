@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
-import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
+import { Dropdown, DropdownDirection, DropdownItem, DropdownPosition } from '../../common/Dropdown'
 import { InlineLoading } from '../../common/InlineLoading'
 import { KeyValue } from '../../common/KeyValue'
 import { SpinnerSize } from '../../common/Spinner'
@@ -174,16 +174,35 @@ const ChevronLeft = styled(ChevronRight)`
   transform: rotateZ(180deg);
 `
 
-const PagesSelect = styled.select`
-  border: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  -ms-appearance: none;
-`
-
 const Loading = styled(InlineLoading)`
   min-height: 290px;
+`
+
+const DropdownPagination = styled(Dropdown)`
+  .dropdownItems {
+    min-width: 70px;
+  }
+`
+
+const PaginationDropdownButton = styled.div`
+  ${PaginationTextCSS}
+  cursor: pointer;
+`
+
+const PaginationItem = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  font-weight: 400;
+  height: 32px;
+  line-height: 1.2;
+  padding: 0 10px;
+
+  &:hover {
+    background-color: ${(props) => props.theme.dropdown.item.backgroundColorHover};
+  }
 `
 
 interface Props {
@@ -426,7 +445,6 @@ const AllAuctions: React.FC<Props> = (props) => {
           </DeleteSearchTerm>
         </SearchWrapper>
         <Dropdown
-          activeItemHighlight={false}
           disabled={noData || isLoading}
           dropdownButtonContent={
             <ButtonSelect
@@ -437,6 +455,7 @@ const AllAuctions: React.FC<Props> = (props) => {
               }
             />
           }
+          dropdownDirection={DropdownDirection.upwards}
           dropdownPosition={DropdownPosition.right}
           items={filterOptions.map((item, index) => (
             <DropdownItem
@@ -487,21 +506,29 @@ const AllAuctions: React.FC<Props> = (props) => {
             })}
             <Pagination>
               <PaginationText>Items per page</PaginationText>{' '}
-              <PagesSelect
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value))
-                }}
-                value={pageSize}
-              >
-                {[5, 10, 20, 30, 40, 50].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
+              <DropdownPagination
+                disabled={noData || isLoading}
+                dropdownButtonContent={
+                  <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
+                }
+                dropdownPosition={DropdownPosition.right}
+                items={[5, 10, 20, 30].map((pageSize) => (
+                  <PaginationItem
+                    key={pageSize}
+                    onClick={() => {
+                      setPageSize(Number(pageSize))
+                    }}
+                  >
                     {pageSize}
-                  </option>
+                  </PaginationItem>
                 ))}
-              </PagesSelect>
+              />
               <PaginationBreak>|</PaginationBreak>
               <PaginationText>
-                {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} - {(pageIndex + 1) * pageSize}{' '}
+                {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
+                {rows.length < (pageIndex + 1) * pageSize
+                  ? rows.length
+                  : (pageIndex + 1) * pageSize}{' '}
                 of {rows.length} auctions
               </PaginationText>{' '}
               <PaginationButton disabled={!canPreviousPage} onClick={() => previousPage()}>
