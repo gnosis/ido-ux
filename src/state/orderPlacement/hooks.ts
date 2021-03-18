@@ -67,7 +67,7 @@ export function orderToPrice(order: SellOrder | null | undefined): Fraction | un
   ) {
     return undefined
   } else {
-    return new Fraction(order.sellAmount.raw.toString(), order.buyAmount.raw.toString())
+    return new Fraction(order.sellAmount.toSignificant(60), order.buyAmount.toSignificant(60))
   }
 }
 
@@ -337,8 +337,8 @@ export function useDerivedAuctionInfo(): Maybe<DerivedAuctionInfo> {
     initialPrice = undefined
   } else {
     initialPrice = new Fraction(
-      initialAuctionOrder?.buyAmount?.raw.toString(),
-      initialAuctionOrder?.sellAmount?.raw.toString(),
+      initialAuctionOrder?.buyAmount?.toSignificant(60),
+      initialAuctionOrder?.sellAmount?.toSignificant(60),
     )
   }
   return {
