@@ -67,7 +67,14 @@ export function orderToPrice(order: SellOrder | null | undefined): Fraction | un
   ) {
     return undefined
   } else {
-    return new Fraction(order.sellAmount.toSignificant(60), order.buyAmount.toSignificant(60))
+    return new Fraction(
+      BigNumber.from(order.sellAmount.raw.toString())
+        .mul(BigNumber.from('10').pow(order.buyAmount.token.decimals))
+        .toString(),
+      BigNumber.from(order.buyAmount.raw.toString())
+        .mul(BigNumber.from('10').pow(order.sellAmount.token.decimals))
+        .toString(),
+    )
   }
 }
 
@@ -337,8 +344,12 @@ export function useDerivedAuctionInfo(): Maybe<DerivedAuctionInfo> {
     initialPrice = undefined
   } else {
     initialPrice = new Fraction(
-      initialAuctionOrder?.buyAmount?.toSignificant(60),
-      initialAuctionOrder?.sellAmount?.toSignificant(60),
+      BigNumber.from(initialAuctionOrder?.buyAmount?.raw.toString())
+        .mul(BigNumber.from('10').pow(initialAuctionOrder?.sellAmount?.token.decimals))
+        .toString(),
+      BigNumber.from(initialAuctionOrder?.sellAmount?.raw.toString())
+        .mul(BigNumber.from('10').pow(initialAuctionOrder?.buyAmount?.token.decimals))
+        .toString(),
     )
   }
   return {
