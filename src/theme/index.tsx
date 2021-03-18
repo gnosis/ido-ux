@@ -115,8 +115,9 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     boxShadow: '0 0 24px 0 #002249',
     item: {
       backgroundColor: 'transparent',
-      backgroundColorActive: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)',
-      backgroundColorHover: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+      backgroundColorActive: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)',
+      backgroundColorHover: darkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.1)',
+      borderColor: darkMode ? '#174172' : '#174172',
       color: darkMode ? '#fff' : '#000',
       colorActive: darkMode ? '#fff' : '#000',
       height: '37px',

@@ -132,6 +132,7 @@ const PaginationTextCSS = css`
 
 const PaginationText = styled.span`
   ${PaginationTextCSS}
+  margin-right: 8px;
 `
 
 const PaginationBreak = styled.span`
@@ -141,14 +142,16 @@ const PaginationBreak = styled.span`
 
 const PaginationButton = styled.button`
   align-items: center;
+  background: none;
   border: none;
   cursor: pointer;
   display: flex;
+  justify-content: center;
   height: 35px;
   outline: none;
   padding: 0;
   user-select: none;
-  width: 35px;
+  width: 25px;
 
   &:hover {
     .fill {
@@ -168,7 +171,7 @@ const PaginationButton = styled.button`
 `
 
 const ChevronLeft = styled(ChevronRight)`
-  transform: translateZ(90deg);
+  transform: rotateZ(180deg);
 `
 
 const PagesSelect = styled.select`
@@ -499,7 +502,7 @@ const AllAuctions: React.FC<Props> = (props) => {
               <PaginationBreak>|</PaginationBreak>
               <PaginationText>
                 {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} - {(pageIndex + 1) * pageSize}{' '}
-                of {rows.length} transactions
+                of {rows.length} auctions
               </PaginationText>{' '}
               <PaginationButton disabled={!canPreviousPage} onClick={() => previousPage()}>
                 <ChevronLeft />
