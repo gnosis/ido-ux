@@ -19,6 +19,7 @@ export interface AuctionInfoDetail {
   minimumBiddingAmountPerOrder: string
   orderCancellationEndDate: number | undefined
   exactOrder: string
+  isPrivateAuction: boolean
 }
 
 export const useAuctionDetails = (): {

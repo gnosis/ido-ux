@@ -18,6 +18,7 @@ import { additionalServiceApi } from './../api'
 import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
+import { useSignature } from './useSignature'
 
 export const queueStartElement =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -35,6 +36,8 @@ export function usePlaceOrderCallback(
   const { auctionId, price, sellAmount } = useSwapState()
   const { onNewBid } = useOrderbookActionHandlers()
 
+  const { loading, signature } = useSignature()
+
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
@@ -46,10 +49,9 @@ export function usePlaceOrderCallback(
     let previousOrder: string
 
     return async function onPlaceOrder() {
-      if (!chainId || !library || !account || !userId) {
+      if (!chainId || !library || !account || !userId || loading) {
         throw new Error('missing dependencies in onPlaceOrder callback')
       }
-
       const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
         auctioningToken,
         biddingToken,
@@ -91,7 +93,7 @@ export function usePlaceOrderCallback(
           [buyAmountScaled.toString()],
           [sellAmountScaled.toString()],
           [previousOrder],
-          '0x', // Depending on the allowList interface, different bytes values need to be sent
+          signature ? signature : '0x',
         ]
         value = null
       }
@@ -155,5 +157,7 @@ export function usePlaceOrderCallback(
     sellAmount,
     onNewOrder,
     onNewBid,
+    signature,
+    loading,
   ])
 }
