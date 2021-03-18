@@ -201,7 +201,6 @@ const OrderPlacement: React.FC = () => {
       setShowWarning(true)
     }
   }
-  console.log(auctionInfo?.auctionDetails?.isPrivateAuction)
   if (loading) {
     return (
       <Wrapper id="chartdiv">
