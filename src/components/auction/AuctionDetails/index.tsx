@@ -112,8 +112,10 @@ const AuctionDetails = () => {
 
   const titlePrice = useMemo(
     () =>
-      auctionState === AuctionState.ORDER_PLACING ||
-      auctionState === AuctionState.ORDER_PLACING_AND_CANCELING
+      !auctionState
+        ? 'Loading...'
+        : auctionState === AuctionState.ORDER_PLACING ||
+          auctionState === AuctionState.ORDER_PLACING_AND_CANCELING
         ? 'Current price'
         : auctionState === AuctionState.PRICE_SUBMISSION
         ? 'Clearing price'
@@ -146,7 +148,7 @@ const AuctionDetails = () => {
             <Tooltip
               id="auctionPrice"
               text={
-                '"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled'
+                "This will be the auction's Closing Price if no more bids are submitted or canceled, OR it will be the auction's Clearing Price if the auction concludes without additional bids."
               }
             />
           </>
@@ -158,7 +160,10 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Bidding with</span>
-            <Tooltip id="biddingWith" text={'Bidding with tooltip'} />
+            <Tooltip
+              id="biddingWith"
+              text={'This is the token that is accepted for bidding in the auction.'}
+            />
           </>
         }
         itemValue={
@@ -186,7 +191,10 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Total auctioned</span>
-            <Tooltip id="totalAuctioned" text={'Total auctioned tooltip'} />
+            <Tooltip
+              id="totalAuctioned"
+              text={'Total amount of tokens available to be bought in the auction.'}
+            />
           </>
         }
         itemValue={
@@ -215,7 +223,10 @@ const AuctionDetails = () => {
         itemKey={
           <>
             <span>Min Sell Price</span>
-            <Tooltip id="minSellPrice" text={'Min Sell Price tooltip'} />
+            <Tooltip
+              id="minSellPrice"
+              text={'Minimum bidding price the auctioneer defined for participation.'}
+            />
           </>
         }
         itemValue={
