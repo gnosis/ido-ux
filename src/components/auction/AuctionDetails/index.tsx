@@ -11,7 +11,6 @@ import {
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
-import { normalizePrice } from '../../../utils/tools'
 import { KeyValue } from '../../common/KeyValue'
 import TokenLogo from '../../common/TokenLogo'
 import { Tooltip } from '../../common/Tooltip'
