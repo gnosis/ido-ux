@@ -44,8 +44,8 @@ const ButtonWrapper = styled.div`
 
 const OrderTable: React.FC = () => {
   const orders: OrderState | undefined = useOrderState()
-  const { biddingToken, orderCancellationEndDate } = useDerivedAuctionInfo()
-  const cancelOrderCallback = useCancelOrderCallback(biddingToken)
+  const derivedAuctionInfo = useDerivedAuctionInfo()
+  const cancelOrderCallback = useCancelOrderCallback(derivedAuctionInfo?.biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
 
   useCurrentUserOrders()
@@ -86,7 +86,7 @@ const OrderTable: React.FC = () => {
   const modalBottom = () => {
     return (
       <CancelModalFooter
-        biddingToken={biddingToken}
+        biddingToken={derivedAuctionInfo?.biddingToken}
         confirmText={'Cancel Order'}
         onCancelOrder={onCancelOrder}
         orderId={orderId}
@@ -96,7 +96,7 @@ const OrderTable: React.FC = () => {
 
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
-  const isOrderCancelationAllowed = now < orderCancellationEndDate
+  const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
   const ordersEmpty = !orders.orders || orders.orders.length == 0
 
   return (

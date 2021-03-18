@@ -71,60 +71,57 @@ export function useGetClaimInfo(): Maybe<ClaimInformation> {
 }
 export function useGetAuctionProceeds(): AuctionProceedings {
   const claimInfo = useGetClaimInfo()
-  const {
-    auctioningToken,
-    biddingToken,
-    clearingPriceOrder,
-    clearingPriceSellOrder,
-    clearingPriceVolume,
-  } = useDerivedAuctionInfo()
+  const derivedAuctionInfo = useDerivedAuctionInfo()
 
   if (
     !claimInfo ||
-    !biddingToken ||
-    !auctioningToken ||
-    !clearingPriceSellOrder ||
-    !clearingPriceOrder ||
-    !clearingPriceVolume
+    !derivedAuctionInfo?.biddingToken ||
+    !derivedAuctionInfo?.auctioningToken ||
+    !derivedAuctionInfo?.clearingPriceSellOrder ||
+    !derivedAuctionInfo?.clearingPriceOrder ||
+    !derivedAuctionInfo?.clearingPriceVolume
   ) {
     return {
       claimableBiddingToken: null,
       claimableAuctioningToken: null,
     }
   }
-  let claimableAuctioningToken = new TokenAmount(auctioningToken, '0')
-  let claimableBiddingToken = new TokenAmount(biddingToken, '0')
+  let claimableAuctioningToken = new TokenAmount(derivedAuctionInfo?.auctioningToken, '0')
+  let claimableBiddingToken = new TokenAmount(derivedAuctionInfo?.biddingToken, '0')
   for (const order of claimInfo.sellOrdersFormUser) {
     const decodedOrder = decodeOrder(order)
-    if (decodedOrder == clearingPriceOrder) {
+    if (decodedOrder == derivedAuctionInfo?.clearingPriceOrder) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(biddingToken, decodedOrder.sellAmount.sub(clearingPriceVolume).toString()),
+        new TokenAmount(
+          derivedAuctionInfo?.biddingToken,
+          decodedOrder.sellAmount.sub(derivedAuctionInfo?.clearingPriceVolume).toString(),
+        ),
       )
       claimableAuctioningToken = claimableAuctioningToken.add(
         new TokenAmount(
-          auctioningToken,
-          clearingPriceVolume
-            .mul(clearingPriceOrder.buyAmount)
-            .div(clearingPriceOrder.sellAmount)
+          derivedAuctionInfo?.auctioningToken,
+          derivedAuctionInfo?.clearingPriceVolume
+            .mul(derivedAuctionInfo?.clearingPriceOrder.buyAmount)
+            .div(derivedAuctionInfo?.clearingPriceOrder.sellAmount)
             .toString(),
         ),
       )
     } else if (
-      clearingPriceOrder.buyAmount
+      derivedAuctionInfo?.clearingPriceOrder.buyAmount
         .mul(decodedOrder.sellAmount)
-        .lt(decodedOrder.buyAmount.mul(clearingPriceOrder.sellAmount))
+        .lt(decodedOrder.buyAmount.mul(derivedAuctionInfo?.clearingPriceOrder.sellAmount))
     ) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
+        new TokenAmount(derivedAuctionInfo?.biddingToken, decodedOrder.sellAmount.toString()),
       )
     } else {
-      if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
+      if (derivedAuctionInfo?.clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
-            auctioningToken,
+            derivedAuctionInfo?.auctioningToken,
             decodedOrder.sellAmount
-              .mul(clearingPriceOrder.buyAmount)
-              .div(clearingPriceOrder.sellAmount)
+              .mul(derivedAuctionInfo?.clearingPriceOrder.buyAmount)
+              .div(derivedAuctionInfo?.clearingPriceOrder.sellAmount)
               .toString(),
           ),
         )
