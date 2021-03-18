@@ -241,32 +241,32 @@ export function useDeriveAuctioningAndBiddingToken(): {
   biddingToken: Token | undefined
 } {
   const { chainId } = useSwapState()
-  const auctionDetails = useAuctionDetails()
+  const { auctionInfo } = useAuctionDetails()
 
   const auctioningToken = useMemo(
     () =>
-      chainId == undefined || !auctionDetails
+      chainId == undefined || !auctionInfo
         ? undefined
         : new Token(
             chainId as ChainId,
-            auctionDetails.addressAuctioningToken,
-            parseInt(auctionDetails.decimalsAuctioningToken, 16),
-            auctionDetails.symbolAuctioningToken,
+            auctionInfo.addressAuctioningToken,
+            parseInt(auctionInfo.decimalsAuctioningToken, 16),
+            auctionInfo.symbolAuctioningToken,
           ),
-    [chainId, auctionDetails],
+    [chainId, auctionInfo],
   )
 
   const biddingToken = useMemo(
     () =>
-      chainId == undefined || !auctionDetails
+      chainId == undefined || !auctionInfo
         ? undefined
         : new Token(
             chainId as ChainId,
-            auctionDetails.addressBiddingToken,
-            parseInt(auctionDetails.decimalsBiddingToken, 16),
-            auctionDetails.symbolBiddingToken,
+            auctionInfo.addressBiddingToken,
+            parseInt(auctionInfo.decimalsBiddingToken, 16),
+            auctionInfo.symbolBiddingToken,
           ),
-    [chainId, auctionDetails],
+    [chainId, auctionInfo],
   )
 
   return {
@@ -295,13 +295,13 @@ export function useDerivedAuctionInfo(): {
 
   const { sellAmount } = useSwapState()
   const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken()
-  const auctionDetails = useAuctionDetails()
+  const { auctionInfo } = useAuctionDetails()
   const clearingPriceInfo = useClearingPriceInfo()
 
   const clearingPriceVolume = clearingPriceInfo?.volume
 
   const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
-    auctionDetails?.exactOrder,
+    auctionInfo?.exactOrder,
     auctioningToken,
     biddingToken,
   )
@@ -316,7 +316,7 @@ export function useDerivedAuctionInfo(): {
   )
 
   const minBiddingAmountPerOrder = BigNumber.from(
-    auctionDetails?.minimumBiddingAmountPerOrder ?? 0,
+    auctionInfo?.minimumBiddingAmountPerOrder ?? 0,
   ).toString()
 
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [biddingToken])
@@ -343,12 +343,12 @@ export function useDerivedAuctionInfo(): {
     clearingPriceOrder,
     clearingPrice,
     initialAuctionOrder,
-    auctionStartDate: auctionDetails?.startingTimestamp,
-    auctionEndDate: auctionDetails?.endTimeTimestamp,
+    auctionStartDate: auctionInfo?.startingTimestamp,
+    auctionEndDate: auctionInfo?.endTimeTimestamp,
     clearingPriceVolume,
     initialPrice,
     minBiddingAmountPerOrder,
-    orderCancellationEndDate: auctionDetails?.orderCancellationEndDate,
+    orderCancellationEndDate: auctionInfo?.orderCancellationEndDate,
   }
 }
 
@@ -359,19 +359,19 @@ export function useDerivedAuctionState(): {
   const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>(null)
   const [loading, setLoading] = useState<boolean>(true)
 
-  const auctionDetails = useAuctionDetails()
+  const { auctionInfo } = useAuctionDetails()
   const clearingPriceInfo = useClearingPriceInfo()
 
   useEffect(() => {
-    const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
+    const auctioningTokenAddress: string | undefined = auctionInfo?.addressAuctioningToken
     setLoading(true)
     if (!auctioningTokenAddress) {
       setAuctionState(AuctionState.NOT_YET_STARTED)
     } else {
       const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
 
-      const auctionEndDate = auctionDetails?.endTimeTimestamp
-      const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
+      const auctionEndDate = auctionInfo?.endTimeTimestamp
+      const orderCancellationEndDate = auctionInfo?.orderCancellationEndDate
 
       let clearingPrice: Fraction | undefined
       if (
@@ -403,7 +403,7 @@ export function useDerivedAuctionState(): {
       setAuctionState(auctionState)
     }
     setLoading(false)
-  }, [auctionDetails, clearingPriceInfo])
+  }, [auctionInfo, clearingPriceInfo])
 
   return {
     auctionState,
