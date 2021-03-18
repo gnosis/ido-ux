@@ -14,7 +14,7 @@ const Wrapper = styled(BaseCard)`
 
 export const OrderBook: React.FC = () => {
   useOrderbookDataCallback()
-  const { auctioningToken, biddingToken } = useDerivedAuctionInfo()
+  const derivedAuctionInfo = useDerivedAuctionInfo()
 
   const { asks, bids, error, userOrderPrice, userOrderVolume } = useOrderbookState()
   const processedOrderbook = useMemo(
@@ -22,10 +22,10 @@ export const OrderBook: React.FC = () => {
       processOrderbookData({
         data: { bids, asks },
         userOrder: { price: userOrderPrice, volume: userOrderVolume },
-        baseToken: auctioningToken,
-        quoteToken: biddingToken,
+        baseToken: derivedAuctionInfo?.auctioningToken,
+        quoteToken: derivedAuctionInfo?.biddingToken,
       }),
-    [bids, asks, auctioningToken, biddingToken, userOrderPrice, userOrderVolume],
+    [bids, asks, derivedAuctionInfo, userOrderPrice, userOrderVolume],
   )
 
   return (
@@ -35,9 +35,9 @@ export const OrderBook: React.FC = () => {
           <OrderBookError error={error} />
         ) : (
           <OrderBookChart
-            baseToken={auctioningToken}
+            baseToken={derivedAuctionInfo?.auctioningToken}
             data={processedOrderbook}
-            quoteToken={biddingToken}
+            quoteToken={derivedAuctionInfo?.biddingToken}
           />
         )}
       </Wrapper>

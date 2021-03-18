@@ -24,35 +24,46 @@ export interface AuctionInfoDetail {
 }
 
 export const useAuctionDetails = (): {
-  auctionInfo: Maybe<AuctionInfoDetail>
-  loading: boolean
+  auctionDetails: Maybe<AuctionInfoDetail>
+  auctionInfoLoading: boolean
 } => {
   const { auctionId, chainId = CHAIN_ID } = useSwapState()
   const [auctionInfo, setAuctionInfo] = useState<Maybe<AuctionInfoDetail>>(null)
-  const [loading, setLoading] = useState(true)
+  const [auctionInfoLoading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
+    let cancelled = false
+    setLoading(true)
     const fetchApiData = async () => {
       try {
         if (!chainId || !auctionId) {
           return
         }
-        setLoading(true)
+
         const params = {
           networkId: chainId,
           auctionId,
         }
 
         const auctionInfo = await additionalServiceApi.getAuctionDetails(params)
-        setAuctionInfo(auctionInfo)
+        if (!cancelled) {
+          setLoading(false)
+
+          setAuctionInfo(auctionInfo)
+        }
       } catch (error) {
+        if (cancelled) return
+        setLoading(false)
         setAuctionInfo(null)
         console.error('Error getting auction details', error)
       }
-      setLoading(false)
     }
     fetchApiData()
+
+    return (): void => {
+      cancelled = true
+    }
   }, [setAuctionInfo, auctionId, chainId])
 
-  return { auctionInfo, loading }
+  return { auctionDetails: auctionInfo, auctionInfoLoading }
 }

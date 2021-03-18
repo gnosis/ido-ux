@@ -16,6 +16,7 @@ import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import { About } from './About'
 import Auction from './Auction'
 import { Cookies } from './Cookies'
+import { Documentation } from './Documentation'
 import { Imprint } from './Imprint'
 import { Landing } from './Landing'
 import { Licenses } from './Licenses'
@@ -55,7 +56,25 @@ export default function App() {
                   <Route component={Licenses} exact path="/licenses" strict />
                   <Route component={About} exact path="/about" strict />
                   <Route component={Imprint} exact path="/imprint" strict />
+                  <Route component={Documentation} exact path="/docs" strict />
+                  <Route component={Documentation} exact path="/docs/batch-auctions" strict />
+                  <Route component={Documentation} exact path="/docs/use-cases" strict />
+                  <Route component={Documentation} exact path="/docs/user-flow" strict />
+                  <Route
+                    component={Documentation}
+                    exact
+                    path="/docs/participate-as-a-bidder"
+                    strict
+                  />
+                  <Route
+                    component={Documentation}
+                    exact
+                    path="/docs/participate-as-auctioneer"
+                    strict
+                  />
+                  <Route component={Documentation} exact path="/docs/faq" strict />
                   <Route component={NotAllowed} exact path="/not-allowed" strict />
+
                   <Route exact path="/">
                     <Redirect to="/start" />
                   </Route>
