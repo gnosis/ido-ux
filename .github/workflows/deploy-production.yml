@@ -50,5 +50,5 @@ jobs:
           # todo: Add mainnet and make sure that we refer to production api values
 
       - name: "Deploy to IPFS with infura"
-        run: yarn ipfs-publish ./build
+        run: yarn ipfs-publish
     
