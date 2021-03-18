@@ -108,16 +108,10 @@ export const Footer: React.FC<Props> = (props) => {
           <Link to="/terms-and-conditions#topAnchor">Terms</Link>
         </Item>
         <Item>
-          <Link to="/privacy-policy#topAnchor">Privacy</Link>
-        </Item>
-        <Item>
           <Link to="/cookie-policy#topAnchor">Cookies</Link>
           <IconWrapper onClick={onCookiesBannerShow}>
             <SettingsIconStyled />
           </IconWrapper>
-        </Item>
-        <Item>
-          <Link to="/licenses#topAnchor">Licenses</Link>
         </Item>
         <Item>
           <Link to="/imprint#topAnchor">Imprint</Link>

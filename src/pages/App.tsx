@@ -12,15 +12,12 @@ import { MainScroll } from '../components/pureStyledComponents/MainScroll'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
 import { PUBLIC_URL } from '../constants/config'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
-import { About } from './About'
 import Auction from './Auction'
-import { Cookies } from './Cookies'
 import { Documentation } from './Documentation'
 import { Imprint } from './Imprint'
 import { Landing } from './Landing'
 import { Licenses } from './Licenses'
 import Overview from './Overview'
-import { Privacy } from './Privacy'
 import { Terms } from './Terms'
 
 let Router: React.ComponentType
@@ -49,10 +46,7 @@ export default function App() {
                   <Route component={Overview} exact path="/overview" strict />
                   <Route component={Landing} exact path="/start" strict />
                   <Route component={Terms} exact path="/terms-and-conditions" strict />
-                  <Route component={Privacy} exact path="/privacy-policy" strict />
-                  <Route component={Cookies} exact path="/cookie-policy" strict />
                   <Route component={Licenses} exact path="/licenses" strict />
-                  <Route component={About} exact path="/about" strict />
                   <Route component={Imprint} exact path="/imprint" strict />
                   <Route component={Documentation} exact path="/docs" strict />
                   <Route component={Documentation} exact path="/docs/batch-auctions" strict />
