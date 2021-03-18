@@ -455,7 +455,6 @@ const AllAuctions: React.FC<Props> = (props) => {
               }
             />
           }
-          dropdownDirection={DropdownDirection.upwards}
           dropdownPosition={DropdownPosition.right}
           items={filterOptions.map((item, index) => (
             <DropdownItem
@@ -511,6 +510,7 @@ const AllAuctions: React.FC<Props> = (props) => {
                 dropdownButtonContent={
                   <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
                 }
+                dropdownDirection={DropdownDirection.upwards}
                 dropdownPosition={DropdownPosition.right}
                 items={[5, 10, 20, 30].map((pageSize) => (
                   <PaginationItem
