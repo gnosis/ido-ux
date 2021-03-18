@@ -419,7 +419,9 @@ const AllAuctions: React.FC<Props> = (props) => {
   ]
 
   const { pageIndex, pageSize } = state
-  const noData = tableData.length === 0
+  const noAuctions = tableData.length === 0
+  const noAuctionsFound = page.length === 0
+  const noData = noAuctions || noAuctionsFound
 
   return (
     <Wrapper {...restProps}>
@@ -428,7 +430,7 @@ const AllAuctions: React.FC<Props> = (props) => {
         <SearchWrapper>
           <Magnifier />
           <SearchInput
-            disabled={noData || isLoading}
+            disabled={isLoading}
             onChange={(e) => {
               setGlobalFilter(e.target.value)
             }}
@@ -445,7 +447,7 @@ const AllAuctions: React.FC<Props> = (props) => {
           </DeleteSearchTerm>
         </SearchWrapper>
         <Dropdown
-          disabled={noData || isLoading}
+          disabled={isLoading}
           dropdownButtonContent={
             <ButtonSelect
               content={
@@ -474,7 +476,10 @@ const AllAuctions: React.FC<Props> = (props) => {
       ) : noData ? (
         <EmptyContentWrapper>
           <InfoIcon />
-          <EmptyContentText>No auctions.</EmptyContentText>
+          <EmptyContentText>
+            {noAuctions && 'No auctions.'}
+            {noAuctionsFound && 'No auctions found.'}
+          </EmptyContentText>
         </EmptyContentWrapper>
       ) : (
         <>
@@ -506,7 +511,6 @@ const AllAuctions: React.FC<Props> = (props) => {
             <Pagination>
               <PaginationText>Items per page</PaginationText>{' '}
               <DropdownPagination
-                disabled={noData || isLoading}
                 dropdownButtonContent={
                   <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
                 }
