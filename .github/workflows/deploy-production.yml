@@ -3,7 +3,7 @@ on:
   push:
     tags: [v*]
 jobs:
-  deploy:
+  deploy-production:
     runs-on: ubuntu-latest
     env:
         REPO_NAME_SLUG: idoux
@@ -42,12 +42,13 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build Web Apps
-        run: yarn build
+        run: yarn ipfs-build
         env:
           REACT_APP_CHAIN_ID: 100
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
+          # todo: Add mainnet and make sure that we refer to production api values
 
-      - name: "Deploy tagged versions to IPFS with infura"
+      - name: "Deploy to IPFS with infura"
         run: yarn ipfs-publish ./build
     
