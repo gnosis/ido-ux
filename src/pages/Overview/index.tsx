@@ -1,52 +1,80 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
-import DatatablePage from '../../components/AllAuctionsTable'
-import { ButtonLight } from '../../components/Button'
+import AllAuctions from '../../components/auctions/AllAuctions'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import DoubleLogo from '../../components/common/DoubleLogo'
-import { InlineLoading } from '../../components/common/InlineLoading'
-import { SpinnerSize } from '../../components/common/Spinner'
-import { InfoIcon } from '../../components/icons/InfoIcon'
+import { Tooltip } from '../../components/common/Tooltip'
+import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
+import { Private } from '../../components/icons/Private'
+import { YesIcon } from '../../components/icons/YesIcon'
+import { useActiveWeb3React } from '../../hooks'
 import {
-  EmptyContentText,
-  EmptyContentWrapper,
-} from '../../components/pureStyledComponents/EmptyContent'
-import { chainNames } from '../../constants'
-import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+  AuctionInfo,
+  useAllAuctionInfo,
+  useAllAuctionInfoWithParticipation,
+} from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
+import { getChainName } from '../../utils/tools'
 
-const ViewBtn = styled(ButtonLight)`
-  background: none;
-  color: ${({ theme }) => theme.text3};
-  width: 100%;
+const Chevron = styled(ChevronRightBig)`
+  flex-shrink: 0;
+  min-width: 11px;
+`
 
-  &:hover {
-    background: none;
-  }
+const Featured = styled(FeaturedAuctions)`
+  margin-top: 40px;
 
-  > svg {
-    margin: 0 0 0 5px;
+  .featuredAuctionsTitle {
+    margin-bottom: 25px;
   }
 `
 
-export default function Overview() {
+const Overview = () => {
+  const { account } = useActiveWeb3React()
+  return account ? <OverviewWithAccount account={account} /> : <OverviewWithoutAccount />
+}
+
+const OverviewWithoutAccount = () => {
   const allAuctions = useAllAuctionInfo()
-  const history = useHistory()
+  return <OverviewCommon allAuctions={allAuctions} />
+}
+
+const OverviewWithAccount = ({ account }: { account: string }) => {
+  const allAuctions = useAllAuctionInfoWithParticipation(account)
+  return <OverviewCommon allAuctions={allAuctions} />
+}
+
+const OverviewCommon = ({ allAuctions }: { allAuctions: Maybe<AuctionInfo[]> }) => {
+  const tableData = []
+
   useSetNoDefaultNetworkId()
 
-  const handleClick = (auctionId: number, chainId: number) => {
-    history.push(`/auction?auctionId=${auctionId}&chainId=${chainId}#topAnchor`)
-  }
-
-  const tableData = []
   allAuctions?.forEach((item) => {
     tableData.push({
-      auctionId: item.auctionId,
-      chainId: chainNames[Number(item.chainId)],
-      selling: item.symbolAuctioningToken,
+      auctionId: `#${item.auctionId}`,
       buying: item.symbolBiddingToken,
+      chainId: getChainName(Number(item.chainId)),
+      chevron: <Chevron />,
+      date: (
+        <>
+          <span>{new Date(item.endTimeTimestamp * 1000).toLocaleDateString()}</span>
+          <Tooltip
+            id={`auction_date${item.auctionId}`}
+            text={new Date(item.endTimeTimestamp * 1000).toString()}
+          />
+        </>
+      ),
+      participation: item.hasParticipation ? (
+        <>
+          <span>Yes</span>
+          <YesIcon />
+        </>
+      ) : (
+        'No'
+      ),
+      selling: item.symbolAuctioningToken,
+      status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       symbol: (
         <DoubleLogo
           auctioningToken={{
@@ -57,33 +85,30 @@ export default function Overview() {
             address: item.addressBiddingToken,
             symbol: item.symbolBiddingToken,
           }}
-          size="40px"
+          size="32px"
         />
       ),
-      date: new Date(item.endTimeTimestamp * 1000).toLocaleDateString(),
-      status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
-      link: (
-        <ViewBtn onClick={() => handleClick(item.auctionId, Number(item.chainId))} type="button">
-          {' '}
-          view{' '}
-        </ViewBtn>
+      type: item.isPrivateAuction ? (
+        <>
+          <span>Private</span>
+          <Private />
+        </>
+      ) : (
+        'Public'
       ),
+      url: `/auction?auctionId=${item.auctionId}&chainId=${Number(item.chainId)}#topAnchor`,
     })
   })
 
   return (
     <>
-      <FeaturedAuctions />
-      {(allAuctions === undefined || allAuctions === null) && (
-        <InlineLoading message="Loading..." size={SpinnerSize.small} />
-      )}
-      {allAuctions && allAuctions.length === 0 && (
-        <EmptyContentWrapper>
-          <InfoIcon />
-          <EmptyContentText>No auctions.</EmptyContentText>
-        </EmptyContentWrapper>
-      )}
-      {allAuctions && allAuctions.length > 0 && <DatatablePage {...tableData} />}
+      <Featured />
+      <AllAuctions
+        isLoading={allAuctions === undefined || allAuctions === null}
+        tableData={tableData}
+      />
     </>
   )
 }
+
+export default Overview

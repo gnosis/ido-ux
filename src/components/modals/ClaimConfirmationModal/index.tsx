@@ -4,15 +4,15 @@ import styled, { ThemeContext } from 'styled-components'
 
 import { Text } from 'rebass'
 
-import { useActiveWeb3React } from '../../hooks'
-import { ExternalLink } from '../../theme'
-import { CloseIcon } from '../../theme/components'
-import { getEtherscanLink } from '../../utils'
-import { ButtonPrimary } from '../Button'
-import { AutoColumn, ColumnCenter } from '../Column'
-import Loader from '../Loader'
-import { RowBetween } from '../Row'
-import Modal from '../modals/Modal'
+import { useActiveWeb3React } from '../../../hooks'
+import { ExternalLink } from '../../../theme'
+import { CloseIcon } from '../../../theme/components'
+import { getEtherscanLink } from '../../../utils'
+import { ButtonPrimary } from '../../Button'
+import { AutoColumn, ColumnCenter } from '../../Column'
+import Loader from '../../Loader'
+import { RowBetween } from '../../Row'
+import Modal from '../Modal'
 
 const Wrapper = styled.div`
   width: 100%;

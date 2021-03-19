@@ -6,6 +6,7 @@ import { ExternalLinkIcon } from '../../icons/ExternalLinkIcon'
 const Wrapper = styled.a`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   height: 15px;
   justify-content: center;
   text-decoration: none;

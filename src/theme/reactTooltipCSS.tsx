@@ -14,6 +14,7 @@ export const reactTooltipCSS = css`
     padding: 10px 12px;
     text-align: left;
     text-transform: none;
+    white-space: normal;
 
     > a {
       color: #fff;

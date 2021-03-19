@@ -7,6 +7,7 @@ import { isAddress } from '../../../utils'
 const Wrapper = styled.div<{ size?: string }>`
   background-color: #606467;
   border-radius: 50%;
+  flex-shrink: 0;
   height: ${({ size }) => size};
   overflow: hidden;
   position: relative;

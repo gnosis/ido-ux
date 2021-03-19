@@ -2,14 +2,14 @@ import React, { useCallback, useState } from 'react'
 import { AlertCircle, CheckCircle } from 'react-feather'
 import styled from 'styled-components'
 
-import { useActiveWeb3React } from '../../hooks'
-import useInterval from '../../hooks/useInterval'
-import { useRemovePopup } from '../../state/application/hooks'
-import { TYPE } from '../../theme'
-import { ExternalLink } from '../../theme/components'
-import { getEtherscanLink } from '../../utils'
-import { AutoColumn } from '../Column'
-import { AutoRow } from '../Row'
+import { useActiveWeb3React } from '../../../hooks'
+import useInterval from '../../../hooks/useInterval'
+import { useRemovePopup } from '../../../state/application/hooks'
+import { TYPE } from '../../../theme'
+import { ExternalLink } from '../../../theme/components'
+import { getEtherscanLink } from '../../../utils'
+import { AutoColumn } from '../../Column'
+import { AutoRow } from '../../Row'
 
 const Fader = styled.div<{ count: number }>`
   position: absolute;

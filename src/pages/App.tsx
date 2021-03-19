@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter, HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 
-import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { CookiesBanner } from '../components/common/CookiesBanner'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
+import Popups from '../components/modals/Popups'
 import { BaseCard } from '../components/pureStyledComponents/BaseCard'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainScroll } from '../components/pureStyledComponents/MainScroll'

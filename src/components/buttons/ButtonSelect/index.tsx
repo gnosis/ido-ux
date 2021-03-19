@@ -5,25 +5,25 @@ import { ChevronDown } from '../../icons/ChevronDown'
 
 const Wrapper = styled.button`
   align-items: center;
-  background-color: ${(props) => props.theme.textField.backgroundColor};
-  border-color: ${(props) => props.theme.textField.borderColor};
-  border-radius: ${(props) => props.theme.textField.borderRadius};
-  border-style: ${(props) => props.theme.textField.borderStyle};
-  border-width: ${(props) => props.theme.textField.borderWidth};
-  color: ${(props) => props.theme.textField.color};
+  background-color: ${({ theme }) => theme.textField.backgroundColor};
+  border-color: ${({ theme }) => theme.textField.borderColor};
+  border-radius: ${({ theme }) => theme.textField.borderRadius};
+  border-style: ${({ theme }) => theme.textField.borderStyle};
+  border-width: ${({ theme }) => theme.textField.borderWidth};
+  color: ${({ theme }) => theme.textField.color};
   display: flex;
-  font-size: ${(props) => props.theme.textField.fontSize};
-  font-weight: ${(props) => props.theme.textField.fontWeight};
-  height: ${(props) => props.theme.textField.height};
+  font-size: ${({ theme }) => theme.textField.fontSize};
+  font-weight: ${({ theme }) => theme.textField.fontWeight};
+  height: ${({ theme }) => theme.textField.height};
   justify-content: space-between;
   outline: none;
-  padding: 0 ${(props) => props.theme.textField.paddingHorizontal};
+  padding: 0 18px;
   transition: border-color 0.15s linear;
   width: 100%;
 
   .isOpen & {
-    background-color: ${(props) => props.theme.textField.backgroundColorActive};
-    border-color: ${(props) => props.theme.textField.borderColorActive};
+    background-color: ${({ theme }) => theme.textField.backgroundColorActive};
+    border-color: ${({ theme }) => theme.textField.borderColorActive};
   }
 `
 

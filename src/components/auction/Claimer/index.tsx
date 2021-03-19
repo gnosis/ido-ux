@@ -10,10 +10,10 @@ import {
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { getTokenDisplay } from '../../../utils'
-import ClaimConfirmationModal from '../../ClaimConfirmationModal'
 import { Button } from '../../buttons/Button'
 import TokenLogo from '../../common/TokenLogo'
 import { ErrorInfo } from '../../icons/ErrorInfo'
+import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
 
