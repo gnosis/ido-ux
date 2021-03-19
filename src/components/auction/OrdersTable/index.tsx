@@ -110,7 +110,7 @@ const OrderTable: React.FC = () => {
       )}
       {!ordersEmpty && (
         <Wrapper>
-          {Object.entries(orders).map((order, index) => (
+          {orders.orders.map((order, index) => (
             <CellRow columns={4} key={index}>
               <Cell>
                 <KeyValue
@@ -124,7 +124,7 @@ const OrderTable: React.FC = () => {
                       />
                     </>
                   }
-                  itemValue={order[1].sellAmount}
+                  itemValue={order.sellAmount}
                 />
               </Cell>
               <Cell>
@@ -141,7 +141,7 @@ const OrderTable: React.FC = () => {
                       />
                     </>
                   }
-                  itemValue={order[1].price}
+                  itemValue={order.price}
                 />
               </Cell>
               <Cell>
@@ -149,7 +149,7 @@ const OrderTable: React.FC = () => {
                   align="flex-start"
                   itemKey={<span>Status</span>}
                   itemValue={
-                    order[1].status == OrderStatus.PLACED ? (
+                    order.status == OrderStatus.PLACED ? (
                       <>
                         <span>Placed</span>
                         <OrderPlaced />
@@ -169,7 +169,7 @@ const OrderTable: React.FC = () => {
                     disabled={!isOrderCancelationAllowed}
                     onClick={() => {
                       if (isOrderCancelationAllowed) {
-                        setOrderId(order[1].id)
+                        setOrderId(order.id)
                         setShowConfirm(true)
                       }
                     }}
