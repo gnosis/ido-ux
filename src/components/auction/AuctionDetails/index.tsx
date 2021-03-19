@@ -11,7 +11,6 @@ import {
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
-import { normalizePrice } from '../../../utils/tools'
 import { KeyValue } from '../../common/KeyValue'
 import TokenLogo from '../../common/TokenLogo'
 import { Tooltip } from '../../common/Tooltip'
@@ -75,7 +74,6 @@ const AuctionDetails = () => {
     () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
     [derivedAuctionInfo?.auctioningToken],
   )
-
   const clearingPriceDisplay = useMemo(() => {
     const clearingPriceInfoAsSellOrder =
       clearingPriceInfo &&
@@ -84,31 +82,14 @@ const AuctionDetails = () => {
         derivedAuctionInfo?.biddingToken,
         derivedAuctionInfo?.auctioningToken,
       )
-    let clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
-
-    if (
-      derivedAuctionInfo?.clearingPrice &&
-      derivedAuctionInfo?.auctioningToken &&
-      derivedAuctionInfo?.biddingToken
-    ) {
-      clearingPriceNumber = normalizePrice(
-        derivedAuctionInfo?.auctioningToken,
-        derivedAuctionInfo?.biddingToken,
-        derivedAuctionInfo?.clearingPrice,
-      ).toSignificant(4)
-    }
+    const clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
 
     return clearingPriceNumber
       ? `${clearingPriceNumber} ${getTokenDisplay(
           derivedAuctionInfo?.biddingToken,
         )}/${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}`
       : '-'
-  }, [
-    derivedAuctionInfo?.auctioningToken,
-    derivedAuctionInfo?.biddingToken,
-    derivedAuctionInfo?.clearingPrice,
-    clearingPriceInfo,
-  ])
+  }, [derivedAuctionInfo?.auctioningToken, derivedAuctionInfo?.biddingToken, clearingPriceInfo])
 
   const titlePrice = useMemo(
     () =>
@@ -123,22 +104,7 @@ const AuctionDetails = () => {
     [auctionState],
   )
 
-  const initialPriceToDisplay = useMemo(() => {
-    if (
-      derivedAuctionInfo?.initialPrice &&
-      derivedAuctionInfo?.auctioningToken &&
-      derivedAuctionInfo?.biddingToken
-    ) {
-      return normalizePrice(
-        derivedAuctionInfo?.auctioningToken,
-        derivedAuctionInfo?.biddingToken,
-        derivedAuctionInfo?.initialPrice,
-      )
-    } else {
-      return derivedAuctionInfo?.initialPrice
-    }
-  }, [derivedAuctionInfo])
-
+  const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
   return (
     <Wrapper noPadding>
       <Cell
