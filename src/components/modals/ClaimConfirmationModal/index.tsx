@@ -12,7 +12,7 @@ import { ButtonPrimary } from '../../Button'
 import { AutoColumn, ColumnCenter } from '../../Column'
 import Loader from '../../Loader'
 import { RowBetween } from '../../Row'
-import Modal from '../Modal'
+import Modal from '../common/Modal'
 
 const Wrapper = styled.div`
   width: 100%;

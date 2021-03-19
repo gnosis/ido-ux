@@ -16,13 +16,13 @@ import { ExternalLink } from '../../../theme'
 import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
 import { AlertIcon } from '../../icons/AlertIcon'
-import Modal from '../Modal'
+import Modal from '../common/Modal'
 import { ModalTitle } from '../common/ModalTitle'
+import Option from '../common/Option'
+import PendingView from '../common/PendingView'
 import { Content } from '../common/pureStyledComponents/Content'
 import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
 import { Text } from '../common/pureStyledComponents/Text'
-import Option from './Option'
-import PendingView from './PendingView'
 
 const Blurb = styled.div``
 
@@ -141,16 +141,12 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
           return (
             <Option
               active={option.connector && option.connector === connector}
-              color={option.color}
-              header={option.name}
               icon={option.icon}
-              id={`connect-${key}`}
-              key={key}
               link={option.href}
               onClick={() => {
                 option.connector !== connector && !option.href && tryActivation(option.connector)
               }}
-              subheader={null}
+              text={option.name}
             />
           )
         }
@@ -161,15 +157,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
         if (!(window.web3 || window.ethereum)) {
           if (option.name === 'MetaMask') {
             return (
-              <Option
-                color={'#E8831D'}
-                header={'Install Metamask'}
-                icon={MetamaskIcon}
-                id={`connect-${key}`}
-                key={key}
-                link={'https://metamask.io/'}
-                subheader={null}
-              />
+              <Option icon={MetamaskIcon} link={'https://metamask.io/'} text={'Install Metamask'} />
             )
           } else {
             return null //dont want to return install twice
@@ -186,18 +174,14 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
         !option.mobileOnly && (
           <Option
             active={option.connector === connector}
-            color={option.color}
-            header={option.name}
             icon={option.icon}
-            id={`connect-${key}`}
-            key={key}
             link={option.href}
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
                 : !option.href && tryActivation(option.connector)
-            }} //use option.description to bring back multi-line
-            subheader={null}
+            }}
+            text={option.name}
           />
         )
       )

@@ -6,7 +6,7 @@ import { useAllTransactions } from '../../../state/transactions/hooks'
 import { TransactionDetails } from '../../../state/transactions/reducer'
 import Transaction from '../../AccountDetails/Transaction'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
-import Modal from '../Modal'
+import Modal from '../common/Modal'
 
 const CloseIcon = styled.div`
   position: absolute;

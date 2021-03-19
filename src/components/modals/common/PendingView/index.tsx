@@ -5,14 +5,14 @@ import styled from 'styled-components'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
-import Circle from '../../../assets/images/circle.svg'
-import { injected, walletconnect } from '../../../connectors'
-import { SUPPORTED_WALLETS } from '../../../constants'
-import { Spinner } from '../../../theme'
-import Option from './Option'
-import WalletConnectData from './WalletConnectData'
+import Circle from '../../../../assets/images/circle.svg'
+import { injected, walletconnect } from '../../../../connectors'
+import { SUPPORTED_WALLETS } from '../../../../constants'
+import { Spinner } from '../../../../theme'
+import Option from '../Option'
+import WalletConnectData from '../WalletConnectData'
 
-const PendingSection = styled.div`
+const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   align-items: center;
   justify-content: center;
@@ -74,25 +74,29 @@ const LoadingWrapper = styled.div`
   justify-content: center;
 `
 
-export default function PendingView({
-  connector,
-  error = false,
-  setPendingError,
-  size,
-  tryActivation,
-  uri = '',
-}: {
-  uri?: string
-  size?: number
+interface Props {
   connector?: AbstractConnector
   error?: boolean
   setPendingError: (error: boolean) => void
+  size?: number
   tryActivation: (connector: AbstractConnector) => void
-}) {
+  uri?: string
+}
+
+const PendingView: React.FC<Props> = (props) => {
+  const {
+    connector,
+    error = false,
+    setPendingError,
+    size,
+    tryActivation,
+    uri = '',
+    ...restProps
+  } = props
   const isMetamask = window.ethereum && window.ethereum.isMetaMask
 
   return (
-    <PendingSection>
+    <Wrapper {...restProps}>
       {!error && connector === walletconnect && <WalletConnectData size={size} uri={uri} />}
       <LoadingMessage error={error}>
         <LoadingWrapper>
@@ -130,17 +134,16 @@ export default function PendingView({
           return (
             <Option
               clickable={false}
-              color={option.color}
-              header={option.name}
               icon={option.icon}
-              id={`connect-${key}`}
-              key={key}
-              subheader={option.description}
+              subText={option.description}
+              text={option.name}
             />
           )
         }
         return null
       })}
-    </PendingSection>
+    </Wrapper>
   )
 }
+
+export default PendingView
