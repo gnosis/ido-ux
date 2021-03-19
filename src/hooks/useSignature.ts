@@ -31,9 +31,10 @@ export const useSignature = (): {
         if (!cancelled) setSignature(signature)
         setLoading(false)
       } catch (error) {
-        if (!cancelled) setSignature(null)
-        setLoading(false)
-
+        if (!cancelled) {
+          setSignature(null)
+          setLoading(false)
+        }
         console.error('Error getting auction details', error)
       }
     }
