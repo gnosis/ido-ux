@@ -195,13 +195,13 @@ export function useGetOrderPlacementError(): {
   if (!sellAmount) {
     error = error ?? 'Enter an amount'
   }
-
   if (
     derivedAuctionInfo?.minBiddingAmountPerOrder &&
     derivedAuctionInfo?.biddingToken &&
     sellAmount &&
-    ((sellAmountScaled &&
-      BigNumber.from(derivedAuctionInfo?.minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
+    (!sellAmountScaled ||
+      (sellAmountScaled &&
+        BigNumber.from(derivedAuctionInfo?.minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
       parseFloat(sellAmount) == 0)
   ) {
     const errorMsg =
