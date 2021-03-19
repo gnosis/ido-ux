@@ -6,6 +6,10 @@ export const appendOrders = createAction<{
   orders: OrderDisplay[]
 }>('AppendOrders')
 
+export const resetOrders = createAction<{
+  orders: OrderDisplay[]
+}>('ResetOrders')
+
 export const removeOrders = createAction<{
   orderId: string
 }>('RemoveOrders')

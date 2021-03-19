@@ -13,7 +13,7 @@ export const removeBid = createAction<{
 export const resetOrderbookData = createAction<{
   orderbook: OrderBookData
   error: Maybe<Error>
-}>('ResetOrders')
+}>('ResetOrderbookOrders')
 
 export const pullOrderbookData = createAction<void>('PullOrderbookData')
 
