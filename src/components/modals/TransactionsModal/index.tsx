@@ -5,6 +5,7 @@ import { ReactComponent as Close } from '../../../assets/images/x.svg'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import { TransactionDetails } from '../../../state/transactions/reducer'
 import Transaction from '../../AccountDetails/Transaction'
+import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import Modal from '../Modal'
 
 const CloseIcon = styled.div`
@@ -127,8 +128,13 @@ export const TransactionsModal: React.FC<Props> = (props) => {
             <HoverText>Transactions</HoverText>
           </HeaderRow>
           <ContentWrapper>
-            {renderTransactions(pending)}
-            {renderTransactions(confirmed)}
+            {pending.length === 0 && confirmed.length === 0 && (
+              <EmptyContentWrapper>
+                <EmptyContentText>No transactions to a connected wallet.</EmptyContentText>
+              </EmptyContentWrapper>
+            )}
+            {pending.length > 0 && renderTransactions(pending)}
+            {confirmed.length > 0 && renderTransactions(confirmed)}
           </ContentWrapper>
         </UpperSection>
       </Wrapper>
