@@ -118,7 +118,10 @@ const OrderTable: React.FC = () => {
                   itemKey={
                     <>
                       <span>Amount</span>
-                      <Tooltip id={`amount_${index}`} text={'Amount tooltip'} />
+                      <Tooltip
+                        id={`amount_${index}`}
+                        text={'The amount of bidding token committed to the order.'}
+                      />
                     </>
                   }
                   itemValue={order[1].sellAmount}
@@ -130,7 +133,12 @@ const OrderTable: React.FC = () => {
                   itemKey={
                     <>
                       <span>Limit Price</span>
-                      <Tooltip id={`limitPrice_${index}`} text={'Limit Price tooltip'} />
+                      <Tooltip
+                        id={`limitPrice_${index}`}
+                        text={
+                          'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.'
+                        }
+                      />
                     </>
                   }
                   itemValue={order[1].price}

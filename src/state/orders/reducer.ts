@@ -1,6 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit'
 
-import { appendOrders, finalizeOrderPlacement, loadOrderFromAPI, removeOrders } from './actions'
+import {
+  appendOrders,
+  finalizeOrderPlacement,
+  loadOrderFromAPI,
+  removeOrders,
+  resetOrders,
+} from './actions'
 
 export enum OrderStatus {
   PENDING,
@@ -15,12 +21,10 @@ export interface OrderDisplay {
 }
 export interface OrderState {
   orders: OrderDisplay[]
-  shouldLoad: boolean
 }
 
 const initialState: OrderState = {
   orders: [],
-  shouldLoad: true,
 }
 
 export default createReducer<OrderState>(initialState, (builder) =>
@@ -31,7 +35,13 @@ export default createReducer<OrderState>(initialState, (builder) =>
       return {
         ...state,
         orders,
-        shouldLoad: false,
+      }
+    })
+    .addCase(resetOrders, (state: OrderState, { payload: { orders } }) => {
+      orders = [...new Set(orders)]
+      return {
+        ...state,
+        orders,
       }
     })
     .addCase(removeOrders, (state: OrderState, { payload: { orderId } }) => {
@@ -54,14 +64,12 @@ export default createReducer<OrderState>(initialState, (builder) =>
       return {
         ...state,
         orders,
-        shouldLoad: false,
       }
     })
     .addCase(loadOrderFromAPI, (state: OrderState) => {
       return {
         ...state,
         orders: [],
-        shouldLoad: true,
       }
     }),
 )

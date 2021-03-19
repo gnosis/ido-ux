@@ -13,6 +13,7 @@ export const reactTooltipCSS = css`
     opacity: 1;
     padding: 10px 12px;
     text-align: left;
+    text-transform: none;
     white-space: normal;
 
     > a {
