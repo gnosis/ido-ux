@@ -21,7 +21,7 @@ export interface AdditionalServicesApi {
   getClearingPriceOrderAndVolume(params: OrderBookParams): Promise<ClearingPriceAndVolumeData>
   getAuctionDetails(params: AuctionDetailParams): Promise<AuctionInfoDetail>
   getAuctionDetailsUrl(params: AuctionDetailParams): string
-  getSignature(params: GetSignatureParams): Promise<boolean>
+  getSignature(params: GetSignatureParams): Promise<string>
   getSignatureUrl(params: GetSignatureParams): string
 }
 
@@ -375,7 +375,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return `${baseUrl}get_signature/${auctionId}/${address}`
   }
 
-  public async getSignature(params: GetSignatureParams): Promise<boolean> {
+  public async getSignature(params: GetSignatureParams): Promise<string> {
     try {
       const url = await this.getSignatureUrl(params)
 
@@ -386,11 +386,10 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
         throw await res.json()
       }
       const response = await await res.json()
-      return !!response
+      return response.includes('not available for user') ? null : response
     } catch (error) {
       console.error(error)
-
-      return false
+      return null
     }
   }
 

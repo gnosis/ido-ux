@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react'
 
 import { additionalServiceApi } from '../api'
-import { CHAIN_ID } from '../constants/config'
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { useActiveWeb3React } from './index'
 
 export const useSignature = (): {
-  hasSignature: Maybe<boolean>
+  signature: Maybe<string>
   loading: boolean
 } => {
-  const { auctionId, chainId = CHAIN_ID } = useSwapState()
-  const [hasSignature, setHasSignature] = useState<Maybe<boolean>>(null)
+  const { auctionId, chainId } = useSwapState()
+  const [signature, setSignature] = useState<Maybe<string>>(null)
   const [loading, setLoading] = useState(true)
 
   const { account } = useActiveWeb3React()
 
   useEffect(() => {
+    let cancelled = false
     const fetchApiData = async () => {
       try {
         if (!chainId || !auctionId || !account) {
@@ -27,17 +27,21 @@ export const useSignature = (): {
           auctionId: auctionId,
           address: account,
         }
-
-        const hasSignature = await additionalServiceApi.getSignature(params)
-        setHasSignature(hasSignature)
+        const signature = await additionalServiceApi.getSignature(params)
+        if (!cancelled) setSignature(signature)
+        setLoading(false)
       } catch (error) {
-        setHasSignature(false)
+        if (!cancelled) setSignature(null)
+        setLoading(false)
+
         console.error('Error getting auction details', error)
       }
-      setLoading(false)
     }
     fetchApiData()
-  }, [account, setHasSignature, auctionId, chainId])
+    return (): void => {
+      cancelled = true
+    }
+  }, [account, setSignature, auctionId, chainId])
 
-  return { hasSignature, loading }
+  return { signature, loading }
 }

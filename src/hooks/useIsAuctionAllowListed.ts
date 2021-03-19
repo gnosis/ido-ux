@@ -5,15 +5,15 @@ import { useSignature } from './useSignature'
 
 const useIsAuctionAllowListed = (): { isAuctionAllowListed: Maybe<boolean>; loading: boolean } => {
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails()
-  const { hasSignature, loading: loadingSignature } = useSignature()
+  const { loading: loadingSignature, signature } = useSignature()
 
   const [isAuctionAllowListed, setIsAuctionAllowListed] = React.useState<Maybe<boolean>>(true)
 
   React.useEffect(() => {
     if (auctionDetails && auctionDetails.isPrivateAuction && !auctionInfoLoading) {
-      setIsAuctionAllowListed(auctionDetails.isPrivateAuction && !loadingSignature && hasSignature)
+      setIsAuctionAllowListed(auctionDetails.isPrivateAuction && !loadingSignature && !!signature)
     }
-  }, [auctionDetails, auctionInfoLoading, hasSignature, loadingSignature])
+  }, [auctionDetails, auctionInfoLoading, signature, loadingSignature])
 
   return { isAuctionAllowListed, loading: auctionInfoLoading || loadingSignature }
 }

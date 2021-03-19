@@ -2,7 +2,6 @@ import React, { Suspense } from 'react'
 import { BrowserRouter, HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 
 import Popups from '../components/Popups'
-import ProtectedRoute from '../components/ProtectedRoute'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { CookiesBanner } from '../components/common/CookiesBanner'
 import { Footer } from '../components/layout/Footer'
@@ -47,7 +46,7 @@ export default function App() {
               <Popups />
               <Web3ReactManager>
                 <Switch>
-                  <ProtectedRoute component={Auction} exact path="/auction" strict />
+                  <Route component={Auction} exact path="/auction" strict />
                   <Route component={Overview} exact path="/overview" strict />
                   <Route component={Landing} exact path="/start" strict />
                   <Route component={Terms} exact path="/terms-and-conditions" strict />

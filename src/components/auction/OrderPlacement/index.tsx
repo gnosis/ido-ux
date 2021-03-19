@@ -5,7 +5,9 @@ import { ChainId, Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 import { EASY_AUCTION_NETWORKS } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
+import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { usePlaceOrderCallback } from '../../../hooks/usePlaceOrderCallback'
+import { useSignature } from '../../../hooks/useSignature'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
   AuctionState,
@@ -22,6 +24,8 @@ import { getTokenDisplay } from '../../../utils'
 import ConfirmationModal from '../../ConfirmationModal'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
 import TokenLogo from '../../common/TokenLogo'
 import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
@@ -98,7 +102,8 @@ const OrderPlacement: React.FC = () => {
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
   const { auctionState } = useDerivedAuctionState()
-
+  const { loading, signature } = useSignature()
+  const auctionInfo = useAuctionDetails()
   const isValid = !error
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -196,7 +201,20 @@ const OrderPlacement: React.FC = () => {
       setShowWarning(true)
     }
   }
-
+  if (loading) {
+    return (
+      <Wrapper id="chartdiv">
+        <InlineLoading size={SpinnerSize.small} />
+      </Wrapper>
+    )
+  }
+  if (auctionInfo?.auctionDetails?.isPrivateAuction && !loading && !signature) {
+    return (
+      <Wrapper>
+        <BaseCard>You are not allowed place an order for this auction </BaseCard>
+      </Wrapper>
+    )
+  }
   return (
     <Wrapper>
       <BalanceWrapper>
