@@ -24,6 +24,15 @@ export interface AdditionalServicesApi {
   getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string
   getClearingPriceOrderAndVolume(params: OrderBookParams): Promise<ClearingPriceAndVolumeData>
   getAuctionDetails(params: AuctionDetailParams): Promise<AuctionInfoDetail>
+  getAuctionDetailsUrl(params: AuctionDetailParams): string
+  getSignature(params: GetSignatureParams): Promise<string>
+  getSignatureUrl(params: GetSignatureParams): string
+}
+
+interface GetSignatureParams {
+  networkId: number
+  auctionId: number
+  address: string
 }
 
 interface OrderBookParams {
@@ -407,6 +416,30 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       throw new Error(
         `Failed to query orderbook data for auction  id ${auctionId} : ${error.message}`,
       )
+    }
+  }
+
+  public getSignatureUrl(params: GetSignatureParams): string {
+    const { address, auctionId, networkId } = params
+    const baseUrl = this._getBaseUrl(networkId)
+    return `${baseUrl}get_signature/${auctionId}/${address}`
+  }
+
+  public async getSignature(params: GetSignatureParams): Promise<string> {
+    try {
+      const url = await this.getSignatureUrl(params)
+
+      const res = await fetch(url)
+      if (!res.ok) {
+        // backend returns {"message":"invalid url query"}
+        // for bad requests
+        throw await res.json()
+      }
+      const response = await await res.json()
+      return response.includes('not available for user') ? null : response
+    } catch (error) {
+      console.error(error)
+      return null
     }
   }
 

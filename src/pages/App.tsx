@@ -19,6 +19,7 @@ import { Documentation } from './Documentation'
 import { Imprint } from './Imprint'
 import { Landing } from './Landing'
 import { Licenses } from './Licenses'
+import { NotAllowed } from './NotAllowed'
 import Overview from './Overview'
 import { Privacy } from './Privacy'
 import { Terms } from './Terms'
@@ -71,6 +72,8 @@ export default function App() {
                     strict
                   />
                   <Route component={Documentation} exact path="/docs/faq" strict />
+                  <Route component={NotAllowed} exact path="/not-allowed" strict />
+
                   <Route exact path="/">
                     <Redirect to="/start" />
                   </Route>
