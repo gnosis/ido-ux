@@ -28,8 +28,10 @@ export const useSignature = (): {
           address: account,
         }
         const signature = await additionalServiceApi.getSignature(params)
-        if (!cancelled) setSignature(signature)
-        setLoading(false)
+        if (!cancelled) {
+          setSignature(signature)
+          setLoading(false)
+        }
       } catch (error) {
         if (!cancelled) {
           setSignature(null)
