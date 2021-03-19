@@ -17,6 +17,10 @@ export interface AdditionalServicesApi {
   getMostInterestingAuctionDetails(): Promise<AuctionInfo[]>
   getAllAuctionDetailsUrl(networkId: number): string
   getAllAuctionDetails(): Promise<AuctionInfo[]>
+  getAllAuctionDetailsWithUserParticipationUrl(
+    params: AuctionDetailWithUserParticipationParams,
+  ): string
+  getAllAuctionDetailsWithUserParticipation(account: string): Promise<AuctionInfo[]>
   getClearingPriceOrderAndVolumeUrl(params: OrderBookParams): string
   getClearingPriceOrderAndVolume(params: OrderBookParams): Promise<ClearingPriceAndVolumeData>
   getAuctionDetails(params: AuctionDetailParams): Promise<AuctionInfoDetail>
@@ -47,6 +51,11 @@ interface UserOrderParams {
 interface AuctionDetailParams {
   networkId: number
   auctionId: number
+}
+
+interface AuctionDetailWithUserParticipationParams {
+  networkId: number
+  account: string
 }
 
 /**
@@ -147,11 +156,52 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url
   }
 
+  public getAllAuctionDetailsWithUserParticipationUrl(
+    params: AuctionDetailWithUserParticipationParams,
+  ): string {
+    const { account, networkId } = params
+    const baseUrl = this._getBaseUrl(networkId)
+
+    const url = `${baseUrl}get_all_auction_with_details_with_user_participation/${account}`
+    return url
+  }
+
   public getAuctionDetailsUrl(params: AuctionDetailParams): string {
     const { auctionId, networkId } = params
     const baseUrl = this._getBaseUrl(networkId)
 
     return `${baseUrl}get_auction_with_details/${auctionId}`
+  }
+
+  public async getAllAuctionDetailsWithUserParticipation(
+    account: string,
+  ): Promise<Maybe<AuctionInfo[]>> {
+    try {
+      const promises: Promise<Response>[] = []
+      for (const networkId in this.urlsByNetwork) {
+        const url = await this.getAllAuctionDetailsWithUserParticipationUrl({
+          networkId: Number(networkId),
+          account,
+        })
+
+        promises.push(fetch(url))
+      }
+      const results = await Promise.all(promises)
+      const allAuctions = []
+      for (const res of results) {
+        if (!res.ok) {
+          // backend returns {"message":"invalid url query"}
+          // for bad requests
+          throw await res.json()
+        }
+        allAuctions.push(await res.json())
+      }
+      return allAuctions.flat()
+    } catch (error) {
+      console.error(error)
+
+      throw new Error(`Failed to query all auctions: ${error.message}`)
+    }
   }
 
   public getCurrentUserOrdersUrl(params: UserOrderParams): string {

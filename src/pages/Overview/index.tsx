@@ -8,7 +8,12 @@ import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { Private } from '../../components/icons/Private'
 import { YesIcon } from '../../components/icons/YesIcon'
-import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { useActiveWeb3React } from '../../hooks'
+import {
+  AuctionInfo,
+  useAllAuctionInfo,
+  useAllAuctionInfoWithParticipation,
+} from '../../hooks/useAllAuctionInfos'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { getChainName } from '../../utils/tools'
 
@@ -26,9 +31,22 @@ const Featured = styled(FeaturedAuctions)`
 `
 
 const Overview = () => {
+  const { account } = useActiveWeb3React()
+  return account ? <OverviewWithAccount account={account} /> : <OverviewWithoutAccount />
+}
+
+const OverviewWithoutAccount = () => {
   const allAuctions = useAllAuctionInfo()
+  return <OverviewCommon allAuctions={allAuctions} />
+}
+
+const OverviewWithAccount = ({ account }: { account: string }) => {
+  const allAuctions = useAllAuctionInfoWithParticipation(account)
+  return <OverviewCommon allAuctions={allAuctions} />
+}
+
+const OverviewCommon = ({ allAuctions }: { allAuctions: Maybe<AuctionInfo[]> }) => {
   const tableData = []
-  const mockedParticipation = 'yes'
 
   useSetNoDefaultNetworkId()
 
@@ -47,15 +65,14 @@ const Overview = () => {
           />
         </>
       ),
-      participation:
-        mockedParticipation === 'yes' ? (
-          <>
-            <span>Yes</span>
-            <YesIcon />
-          </>
-        ) : (
-          'No'
-        ),
+      participation: item.hasParticipation ? (
+        <>
+          <span>Yes</span>
+          <YesIcon />
+        </>
+      ) : (
+        'No'
+      ),
       selling: item.symbolAuctioningToken,
       status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       symbol: (
