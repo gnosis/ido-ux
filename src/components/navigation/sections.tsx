@@ -9,10 +9,6 @@ export const navItems = [
     icon: <SendIcon />,
   },
   {
-    title: 'About',
-    url: '/about#topAnchor',
-  },
-  {
     title: 'Docs',
     url: '/docs#topAnchor',
   },
