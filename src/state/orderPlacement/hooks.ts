@@ -67,7 +67,14 @@ export function orderToPrice(order: SellOrder | null | undefined): Fraction | un
   ) {
     return undefined
   } else {
-    return new Fraction(order.sellAmount.raw.toString(), order.buyAmount.raw.toString())
+    return new Fraction(
+      BigNumber.from(order.sellAmount.raw.toString())
+        .mul(BigNumber.from('10').pow(order.buyAmount.token.decimals))
+        .toString(),
+      BigNumber.from(order.buyAmount.raw.toString())
+        .mul(BigNumber.from('10').pow(order.sellAmount.token.decimals))
+        .toString(),
+    )
   }
 }
 
@@ -188,13 +195,13 @@ export function useGetOrderPlacementError(): {
   if (!sellAmount) {
     error = error ?? 'Enter an amount'
   }
-
   if (
     derivedAuctionInfo?.minBiddingAmountPerOrder &&
     derivedAuctionInfo?.biddingToken &&
     sellAmount &&
-    ((sellAmountScaled &&
-      BigNumber.from(derivedAuctionInfo?.minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
+    (!sellAmountScaled ||
+      (sellAmountScaled &&
+        BigNumber.from(derivedAuctionInfo?.minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
       parseFloat(sellAmount) == 0)
   ) {
     const errorMsg =
@@ -337,8 +344,12 @@ export function useDerivedAuctionInfo(): Maybe<DerivedAuctionInfo> {
     initialPrice = undefined
   } else {
     initialPrice = new Fraction(
-      initialAuctionOrder?.buyAmount?.raw.toString(),
-      initialAuctionOrder?.sellAmount?.raw.toString(),
+      BigNumber.from(initialAuctionOrder?.buyAmount?.raw.toString())
+        .mul(BigNumber.from('10').pow(initialAuctionOrder?.sellAmount?.token.decimals))
+        .toString(),
+      BigNumber.from(initialAuctionOrder?.sellAmount?.raw.toString())
+        .mul(BigNumber.from('10').pow(initialAuctionOrder?.buyAmount?.token.decimals))
+        .toString(),
     )
   }
   return {
@@ -508,7 +519,7 @@ export function useCurrentUserOrders() {
   const { account } = useActiveWeb3React()
   const { auctionId, chainId } = useSwapState()
   const derivedAuctionInfo = useDerivedAuctionInfo()
-  const { onNewOrder } = useOrderActionHandlers()
+  const { onResetOrder } = useOrderActionHandlers()
 
   useEffect(() => {
     let cancelled = false
@@ -561,7 +572,7 @@ export function useCurrentUserOrders() {
           status: OrderStatus.PLACED,
         })
       }
-      if (!cancelled) onNewOrder(sellOrderDisplays)
+      if (!cancelled) onResetOrder(sellOrderDisplays)
     }
     fetchData()
     return (): void => {
@@ -571,7 +582,7 @@ export function useCurrentUserOrders() {
     chainId,
     account,
     auctionId,
-    onNewOrder,
+    onResetOrder,
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
   ])

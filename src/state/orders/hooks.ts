@@ -3,7 +3,13 @@ import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
-import { appendOrders, finalizeOrderPlacement, loadOrderFromAPI, removeOrders } from './actions'
+import {
+  appendOrders,
+  finalizeOrderPlacement,
+  loadOrderFromAPI,
+  removeOrders,
+  resetOrders,
+} from './actions'
 import { OrderDisplay } from './reducer'
 
 export function useOrderState(): AppState['orders'] {
@@ -11,6 +17,7 @@ export function useOrderState(): AppState['orders'] {
 }
 
 export function useOrderActionHandlers(): {
+  onResetOrder: (orders: OrderDisplay[]) => void
   onNewOrder: (orders: OrderDisplay[]) => void
   onDeleteOrder: (orderId: string) => void
   onFinalizeOrder: () => void
@@ -21,6 +28,12 @@ export function useOrderActionHandlers(): {
   const onNewOrder = useCallback(
     (orders: OrderDisplay[]) => {
       dispatch(appendOrders({ orders }))
+    },
+    [dispatch],
+  )
+  const onResetOrder = useCallback(
+    (orders: OrderDisplay[]) => {
+      dispatch(resetOrders({ orders }))
     },
     [dispatch],
   )
@@ -39,5 +52,5 @@ export function useOrderActionHandlers(): {
     [dispatch],
   )
 
-  return { onNewOrder, onReloadFromAPI, onFinalizeOrder, onDeleteOrder }
+  return { onResetOrder, onNewOrder, onReloadFromAPI, onFinalizeOrder, onDeleteOrder }
 }
