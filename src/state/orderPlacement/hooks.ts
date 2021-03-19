@@ -508,7 +508,7 @@ export function useCurrentUserOrders() {
   const { account } = useActiveWeb3React()
   const { auctionId, chainId } = useSwapState()
   const derivedAuctionInfo = useDerivedAuctionInfo()
-  const { onNewOrder } = useOrderActionHandlers()
+  const { onResetOrder } = useOrderActionHandlers()
 
   useEffect(() => {
     let cancelled = false
@@ -561,7 +561,7 @@ export function useCurrentUserOrders() {
           status: OrderStatus.PLACED,
         })
       }
-      if (!cancelled) onNewOrder(sellOrderDisplays)
+      if (!cancelled) onResetOrder(sellOrderDisplays)
     }
     fetchData()
     return (): void => {
@@ -571,7 +571,7 @@ export function useCurrentUserOrders() {
     chainId,
     account,
     auctionId,
-    onNewOrder,
+    onResetOrder,
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
   ])
