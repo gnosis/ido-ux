@@ -17,6 +17,7 @@ import { ExternalLink } from '../../../theme'
 import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
 import Modal from '../Modal'
+import { ModalTitle } from '../common/ModalTitle'
 import Option from './Option'
 import PendingView from './PendingView'
 
@@ -135,7 +136,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
     })
   }, [toggleWalletModal])
 
-  function getOptions() {
+  const getOptions = () => {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
@@ -212,9 +213,12 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
     })
   }
 
-  const getModalContent = () => {
-    if (error || errorWrongNetwork) {
-      return (
+  const generalError = error || errorWrongNetwork
+  const showWalletDetails = account && walletView === WALLET_VIEWS.ACCOUNT
+
+  return (
+    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
+      {generalError && (
         <UpperSection>
           <CloseIcon onClick={toggleWalletModal}>
             <CloseColor />
@@ -234,10 +238,8 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
             )}
           </ContentWrapper>
         </UpperSection>
-      )
-    }
-    if (account && walletView === WALLET_VIEWS.ACCOUNT) {
-      return (
+      )}
+      {showWalletDetails && account && walletView === WALLET_VIEWS.ACCOUNT && (
         <AccountDetails
           confirmedTransactions={confirmedTransactions}
           // eslint-disable-next-line
@@ -246,58 +248,49 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
           pendingTransactions={pendingTransactions}
           toggleWalletModal={toggleWalletModal}
         />
-      )
-    }
-    return (
-      <UpperSection>
+      )}
+      {generalError && showWalletDetails && (
         <CloseIcon onClick={toggleWalletModal}>
           <CloseColor />
         </CloseIcon>
-        {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow color="blue">
-            <HoverText
-              onClick={() => {
-                setPendingError(false)
-                setWalletView(WALLET_VIEWS.ACCOUNT)
-              }}
-            >
-              Back
-            </HoverText>
-          </HeaderRow>
+      )}
+      {walletView !== WALLET_VIEWS.ACCOUNT && (
+        <HeaderRow color="blue">
+          <HoverText
+            onClick={() => {
+              setPendingError(false)
+              setWalletView(WALLET_VIEWS.ACCOUNT)
+            }}
+          >
+            Back
+          </HoverText>
+        </HeaderRow>
+      )}
+      {!generalError && !showWalletDetails && (
+        <ModalTitle onClose={toggleWalletModal} title="Connect to a wallet" />
+      )}
+      <ContentWrapper>
+        {walletView === WALLET_VIEWS.PENDING ? (
+          <PendingView
+            connector={pendingWallet}
+            error={pendingError}
+            setPendingError={setPendingError}
+            size={220}
+            tryActivation={tryActivation}
+            uri={uri}
+          />
         ) : (
-          <HeaderRow>
-            <HoverText>Connect to a wallet</HoverText>
-          </HeaderRow>
+          <OptionGrid>{getOptions()}</OptionGrid>
         )}
-        <ContentWrapper>
-          {walletView === WALLET_VIEWS.PENDING ? (
-            <PendingView
-              connector={pendingWallet}
-              error={pendingError}
-              setPendingError={setPendingError}
-              size={220}
-              tryActivation={tryActivation}
-              uri={uri}
-            />
-          ) : (
-            <OptionGrid>{getOptions()}</OptionGrid>
-          )}
-          {walletView !== WALLET_VIEWS.PENDING && (
-            <Blurb>
-              <span>New to Ethereum? &nbsp;</span>{' '}
-              <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
-                Learn more about wallets
-              </ExternalLink>
-            </Blurb>
-          )}
-        </ContentWrapper>
-      </UpperSection>
-    )
-  }
-
-  return (
-    <Modal isOpen={walletModalOpen} minHeight={null} onDismiss={toggleWalletModal}>
-      {getModalContent()}
+        {walletView !== WALLET_VIEWS.PENDING && (
+          <Blurb>
+            <span>New to Ethereum? &nbsp;</span>{' '}
+            <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
+              Learn more about wallets
+            </ExternalLink>
+          </Blurb>
+        )}
+      </ContentWrapper>
     </Modal>
   )
 }

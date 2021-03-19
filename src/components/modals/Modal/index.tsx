@@ -1,7 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { DialogContent, DialogOverlay } from '@reach/dialog'
+import {
+  DialogContent,
+  DialogContentProps,
+  DialogOverlay,
+  DialogOverlayProps,
+  DialogProps,
+} from '@reach/dialog'
 
 const StyledDialogOverlay = styled(DialogOverlay)`
   align-items: center;
@@ -50,14 +56,10 @@ export const DEFAULT_MODAL_OPTIONS = {
   closeButton: true,
 }
 
-interface Props {
-  children?: React.ReactNode
-  initialFocusRef?: React.RefObject<any>
-  isOpen: boolean
+interface Props extends DialogOverlayProps, DialogContentProps, DialogProps {
   maxHeight?: number | string
   minHeight?: number
   width?: number
-  onDismiss: () => void
 }
 
 const Modal: React.FC<Props> = (props) => {
