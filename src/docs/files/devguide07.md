@@ -70,6 +70,8 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 
 -   Red line -> shows the minimum sell price (x axis) the auctioneer is willing to accept.
 
+-   Orange line -> shows the order that the user will submitt
+
 #### What is the settlement transaction?
 
 The settlement transaction refers to a transaction that needs to be executed after the auction ends in order to a) distribute the proceeds to the auctioneer and b) make claiming available for users.
