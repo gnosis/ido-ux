@@ -48,9 +48,15 @@ const OverviewWithAccount = ({ account }: { account: string }) => {
 const OverviewCommon = ({ allAuctions }: { allAuctions: Maybe<AuctionInfo[]> }) => {
   const tableData = []
 
+  const allAuctionsSorted = allAuctions?.sort((a, b) => {
+    const aStatus = new Date(a.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended'
+    const bStatus = new Date(b.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended'
+    return bStatus.localeCompare(aStatus) || b.interestScore - a.interestScore
+  })
+
   useSetNoDefaultNetworkId()
 
-  allAuctions?.forEach((item) => {
+  allAuctionsSorted?.forEach((item) => {
     tableData.push({
       auctionId: `#${item.auctionId}`,
       buying: item.symbolBiddingToken,
