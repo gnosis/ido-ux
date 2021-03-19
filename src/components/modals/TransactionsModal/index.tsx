@@ -130,7 +130,7 @@ export const TransactionsModal: React.FC<Props> = (props) => {
           <ContentWrapper>
             {pending.length === 0 && confirmed.length === 0 && (
               <EmptyContentWrapper>
-                <EmptyContentText>No transactions to a connected wallet.</EmptyContentText>
+                <EmptyContentText>No transaction to a connected wallet.</EmptyContentText>
               </EmptyContentWrapper>
             )}
             {pending.length > 0 && renderTransactions(pending)}
