@@ -35,6 +35,7 @@ const StyledDialogContent = styled(DialogContent)<{
   box-shadow: ${({ theme }) => theme.modal.body.boxShadow};
   max-height: ${(props) => (!props.maxHeight ? 'none' : `${Number(props.maxHeight)}px`)};
   min-height: ${(props) => `${Number(props.minHeight)}px`};
+  outline: none;
   padding-bottom: ${({ theme }) => theme.modal.body.paddingVertical};
   padding-left: ${({ theme }) => theme.modal.body.paddingHorizontal};
   padding-right: ${({ theme }) => theme.modal.body.paddingHorizontal};
@@ -57,9 +58,9 @@ export const DEFAULT_MODAL_OPTIONS = {
 }
 
 interface Props extends DialogOverlayProps, DialogContentProps, DialogProps {
-  maxHeight?: number | string
-  minHeight?: number
-  width?: number
+  maxHeight?: number | string | undefined
+  minHeight?: number | undefined
+  width?: number | undefined
 }
 
 const Modal: React.FC<Props> = (props) => {

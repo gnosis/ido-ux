@@ -7,7 +7,6 @@ import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
 import MetamaskIcon from '../../../assets/images/metamask.png'
-import { ReactComponent as Close } from '../../../assets/images/x.svg'
 import { fortmatic, injected, portis, walletconnect } from '../../../connectors'
 import { OVERLAY_READY } from '../../../connectors/Fortmatic'
 import { SUPPORTED_WALLETS } from '../../../constants'
@@ -16,26 +15,18 @@ import { useWalletModalOpen, useWalletModalToggle } from '../../../state/applica
 import { ExternalLink } from '../../../theme'
 import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
+import { AlertIcon } from '../../icons/AlertIcon'
 import Modal from '../Modal'
 import { ModalTitle } from '../common/ModalTitle'
+import { Content } from '../common/pureStyledComponents/Content'
+import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
+import { Text } from '../common/pureStyledComponents/Text'
 import Option from './Option'
 import PendingView from './PendingView'
-
-const CloseIcon = styled.div``
-
-const CloseColor = styled(Close)``
-
-const HeaderRow = styled.div``
-
-const ContentWrapper = styled.div``
-
-const UpperSection = styled.div``
 
 const Blurb = styled.div``
 
 const OptionGrid = styled.div``
-
-const HoverText = styled.div``
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
@@ -213,64 +204,49 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
     })
   }
 
-  const generalError = error || errorWrongNetwork
-  const showWalletDetails = account && walletView === WALLET_VIEWS.ACCOUNT
+  const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
+  const viewAccountTransactions = account && walletView === WALLET_VIEWS.ACCOUNT
+  const connectingToWallet = walletView === WALLET_VIEWS.PENDING
+  const title = networkError
+    ? 'Wrong Network'
+    : error && viewAccountTransactions
+    ? ''
+    : error
+    ? 'Error connecting'
+    : 'Connect to a wallet'
+  const errorMessage =
+    error instanceof UnsupportedChainIdError
+      ? 'Please connect to the appropriate Ethereum network.'
+      : errorWrongNetwork
+      ? errorWrongNetwork
+      : 'Error connecting. Try refreshing the page.'
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal}>
-      {generalError && (
-        <UpperSection>
-          <CloseIcon onClick={toggleWalletModal}>
-            <CloseColor />
-          </CloseIcon>
-          <HeaderRow>
-            {error instanceof UnsupportedChainIdError || errorWrongNetwork
-              ? 'Wrong Network'
-              : 'Error connecting'}
-          </HeaderRow>
-          <ContentWrapper>
-            {error instanceof UnsupportedChainIdError ? (
-              <h5>Please connect to the appropriate Ethereum network.</h5>
-            ) : errorWrongNetwork ? (
-              errorWrongNetwork
-            ) : (
-              'Error connecting. Try refreshing the page.'
-            )}
-          </ContentWrapper>
-        </UpperSection>
-      )}
-      {showWalletDetails && account && walletView === WALLET_VIEWS.ACCOUNT && (
-        <AccountDetails
-          confirmedTransactions={confirmedTransactions}
-          // eslint-disable-next-line
-          ENSName={ENSName}
-          openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
-          pendingTransactions={pendingTransactions}
-          toggleWalletModal={toggleWalletModal}
-        />
-      )}
-      {generalError && showWalletDetails && (
-        <CloseIcon onClick={toggleWalletModal}>
-          <CloseColor />
-        </CloseIcon>
-      )}
-      {walletView !== WALLET_VIEWS.ACCOUNT && (
-        <HeaderRow color="blue">
-          <HoverText
-            onClick={() => {
-              setPendingError(false)
-              setWalletView(WALLET_VIEWS.ACCOUNT)
-            }}
-          >
-            Back
-          </HoverText>
-        </HeaderRow>
-      )}
-      {!generalError && !showWalletDetails && (
-        <ModalTitle onClose={toggleWalletModal} title="Connect to a wallet" />
-      )}
-      <ContentWrapper>
-        {walletView === WALLET_VIEWS.PENDING ? (
+    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} width={error ? 400 : undefined}>
+      <ModalTitle onClose={toggleWalletModal} title={title} />
+      <Content>
+        {error && (
+          <>
+            <IconWrapper>
+              <AlertIcon />
+            </IconWrapper>
+            <Text fontSize="18px" textAlign="center">
+              {errorMessage}
+            </Text>
+          </>
+        )}
+        {!error && !connectingToWallet && (
+          <>
+            <OptionGrid>{getOptions()}</OptionGrid>{' '}
+            <Blurb>
+              <span>New to Ethereum? &nbsp;</span>{' '}
+              <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
+                Learn more about wallets
+              </ExternalLink>
+            </Blurb>
+          </>
+        )}
+        {!error && connectingToWallet && (
           <PendingView
             connector={pendingWallet}
             error={pendingError}
@@ -279,18 +255,18 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
             tryActivation={tryActivation}
             uri={uri}
           />
-        ) : (
-          <OptionGrid>{getOptions()}</OptionGrid>
         )}
-        {walletView !== WALLET_VIEWS.PENDING && (
-          <Blurb>
-            <span>New to Ethereum? &nbsp;</span>{' '}
-            <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
-              Learn more about wallets
-            </ExternalLink>
-          </Blurb>
+        {!error && viewAccountTransactions && (
+          <AccountDetails
+            confirmedTransactions={confirmedTransactions}
+            // eslint-disable-next-line
+            ENSName={ENSName}
+            openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
+            pendingTransactions={pendingTransactions}
+            toggleWalletModal={toggleWalletModal}
+          />
         )}
-      </ContentWrapper>
+      </Content>
     </Modal>
   )
 }
