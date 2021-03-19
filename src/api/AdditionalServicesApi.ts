@@ -435,7 +435,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
         // for bad requests
         throw await res.json()
       }
-      const response = await await res.json()
+      const response = await res.json()
       return response.includes('not available for user') ? null : response
     } catch (error) {
       console.error(error)
