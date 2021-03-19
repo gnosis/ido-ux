@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
+import { CHAIN_ID } from '../constants/config'
 import { useSwapState } from '../state/orderPlacement/hooks'
 
 export interface AuctionInfoDetail {
@@ -19,13 +20,14 @@ export interface AuctionInfoDetail {
   minimumBiddingAmountPerOrder: string
   orderCancellationEndDate: number | undefined
   exactOrder: string
+  isPrivateAuction: boolean
 }
 
 export const useAuctionDetails = (): {
   auctionDetails: Maybe<AuctionInfoDetail>
   auctionInfoLoading: boolean
 } => {
-  const { auctionId, chainId } = useSwapState()
+  const { auctionId, chainId = CHAIN_ID } = useSwapState()
   const [auctionInfo, setAuctionInfo] = useState<Maybe<AuctionInfoDetail>>(null)
   const [auctionInfoLoading, setLoading] = useState<boolean>(true)
 
