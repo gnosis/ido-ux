@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
-import { ChainId, Fraction, Token } from 'uniswap-xdai-sdk'
+import { Fraction, Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 

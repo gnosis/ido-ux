@@ -33,7 +33,7 @@ if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI
 export const network = new NetworkConnector(networkConnectorArguments)
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 100, 5777],
+  supportedChainIds: [1, 4, 100],
 })
 
 // mainnet only
@@ -65,7 +65,7 @@ export const portis = new PortisConnector({
 // mainnet only
 export const walletlink = new WalletLinkConnector({
   url: NETWORK_URL_MAINNET,
-  appName: 'Uniswap',
+  appName: 'GnosisAuction',
   appLogoUrl:
     'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg',
 })

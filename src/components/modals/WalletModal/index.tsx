@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import { Web3Provider } from '@ethersproject/providers'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 import { isMobile } from 'react-device-detect'
@@ -14,6 +15,7 @@ import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
+import { ChainId } from '../../../utils'
 import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
 import Modal from '../Modal'
@@ -172,6 +174,7 @@ export default function WalletModal({
   // close modal when a connection is successful
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
+
   useEffect(() => {
     if (
       walletModalOpen &&
@@ -205,15 +208,28 @@ export default function WalletModal({
       action: 'Change Wallet',
       label: name,
     })
-    setPendingWallet(connector) // set wallet for pending view
-    setWalletView(WALLET_VIEWS.PENDING)
-    activate(connector, undefined, true).catch((error) => {
+
+    try {
+      // We check the metamask networkId
+      const provider = new Web3Provider(window.ethereum, 'any')
+      const { chainId: walletNetworkId } = await provider.getNetwork()
+      if (!Object.values(ChainId).includes(walletNetworkId)) {
+        throw new UnsupportedChainIdError(
+          walletNetworkId,
+          Object.keys(ChainId).map((chainId) => Number(chainId)),
+        )
+      }
+
+      setPendingWallet(connector) // set wallet for pending view
+      setWalletView(WALLET_VIEWS.PENDING)
+      await activate(connector, undefined, true)
+    } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
         activate(connector) // a little janky...can't use setError because the connector isn't set
       } else {
         setPendingError(true)
       }
-    })
+    }
   }
 
   // close wallet modal if fortmatic modal is active
@@ -323,7 +339,10 @@ export default function WalletModal({
           </HeaderRow>
           <ContentWrapper>
             {error instanceof UnsupportedChainIdError ? (
-              <h5>Please connect to the appropriate Ethereum network.</h5>
+              <h5>
+                Please connect to the appropriate Ethereum network. Use one of the followings:
+                Mainnet, Rinkeby or xDai.
+              </h5>
             ) : errorWrongNetwork ? (
               errorWrongNetwork
             ) : (

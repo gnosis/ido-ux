@@ -1,9 +1,10 @@
-import { ChainId, JSBI, Percent, Token, TokenAmount } from 'uniswap-xdai-sdk'
+import { JSBI, Percent, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
 
 import {
+  ChainId,
   basisPointsToPercent,
   calculateGasMargin,
   calculateSlippageAmount,
@@ -22,11 +23,6 @@ describe('utils', () => {
     })
     it('unrecognized chain id defaults to mainnet', () => {
       expect(getEtherscanLink(2, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
-    })
-    it('ropsten', () => {
-      expect(getEtherscanLink(3, 'abc', 'address')).toEqual(
-        'https://ropsten.etherscan.io/address/abc',
-      )
     })
     it('enum', () => {
       expect(getEtherscanLink(ChainId.RINKEBY, 'abc', 'address')).toEqual(

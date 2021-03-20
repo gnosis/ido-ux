@@ -1,5 +1,6 @@
-import { ChainId, Token } from 'uniswap-xdai-sdk'
+import { Token } from 'uniswap-xdai-sdk'
 
+import { ChainId } from '../../utils'
 export default [
   new Token(
     ChainId.MAINNET,

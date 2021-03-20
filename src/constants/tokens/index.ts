@@ -1,19 +1,22 @@
-import { ChainId, Token, WETH } from 'uniswap-xdai-sdk'
+import { Token, WETH } from 'uniswap-xdai-sdk'
 
-import KOVAN_TOKENS from './kovan'
+import { ChainId } from '../../utils'
 import MAINNET_TOKENS from './mainnet'
 import RINKEBY_TOKENS from './rinkeby'
-import ROPSTEN_TOKENS from './ropsten'
 
 type AllTokens = Readonly<{ [chainId in ChainId]: Readonly<{ [tokenAddress: string]: Token }> }>
+
+const chainIdValues = Object.values(ChainId)
+const wethTokensValues = Object.values(WETH).filter((wethToken: Token) =>
+  chainIdValues.includes(Number(wethToken.chainId)),
+)
+
 export const ALL_TOKENS: AllTokens = [
   // WETH on all chains
-  ...Object.values(WETH),
+  ...wethTokensValues,
   // chain-specific tokens
   ...MAINNET_TOKENS,
   ...RINKEBY_TOKENS,
-  ...KOVAN_TOKENS,
-  ...ROPSTEN_TOKENS,
 ]
 
   // put into an object
@@ -31,9 +34,6 @@ export const ALL_TOKENS: AllTokens = [
     {
       [ChainId.MAINNET]: {},
       [ChainId.RINKEBY]: {},
-      [ChainId.GÖRLI]: {},
-      [ChainId.ROPSTEN]: {},
-      [ChainId.KOVAN]: {},
       [ChainId.XDAI]: {},
     },
   )
