@@ -15,13 +15,20 @@ export function useCancelOrderCallback(
 ): null | ((orderId: string) => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
-  const { auctionId } = useSwapState()
+  const { auctionId, chainId: orderChainId } = useSwapState()
 
   return useMemo(() => {
     return async function onCancelOrder(orderId: string) {
       if (!chainId || !library || !account) {
         throw new Error('missing dependencies in onCancelOrder callback')
       }
+
+      if (chainId !== orderChainId) {
+        throw new Error(
+          'You are not connected at the same network as the order that trying to cancel',
+        )
+      }
+
       const decodedOrder = decodeOrder(orderId)
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
@@ -61,5 +68,5 @@ export function useCancelOrderCallback(
           throw error
         })
     }
-  }, [account, addTransaction, chainId, library, auctionId, biddingToken])
+  }, [account, orderChainId, addTransaction, chainId, library, auctionId, biddingToken])
 }
