@@ -4,6 +4,7 @@ import { ChainId, Fraction, Token } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
+import { chainNames } from '../constants'
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin, getEasyAuctionContract } from '../utils'
@@ -25,7 +26,7 @@ export function useCancelOrderCallback(
 
       if (chainId !== orderChainId) {
         throw new Error(
-          'You are not connected at the same network as the order that trying to cancel',
+          `In order to cancel this order, please connect to ${chainNames[chainId]} network`,
         )
       }
 
