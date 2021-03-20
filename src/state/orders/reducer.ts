@@ -18,6 +18,7 @@ export interface OrderDisplay {
   sellAmount: string
   price: string
   status: OrderStatus
+  chainId: number
 }
 export interface OrderState {
   orders: OrderDisplay[]
@@ -59,6 +60,7 @@ export default createReducer<OrderState>(initialState, (builder) =>
           sellAmount: order.sellAmount,
           price: order.price,
           status: OrderStatus.PLACED,
+          chainId: order.chainId,
         })
       }
       return {

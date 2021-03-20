@@ -131,6 +131,7 @@ export function usePlaceOrderCallback(
               sellAmount: parseFloat(sellAmount).toString(),
               price: price.toString(),
               status: OrderStatus.PENDING,
+              chainId,
             },
           ])
           onNewBid({

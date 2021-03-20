@@ -569,6 +569,7 @@ export function useCurrentUserOrders() {
               .mul(BigNumber.from(10).pow(derivedAuctionInfo.biddingToken.decimals))
               .toString(),
           ).toSignificant(6),
+          chainId,
           status: OrderStatus.PLACED,
         })
       }
