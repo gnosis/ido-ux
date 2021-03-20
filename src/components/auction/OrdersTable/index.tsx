@@ -47,7 +47,6 @@ const OrderTable: React.FC = () => {
   const derivedAuctionInfo = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(derivedAuctionInfo?.biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
-
   useCurrentUserOrders()
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -98,7 +97,6 @@ const OrderTable: React.FC = () => {
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
   const ordersEmpty = !orders.orders || orders.orders.length == 0
-
   return (
     <>
       <SectionTitle as="h2">Your Orders</SectionTitle>
