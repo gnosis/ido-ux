@@ -28,7 +28,6 @@ export const queueLastElement = '0xffffffffffffffffffffffffffffffffffffffff00000
 // and the user has approved the transfer of tokens
 export function usePlaceOrderCallback(
   auctionIdentifer: AuctionIdentifier,
-  loading: boolean,
   signature: string | null,
   auctioningToken: Token,
   biddingToken: Token,
@@ -51,7 +50,7 @@ export function usePlaceOrderCallback(
     let previousOrder: string
 
     return async function onPlaceOrder() {
-      if (!chainId || !library || !account || !userId || loading) {
+      if (!chainId || !library || !account || !userId || !signature) {
         throw new Error('missing dependencies in onPlaceOrder callback')
       }
       const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
@@ -161,6 +160,5 @@ export function usePlaceOrderCallback(
     onNewOrder,
     onNewBid,
     signature,
-    loading,
   ])
 }

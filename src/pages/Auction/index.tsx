@@ -7,11 +7,7 @@ import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import {
-  useDefaultsFromURLSearch,
-  useDerivedAuctionInfo,
-  useDerivedAuctionState,
-} from '../../state/orderPlacement/hooks'
+import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { getChainName } from '../../utils/tools'
 
@@ -68,7 +64,6 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
   useDefaultsFromURLSearch(search)
   const auctionIdentifier = parseURL(search)
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
-  const { auctionState, loading } = useDerivedAuctionState(auctionIdentifier)
 
   const url = window.location.href
 
@@ -87,15 +82,13 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
       </SubTitleWrapper>
       <AuctionDetails
         auctionIdentifier={auctionIdentifier}
-        auctionState={auctionState}
+        auctionState={derivedAuctionInfo?.auctionState}
         derivedAuctionInfo={derivedAuctionInfo}
-        loading={loading}
       />
       <AuctionBody
         auctionIdentifier={auctionIdentifier}
-        auctionState={auctionState}
+        auctionState={derivedAuctionInfo?.auctionState}
         derivedAuctionInfo={derivedAuctionInfo}
-        loading={loading}
       />
     </>
   )

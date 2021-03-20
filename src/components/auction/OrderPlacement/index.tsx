@@ -13,13 +13,14 @@ import {
   AuctionState,
   DerivedAuctionInfo,
   useGetOrderPlacementError,
+  useParsedBiddingAmount,
   useSwapActionHandlers,
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import { useTokenBalance } from '../../../state/wallet/hooks'
+import { useTokenBalance, useTokenBalances } from '../../../state/wallet/hooks'
 import { ChainId, getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
@@ -92,15 +93,12 @@ const ApprovalButton = styled(Button)`
   padding: 0 14px;
 `
 interface OrderPlacementProps {
-  signature: string | null | undefined
-  loading: boolean
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
   auctionState: AuctionState
 }
 
 const OrderPlacement = (props: OrderPlacementProps) => {
-  console.log('orderPlacement rerender')
   const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
   const { account, chainId } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
@@ -111,14 +109,15 @@ const OrderPlacement = (props: OrderPlacementProps) => {
   const { onUserPriceInput } = useSwapActionHandlers()
   const auctionInfo = useAuctionDetails(auctionIdentifier)
   const isValid = !error
-  const { loading, signature } = useSignature(auctionIdentifier, account)
+  const { signature } = useSignature(auctionIdentifier, account)
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
-  const approvalTokenAmount: TokenAmount | undefined = derivedAuctionInfo?.parsedBiddingAmount
+  const parsedBiddingAmount = useParsedBiddingAmount(auctionIdentifier, derivedAuctionInfo)
+  const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
 
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -126,15 +125,19 @@ const OrderPlacement = (props: OrderPlacementProps) => {
   )
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
+  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
+    derivedAuctionInfo?.biddingToken,
+  ])
+  const biddingTokenBalance =
+    relevantTokenBalances?.[derivedAuctionInfo?.biddingToken?.address ?? '']
+
   useEffect(() => {
     if (approval === ApprovalState.PENDING) {
       setApprovalSubmitted(true)
     }
   }, [approval, approvalSubmitted])
 
-  const maxAmountInput: TokenAmount = derivedAuctionInfo?.biddingTokenBalance
-    ? derivedAuctionInfo?.biddingTokenBalance
-    : undefined
+  const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
   useEffect(() => {
     if (price == '-' && derivedAuctionInfo?.initialPrice) {
@@ -154,7 +157,6 @@ const OrderPlacement = (props: OrderPlacementProps) => {
 
   const placeOrderCallback = usePlaceOrderCallback(
     auctionIdentifier,
-    loading,
     signature,
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
@@ -211,128 +213,123 @@ const OrderPlacement = (props: OrderPlacementProps) => {
       setShowWarning(true)
     }
   }
-  if (loading) {
-    return (
-      <>
+
+  return (
+    <Wrapper>
+      {auctionInfo?.auctionDetails?.isPrivateAuction && signature && signature.length < 4 ? (
+        <>
+          {' '}
+          <BaseCard>You are not allowed place an order for this auction </BaseCard>{' '}
+        </>
+      ) : !signature ? (
         <Wrapper id="chartdiv">
           <InlineLoading size={SpinnerSize.small} />
         </Wrapper>
-      </>
-    )
-  }
-  if (
-    auctionInfo?.auctionDetails?.isPrivateAuction &&
-    !loading &&
-    signature &&
-    signature.length < 4
-  ) {
-    return (
-      <>
-        <Wrapper>
-          <BaseCard>You are not allowed place an order for this auction </BaseCard>
-        </Wrapper>
-      </>
-    )
-  }
-  return (
-    <Wrapper>
-      <BalanceWrapper>
-        <Balance>
-          Your Balance:{' '}
-          <Total>{`${
-            account
-              ? `${userTokenBalance?.toSignificant(6)} ${derivedAuctionInfo?.biddingToken?.symbol}`
-              : 'Connect your wallet'
-          } `}</Total>
-        </Balance>
-        {account && derivedAuctionInfo?.biddingToken && derivedAuctionInfo?.biddingToken.address && (
-          <TokenLogo
-            size={'22px'}
-            token={{
-              address: derivedAuctionInfo?.biddingToken.address,
-              symbol: derivedAuctionInfo?.biddingToken.symbol,
-            }}
-          />
-        )}
-      </BalanceWrapper>
-      <CurrencyInputPanel
-        onMax={() => {
-          maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
-        }}
-        onUserSellAmountInput={onUserSellAmountInput}
-        token={derivedAuctionInfo?.biddingToken}
-        value={sellAmount}
-      />
-      <PriceInputPanel
-        auctioningToken={derivedAuctionInfo?.auctioningToken}
-        biddingToken={derivedAuctionInfo?.biddingToken}
-        label={`${biddingTokenDisplay} per ${auctioningTokenDisplay} price`}
-        onUserPriceInput={onUserPriceInput}
-        value={price}
-      />
-      {(error || orderPlacingOnly) && (
-        <ErrorWrapper>
-          {error && sellAmount !== '' && price !== '' && (
-            <ErrorRow>
-              <ErrorInfo />
-              <ErrorText>{error}</ErrorText>
-            </ErrorRow>
-          )}
-          {orderPlacingOnly && (
-            <ErrorRow>
-              <ErrorLock />
-              <ErrorText>
-                New orders can&apos;t be cancelled once you confirm the transaction in the next
-                step.
-              </ErrorText>
-            </ErrorRow>
-          )}
-        </ErrorWrapper>
-      )}
-      {notApproved && (
-        <ApprovalWrapper>
-          <ApprovalText>
-            You need to unlock {derivedAuctionInfo?.biddingToken.symbol} to allow the smart contract
-            to interact with it. This has to be done for each new token.
-          </ApprovalText>
-          <ApprovalButton
-            buttonType={ButtonType.primaryInverted}
-            disabled={approval === ApprovalState.PENDING}
-            onClick={approveCallback}
-          >
-            {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
-          </ApprovalButton>
-        </ApprovalWrapper>
-      )}
-      {!account ? (
-        <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
       ) : (
-        <ActionButton disabled={!isValid || notApproved} onClick={handleShowConfirm}>
-          Place Order
-        </ActionButton>
+        <>
+          <BalanceWrapper>
+            <Balance>
+              Your Balance:{' '}
+              <Total>{`${
+                account
+                  ? `${userTokenBalance?.toSignificant(6)} ${
+                      derivedAuctionInfo?.biddingToken?.symbol
+                    }`
+                  : 'Connect your wallet'
+              } `}</Total>
+            </Balance>
+            {account &&
+              derivedAuctionInfo?.biddingToken &&
+              derivedAuctionInfo?.biddingToken.address && (
+                <TokenLogo
+                  size={'22px'}
+                  token={{
+                    address: derivedAuctionInfo?.biddingToken.address,
+                    symbol: derivedAuctionInfo?.biddingToken.symbol,
+                  }}
+                />
+              )}
+          </BalanceWrapper>
+          <CurrencyInputPanel
+            onMax={() => {
+              maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
+            }}
+            onUserSellAmountInput={onUserSellAmountInput}
+            token={derivedAuctionInfo?.biddingToken}
+            value={sellAmount}
+          />
+          <PriceInputPanel
+            auctioningToken={derivedAuctionInfo?.auctioningToken}
+            biddingToken={derivedAuctionInfo?.biddingToken}
+            label={`${biddingTokenDisplay} per ${auctioningTokenDisplay} price`}
+            onUserPriceInput={onUserPriceInput}
+            value={price}
+          />
+          {(error || orderPlacingOnly) && (
+            <ErrorWrapper>
+              {error && sellAmount !== '' && price !== '' && (
+                <ErrorRow>
+                  <ErrorInfo />
+                  <ErrorText>{error}</ErrorText>
+                </ErrorRow>
+              )}
+              {orderPlacingOnly && (
+                <ErrorRow>
+                  <ErrorLock />
+                  <ErrorText>
+                    New orders can&apos;t be cancelled once you confirm the transaction in the next
+                    step.
+                  </ErrorText>
+                </ErrorRow>
+              )}
+            </ErrorWrapper>
+          )}
+          {notApproved && (
+            <ApprovalWrapper>
+              <ApprovalText>
+                You need to unlock {derivedAuctionInfo?.biddingToken.symbol} to allow the smart
+                contract to interact with it. This has to be done for each new token.
+              </ApprovalText>
+              <ApprovalButton
+                buttonType={ButtonType.primaryInverted}
+                disabled={approval === ApprovalState.PENDING}
+                onClick={approveCallback}
+              >
+                {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
+              </ApprovalButton>
+            </ApprovalWrapper>
+          )}
+          {!account ? (
+            <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+          ) : (
+            <ActionButton disabled={!isValid || notApproved} onClick={handleShowConfirm}>
+              Place Order
+            </ActionButton>
+          )}
+          <WarningModal
+            content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+            isOpen={showWarning}
+            onDismiss={() => {
+              setShowWarning(false)
+            }}
+            title="Warning!"
+          />
+          <ConfirmationModal
+            attemptingTxn={attemptingTxn}
+            bottomContent={modalBottom}
+            hash={txHash}
+            isOpen={showConfirm}
+            onDismiss={() => {
+              resetModal()
+              setShowConfirm(false)
+            }}
+            pendingConfirmation={pendingConfirmation}
+            pendingText={pendingText}
+            title="Confirm Order"
+            topContent={modalHeader}
+          />
+        </>
       )}
-      <WarningModal
-        content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
-        isOpen={showWarning}
-        onDismiss={() => {
-          setShowWarning(false)
-        }}
-        title="Warning!"
-      />
-      <ConfirmationModal
-        attemptingTxn={attemptingTxn}
-        bottomContent={modalBottom}
-        hash={txHash}
-        isOpen={showConfirm}
-        onDismiss={() => {
-          resetModal()
-          setShowConfirm(false)
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={pendingText}
-        title="Confirm Order"
-        topContent={modalHeader}
-      />
     </Wrapper>
   )
 }

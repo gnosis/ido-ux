@@ -1,9 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { useWeb3React } from '@web3-react/core'
-
-import { useSignature } from '../../../hooks/useSignature'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { InlineLoading } from '../../common/InlineLoading'
@@ -30,30 +27,20 @@ const Grid = styled.div`
 interface AuctionBodyProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
-  auctionState: AuctionState
-  loading?: boolean
+  auctionState: AuctionState | null
 }
 
 const AuctionBody = (props: AuctionBodyProps) => {
-  console.log('AuctionBody rerender')
-
-  const { auctionIdentifier, auctionState, derivedAuctionInfo, loading } = props
+  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],
   )
 
-  const isNotLoading = React.useMemo(() => auctionState !== null && !loading, [
-    loading,
-    auctionState,
-  ])
-  const { account } = useWeb3React()
-  const { loading: loadingSignature, signature } = useSignature(auctionIdentifier, account)
-
   return (
     <>
-      {!isNotLoading && <InlineLoading message="Loading..." />}
-      {auctionStarted && isNotLoading && (
+      {!auctionStarted && <InlineLoading message="Loading..." />}
+      {auctionStarted && (
         <SectionTitle as="h2">
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
@@ -61,7 +48,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
           {auctionState === AuctionState.CLAIMING && 'Claim Proceedings'}
         </SectionTitle>
       )}
-      {auctionStarted && isNotLoading && (
+      {auctionStarted && (
         <Grid>
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
@@ -69,8 +56,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
               auctionIdentifier={auctionIdentifier}
               auctionState={auctionState}
               derivedAuctionInfo={derivedAuctionInfo}
-              loading={loadingSignature}
-              signature={signature}
             />
           )}
           {auctionState === AuctionState.CLAIMING && (
@@ -89,7 +74,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
-      {auctionStarted && isNotLoading && (
+      {auctionStarted && (
         <OrdersTable
           auctionIdentifier={auctionIdentifier}
           derivedAuctionInfo={derivedAuctionInfo}

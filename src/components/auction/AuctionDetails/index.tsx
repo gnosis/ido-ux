@@ -53,11 +53,10 @@ interface AuctionDetailsProps {
   auctionIdentifier: AuctionIdentifier
   auctionState: AuctionState
   derivedAuctionInfo: DerivedAuctionInfo
-  loading: boolean
 }
 
 const AuctionDetails = (props: AuctionDetailsProps) => {
-  const { auctionIdentifier, auctionState, derivedAuctionInfo, loading } = props
+  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
   const { chainId } = auctionIdentifier
 
   const auctionTokenAddress = useMemo(
@@ -155,11 +154,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         }
       />
       <TimerWrapper>
-        <AuctionTimer
-          auctionState={auctionState}
-          derivedAuctionInfo={derivedAuctionInfo}
-          loading={loading}
-        />
+        <AuctionTimer auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
       </TimerWrapper>
       <Cell
         itemKey={

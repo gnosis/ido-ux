@@ -150,7 +150,7 @@ interface AuctionTimerProps {
 }
 
 export const AuctionTimer = (props: AuctionTimerProps) => {
-  const { auctionState, derivedAuctionInfo, loading } = props
+  const { auctionState, derivedAuctionInfo } = props
   const [timeLeft, setTimeLeft] = React.useState(
     calculateTimeLeft(derivedAuctionInfo?.auctionEndDate),
   )
@@ -192,7 +192,7 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
   return (
     <Wrapper progress={progress}>
       <Center>
-        {(auctionState === null || loading) && <TextBig>Loading</TextBig>}
+        {auctionState === null && <TextBig>Loading</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && (
           <TextBig>
             Auction
