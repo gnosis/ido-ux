@@ -16,6 +16,7 @@ import {
   useSwapActionHandlers,
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalance } from '../../../state/wallet/hooks'
@@ -91,12 +92,16 @@ const ApprovalButton = styled(Button)`
   padding: 0 14px;
 `
 interface OrderPlacementProps {
+  signature: string | null | undefined
+  loading: boolean
+  auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
   auctionState: AuctionState
 }
 
-const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
-  const { auctionState, derivedAuctionInfo } = props
+const OrderPlacement = (props: OrderPlacementProps) => {
+  console.log('orderPlacement rerender')
+  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
   const { account, chainId } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
@@ -104,9 +109,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { error } = useGetOrderPlacementError(derivedAuctionInfo)
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
-  const { loading, signature } = useSignature()
-  const auctionInfo = useAuctionDetails()
+  const auctionInfo = useAuctionDetails(auctionIdentifier)
   const isValid = !error
+  const { loading, signature } = useSignature(auctionIdentifier, account)
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
@@ -148,6 +153,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   const placeOrderCallback = usePlaceOrderCallback(
+    auctionIdentifier,
+    loading,
+    signature,
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
   )
@@ -205,16 +213,25 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
   if (loading) {
     return (
-      <Wrapper id="chartdiv">
-        <InlineLoading size={SpinnerSize.small} />
-      </Wrapper>
+      <>
+        <Wrapper id="chartdiv">
+          <InlineLoading size={SpinnerSize.small} />
+        </Wrapper>
+      </>
     )
   }
-  if (auctionInfo?.auctionDetails?.isPrivateAuction && !loading && !signature) {
+  if (
+    auctionInfo?.auctionDetails?.isPrivateAuction &&
+    !loading &&
+    signature &&
+    signature.length < 4
+  ) {
     return (
-      <Wrapper>
-        <BaseCard>You are not allowed place an order for this auction </BaseCard>
-      </Wrapper>
+      <>
+        <Wrapper>
+          <BaseCard>You are not allowed place an order for this auction </BaseCard>
+        </Wrapper>
+      </>
     )
   }
   return (

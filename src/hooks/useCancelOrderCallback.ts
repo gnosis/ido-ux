@@ -5,18 +5,19 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
 import { chainNames } from '../constants'
-import { useSwapState } from '../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 
 export function useCancelOrderCallback(
+  auctionIdentifier: AuctionIdentifier,
   biddingToken: Token,
 ): null | ((orderId: string) => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
-  const { auctionId, chainId: orderChainId } = useSwapState()
+  const { auctionId, chainId: orderChainId } = auctionIdentifier
 
   return useMemo(() => {
     return async function onCancelOrder(orderId: string) {
@@ -26,7 +27,9 @@ export function useCancelOrderCallback(
 
       if (chainId !== orderChainId) {
         throw new Error(
-          `In order to cancel this order, please connect to ${chainNames[orderChainId]} network`,
+          `In order to cancel this order, please connect to ${
+            chainNames[Number(orderChainId)]
+          } network`,
         )
       }
 

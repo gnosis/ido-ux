@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
@@ -12,12 +13,13 @@ const Wrapper = styled(BaseCard)`
   min-width: 100%;
 `
 interface OrderbookProps {
+  auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
 export const OrderBook: React.FC<OrderbookProps> = (props) => {
-  const { derivedAuctionInfo } = props
-  useOrderbookDataCallback()
+  const { auctionIdentifier, derivedAuctionInfo } = props
+  useOrderbookDataCallback(auctionIdentifier)
 
   const { asks, bids, error, userOrderPrice, userOrderVolume } = useOrderbookState()
   const processedOrderbook = useMemo(

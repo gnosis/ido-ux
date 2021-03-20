@@ -11,8 +11,8 @@ import {
   useDefaultsFromURLSearch,
   useDerivedAuctionInfo,
   useDerivedAuctionState,
-  useSwapState,
 } from '../../state/orderPlacement/hooks'
+import { parseURL } from '../../state/orderPlacement/reducer'
 import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
@@ -64,10 +64,11 @@ const NetworkName = styled.span`
 `
 
 const Auction = ({ location: { search } }: RouteComponentProps) => {
+  // needed to update the auctionId for header component
   useDefaultsFromURLSearch(search)
-  const { auctionId, chainId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-  const { auctionState, loading } = useDerivedAuctionState()
+  const auctionIdentifier = parseURL(search)
+  const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
+  const { auctionState, loading } = useDerivedAuctionState(auctionIdentifier)
 
   const url = window.location.href
 
@@ -78,18 +79,20 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         <SubTitle>
           <Network>
             <NetworkIconStyled />
-            <NetworkName>Selling on {getChainName(chainId)} -</NetworkName>
+            <NetworkName>Selling on {getChainName(auctionIdentifier.chainId)} -</NetworkName>
           </Network>
-          <AuctionId>Auction Id #{auctionId}</AuctionId>
+          <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
         </SubTitle>
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
       <AuctionDetails
+        auctionIdentifier={auctionIdentifier}
         auctionState={auctionState}
         derivedAuctionInfo={derivedAuctionInfo}
         loading={loading}
       />
       <AuctionBody
+        auctionIdentifier={auctionIdentifier}
         auctionState={auctionState}
         derivedAuctionInfo={derivedAuctionInfo}
         loading={loading}

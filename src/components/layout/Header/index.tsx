@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { useWeb3React } from '@web3-react/core'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
 import useENSName from '../../../hooks/useENSName'
@@ -104,10 +104,11 @@ const Error = styled.span`
 `
 
 export const Header: React.FC = (props) => {
-  const { account } = useWeb3React()
+  const { account, error } = useWeb3React()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
-  const [mobileMenuVisible, setMobileMenuVisible] = React.useState(false)
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
+  const wrongNetwork = error instanceof UnsupportedChainIdError || errorWrongNetwork !== undefined
 
   const toggleWalletModal = useWalletModalToggle()
   const allTransactions = useAllTransactions()
@@ -136,12 +137,16 @@ export const Header: React.FC = (props) => {
   const web3Status = React.useMemo(() => {
     return isConnected && errorWrongNetwork == undefined ? (
       <UserDropdownStyled />
-    ) : errorWrongNetwork ? (
-      <Error>{errorWrongNetwork}</Error>
+    ) : errorWrongNetwork || wrongNetwork ? (
+      errorWrongNetwork ? (
+        <Error>{errorWrongNetwork}</Error>
+      ) : (
+        <Error>{wrongNetwork}</Error>
+      )
     ) : (
       <ButtonConnectStyled onClick={toggleWalletModal} />
     )
-  }, [isConnected, errorWrongNetwork, toggleWalletModal])
+  }, [isConnected, wrongNetwork, errorWrongNetwork, toggleWalletModal])
 
   return (
     <>

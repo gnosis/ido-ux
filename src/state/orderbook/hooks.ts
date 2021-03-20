@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '..'
 import { additionalServiceApi } from '../../api'
 import { OrderBookData, PricePoint } from '../../api/AdditionalServicesApi'
-import { useSwapState } from '../orderPlacement/hooks'
+import { AuctionIdentifier } from '../orderPlacement/reducer'
 import {
   appendBid,
   pullOrderbookData,
@@ -73,8 +73,8 @@ export function useOrderbookActionHandlers(): {
     onResetUserVolume,
   }
 }
-export function useOrderbookDataCallback() {
-  const { auctionId, chainId } = useSwapState()
+export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
+  const { auctionId, chainId } = auctionIdentifer
   const { onResetOrderbookData } = useOrderbookActionHandlers()
   useEffect(() => {
     let cancelled = false

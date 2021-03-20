@@ -1,7 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { useWeb3React } from '@web3-react/core'
+
+import { useSignature } from '../../../hooks/useSignature'
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { InlineLoading } from '../../common/InlineLoading'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { AuctionNotStarted } from '../AuctionNotStarted'
@@ -24,13 +28,16 @@ const Grid = styled.div`
 `
 
 interface AuctionBodyProps {
+  auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
   auctionState: AuctionState
   loading?: boolean
 }
 
 const AuctionBody = (props: AuctionBodyProps) => {
-  const { auctionState, derivedAuctionInfo, loading } = props
+  console.log('AuctionBody rerender')
+
+  const { auctionIdentifier, auctionState, derivedAuctionInfo, loading } = props
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],
@@ -40,6 +47,9 @@ const AuctionBody = (props: AuctionBodyProps) => {
     loading,
     auctionState,
   ])
+  const { account } = useWeb3React()
+  const { loading: loadingSignature, signature } = useSignature(auctionIdentifier, account)
+
   return (
     <>
       {!isNotLoading && <InlineLoading message="Loading..." />}
@@ -55,19 +65,36 @@ const AuctionBody = (props: AuctionBodyProps) => {
         <Grid>
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-            <OrderPlacement auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
+            <OrderPlacement
+              auctionIdentifier={auctionIdentifier}
+              auctionState={auctionState}
+              derivedAuctionInfo={derivedAuctionInfo}
+              loading={loadingSignature}
+              signature={signature}
+            />
           )}
           {auctionState === AuctionState.CLAIMING && (
-            <Claimer derivedAuctionInfo={derivedAuctionInfo} />
+            <Claimer
+              auctionIdentifier={auctionIdentifier}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
           )}
           {auctionState === AuctionState.PRICE_SUBMISSION && (
             <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
           )}
-          <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
+          <OrderBook
+            auctionIdentifier={auctionIdentifier}
+            derivedAuctionInfo={derivedAuctionInfo}
+          />
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
-      {auctionStarted && isNotLoading && <OrdersTable derivedAuctionInfo={derivedAuctionInfo} />}
+      {auctionStarted && isNotLoading && (
+        <OrdersTable
+          auctionIdentifier={auctionIdentifier}
+          derivedAuctionInfo={derivedAuctionInfo}
+        />
+      )}
     </>
   )
 }

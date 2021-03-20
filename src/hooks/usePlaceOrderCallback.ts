@@ -8,6 +8,7 @@ import { EASY_AUCTION_NETWORKS } from '../constants'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
 import { useSwapState } from '../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useOrderbookActionHandlers } from '../state/orderbook/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { OrderStatus } from '../state/orders/reducer'
@@ -18,7 +19,6 @@ import { additionalServiceApi } from './../api'
 import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
-import { useSignature } from './useSignature'
 
 export const queueStartElement =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -27,16 +27,18 @@ export const queueLastElement = '0xffffffffffffffffffffffffffffffffffffffff00000
 // returns a function that will place an order, if the parameters are all valid
 // and the user has approved the transfer of tokens
 export function usePlaceOrderCallback(
+  auctionIdentifer: AuctionIdentifier,
+  loading: boolean,
+  signature: string | null,
   auctioningToken: Token,
   biddingToken: Token,
 ): null | (() => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const { onNewOrder } = useOrderActionHandlers()
-  const { auctionId, price, sellAmount } = useSwapState()
+  const { auctionId } = auctionIdentifer
+  const { price, sellAmount } = useSwapState()
   const { onNewBid } = useOrderbookActionHandlers()
-
-  const { loading, signature } = useSignature()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],

@@ -29,22 +29,11 @@ function parseAuctionIdParameter(urlParam: any): number {
 export default createReducer<SwapState>(initialState, (builder) =>
   builder
     .addCase(setDefaultsFromURLSearch, (_, { payload: { queryString } }) => {
-      if (queryString && queryString.length > 1) {
-        const parsedQs = parse(queryString, {
-          parseArrays: false,
-          ignoreQueryPrefix: true,
-        })
-
-        return {
-          ...initialState,
-          chainId: parseAuctionIdParameter(parsedQs.chainId),
-          auctionId: parseAuctionIdParameter(parsedQs.auctionId),
-        }
-      }
-
+      const { auctionId, chainId } = parseURL(queryString)
       return {
         ...initialState,
-        auctionId: 1,
+        auctionId,
+        chainId,
       }
     })
     .addCase(setNoDefaultNetworkId, () => {
@@ -65,3 +54,26 @@ export default createReducer<SwapState>(initialState, (builder) =>
       }
     }),
 )
+
+export interface AuctionIdentifier {
+  auctionId: number
+  chainId: number
+}
+export function parseURL(queryString: string): AuctionIdentifier {
+  if (queryString && queryString.length > 1) {
+    const parsedQs = parse(queryString, {
+      parseArrays: false,
+      ignoreQueryPrefix: true,
+    })
+
+    return {
+      chainId: parseAuctionIdParameter(parsedQs.chainId),
+      auctionId: parseAuctionIdParameter(parsedQs.auctionId),
+    }
+  }
+
+  return {
+    chainId: 1,
+    auctionId: 1,
+  }
+}
