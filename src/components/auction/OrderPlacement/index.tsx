@@ -24,8 +24,6 @@ import { useTokenBalance, useTokenBalances } from '../../../state/wallet/hooks'
 import { ChainId, getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
-import { InlineLoading } from '../../common/InlineLoading'
-import { SpinnerSize } from '../../common/Spinner'
 import TokenLogo from '../../common/TokenLogo'
 import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
@@ -221,10 +219,6 @@ const OrderPlacement = (props: OrderPlacementProps) => {
           {' '}
           <BaseCard>You are not allowed place an order for this auction </BaseCard>{' '}
         </>
-      ) : !signature ? (
-        <Wrapper id="chartdiv">
-          <InlineLoading size={SpinnerSize.small} />
-        </Wrapper>
       ) : (
         <>
           <BalanceWrapper>
