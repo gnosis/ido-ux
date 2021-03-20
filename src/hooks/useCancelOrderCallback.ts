@@ -26,7 +26,7 @@ export function useCancelOrderCallback(
 
       if (chainId !== orderChainId) {
         throw new Error(
-          `In order to cancel this order, please connect to ${chainNames[chainId]} network`,
+          `In order to cancel this order, please connect to ${chainNames[orderChainId]} network`,
         )
       }
 
