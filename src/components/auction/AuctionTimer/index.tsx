@@ -1,11 +1,7 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import {
-  AuctionState,
-  useDerivedAuctionInfo,
-  useDerivedAuctionState,
-} from '../../../state/orderPlacement/hooks'
+import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import {
   calculateTimeLeft,
   calculateTimeProgress,
@@ -147,10 +143,14 @@ const formatSeconds = (seconds: number): React.ReactNode => {
     </>
   )
 }
+interface AuctionTimerProps {
+  derivedAuctionInfo: DerivedAuctionInfo
+  auctionState: AuctionState
+  loading?: boolean
+}
 
-export const AuctionTimer = () => {
-  const { auctionState, loading } = useDerivedAuctionState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
+export const AuctionTimer = (props: AuctionTimerProps) => {
+  const { auctionState, derivedAuctionInfo, loading } = props
   const [timeLeft, setTimeLeft] = React.useState(
     calculateTimeLeft(derivedAuctionInfo?.auctionEndDate),
   )

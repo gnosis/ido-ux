@@ -4,11 +4,7 @@ import styled from 'styled-components'
 import { useActiveWeb3React } from '../../../hooks'
 import { useClaimOrderCallback, useGetAuctionProceeds } from '../../../hooks/useClaimOrderCallback'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import {
-  useDerivedAuctionInfo,
-  useDerivedClaimInfo,
-  useSwapState,
-} from '../../../state/orderPlacement/hooks'
+import { useDerivedClaimInfo, useSwapState } from '../../../state/orderPlacement/hooks'
 import { getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import TokenLogo from '../../common/TokenLogo'
@@ -61,18 +57,19 @@ const Text = styled.div`
   margin-left: 10px;
 `
 
-const Claimer: React.FC = () => {
+const Claimer: React.FC<{ derivedAuctionInfo }> = ({ derivedAuctionInfo }) => {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const { auctionId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
   const { error } = useDerivedClaimInfo(auctionId)
 
   const isValid = !error
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
 
-  const { claimableAuctioningToken, claimableBiddingToken } = useGetAuctionProceeds()
+  const { claimableAuctioningToken, claimableBiddingToken } = useGetAuctionProceeds(
+    derivedAuctionInfo,
+  )
   const [txHash, setTxHash] = useState<string>('')
 
   function resetModal() {

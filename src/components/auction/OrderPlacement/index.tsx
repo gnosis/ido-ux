@@ -11,8 +11,7 @@ import { useSignature } from '../../../hooks/useSignature'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
   AuctionState,
-  useDerivedAuctionInfo,
-  useDerivedAuctionState,
+  DerivedAuctionInfo,
   useGetOrderPlacementError,
   useSwapActionHandlers,
   useSwapState,
@@ -91,17 +90,20 @@ const ApprovalButton = styled(Button)`
   height: 26px;
   padding: 0 14px;
 `
+interface OrderPlacementProps {
+  derivedAuctionInfo: DerivedAuctionInfo
+  auctionState: AuctionState
+}
 
-const OrderPlacement: React.FC = () => {
+const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
+  const { auctionState, derivedAuctionInfo } = props
   const { account, chainId } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-  const { error } = useGetOrderPlacementError()
+  const { error } = useGetOrderPlacementError(derivedAuctionInfo)
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
-  const { auctionState } = useDerivedAuctionState()
   const { loading, signature } = useSignature()
   const auctionInfo = useAuctionDetails()
   const isValid = !error

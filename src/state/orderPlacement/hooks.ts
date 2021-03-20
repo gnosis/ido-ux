@@ -169,11 +169,11 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
   return
 }
 
-export function useGetOrderPlacementError(): {
+export function useGetOrderPlacementError(
+  derivedAuctionInfo: DerivedAuctionInfo,
+): {
   error?: string
 } {
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-
   const { account } = useActiveWeb3React()
 
   const { price, sellAmount } = useSwapState()
@@ -516,10 +516,9 @@ export function useSetNoDefaultNetworkId() {
   }, [dispatch])
 }
 
-export function useCurrentUserOrders() {
+export function useCurrentUserOrders(derivedAuctionInfo: DerivedAuctionInfo) {
   const { account } = useActiveWeb3React()
   const { auctionId, chainId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
   const { onResetOrder } = useOrderActionHandlers()
 
   useEffect(() => {

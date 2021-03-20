@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useCurrentUserOrders, useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo, useCurrentUserOrders } from '../../../state/orderPlacement/hooks'
 import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import { getChainName } from '../../../utils/tools'
@@ -43,13 +43,16 @@ const ButtonWrapper = styled.div`
   height: 100%;
   justify-content: flex-end;
 `
+interface OrderTableProps {
+  derivedAuctionInfo: DerivedAuctionInfo
+}
 
-const OrderTable: React.FC = () => {
+const OrderTable: React.FC<OrderTableProps> = (props) => {
+  const { derivedAuctionInfo } = props
   const orders: OrderState | undefined = useOrderState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(derivedAuctionInfo?.biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
-  useCurrentUserOrders()
+  useCurrentUserOrders(derivedAuctionInfo)
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)

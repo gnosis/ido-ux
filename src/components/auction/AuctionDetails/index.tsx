@@ -6,8 +6,6 @@ import {
   AuctionState,
   orderToPrice,
   orderToSellOrder,
-  useDerivedAuctionInfo,
-  useDerivedAuctionState,
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
@@ -51,10 +49,8 @@ const TimerWrapper = styled.div`
   position: relative;
 `
 
-const AuctionDetails = () => {
+const AuctionDetails = ({ auctionState, derivedAuctionInfo, loading }) => {
   const { chainId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-  const { auctionState } = useDerivedAuctionState()
 
   const auctionTokenAddress = useMemo(
     () => getEtherscanLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
@@ -151,7 +147,11 @@ const AuctionDetails = () => {
         }
       />
       <TimerWrapper>
-        <AuctionTimer />
+        <AuctionTimer
+          auctionState={auctionState}
+          derivedAuctionInfo={derivedAuctionInfo}
+          loading={loading}
+        />
       </TimerWrapper>
       <Cell
         itemKey={

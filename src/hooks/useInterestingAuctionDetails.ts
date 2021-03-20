@@ -18,10 +18,9 @@ export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
         if (cancelled) return
         setMostInterestingAuctions(auctionInfo)
       } catch (error) {
+        if (cancelled) return
         setMostInterestingAuctions(null)
         console.error('Error getting clearing price info', error)
-
-        if (cancelled) return
       }
     }
     fetchApiData()

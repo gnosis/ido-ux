@@ -4,7 +4,7 @@ import { TokenAmount } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
-import { useDerivedAuctionInfo, useSwapState } from '../state/orderPlacement/hooks'
+import { DerivedAuctionInfo, useSwapState } from '../state/orderPlacement/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { additionalServiceApi } from './../api'
@@ -69,9 +69,8 @@ export function useGetClaimInfo(): Maybe<ClaimInformation> {
 
   return claimInfo
 }
-export function useGetAuctionProceeds(): AuctionProceedings {
+export function useGetAuctionProceeds(derivedAuctionInfo: DerivedAuctionInfo): AuctionProceedings {
   const claimInfo = useGetClaimInfo()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
 
   if (
     !claimInfo ||

@@ -7,7 +7,12 @@ import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { useDefaultsFromURLSearch, useSwapState } from '../../state/orderPlacement/hooks'
+import {
+  useDefaultsFromURLSearch,
+  useDerivedAuctionInfo,
+  useDerivedAuctionState,
+  useSwapState,
+} from '../../state/orderPlacement/hooks'
 import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
@@ -61,6 +66,9 @@ const NetworkName = styled.span`
 const Auction = ({ location: { search } }: RouteComponentProps) => {
   useDefaultsFromURLSearch(search)
   const { auctionId, chainId } = useSwapState()
+  const derivedAuctionInfo = useDerivedAuctionInfo()
+  const { auctionState, loading } = useDerivedAuctionState()
+
   const url = window.location.href
 
   return (
@@ -76,8 +84,16 @@ const Auction = ({ location: { search } }: RouteComponentProps) => {
         </SubTitle>
         <CopyButton copyValue={url} title="Copy URL" />
       </SubTitleWrapper>
-      <AuctionDetails />
-      <AuctionBody />
+      <AuctionDetails
+        auctionState={auctionState}
+        derivedAuctionInfo={derivedAuctionInfo}
+        loading={loading}
+      />
+      <AuctionBody
+        auctionState={auctionState}
+        derivedAuctionInfo={derivedAuctionInfo}
+        loading={loading}
+      />
     </>
   )
 }

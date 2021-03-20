@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { AuctionState, useDerivedAuctionState } from '../../../state/orderPlacement/hooks'
+import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { InlineLoading } from '../../common/InlineLoading'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { AuctionNotStarted } from '../AuctionNotStarted'
@@ -23,8 +23,14 @@ const Grid = styled.div`
   margin: 0 0 40px;
 `
 
-const AuctionBody = () => {
-  const { auctionState, loading } = useDerivedAuctionState()
+interface AuctionBodyProps {
+  derivedAuctionInfo: DerivedAuctionInfo
+  auctionState: AuctionState
+  loading?: boolean
+}
+
+const AuctionBody = (props: AuctionBodyProps) => {
+  const { auctionState, derivedAuctionInfo, loading } = props
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],
@@ -48,16 +54,20 @@ const AuctionBody = () => {
       {auctionStarted && isNotLoading && (
         <Grid>
           {(auctionState === AuctionState.ORDER_PLACING ||
-            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
-          {auctionState === AuctionState.CLAIMING && <Claimer />}
+            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
+            <OrderPlacement auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
+          )}
+          {auctionState === AuctionState.CLAIMING && (
+            <Claimer derivedAuctionInfo={derivedAuctionInfo} />
+          )}
           {auctionState === AuctionState.PRICE_SUBMISSION && (
             <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
           )}
-          <OrderBook />
+          <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
-      {auctionStarted && isNotLoading && <OrdersTable />}
+      {auctionStarted && isNotLoading && <OrdersTable derivedAuctionInfo={derivedAuctionInfo} />}
     </>
   )
 }
