@@ -12,13 +12,11 @@ export interface SwapState {
   readonly chainId: number | undefined
   readonly price: string
   readonly sellAmount: string
-  readonly auctionId: number
 }
 
 const initialState: SwapState = {
   chainId: undefined,
   price: '-',
-  auctionId: 1,
   sellAmount: '',
 }
 
@@ -29,10 +27,9 @@ function parseAuctionIdParameter(urlParam: any): number {
 export default createReducer<SwapState>(initialState, (builder) =>
   builder
     .addCase(setDefaultsFromURLSearch, (_, { payload: { queryString } }) => {
-      const { auctionId, chainId } = parseURL(queryString)
+      const { chainId } = parseURL(queryString)
       return {
         ...initialState,
-        auctionId,
         chainId,
       }
     })

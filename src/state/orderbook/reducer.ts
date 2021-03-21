@@ -16,7 +16,8 @@ export interface OrderbookState {
   error: Maybe<Error>
   userOrderPrice: number
   userOrderVolume: number
-  shouldLoad: boolean
+  auctionId: number
+  chainId: number
 }
 
 const initialState: OrderbookState = {
@@ -25,7 +26,8 @@ const initialState: OrderbookState = {
   error: null,
   userOrderPrice: 0,
   userOrderVolume: 0,
-  shouldLoad: true,
+  auctionId: 0,
+  chainId: 0,
 }
 
 export default createReducer<OrderbookState>(initialState, (builder) =>
@@ -73,7 +75,7 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
         userOrderVolume: volume,
       }
     })
-    .addCase(resetOrderbookData, (_, { payload: { error, orderbook } }) => {
+    .addCase(resetOrderbookData, (_, { payload: { auctionId, chainId, error, orderbook } }) => {
       return {
         bids: orderbook.bids,
         asks: orderbook.asks,
@@ -81,6 +83,8 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
         userOrderPrice: 0,
         userOrderVolume: 0,
         shouldLoad: false,
+        auctionId,
+        chainId,
       }
     }),
 )

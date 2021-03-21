@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
@@ -19,24 +21,34 @@ interface OrderbookProps {
 
 export const OrderBook: React.FC<OrderbookProps> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
+  const { auctionId, chainId } = auctionIdentifier
   useOrderbookDataCallback(auctionIdentifier)
+  const { asks, bids } = useOrderbookState()
+  const {
+    auctionId: orderbookAuctionId,
+    chainId: orderbookChainId,
+    error,
+    userOrderPrice,
+    userOrderVolume,
+  } = useOrderbookState()
+  let data = { bids, asks }
+  if (orderbookAuctionId != auctionId && chainId != orderbookChainId) {
+    data = null
+  }
 
-  const { asks, bids, error, userOrderPrice, userOrderVolume } = useOrderbookState()
-  const processedOrderbook = useMemo(
-    () =>
-      processOrderbookData({
-        data: { bids, asks },
-        userOrder: { price: userOrderPrice, volume: userOrderVolume },
-        baseToken: derivedAuctionInfo?.auctioningToken,
-        quoteToken: derivedAuctionInfo?.biddingToken,
-      }),
-    [bids, asks, derivedAuctionInfo, userOrderPrice, userOrderVolume],
-  )
+  const processedOrderbook = processOrderbookData({
+    data,
+    userOrder: { price: userOrderPrice, volume: userOrderVolume },
+    baseToken: derivedAuctionInfo?.auctioningToken,
+    quoteToken: derivedAuctionInfo?.biddingToken,
+  })
 
   return (
     <>
       <Wrapper>
-        {error || !asks || asks.length === 0 ? (
+        {!data ? (
+          <InlineLoading size={SpinnerSize.small} />
+        ) : error || !asks || asks.length === 0 ? (
           <OrderBookError error={error} />
         ) : (
           <OrderBookChart
