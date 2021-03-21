@@ -126,7 +126,7 @@ const OrderTable: React.FC = () => {
       {!ordersEmpty && (
         <Wrapper>
           {ordersSortered.map((order, index) => (
-            <CellRow columns={4} key={index}>
+            <CellRow columns={5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
