@@ -87,10 +87,17 @@ const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProp
   const { baseToken, data, quoteToken } = props
   const chartRef = useRef(null)
 
+  // Handle component unmounting, dispose chart
+  useEffect(() => {
+    return () => {
+      chartRef.current && chartRef.current.dispose()
+    }
+  }, [])
+
   useEffect(() => {
     if (!baseToken || !quoteToken || !data) return
 
-    if (chartRef.current) return
+    // if (chartRef.current) return
 
     const baseTokenLabel = baseToken.symbol
     const quoteTokenLabel = quoteToken.symbol
@@ -255,17 +262,10 @@ const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProp
       '{dataContext.dummyData.description}'
   }, [data, baseToken, quoteToken])
 
-  // Handle component unmounting, dispose chart
-  useEffect(() => {
-    return () => {
-      chartRef.current && chartRef.current.dispose()
-    }
-  }, [])
-
   useEffect(() => {
     if (!chartRef.current || data === null) return
     chartRef.current.data = data.length === 0 ? [] : data
-  }, [data])
+  }, [data, baseToken, quoteToken])
 
   return (
     <Wrapper id="chartdiv">

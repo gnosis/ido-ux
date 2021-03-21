@@ -3,7 +3,7 @@ import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import Ajv from 'ajv'
 
 const TOKEN_LIST_RESOURCES = [
-  // 'https://tokens.coingecko.com/uniswap/all.json',
+  'https://tokens.coingecko.com/uniswap/all.json',
   'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
   'https://tokens.honeyswap.org',
 ]
@@ -43,15 +43,13 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
     const tokens: TokenInfo[] = []
 
     try {
-      const [
-        // coingeckoTokenList,
-        gnosisTokenList,
-        // honeyswapTokenList,
-      ] = await Promise.all(TOKEN_LIST_RESOURCES.map((url) => this.getTokensByUrl(url)))
+      const [coingeckoTokenList, gnosisTokenList, honeyswapTokenList] = await Promise.all(
+        TOKEN_LIST_RESOURCES.map((url) => this.getTokensByUrl(url)),
+      )
 
-      // tokens.push(...coingeckoTokenList.tokens)
+      tokens.push(...coingeckoTokenList.tokens)
       tokens.push(...gnosisTokenList.tokens)
-      // tokens.push(...honeyswapTokenList.tokens)
+      tokens.push(...honeyswapTokenList.tokens)
     } catch (error) {
       console.error(error)
 
