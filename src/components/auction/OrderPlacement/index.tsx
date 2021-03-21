@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { ChainId, Fraction, TokenAmount } from 'uniswap-xdai-sdk'
+import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { EASY_AUCTION_NETWORKS } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
@@ -20,7 +20,7 @@ import {
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalance } from '../../../state/wallet/hooks'
-import { getTokenDisplay } from '../../../utils'
+import { ChainId, getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'

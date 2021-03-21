@@ -1,9 +1,9 @@
 import { useEffect, useMemo } from 'react'
-import { ChainId, Token, WETH } from 'uniswap-xdai-sdk'
+import { Token, WETH } from 'uniswap-xdai-sdk'
 
 import { ALL_TOKENS } from '../constants/tokens'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'
-import { isAddress } from '../utils'
+import { ChainId, isAddress } from '../utils'
 import { useActiveWeb3React } from './index'
 
 export function useAllTokens(): { [address: string]: Token } {

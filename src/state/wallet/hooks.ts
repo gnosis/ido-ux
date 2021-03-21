@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
-import { ChainId, JSBI, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
+import { JSBI, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens } from '../../hooks/Tokens'
 import { useMulticallContract } from '../../hooks/useContract'
-import { isAddress } from '../../utils'
+import { ChainId, isAddress } from '../../utils'
 import { useMultipleContractSingleData, useSingleContractMultipleData } from '../multicall/hooks'
 
 /**

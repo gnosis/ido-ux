@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { ChainId } from 'uniswap-xdai-sdk'
 
 import { Contract } from '@ethersproject/contracts'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
@@ -7,7 +6,7 @@ import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESS } from '../constants/v1'
-import { getContract } from '../utils'
+import { ChainId, getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 
 // returns null on errors

@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent, Token, TokenAmount } from 'uniswap-xdai-sdk'
+import { JSBI, Percent, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { getAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -23,12 +23,15 @@ export function isAddress(value: any): string | false {
   }
 }
 
+export enum ChainId {
+  MAINNET = 1,
+  RINKEBY = 4,
+  XDAI = 100,
+}
+
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   1: '',
-  3: 'ropsten.',
   4: 'rinkeby.',
-  5: 'goerli.',
-  42: 'kovan.',
   100: 'xdai.',
 }
 
