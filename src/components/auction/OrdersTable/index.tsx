@@ -5,6 +5,7 @@ import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import { useCurrentUserOrders, useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
+import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
@@ -120,7 +121,7 @@ const OrderTable: React.FC = () => {
       {!ordersEmpty && (
         <Wrapper>
           {orders.orders.map((order, index) => (
-            <CellRow columns={4} key={index}>
+            <CellRow columns={5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -169,6 +170,17 @@ const OrderTable: React.FC = () => {
                         <OrderPending />
                       </>
                     )
+                  }
+                />
+              </Cell>
+              <Cell>
+                <KeyValue
+                  align="flex-start"
+                  itemKey={<span>Network</span>}
+                  itemValue={
+                    <>
+                      <span>{getChainName(order.chainId)}</span>
+                    </>
                   }
                 />
               </Cell>
