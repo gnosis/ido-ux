@@ -136,16 +136,12 @@ export const Header: React.FC = (props) => {
   const web3Status = React.useMemo(() => {
     return isConnected && errorWrongNetwork == undefined ? (
       <UserDropdownStyled />
-    ) : errorWrongNetwork || wrongNetwork ? (
-      errorWrongNetwork ? (
-        <Error>{errorWrongNetwork}</Error>
-      ) : (
-        <Error>{wrongNetwork}</Error>
-      )
+    ) : errorWrongNetwork ? (
+      <Error>{errorWrongNetwork}</Error>
     ) : (
       <ButtonConnectStyled onClick={toggleWalletModal} />
     )
-  }, [isConnected, wrongNetwork, errorWrongNetwork, toggleWalletModal])
+  }, [isConnected, errorWrongNetwork, toggleWalletModal])
 
   return (
     <>
