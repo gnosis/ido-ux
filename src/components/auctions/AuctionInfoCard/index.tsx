@@ -214,9 +214,12 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
   const { chainId, endTimeTimestamp, startingTimestamp } = auctionInfo
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endTimeTimestamp))
 
-  setInterval(() => {
-    setTimeLeft(calculateTimeLeft(endTimeTimestamp))
-  }, 1000)
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeLeft(calculateTimeLeft(endTimeTimestamp))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [endTimeTimestamp])
 
   const progressWidth = React.useMemo(() => {
     const progress = calculateTimeProgress(startingTimestamp, endTimeTimestamp)
