@@ -304,17 +304,6 @@ export interface DerivedAuctionInfo {
   orderCancellationEndDate: number | undefined
   auctionState: AuctionState | null | undefined
 }
-export function useParsedBiddingAmount(
-  auctionIdentifier: AuctionIdentifier,
-  derivedAuctionInfo: DerivedAuctionInfo,
-): Maybe<TokenAmount | undefined> {
-  const { sellAmount } = useSwapState()
-
-  const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
-
-  return
-  parsedBiddingAmount
-}
 
 export function useDerivedAuctionInfo(
   auctionIdentifier: AuctionIdentifier,

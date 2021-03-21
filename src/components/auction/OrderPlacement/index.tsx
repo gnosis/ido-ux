@@ -12,8 +12,8 @@ import { useWalletModalToggle } from '../../../state/application/hooks'
 import {
   AuctionState,
   DerivedAuctionInfo,
+  tryParseAmount,
   useGetOrderPlacementError,
-  useParsedBiddingAmount,
   useSwapActionHandlers,
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
@@ -114,13 +114,14 @@ const OrderPlacement = (props: OrderPlacementProps) => {
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
-  const parsedBiddingAmount = useParsedBiddingAmount(auctionIdentifier, derivedAuctionInfo)
+  const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
 
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
   )
+
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
