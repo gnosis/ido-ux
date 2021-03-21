@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Percent } from 'uniswap-xdai-sdk'
+import { JSBI, Percent } from 'uniswap-xdai-sdk'
 
 import ArrowRightIcon from '../assets/images/arrow-right.svg'
 import CoinbaseWalletIcon from '../assets/images/coinbaseWalletIcon.svg'
@@ -8,6 +8,7 @@ import PortisIcon from '../assets/images/portisIcon.png'
 import TrustWalletIcon from '../assets/images/trustWallet.png'
 import WalletConnectIcon from '../assets/images/walletConnectIcon.png'
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
+import { ChainId } from '../utils'
 import { CHAIN_ID } from './config'
 
 export const chainNames = {
@@ -19,10 +20,7 @@ export const chainNames = {
 export const ROUTER_ADDRESS = '0xf164fC0Ec4E93095b804a4795bBe1e041497b92a'
 export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
-  [ChainId.ROPSTEN]: '0x53C43764255c17BD724F74c4eF150724AC50a3ed',
-  [ChainId.KOVAN]: '0x2cc8688C5f75E365aaEEb4ea8D6a480405A48D2A',
   [ChainId.RINKEBY]: '0x307C1384EFeF241d6CBBFb1F85a04C54307Ac9F6',
-  [ChainId.GÖRLI]: '0x732ed4E98f7906B81eb8ECD5269952DCEd966A0f',
   [ChainId.XDAI]: '0x9BacE46438b3f3e0c06d67f5C1743826EE8e87DA',
 }
 const MAINNET_WALLETS = {

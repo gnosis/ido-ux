@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
@@ -107,7 +107,7 @@ export const Header: React.FC = (props) => {
   const { account } = useWeb3React()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
-  const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
+  const [mobileMenuVisible, setMobileMenuVisible] = React.useState(false)
 
   const toggleWalletModal = useWalletModalToggle()
   const allTransactions = useAllTransactions()
@@ -132,14 +132,16 @@ export const Header: React.FC = (props) => {
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
-  const web3Status =
-    isConnected && errorWrongNetwork == undefined ? (
+
+  const web3Status = React.useMemo(() => {
+    return isConnected && errorWrongNetwork == undefined ? (
       <UserDropdownStyled />
     ) : errorWrongNetwork ? (
       <Error>{errorWrongNetwork}</Error>
     ) : (
       <ButtonConnectStyled onClick={toggleWalletModal} />
     )
+  }, [isConnected, errorWrongNetwork, toggleWalletModal])
 
   return (
     <>

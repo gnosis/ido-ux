@@ -1,6 +1,8 @@
-import { ChainId, Fraction, Token } from 'uniswap-xdai-sdk'
+import { Fraction, Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
+
+import { ChainId } from '.'
 
 export const truncateStringInTheMiddle = (
   str: string,
@@ -69,10 +71,7 @@ export const normalizePrice = (auctioningToken: Token, biddingToken: Token, pric
 
 export const getChainName = (chainId: number) => {
   return (
-    (chainId === ChainId.ROPSTEN && 'Ropsten') ||
     (chainId === ChainId.RINKEBY && 'Rinkeby') ||
-    (chainId === ChainId.GÖRLI && 'Görli') ||
-    (chainId === ChainId.KOVAN && 'Kovan') ||
     (chainId === ChainId.MAINNET && 'Mainnet') ||
     (chainId === ChainId.XDAI && 'xDai') ||
     'Unknown Network'
