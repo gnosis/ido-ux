@@ -109,6 +109,11 @@ const OrderTable: React.FC = () => {
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
   const ordersEmpty = !orders.orders || orders.orders.length == 0
 
+  // the array is frozen in strict mode, we will need to copy the array before sorting it
+  const ordersSortered = orders.orders
+    .slice()
+    .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
+
   return (
     <>
       <SectionTitle as="h2">Your Orders</SectionTitle>
@@ -120,7 +125,7 @@ const OrderTable: React.FC = () => {
       )}
       {!ordersEmpty && (
         <Wrapper>
-          {orders.orders.map((order, index) => (
+          {ordersSortered.map((order, index) => (
             <CellRow columns={5} key={index}>
               <Cell>
                 <KeyValue
