@@ -99,6 +99,15 @@ const OrderTable: React.FC = () => {
     )
   }
 
+  const cancelDate = React.useMemo(
+    () =>
+      derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
+      derivedAuctionInfo?.orderCancellationEndDate !== 0
+        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
+        : undefined,
+    [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
+  )
+
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
@@ -121,7 +130,7 @@ const OrderTable: React.FC = () => {
       {!ordersEmpty && (
         <Wrapper>
           {ordersSortered.map((order, index) => (
-            <CellRow columns={5} key={index}>
+            <CellRow columns={cancelDate ? 6 : 5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -184,6 +193,23 @@ const OrderTable: React.FC = () => {
                   }
                 />
               </Cell>
+              {cancelDate && (
+                <Cell>
+                  <KeyValue
+                    align="flex-start"
+                    itemKey={
+                      <>
+                        <span>Last Cancel Date</span>
+                        <Tooltip
+                          id={`limitPrice_${index}`}
+                          text={`After <strong>${cancelDate}</strong> and until the end of the auction, orders cannot be canceled.`}
+                        />
+                      </>
+                    }
+                    itemValue={cancelDate}
+                  />
+                </Cell>
+              )}
               <Cell>
                 <ButtonWrapper>
                   <ActionButton
