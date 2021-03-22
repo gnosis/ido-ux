@@ -62,13 +62,15 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 
 #### What is the chart showing?
 
-<img src="/assets/FAQChart image.png" alt="drawing" width="500"/>
+<img src="/assets/FAQChartImage.png" alt="drawing" width="500"/>
 
 -   Dotted white line -> shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends
 
 -   Green line -> shows the price (x axis) and cumulative size (y axis) of the bids that have been placed, both expressed in the bid token
 
 -   Red line -> shows the minimum sell price (x axis) the auctioneer is willing to accept.
+
+-   Orange line -> shows the order that the user will submitt
 
 #### What is the settlement transaction?
 
