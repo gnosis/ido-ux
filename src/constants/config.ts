@@ -17,7 +17,8 @@ export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID || 1)
 // Infura bridges like 'https://mainnet.infura.io/v3/...'
 export const NETWORK_URL_RINKEBY = process.env.REACT_APP_NETWORK_URL_RINKEBY || ''
 export const NETWORK_URL_MAINNET = process.env.REACT_APP_NETWORK_URL_MAINNET || ''
-export const NETWORK_URL_XDAI = process.env.REACT_APP_NETWORK_URL_XDAI || ''
+export const NETWORK_URL_XDAI =
+  process.env.REACT_APP_NETWORK_URL_XDAI || 'https://rpc.xdaichain.com/'
 
 // Wallet connect keys
 export const FORTMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY || ''
