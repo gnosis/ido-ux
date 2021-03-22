@@ -238,7 +238,8 @@ const OrderTable: React.FC = () => {
             }}
             pendingConfirmation={pendingConfirmation}
             pendingText={pendingText}
-            title="Confirm Order Cancellation"
+            title="Order Cancellation"
+            width={394}
           />
           <WarningModal
             content={orderError}

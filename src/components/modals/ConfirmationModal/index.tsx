@@ -44,6 +44,7 @@ interface ConfirmationModalProps {
   pendingConfirmation: boolean
   pendingText: string
   title?: string
+  width?: number
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
@@ -56,6 +57,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
     pendingConfirmation,
     pendingText,
     title = '',
+    width,
     ...restProps
   } = props
   const { chainId } = useActiveWeb3React()
@@ -67,7 +69,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
     <Modal
       isOpen={isOpen}
       onDismiss={onDismiss}
-      width={isWorking || isFinished ? 394 : undefined}
+      width={width ? width : isWorking || isFinished ? 394 : undefined}
       {...restProps}
     >
       <ModalTitle onClose={onDismiss} title={isWorking || isFinished ? '' : title} />
