@@ -252,7 +252,10 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
           size="68px"
         />
         <SellingText>
-          Selling {auctionInfo.order.volume + ` `}
+          Selling{' '}
+          <span title={auctionInfo.order.volume + ' ' + auctionInfo.symbolAuctioningToken}>
+            {auctionInfo.order.volume.toFixed(2) + ` `}
+          </span>
           {auctionInfo.symbolAuctioningToken}
         </SellingText>
         <Network>
