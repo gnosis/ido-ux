@@ -10,7 +10,7 @@ Although we expect the auctioneer to submit the settlement transaction, anyone c
 
 Bidders: After the auction has ended, and the settlement transaction has been mined, you can click on the `claim` button on the interface.
 
-Auctioneers: After the auction time has ended, submit the transaction to settle the auction. Find an example of the command here (insert link to how to participate as an auctioneer).
+Auctioneers: After the auction time has ended, submit the transaction to settle the auction. Find an [example of the command here](https://ido-ux.dev.gnosisdev.com/#/docs/participate-as-auctioneer#topAnchor).
 
 #### How is the final price calculated?
 
@@ -74,13 +74,17 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 
 #### What is the settlement transaction?
 
-The settlement transaction refers to a transaction that needs to be executed after the auction ends in order to a) distribute the proceeds to the auctioneer and b) make claiming available for users.
+The settlement transaction refers to a transaction that needs to be executed after the auction ends in order to:
+
+a) distribute the proceeds to the auctioneer
+
+b) make claiming available for users.
 
 Although this transaction can be submitted by anyone, we expect the auctioneer to take care of this step. An example of the command can be found in the "How to Participate as an Auctioneer" section.
 
 #### Can I get my tokens back if my bid is not successful?
 
-Yes, as outlined in question "The auction closed but I couldn't claim any of the auctioned tokens, what happened?, you can claim the total balance of the tokens you used for bidding.
+Yes, as outlined in question "The auction closed but I couldn't claim any of the auctioned tokens, what happened?", you can claim the total balance of the tokens you used for bidding.
 
 Please note the ether (gas) spent to submit the bid order cannot be claimed as it is not related to the Gnosis Auction.
 

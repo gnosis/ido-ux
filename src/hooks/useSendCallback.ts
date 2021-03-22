@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
-import { ChainId, JSBI, TokenAmount, WETH } from 'uniswap-xdai-sdk'
+import { JSBI, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
 
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
-import { calculateGasMargin, getSigner, isAddress } from '../utils'
+import { ChainId, calculateGasMargin, getSigner, isAddress } from '../utils'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
 import useENSName from './useENSName'

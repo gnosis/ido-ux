@@ -33,19 +33,26 @@ if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI
 export const network = new NetworkConnector(networkConnectorArguments)
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42, 100, 5777],
+  supportedChainIds: [1, 4, 100],
 })
 
-// mainnet only
 const rpcForWalletConnect: {
   [chainId: number]: string
-} = CHAIN_ID === 4 ? { 4: NETWORK_URL_RINKEBY } : { 1: NETWORK_URL_MAINNET }
+} =
+  CHAIN_ID === 4
+    ? { 4: NETWORK_URL_RINKEBY }
+    : CHAIN_ID === 100
+    ? { 100: NETWORK_URL_XDAI }
+    : { 1: NETWORK_URL_MAINNET }
 
+// The WalletConnectConnector only supports a single RPC when configured,
+// so we are going to use the RPC associated with the Chain_Id environment variable configuration
+// Doing this, we will support every network, including xDai
 export const walletconnect = new WalletConnectConnector({
   rpc: {
     ...rpcForWalletConnect,
   },
-  bridge: 'https://bridge.walletconnect.org',
+  bridge: 'https://safe-walletconnect.gnosis.io',
   qrcode: false,
   pollingInterval: POLLING_INTERVAL,
 })
@@ -65,7 +72,7 @@ export const portis = new PortisConnector({
 // mainnet only
 export const walletlink = new WalletLinkConnector({
   url: NETWORK_URL_MAINNET,
-  appName: 'Uniswap',
+  appName: 'GnosisAuction',
   appLogoUrl:
     'https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg',
 })

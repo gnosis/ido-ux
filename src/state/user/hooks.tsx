@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react'
-import { ChainId, JSBI, Pair, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
+import { JSBI, Pair, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
 import flatMap from 'lodash.flatmap'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens } from '../../hooks/Tokens'
-import { getTokenInfoWithFallback, isAddress } from '../../utils'
+import { ChainId, getTokenInfoWithFallback, isAddress } from '../../utils'
 import { AppDispatch, AppState } from '../index'
 import {
   SerializedPair,

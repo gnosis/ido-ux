@@ -5,6 +5,7 @@ import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import { useCurrentUserOrders, useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
+import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
@@ -12,6 +13,7 @@ import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
 import { OrderPlaced } from '../../icons/OrderPlaced'
 import ConfirmationModal from '../../modals/ConfirmationModal'
+import WarningModal from '../../modals/WarningModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
@@ -47,12 +49,13 @@ const OrderTable: React.FC = () => {
   const derivedAuctionInfo = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(derivedAuctionInfo?.biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
-
   useCurrentUserOrders()
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
+  const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
+  const [orderError, setOrderError] = useState<string>()
 
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
@@ -65,11 +68,18 @@ const OrderTable: React.FC = () => {
   const onCancelOrder = useCallback(() => {
     setAttemptingTxn(true)
 
-    cancelOrderCallback(orderId).then((hash) => {
-      onDeleteOrder(orderId)
-      setTxHash(hash)
-      setPendingConfirmation(false)
-    })
+    cancelOrderCallback(orderId)
+      .then((hash) => {
+        onDeleteOrder(orderId)
+        setTxHash(hash)
+        setPendingConfirmation(false)
+      })
+      .catch((err) => {
+        setOrderError(err.message)
+        setShowConfirm(false)
+        setPendingConfirmation(false)
+        setShowWarning(true)
+      })
   }, [
     setAttemptingTxn,
     setTxHash,
@@ -99,6 +109,11 @@ const OrderTable: React.FC = () => {
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
   const ordersEmpty = !orders.orders || orders.orders.length == 0
 
+  // the array is frozen in strict mode, we will need to copy the array before sorting it
+  const ordersSortered = orders.orders
+    .slice()
+    .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
+
   return (
     <>
       <SectionTitle as="h2">Your Orders</SectionTitle>
@@ -110,8 +125,8 @@ const OrderTable: React.FC = () => {
       )}
       {!ordersEmpty && (
         <Wrapper>
-          {Object.entries(orders).map((order, index) => (
-            <CellRow columns={4} key={index}>
+          {ordersSortered.map((order, index) => (
+            <CellRow columns={5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -124,7 +139,7 @@ const OrderTable: React.FC = () => {
                       />
                     </>
                   }
-                  itemValue={order[1].sellAmount}
+                  itemValue={order.sellAmount}
                 />
               </Cell>
               <Cell>
@@ -141,7 +156,7 @@ const OrderTable: React.FC = () => {
                       />
                     </>
                   }
-                  itemValue={order[1].price}
+                  itemValue={order.price}
                 />
               </Cell>
               <Cell>
@@ -149,7 +164,7 @@ const OrderTable: React.FC = () => {
                   align="flex-start"
                   itemKey={<span>Status</span>}
                   itemValue={
-                    order[1].status == OrderStatus.PLACED ? (
+                    order.status == OrderStatus.PLACED ? (
                       <>
                         <span>Placed</span>
                         <OrderPlaced />
@@ -164,12 +179,23 @@ const OrderTable: React.FC = () => {
                 />
               </Cell>
               <Cell>
+                <KeyValue
+                  align="flex-start"
+                  itemKey={<span>Network</span>}
+                  itemValue={
+                    <>
+                      <span>{getChainName(order.chainId)}</span>
+                    </>
+                  }
+                />
+              </Cell>
+              <Cell>
                 <ButtonWrapper>
                   <ActionButton
                     disabled={!isOrderCancelationAllowed}
                     onClick={() => {
                       if (isOrderCancelationAllowed) {
-                        setOrderId(order[1].id)
+                        setOrderId(order.id)
                         setShowConfirm(true)
                       }
                     }}
@@ -193,6 +219,15 @@ const OrderTable: React.FC = () => {
             pendingText={pendingText}
             title="Confirm Order Cancellation"
             topContent={modalHeader}
+          />
+          <WarningModal
+            content={orderError}
+            isOpen={showWarning}
+            onDismiss={() => {
+              setOrderError(null)
+              setShowWarning(false)
+            }}
+            title="Warning!"
           />
         </Wrapper>
       )}
