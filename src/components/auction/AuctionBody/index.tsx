@@ -27,7 +27,7 @@ const Grid = styled.div`
 interface AuctionBodyProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
-  auctionState: AuctionState | null
+  auctionState: Maybe<AuctionState>
 }
 
 const AuctionBody = (props: AuctionBodyProps) => {
