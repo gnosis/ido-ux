@@ -62,7 +62,7 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 
 #### What is the chart showing?
 
-<img src="/assets/FAQChart image.png" alt="drawing" width="500"/>
+<img src="/assets/FAQChartImage.png" alt="drawing" width="500"/>
 
 -   Dotted white line -> shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends
 

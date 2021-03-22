@@ -50,6 +50,7 @@
 10. If it is the first time that you have used that token to bid, you will have to approve the contract to spend that token. First click on the "Approve" button, and then confirm the transaction on Metamask, as shown below.
 
 <img src="/assets/GA10.png" alt="drawing" width="500"/>
+
 <img src="/assets/GA11.png" alt="drawing" width="500"/>
 
 11. After you have set both the amount of tokens to bid, and the price per bid-token/auction token, you no longer see the enter amount section, instead you see a colored bar with the words “Place Order”. Once you are sure about the parameters you have inputted you have to click on “place order” to include your bid in the auction. 
