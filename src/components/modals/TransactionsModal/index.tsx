@@ -1,94 +1,22 @@
 import React from 'react'
-import styled from 'styled-components'
 
-import { ReactComponent as Close } from '../../../assets/images/x.svg'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import { TransactionDetails } from '../../../state/transactions/reducer'
-import Transaction from '../../AccountDetails/Transaction'
-import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
+import Transaction from '../../common/Transaction'
+import { InfoIcon } from '../../icons/InfoIcon'
 import Modal from '../common/Modal'
-
-const CloseIcon = styled.div`
-  position: absolute;
-  right: 1rem;
-  top: 14px;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-`
-
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.text4};
-  }
-`
-
-const Wrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  margin: 0;
-  padding: 0;
-  width: 100%;
-`
-
-const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-`
-
-const ContentWrapper = styled.div`
-  background-color: ${({ theme }) => theme.bg2};
-  padding: 2rem;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
-`
-
-const UpperSection = styled.div`
-  position: relative;
-
-  h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  h5:last-child {
-    margin-bottom: 0px;
-  }
-
-  h4 {
-    margin-top: 0;
-    font-weight: 500;
-  }
-`
-
-const HoverText = styled.div`
-  :hover {
-    cursor: pointer;
-  }
-`
-
-const TransactionListWrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap};
-`
+import { ModalTitle } from '../common/ModalTitle'
+import { Content } from '../common/pureStyledComponents/Content'
+import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
+import { Text } from '../common/pureStyledComponents/Text'
 
 interface Props {
   isOpen: boolean
-  maxHeight?: number
-  minHeight?: Maybe<number>
   onDismiss: () => void
 }
 
 export const TransactionsModal: React.FC<Props> = (props) => {
-  const { isOpen, maxHeight, minHeight, onDismiss } = props
+  const { isOpen, onDismiss } = props
   const allTransactions = useAllTransactions()
 
   const newTranscationsFirst = (a: TransactionDetails, b: TransactionDetails) => {
@@ -109,35 +37,38 @@ export const TransactionsModal: React.FC<Props> = (props) => {
 
   const renderTransactions = (transactions) => {
     return (
-      <TransactionListWrapper>
+      <>
         {transactions.map((hash, i) => {
           return <Transaction hash={hash} key={i} />
         })}
-      </TransactionListWrapper>
+      </>
     )
   }
 
+  const noTransactions = pending.length === 0 && confirmed.length === 0
+
   return (
-    <Modal isOpen={isOpen} maxHeight={maxHeight} minHeight={minHeight} onDismiss={onDismiss}>
-      <Wrapper>
-        <UpperSection>
-          <CloseIcon onClick={onDismiss}>
-            <CloseColor />
-          </CloseIcon>
-          <HeaderRow>
-            <HoverText>Transactions</HoverText>
-          </HeaderRow>
-          <ContentWrapper>
-            {pending.length === 0 && confirmed.length === 0 && (
-              <EmptyContentWrapper>
-                <EmptyContentText>No transaction to a connected wallet.</EmptyContentText>
-              </EmptyContentWrapper>
-            )}
-            {pending.length > 0 && renderTransactions(pending)}
-            {confirmed.length > 0 && renderTransactions(confirmed)}
-          </ContentWrapper>
-        </UpperSection>
-      </Wrapper>
+    <Modal
+      isOpen={isOpen}
+      minHeight={300}
+      onDismiss={onDismiss}
+      width={noTransactions ? 350 : undefined}
+    >
+      <Content>
+        <ModalTitle onClose={onDismiss} title="Transactions" />
+        {pending.length > 0 && renderTransactions(pending)}
+        {confirmed.length > 0 && renderTransactions(confirmed)}
+        {noTransactions && (
+          <>
+            <IconWrapper>
+              <InfoIcon />
+            </IconWrapper>
+            <Text fontSize="18px" textAlign="center">
+              The connected wallet has no transactions.
+            </Text>
+          </>
+        )}
+      </Content>
     </Modal>
   )
 }
