@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import { Web3Provider } from '@ethersproject/providers'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 import { isMobile } from 'react-device-detect'
@@ -13,6 +14,7 @@ import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
+import { ChainId } from '../../../utils'
 import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
 import { AlertIcon } from '../../icons/AlertIcon'
@@ -110,15 +112,28 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
       action: 'Change Wallet',
       label: name,
     })
-    setPendingWallet(connector)
-    setWalletView(WALLET_VIEWS.PENDING)
-    activate(connector, undefined, true).catch((error) => {
+
+    try {
+      // We check the metamask networkId
+      const provider = new Web3Provider(window.ethereum, 'any')
+      const { chainId: walletNetworkId } = await provider.getNetwork()
+      if (!Object.values(ChainId).includes(walletNetworkId)) {
+        throw new UnsupportedChainIdError(
+          walletNetworkId,
+          Object.keys(ChainId).map((chainId) => Number(chainId)),
+        )
+      }
+
+      setPendingWallet(connector) // set wallet for pending view
+      setWalletView(WALLET_VIEWS.PENDING)
+      await activate(connector, undefined, true)
+    } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
         activate(connector) // a little janky...can't use setError because the connector isn't set
       } else {
         setPendingError(true)
       }
-    })
+    }
   }
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ChainId, Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
+import { Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
@@ -16,6 +16,7 @@ import { useAuctionDetails } from '../../hooks/useAuctionDetails'
 import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
+import { ChainId } from '../../utils'
 import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
@@ -569,6 +570,7 @@ export function useCurrentUserOrders() {
               .mul(BigNumber.from(10).pow(derivedAuctionInfo.biddingToken.decimals))
               .toString(),
           ).toSignificant(6),
+          chainId,
           status: OrderStatus.PLACED,
         })
       }
