@@ -71,23 +71,28 @@ export default function Web3ReactManager({ children }) {
 
   // Fetch token logos by chain ID
   useEffect(() => {
+    let cancelled = false
     const fetchTokenList = async (): Promise<void> => {
       try {
         setShowLoader(true)
 
         const data = await tokenLogosServiceApi.getAllTokens()
-
-        onLoadTokenList(data)
-        setShowLoader(false)
+        if (!cancelled) {
+          onLoadTokenList(data)
+          setShowLoader(false)
+        }
       } catch (error) {
         console.error('Error getting token list', error)
-
+        if (cancelled) return
         onLoadTokenList(null)
         setShowLoader(false)
       }
     }
 
     fetchTokenList()
+    return (): void => {
+      cancelled = true
+    }
   }, [onLoadTokenList])
 
   // on page load, do nothing until we've tried to connect to the injected connector

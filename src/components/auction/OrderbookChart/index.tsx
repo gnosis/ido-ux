@@ -265,7 +265,7 @@ const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProp
   useEffect(() => {
     if (!chartRef.current || data === null) return
     chartRef.current.data = data.length === 0 ? [] : data
-  }, [data])
+  }, [data, baseToken, quoteToken])
 
   return (
     <Wrapper id="chartdiv">
