@@ -6,6 +6,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import DoubleLogo from '../../components/common/DoubleLogo'
 import TokenLogo from '../../components/common/TokenLogo'
+import { ErrorLock } from '../../components/icons/ErrorLock'
+import { ErrorRow, ErrorText, ErrorWrapper } from '../../components/pureStyledComponents/Error'
 import { getTokenDisplay } from '../../utils'
 import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { Button } from '../buttons/Button'
@@ -32,6 +34,10 @@ const Value = styled.div`
   justify-content: flex-start;
 `
 
+const ErrorRowStyled = styled(ErrorRow)`
+  margin-top: 15px;
+`
+
 const ActionButton = styled(Button)`
   margin-top: 45px;
   width: 100%;
@@ -40,8 +46,10 @@ const ActionButton = styled(Button)`
 interface Props {
   auctioningToken?: Token
   biddingToken?: Token
+  cancelDate?: string
   confirmText: string
   onPlaceOrder: () => any
+  orderPlacingOnly?: boolean
   price: string
   priceImpactWithoutFee?: Percent
   realizedLPFee?: TokenAmount
@@ -50,7 +58,16 @@ interface Props {
 }
 
 const SwapModalFooter: React.FC<Props> = (props) => {
-  const { auctioningToken, biddingToken, confirmText, onPlaceOrder, price, sellAmount } = props
+  const {
+    auctioningToken,
+    biddingToken,
+    cancelDate,
+    confirmText,
+    onPlaceOrder,
+    orderPlacingOnly,
+    price,
+    sellAmount,
+  } = props
   const { buyAmountScaled } = convertPriceIntoBuyAndSellAmount(
     auctioningToken,
     biddingToken,
@@ -110,6 +127,29 @@ const SwapModalFooter: React.FC<Props> = (props) => {
           </div>
         </Value>
       </Row>
+      {(cancelDate || orderPlacingOnly) && (
+        <ErrorWrapper>
+          {orderPlacingOnly && (
+            <ErrorRowStyled>
+              <ErrorLock />
+              <ErrorText>
+                Remember: You won&apos;t be able to cancel this order after you click the{' '}
+                <strong>&quot;Confirm&quot;</strong>
+                button.
+              </ErrorText>
+            </ErrorRowStyled>
+          )}
+          {cancelDate && (
+            <ErrorRowStyled>
+              <ErrorLock />
+              <ErrorText>
+                Remember: Beware, after <strong>{cancelDate}</strong> and until the end of the
+                auction, orders cannot be canceled.
+              </ErrorText>
+            </ErrorRowStyled>
+          )}
+        </ErrorWrapper>
+      )}
       <ActionButton onClick={onPlaceOrder}>{confirmText}</ActionButton>
     </>
   )

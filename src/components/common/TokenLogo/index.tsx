@@ -18,6 +18,8 @@ const Wrapper = styled.div<{ size?: string }>`
 `
 
 const Image = styled.img`
+  background: #fff;
+  border-radius: 50%;
   display: block;
   height: 100%;
   width: 100%;

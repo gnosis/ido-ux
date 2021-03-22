@@ -22,7 +22,7 @@ export const ErrorText = styled.div`
   color: ${({ theme }) => theme.text1};
   font-size: 15px;
   font-weight: normal;
-  line-height: 1.2;
+  line-height: 1.4;
   margin: 0 0 0 15px;
   position: relative;
   text-align: left;
