@@ -8,20 +8,11 @@ import { walletconnect } from '../../../../connectors'
 import { Button } from '../../../buttons/Button'
 import { InlineLoading } from '../../../common/InlineLoading'
 import { AlertIcon } from '../../../icons/AlertIcon'
-import { EmptyContentText } from '../../../pureStyledComponents/EmptyContent'
+import { IconWrapper } from '../../common/pureStyledComponents/IconWrapper'
 import { Text } from '../../common/pureStyledComponents/Text'
 import WalletConnectData from '../WalletConnectData'
 
 const Wrapper = styled.div``
-
-const ErrorWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 250px;
-  width: 100%;
-`
 
 const LoadingWrapper = styled(InlineLoading)`
   height: 180px;
@@ -48,9 +39,13 @@ const PendingView: React.FC<Props> = (props) => {
   return (
     <Wrapper {...restProps}>
       {error && (
-        <ErrorWrapper>
-          <AlertIcon />
-          <EmptyContentText>Error connecting.</EmptyContentText>
+        <>
+          <IconWrapper>
+            <AlertIcon />
+          </IconWrapper>
+          <Text fontSize="18px" textAlign="center">
+            Error connecting.
+          </Text>
           <ActionButton
             onClick={() => {
               setPendingError(false)
@@ -59,12 +54,14 @@ const PendingView: React.FC<Props> = (props) => {
           >
             Try Again
           </ActionButton>
-        </ErrorWrapper>
+        </>
       )}
       {!error && isWalletConnect && (
         <>
           <WalletConnectData size={220} uri={uri} />
-          <Text>Scan QR code with a compatible wallet...</Text>
+          <Text fontSize="18px" textAlign="center">
+            Scan QR code with a compatible wallet...
+          </Text>
         </>
       )}
       {!error && !isWalletConnect && <LoadingWrapper message={'Connecting...'} />}

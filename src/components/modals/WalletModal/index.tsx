@@ -16,7 +16,6 @@ import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
 import { ChainId } from '../../../utils'
-import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
@@ -77,13 +76,7 @@ const WALLET_VIEWS = {
   PENDING: 'pending',
 }
 
-interface Props {
-  ENSName?: string
-  confirmedTransactions: string[]
-  pendingTransactions: string[]
-}
-
-const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingTransactions }) => {
+const WalletModal: React.FC = () => {
   const { account, activate, active, connector, error } = useWeb3React()
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState()
@@ -315,16 +308,6 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
             setPendingError={setPendingError}
             tryActivation={tryActivation}
             uri={uri}
-          />
-        )}
-        {!error && viewAccountTransactions && (
-          <AccountDetails
-            confirmedTransactions={confirmedTransactions}
-            // eslint-disable-next-line
-            ENSName={ENSName}
-            openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
-            pendingTransactions={pendingTransactions}
-            toggleWalletModal={toggleWalletModal}
           />
         )}
       </Content>

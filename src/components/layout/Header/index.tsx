@@ -4,10 +4,7 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
-import useENSName from '../../../hooks/useENSName'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import { useAllTransactions } from '../../../state/transactions/hooks'
-import { TransactionDetails } from '../../../state/transactions/reducer'
 import { useNetworkCheck } from '../../Web3Status'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
@@ -110,24 +107,6 @@ export const Header: React.FC = (props) => {
   const [mobileMenuVisible, setMobileMenuVisible] = React.useState(false)
 
   const toggleWalletModal = useWalletModalToggle()
-  const allTransactions = useAllTransactions()
-  const ENSName = useENSName(account)
-
-  const recentTransactionsOnly = (a: TransactionDetails) => {
-    return new Date().getTime() - a.addedTime < 86_400_000
-  }
-
-  const newTransactionFirst = (a: TransactionDetails, b: TransactionDetails) => {
-    return b.addedTime - a.addedTime
-  }
-
-  const sortedRecentTransactions = React.useMemo(() => {
-    const txs = Object.values(allTransactions)
-    return txs.filter(recentTransactionsOnly).sort(newTransactionFirst)
-  }, [allTransactions])
-
-  const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash)
-  const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
 
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
@@ -156,12 +135,7 @@ export const Header: React.FC = (props) => {
           {web3Status}
         </Inner>
       </Wrapper>
-      <WalletModal
-        confirmedTransactions={confirmed}
-        // eslint-disable-next-line
-        ENSName={ENSName}
-        pendingTransactions={pending}
-      />
+      <WalletModal />
     </>
   )
 }
