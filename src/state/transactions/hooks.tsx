@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { TransactionResponse } from '@ethersproject/providers'
 import { useDispatch, useSelector } from 'react-redux'
@@ -44,11 +44,32 @@ export function useTransactionAdder(): (
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
-  const { chainId } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
 
-  const state = useSelector<AppState, TransactionState>((state) => state.transactions)
+  const transactions = useSelector<AppState, TransactionState>((state) => state.transactions)
 
-  return state[chainId ?? -1] ?? {}
+  const transactionsFilteredByConnectedAccount = useMemo(() => {
+    const transactionsByChainId = transactions[chainId ?? -1] ?? {}
+    if (!account) {
+      return transactionsByChainId
+    }
+
+    return Object.keys(transactionsByChainId)
+      .filter(
+        (key) =>
+          // Here we filter by the right account, is a little complicated because the key is a hash
+          account && transactionsByChainId[key]?.from.toLowerCase() === account.toLowerCase(),
+      )
+      .reduce((obj, key) => {
+        // Now we can return the correct object transactions based on the filtered keys
+        return {
+          ...obj,
+          [key]: transactionsByChainId[key],
+        }
+      }, {})
+  }, [account, chainId, transactions])
+
+  return transactionsFilteredByConnectedAccount
 }
 
 // returns whether a token has a pending approval transaction
