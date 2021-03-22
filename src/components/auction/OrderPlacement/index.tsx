@@ -30,9 +30,11 @@ import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import { ErrorLock } from '../../icons/ErrorLock'
+import { LockBig } from '../../icons/LockBig'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 
@@ -89,6 +91,18 @@ const ApprovalButton = styled(Button)`
   font-weight: 600;
   height: 26px;
   padding: 0 14px;
+`
+
+const PrivateWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  justify-content: center;
+`
+
+const TextBig = styled(EmptyContentText)`
+  font-size: 22px;
 `
 
 const OrderPlacement: React.FC = () => {
@@ -210,7 +224,13 @@ const OrderPlacement: React.FC = () => {
         {loading ? (
           <InlineLoading size={SpinnerSize.small} />
         ) : auctionInfo?.auctionDetails?.isPrivateAuction && !loading && !signature ? (
-          <p>You are not allowed place an order for this auction</p>
+          <PrivateWrapper>
+            <LockBig />
+            <TextBig>Private auction</TextBig>
+            <EmptyContentText style={{ marginTop: '0' }}>
+              You are not allowed place an order.
+            </EmptyContentText>
+          </PrivateWrapper>
         ) : (
           <>
             <BalanceWrapper>
