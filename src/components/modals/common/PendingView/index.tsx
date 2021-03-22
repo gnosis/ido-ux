@@ -6,10 +6,8 @@ import styled from 'styled-components'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import Circle from '../../../../assets/images/circle.svg'
-import { injected, walletconnect } from '../../../../connectors'
-import { SUPPORTED_WALLETS } from '../../../../constants'
+import { walletconnect } from '../../../../connectors'
 import { Spinner } from '../../../../theme'
-import Option from '../Option'
 import WalletConnectData from '../WalletConnectData'
 
 const Wrapper = styled.div`
@@ -93,7 +91,6 @@ const PendingView: React.FC<Props> = (props) => {
     uri = '',
     ...restProps
   } = props
-  const isMetamask = window.ethereum && window.ethereum.isMetaMask
 
   return (
     <Wrapper {...restProps}>
@@ -120,28 +117,6 @@ const PendingView: React.FC<Props> = (props) => {
           )}
         </LoadingWrapper>
       </LoadingMessage>
-      {Object.keys(SUPPORTED_WALLETS).map((key) => {
-        const option = SUPPORTED_WALLETS[key]
-        if (option.connector === connector) {
-          if (option.connector === injected) {
-            if (isMetamask && option.name !== 'MetaMask') {
-              return null
-            }
-            if (!isMetamask && option.name === 'MetaMask') {
-              return null
-            }
-          }
-          return (
-            <Option
-              clickable={false}
-              icon={option.icon}
-              subText={option.description}
-              text={option.name}
-            />
-          )
-        }
-        return null
-      })}
     </Wrapper>
   )
 }

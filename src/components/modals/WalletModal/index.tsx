@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Web3Provider } from '@ethersproject/providers'
@@ -18,6 +19,7 @@ import { ChainId } from '../../../utils'
 import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
 import { AlertIcon } from '../../icons/AlertIcon'
+import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import Modal from '../common/Modal'
 import { ModalTitle } from '../common/ModalTitle'
 import Option from '../common/Option'
@@ -26,9 +28,47 @@ import { Content } from '../common/pureStyledComponents/Content'
 import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
 import { Text } from '../common/pureStyledComponents/Text'
 
-const Blurb = styled.div``
+const CheckboxWrapper = styled.div`
+  align-items: baseline;
+  display: flex;
+  margin-bottom: 40px;
+  margin-top: 12px;
+`
 
-const OptionGrid = styled.div``
+const CheckboxText = styled.span`
+  color: ${({ theme }) => theme.text1};
+  font-size: 15px;
+  font-weight: normal;
+  line-height: 1.4;
+  margin-left: 12px;
+
+  a {
+    color: ${({ theme }) => theme.text1};
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+`
+
+const Footer = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.4;
+  margin-left: 12px;
+  text-align: center;
+
+  a {
+    color: ${({ theme }) => theme.text1};
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+`
 
 const WALLET_VIEWS = {
   OPTIONS: 'options',
@@ -52,6 +92,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
   const toggleWalletModal = useWalletModalToggle()
   const previousAccount = usePrevious(account)
   const { errorWrongNetwork } = useNetworkCheck()
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
@@ -155,7 +196,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
         if (!window.web3 && !window.ethereum && option.mobile) {
           return (
             <Option
-              active={option.connector && option.connector === connector}
+              disabled={!termsAccepted}
               icon={option.icon}
               link={option.href}
               onClick={() => {
@@ -172,7 +213,12 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
         if (!(window.web3 || window.ethereum)) {
           if (option.name === 'MetaMask') {
             return (
-              <Option icon={MetamaskIcon} link={'https://metamask.io/'} text={'Install Metamask'} />
+              <Option
+                disabled={!termsAccepted}
+                icon={MetamaskIcon}
+                link={'https://metamask.io/'}
+                text={'Install Metamask'}
+              />
             )
           } else {
             return null //dont want to return install twice
@@ -188,7 +234,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
         !isMobile &&
         !option.mobileOnly && (
           <Option
-            active={option.connector === connector}
+            disabled={!termsAccepted}
             icon={option.icon}
             link={option.href}
             onClick={() => {
@@ -236,13 +282,23 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
         )}
         {!error && !connectingToWallet && (
           <>
-            <OptionGrid>{getOptions()}</OptionGrid>{' '}
-            <Blurb>
-              <span>New to Ethereum? &nbsp;</span>{' '}
+            <div>{getOptions()}</div>
+            <CheckboxWrapper>
+              <Checkbox checked={termsAccepted} onClick={() => setTermsAccepted(!termsAccepted)} />
+              <CheckboxText>
+                You accept our{' '}
+                <NavLink target="_blank" to="/terms-and-conditions">
+                  Terms &amp; Conditions
+                </NavLink>{' '}
+                when connecting your wallet to this app.
+              </CheckboxText>
+            </CheckboxWrapper>
+            <Footer>
+              <span>New to Ethereum?</span>{' '}
               <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
-                Learn more about wallets
+                Learn more about wallets.
               </ExternalLink>
-            </Blurb>
+            </Footer>
           </>
         )}
         {!error && connectingToWallet && (

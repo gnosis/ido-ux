@@ -23,6 +23,7 @@ const CheckboxDisabledCSS = css`
 export const Checkbox = styled.div<{ checked?: boolean; disabled?: boolean }>`
   background-color: ${({ theme }) => theme.mainBackground};
   border: solid 1px ${({ theme }) => theme.primary1};
+  cursor: pointer;
   flex-grow: 0;
   flex-shrink: 0;
   height: 12px;

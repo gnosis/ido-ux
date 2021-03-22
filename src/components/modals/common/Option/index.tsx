@@ -3,11 +3,12 @@ import styled from 'styled-components'
 
 import { ExternalLink } from '../../../../theme'
 
-const Wrapper = styled.button<{ active?: boolean; clickable?: boolean }>`
+const Wrapper = styled.button<{ disabled?: boolean }>`
   align-items: center;
   background-color: transparent;
   border-radius: 12px;
   border: solid 1px ${({ theme }) => theme.primary2};
+  cursor: pointer;
   display: flex;
   height: 54px;
   justify-content: flex-start;
@@ -23,8 +24,8 @@ const Wrapper = styled.button<{ active?: boolean; clickable?: boolean }>`
     background-color: #001e3c;
   }
 
-  ${(props) => !props.clickable && `&[disabled] { opacity: 0.5; cursor: not-allowed;}`}
-  ${(props) => !props.clickable && `&:hover { background-color: transparent; }`}
+  ${(props) => props.disabled && `&[disabled] { opacity: 0.5; cursor: not-allowed;}`}
+  ${(props) => props.disabled && `&[disabled]:hover { background-color: transparent; }`}
 `
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -61,19 +62,17 @@ const Image = styled.img`
 `
 
 interface Props {
-  active?: boolean
-  clickable?: boolean
-  text: React.ReactNode
+  disabled?: boolean
   icon: string
   link?: Maybe<string>
   onClick?: null | (() => void)
   subText?: Maybe<React.ReactNode>
+  text: React.ReactNode
 }
 
 const Option: React.FC<Props> = (props) => {
   const {
-    active = false,
-    clickable = true,
+    disabled = false,
     icon,
     link = null,
     onClick = null,
@@ -82,7 +81,7 @@ const Option: React.FC<Props> = (props) => {
     ...restProps
   } = props
   const content = (
-    <Wrapper active={active} clickable={clickable && !active} onClick={onClick} {...restProps}>
+    <Wrapper disabled={disabled} onClick={onClick} {...restProps}>
       <IconWrapper>
         <Image alt={'Icon'} src={icon} />
       </IconWrapper>
