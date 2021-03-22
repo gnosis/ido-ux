@@ -31,20 +31,9 @@ export const FeaturedAuctions: React.FC = (props) => {
   const { ...restProps } = props
   const highlightedAuctions = useInterestingAuctionInfo()
 
-  const auctions = React.useMemo(() => {
-    const items: React.ReactNodeArray = []
-
-    if (highlightedAuctions && highlightedAuctions.length > 0) {
-      const highlightedAuctionsFirstThree = highlightedAuctions.slice(0, 3)
-      for (const highlightedAuction of highlightedAuctionsFirstThree) {
-        items.push(
-          <AuctionInfoCard auctionInfo={highlightedAuction} key={highlightedAuction.auctionId} />,
-        )
-      }
-    }
-
-    return items
-  }, [highlightedAuctions])
+  const auctions = React.useMemo(() => highlightedAuctions && highlightedAuctions.slice(0, 3), [
+    highlightedAuctions,
+  ])
 
   return (
     <Wrapper {...restProps}>
@@ -60,7 +49,13 @@ export const FeaturedAuctions: React.FC = (props) => {
           <EmptyContentText>No featured auctions.</EmptyContentText>
         </EmptyContentWrapper>
       )}
-      {highlightedAuctions && highlightedAuctions.length > 0 && <Row>{auctions}</Row>}
+      {auctions && auctions.length > 0 && (
+        <Row>
+          {auctions.map((auction, index) => (
+            <AuctionInfoCard auctionInfo={auction} key={index} />
+          ))}
+        </Row>
+      )}
     </Wrapper>
   )
 }
