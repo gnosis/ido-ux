@@ -198,6 +198,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
             <Option
               disabled={!termsAccepted}
               icon={option.icon}
+              key={key}
               link={option.href}
               onClick={() => {
                 option.connector !== connector && !option.href && tryActivation(option.connector)
@@ -216,6 +217,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
               <Option
                 disabled={!termsAccepted}
                 icon={MetamaskIcon}
+                key={key}
                 link={'https://metamask.io/'}
                 text={'Install Metamask'}
               />
@@ -236,6 +238,7 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
           <Option
             disabled={!termsAccepted}
             icon={option.icon}
+            key={key}
             link={option.href}
             onClick={() => {
               option.connector === connector
