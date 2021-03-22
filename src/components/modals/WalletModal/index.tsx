@@ -270,7 +270,11 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
       : 'Error connecting. Try refreshing the page.'
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} width={error ? 400 : undefined}>
+    <Modal
+      isOpen={walletModalOpen}
+      onDismiss={toggleWalletModal}
+      width={error || connectingToWallet ? 400 : undefined}
+    >
       <ModalTitle onClose={toggleWalletModal} title={title} />
       <Content>
         {error && (
@@ -286,8 +290,8 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
         {!error && !connectingToWallet && (
           <>
             <div>{getOptions()}</div>
-            <CheckboxWrapper>
-              <Checkbox checked={termsAccepted} onClick={() => setTermsAccepted(!termsAccepted)} />
+            <CheckboxWrapper onClick={() => setTermsAccepted(!termsAccepted)}>
+              <Checkbox checked={termsAccepted} />
               <CheckboxText>
                 You accept our{' '}
                 <NavLink target="_blank" to="/terms-and-conditions">
@@ -309,7 +313,6 @@ const WalletModal: React.FC<Props> = ({ ENSName, confirmedTransactions, pendingT
             connector={pendingWallet}
             error={pendingError}
             setPendingError={setPendingError}
-            size={220}
             tryActivation={tryActivation}
             uri={uri}
           />
