@@ -35,7 +35,6 @@ import WarningModal from '../../modals/WarningModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
 import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
-import SwapModalHeader from '../../swap/SwapModalHeader'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -159,23 +158,15 @@ const OrderPlacement: React.FC = () => {
     })
   }
 
-  const [showInverted, setShowInverted] = useState<boolean>(false)
-
-  const modalHeader = () => {
-    return <SwapModalHeader />
-  }
-
   const modalBottom = () => {
     return (
       <SwapModalFooter
         auctioningToken={derivedAuctionInfo?.auctioningToken}
         biddingToken={derivedAuctionInfo?.biddingToken}
-        confirmText={'Confirm Order'}
+        confirmText={'Confirm'}
         onPlaceOrder={onPlaceOrder}
         price={price}
         sellAmount={sellAmount}
-        setShowInverted={setShowInverted}
-        showInverted={showInverted}
       />
     )
   }
@@ -302,7 +293,7 @@ const OrderPlacement: React.FC = () => {
       />
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
-        bottomContent={modalBottom}
+        content={modalBottom}
         hash={txHash}
         isOpen={showConfirm}
         onDismiss={() => {
@@ -312,7 +303,6 @@ const OrderPlacement: React.FC = () => {
         pendingConfirmation={pendingConfirmation}
         pendingText={pendingText}
         title="Confirm Order"
-        topContent={modalHeader}
       />
     </Wrapper>
   )

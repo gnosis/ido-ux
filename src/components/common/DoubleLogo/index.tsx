@@ -11,16 +11,12 @@ const Wrapper = styled.div`
   position: relative;
 `
 
-const Logo = styled(TokenLogo)`
-  border: 3px solid #001429;
-`
-
-const HigherLogo = styled(Logo)`
+const HigherLogo = styled(TokenLogo)`
   margin-right: calc(-${(props) => props.size} / 3);
   z-index: 5;
 `
 
-const CoveredLogo = styled(Logo)`
+const CoveredLogo = styled(TokenLogo)`
   z-index: 1;
 `
 

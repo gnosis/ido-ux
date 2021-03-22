@@ -19,7 +19,6 @@ import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import CancelModalFooter from '../../swap/CancelOrderModealFooter'
-import SwapModalHeader from '../../swap/SwapModalHeader'
 
 const Wrapper = styled(BaseCard)`
   padding: 4px 0;
@@ -89,15 +88,11 @@ const OrderTable: React.FC = () => {
     cancelOrderCallback,
   ])
 
-  const modalHeader = () => {
-    return <SwapModalHeader />
-  }
-
   const modalBottom = () => {
     return (
       <CancelModalFooter
         biddingToken={derivedAuctionInfo?.biddingToken}
-        confirmText={'Cancel Order'}
+        confirmText={'Cancel'}
         onCancelOrder={onCancelOrder}
         orderId={orderId}
       />
@@ -208,7 +203,7 @@ const OrderTable: React.FC = () => {
           ))}
           <ConfirmationModal
             attemptingTxn={attemptingTxn}
-            bottomContent={modalBottom}
+            content={modalBottom}
             hash={txHash}
             isOpen={showConfirm}
             onDismiss={() => {
@@ -218,7 +213,6 @@ const OrderTable: React.FC = () => {
             pendingConfirmation={pendingConfirmation}
             pendingText={pendingText}
             title="Confirm Order Cancellation"
-            topContent={modalHeader}
           />
           <WarningModal
             content={orderError}
