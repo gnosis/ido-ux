@@ -38,8 +38,6 @@ const AuctionId = styled.span`
 
 const CopyButton = styled(ButtonCopy)`
   height: 14px;
-  position: relative;
-  top: -1px;
   width: 14px;
 `
 
