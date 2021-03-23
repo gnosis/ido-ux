@@ -2,12 +2,14 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useCurrentUserOrders, useDerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
-import { OrderState, OrderStatus } from '../../../state/orders/reducer'
+import { useDerivedAuctionInfo, useUserAuctionOrders } from '../../../state/orderPlacement/hooks'
+import { useOrderActionHandlers } from '../../../state/orders/hooks'
+import { OrderStatus } from '../../../state/orders/reducer'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
+import { InlineLoading } from '../../common/InlineLoading'
 import { KeyValue } from '../../common/KeyValue'
+import { SpinnerSize } from '../../common/Spinner'
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
@@ -45,12 +47,10 @@ const ButtonWrapper = styled.div`
 `
 
 const OrderTable: React.FC = () => {
-  const orders: OrderState | undefined = useOrderState()
   const derivedAuctionInfo = useDerivedAuctionInfo()
   const cancelOrderCallback = useCancelOrderCallback(derivedAuctionInfo?.biddingToken)
   const { onDeleteOrder } = useOrderActionHandlers()
-  useCurrentUserOrders()
-
+  const { loading, orders } = useUserAuctionOrders()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
@@ -107,12 +107,15 @@ const OrderTable: React.FC = () => {
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
-  const ordersEmpty = !orders.orders || orders.orders.length == 0
+  const ordersEmpty = !orders || orders.length == 0
 
-  // the array is frozen in strict mode, we will need to copy the array before sorting it
-  const ordersSortered = orders.orders
-    .slice()
-    .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
+  if (loading) {
+    return (
+      <EmptyContentWrapper>
+        <InlineLoading size={SpinnerSize.small} />
+      </EmptyContentWrapper>
+    )
+  }
 
   return (
     <>
@@ -125,7 +128,7 @@ const OrderTable: React.FC = () => {
       )}
       {!ordersEmpty && (
         <Wrapper>
-          {ordersSortered.map((order, index) => (
+          {orders.map((order, index) => (
             <CellRow columns={5} key={index}>
               <Cell>
                 <KeyValue

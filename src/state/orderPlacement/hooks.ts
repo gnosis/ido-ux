@@ -589,3 +589,79 @@ export function useCurrentUserOrders() {
     derivedAuctionInfo?.biddingToken,
   ])
 }
+
+export function useUserAuctionOrders() {
+  const { account } = useActiveWeb3React()
+  const { auctionId, chainId } = useSwapState()
+  const derivedAuctionInfo = useDerivedAuctionInfo()
+  const [loading, setLoading] = useState<boolean>(true)
+  const [orders, setOrders] = useState<OrderDisplay[]>([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+
+      try {
+        if (
+          !chainId ||
+          !account ||
+          !auctionId ||
+          !derivedAuctionInfo?.biddingToken ||
+          !derivedAuctionInfo?.auctioningToken
+        ) {
+          return
+        }
+
+        const orderDisplays: OrderDisplay[] = []
+        const orders: string[] = await additionalServiceApi.getCurrentUserOrders({
+          networkId: chainId,
+          auctionId,
+          user: account,
+        })
+
+        orders.forEach((orderString) => {
+          const order = decodeOrder(orderString)
+
+          orderDisplays.push({
+            id: orderString,
+            sellAmount: new Fraction(
+              order.sellAmount.toString(),
+              BigNumber.from(10).pow(derivedAuctionInfo?.biddingToken?.decimals).toString(),
+            ).toSignificant(6),
+            price: new Fraction(
+              order.sellAmount
+                .mul(BigNumber.from(10).pow(derivedAuctionInfo?.auctioningToken.decimals))
+                .toString(),
+              order.buyAmount
+                .mul(BigNumber.from(10).pow(derivedAuctionInfo?.biddingToken.decimals))
+                .toString(),
+            ).toSignificant(6),
+            chainId,
+            status: OrderStatus.PLACED,
+          })
+        })
+
+        setOrders(
+          orderDisplays.sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price)),
+        )
+      } catch (error) {
+        console.error('Error getting current orders: ', error)
+      }
+
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [
+    chainId,
+    account,
+    auctionId,
+    derivedAuctionInfo?.auctioningToken,
+    derivedAuctionInfo?.biddingToken,
+  ])
+
+  return {
+    orders,
+    loading,
+  }
+}
