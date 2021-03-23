@@ -96,7 +96,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
               Transaction Submitted
             </Text>
             <Text fontSize="20px" margin="0" textAlign="center">
-              Placing Order
+              {pendingText}
             </Text>
             <Link href={getEtherscanLink(chainId, hash, 'transaction')}>
               <span>View on Etherscan</span>
