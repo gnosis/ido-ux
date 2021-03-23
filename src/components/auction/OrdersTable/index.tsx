@@ -2,15 +2,13 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { DerivedAuctionInfo, useUserAuctionOrders } from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo, useCurrentUserOrders } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { useOrderActionHandlers } from '../../../state/orders/hooks'
-import { OrderStatus } from '../../../state/orders/reducer'
+import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
+import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { InlineLoading } from '../../common/InlineLoading'
 import { KeyValue } from '../../common/KeyValue'
-import { SpinnerSize } from '../../common/Spinner'
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
@@ -52,12 +50,14 @@ interface OrderTableProps {
 
 const OrderTable: React.FC<OrderTableProps> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
-  const { loading, orders } = useUserAuctionOrders(auctionIdentifier, derivedAuctionInfo)
+  const orders: OrderState | undefined = useOrderState()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
   )
   const { onDeleteOrder } = useOrderActionHandlers()
+  useCurrentUserOrders(auctionIdentifier, derivedAuctionInfo)
+
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
@@ -119,15 +119,12 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
-  const ordersEmpty = !orders || orders.length == 0
+  const ordersEmpty = !orders.orders || orders.orders.length == 0
 
-  if (loading) {
-    return (
-      <EmptyContentWrapper>
-        <InlineLoading size={SpinnerSize.small} />
-      </EmptyContentWrapper>
-    )
-  }
+  // the array is frozen in strict mode, we will need to copy the array before sorting it
+  const ordersSortered = orders.orders
+    .slice()
+    .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
 
   return (
     <>
@@ -140,7 +137,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       )}
       {!ordersEmpty && (
         <Wrapper>
-          {orders.map((order, index) => (
+          {ordersSortered.map((order, index) => (
             <CellRow columns={cancelDate ? 6 : 5} key={index}>
               <Cell>
                 <KeyValue
