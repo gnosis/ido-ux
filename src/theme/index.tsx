@@ -61,7 +61,7 @@ export function colors(darkMode: boolean): Colors {
     secondary3: darkMode ? '#17000b26' : 'rgba(69,104,255,0.25)',
     text1: darkMode ? '#FFFFFF' : '#000000',
     text2: darkMode ? '#DCDCDC' : '#565A69',
-    text3: darkMode ? '#a9acbb' : '#a9acbb',
+    text3: darkMode ? '#001429' : '#001429',
     text4: darkMode ? '#565A69' : '#C3C5CB',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
     white: '#fff',
