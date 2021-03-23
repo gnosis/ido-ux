@@ -4,9 +4,9 @@ import { Percent } from 'uniswap-xdai-sdk'
 
 import { Text } from 'rebass'
 
-import { YellowCard } from '../Card'
-import { AutoColumn } from '../Column'
-import { RowBetween, RowFixed } from '../Row'
+import { YellowCard } from './Card'
+import { AutoColumn } from './Column'
+import { RowBetween, RowFixed } from './Row'
 
 export function PriceSlippageWarningCard({ priceSlippage }: { priceSlippage: Percent }) {
   const theme = useContext(ThemeContext)

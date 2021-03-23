@@ -1,8 +1,8 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter, HashRouter, Redirect, Route, Switch } from 'react-router-dom'
 
-import Web3ReactManager from '../components/Web3ReactManager'
 import { CookiesBanner } from '../components/common/CookiesBanner'
+import { TopDisclaimer } from '../components/common/TopDisclaimer'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
 import Popups from '../components/popups/Popups'
@@ -10,6 +10,7 @@ import { BaseCard } from '../components/pureStyledComponents/BaseCard'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainScroll } from '../components/pureStyledComponents/MainScroll'
 import { MainWrapper } from '../components/pureStyledComponents/MainWrapper'
+import Web3ReactManager from '../components/web3/Web3ReactManager'
 import { PUBLIC_URL } from '../constants/config'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import { About } from './About'
@@ -24,21 +25,18 @@ import Overview from './Overview'
 import { Privacy } from './Privacy'
 import { Terms } from './Terms'
 
-let Router: React.ComponentType
-if (PUBLIC_URL === '.') {
-  Router = HashRouter
-} else {
-  Router = BrowserRouter
-}
+const Router: React.ComponentType = PUBLIC_URL === '.' ? HashRouter : BrowserRouter
 
-export default function App() {
+const App: React.FC = () => {
   const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
+
   return (
     <Suspense fallback={null}>
       <Router>
         <Route component={DarkModeQueryParamReader} />
         <MainWrapper>
           <Header />
+          <TopDisclaimer />
           <MainScroll>
             <span id="topAnchor" />
             <InnerContainer>
@@ -99,3 +97,5 @@ export default function App() {
     </Suspense>
   )
 }
+
+export default App

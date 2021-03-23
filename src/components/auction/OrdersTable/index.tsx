@@ -15,11 +15,11 @@ import { OrderPending } from '../../icons/OrderPending'
 import { OrderPlaced } from '../../icons/OrderPlaced'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
+import CancelModalFooter from '../../modals/common/CancelModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
-import CancelModalFooter from '../../swap/CancelOrderModealFooter'
 
 const Wrapper = styled(BaseCard)`
   padding: 4px 0;
