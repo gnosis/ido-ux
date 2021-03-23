@@ -2,13 +2,15 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { DerivedAuctionInfo, useCurrentUserOrders } from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo, useUserAuctionOrders } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
-import { OrderState, OrderStatus } from '../../../state/orders/reducer'
+import { useOrderActionHandlers } from '../../../state/orders/hooks'
+import { OrderStatus } from '../../../state/orders/reducer'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
+import { InlineLoading } from '../../common/InlineLoading'
 import { KeyValue } from '../../common/KeyValue'
+import { SpinnerSize } from '../../common/Spinner'
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
@@ -20,7 +22,6 @@ import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import CancelModalFooter from '../../swap/CancelOrderModealFooter'
-import SwapModalHeader from '../../swap/SwapModalHeader'
 
 const Wrapper = styled(BaseCard)`
   padding: 4px 0;
@@ -51,14 +52,12 @@ interface OrderTableProps {
 
 const OrderTable: React.FC<OrderTableProps> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
-  const orders: OrderState | undefined = useOrderState()
+  const { loading, orders } = useUserAuctionOrders(auctionIdentifier, derivedAuctionInfo)
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
   )
   const { onDeleteOrder } = useOrderActionHandlers()
-  useCurrentUserOrders(auctionIdentifier, derivedAuctionInfo)
-
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
@@ -97,30 +96,38 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     cancelOrderCallback,
   ])
 
-  const modalHeader = () => {
-    return <SwapModalHeader />
-  }
-
   const modalBottom = () => {
     return (
       <CancelModalFooter
         biddingToken={derivedAuctionInfo?.biddingToken}
-        confirmText={'Cancel Order'}
+        confirmText={'Cancel'}
         onCancelOrder={onCancelOrder}
         orderId={orderId}
       />
     )
   }
 
+  const cancelDate = React.useMemo(
+    () =>
+      derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
+      derivedAuctionInfo?.orderCancellationEndDate !== 0
+        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
+        : undefined,
+    [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
+  )
+
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
-  const ordersEmpty = !orders.orders || orders.orders.length == 0
+  const ordersEmpty = !orders || orders.length == 0
 
-  // the array is frozen in strict mode, we will need to copy the array before sorting it
-  const ordersSortered = orders.orders
-    .slice()
-    .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
+  if (loading) {
+    return (
+      <EmptyContentWrapper>
+        <InlineLoading size={SpinnerSize.small} />
+      </EmptyContentWrapper>
+    )
+  }
 
   return (
     <>
@@ -133,8 +140,8 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       )}
       {!ordersEmpty && (
         <Wrapper>
-          {ordersSortered.map((order, index) => (
-            <CellRow columns={5} key={index}>
+          {orders.map((order, index) => (
+            <CellRow columns={cancelDate ? 6 : 5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -197,6 +204,23 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   }
                 />
               </Cell>
+              {cancelDate && (
+                <Cell>
+                  <KeyValue
+                    align="flex-start"
+                    itemKey={
+                      <>
+                        <span>Last Cancel Date</span>
+                        <Tooltip
+                          id={`limitPrice_${index}`}
+                          text={`After <strong>${cancelDate}</strong> and until the end of the auction, orders cannot be canceled.`}
+                        />
+                      </>
+                    }
+                    itemValue={cancelDate}
+                  />
+                </Cell>
+              )}
               <Cell>
                 <ButtonWrapper>
                   <ActionButton
@@ -216,7 +240,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
           ))}
           <ConfirmationModal
             attemptingTxn={attemptingTxn}
-            bottomContent={modalBottom}
+            content={modalBottom}
             hash={txHash}
             isOpen={showConfirm}
             onDismiss={() => {
@@ -225,8 +249,8 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
             }}
             pendingConfirmation={pendingConfirmation}
             pendingText={pendingText}
-            title="Confirm Order Cancellation"
-            topContent={modalHeader}
+            title="Order Cancellation"
+            width={394}
           />
           <WarningModal
             content={orderError}

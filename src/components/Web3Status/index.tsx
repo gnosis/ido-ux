@@ -162,7 +162,6 @@ export default function Web3Status() {
   }, [allTransactions])
 
   const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)
-  const confirmed = sortedRecentTransactions.filter((tx) => tx.receipt).map((tx) => tx.hash)
 
   const hasPendingTransactions = !!pending.length
 
@@ -246,12 +245,7 @@ export default function Web3Status() {
   return (
     <>
       {getWeb3Status()}
-      <WalletModal
-        confirmedTransactions={confirmed}
-        // eslint-disable-next-line
-        ENSName={ENSName}
-        pendingTransactions={pending}
-      />
+      <WalletModal />
     </>
   )
 }

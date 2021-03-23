@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 
 import { Web3Provider } from '@ethersproject/providers'
 import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
-import 'inter-ui'
 import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
