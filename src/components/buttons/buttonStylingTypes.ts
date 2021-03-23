@@ -82,7 +82,7 @@ export const ButtonCSS = css<ButtonCommonProps>`
   display: flex;
   font-size: 20px;
   font-weight: 600;
-  height: 35px;
+  height: 44px;
   justify-content: center;
   line-height: 1;
   outline: none;

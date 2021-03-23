@@ -26,6 +26,7 @@ const Wrapper = styled.div<{ size?: SpinnerSize | string | undefined }>`
 `
 
 export enum SpinnerSize {
+  extraSmall = '20px',
   small = '30px',
   regular = '50px',
   large = '60px',

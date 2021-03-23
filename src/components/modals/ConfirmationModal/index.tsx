@@ -1,124 +1,112 @@
-import React, { useContext } from 'react'
-import { ArrowUpCircle } from 'react-feather'
-import styled, { ThemeContext } from 'styled-components'
-
-import { Text } from 'rebass'
+import React from 'react'
+import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { ExternalLink } from '../../../theme'
-import { CloseIcon } from '../../../theme/components'
 import { getEtherscanLink } from '../../../utils'
-import { ButtonPrimary } from '../../Button'
-import { AutoColumn, ColumnCenter } from '../../Column'
-import Loader from '../../Loader'
-import { RowBetween } from '../../Row'
-import Modal from '../Modal'
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
+import { ArrowUp } from '../../icons/ArrowUp'
+import { LinkIcon } from '../../icons/LinkIcon'
+import Modal from '../common/Modal'
+import { ModalTitle } from '../common/ModalTitle'
+import { Content } from '../common/pureStyledComponents/Content'
+import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
+import { Text } from '../common/pureStyledComponents/Text'
 
-const Wrapper = styled.div`
-  width: 100%;
-`
-const Section = styled(AutoColumn)`
-  padding: 24px;
-`
-
-const BottomSection = styled(Section)`
-  background-color: ${({ theme }) => theme.bg2};
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+const LoadingWrapper = styled(InlineLoading)`
+  height: 180px;
 `
 
-const ConfirmedIcon = styled(ColumnCenter)`
-  padding: 60px 0;
+const Link = styled(ExternalLink)`
+  color: ${({ theme }) => theme.text1};
+  font-size: 16px;
+  line-height: 1.2;
+  padding: 12px 0 0 0;
+  text-align: center;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  > span {
+    margin-right: 6px;
+  }
 `
 
 interface ConfirmationModalProps {
+  attemptingTxn: boolean
+  content: () => React.ReactChild
+  hash: string
   isOpen: boolean
   onDismiss: () => void
-  hash: string
-  topContent: () => React.ReactChild
-  bottomContent: () => React.ReactChild
-  attemptingTxn: boolean
   pendingConfirmation: boolean
   pendingText: string
   title?: string
+  width?: number
 }
 
-export default function ConfirmationModal({
-  attemptingTxn,
-  bottomContent,
-  hash,
-  isOpen,
-  onDismiss,
-  pendingConfirmation,
-  pendingText,
-  title = '',
-  topContent,
-}: ConfirmationModalProps) {
+const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
+  const {
+    attemptingTxn,
+    content,
+    hash,
+    isOpen,
+    onDismiss,
+    pendingConfirmation,
+    pendingText,
+    title = '',
+    width,
+    ...restProps
+  } = props
   const { chainId } = useActiveWeb3React()
-  const theme = useContext(ThemeContext)
+
+  const isWorking = attemptingTxn && pendingConfirmation
+  const isFinished = attemptingTxn && !pendingConfirmation
 
   return (
-    <Modal isOpen={isOpen} maxHeight={90} onDismiss={onDismiss}>
-      {!attemptingTxn ? (
-        <Wrapper>
-          <Section>
-            <RowBetween>
-              <Text fontSize={20} fontWeight={500}>
-                {title}
-              </Text>
-              <CloseIcon onClick={onDismiss} />
-            </RowBetween>
-            {topContent()}
-          </Section>
-          <BottomSection gap="12px">{bottomContent()}</BottomSection>
-        </Wrapper>
-      ) : (
-        <Wrapper>
-          <Section>
-            <RowBetween>
-              <div />
-              <CloseIcon onClick={onDismiss} />
-            </RowBetween>
-            <ConfirmedIcon>
-              {pendingConfirmation ? (
-                <Loader size="90px" />
-              ) : (
-                <ArrowUpCircle color={theme.primary1} size={90} strokeWidth={0.5} />
-              )}
-            </ConfirmedIcon>
-            <AutoColumn gap="12px" justify={'center'}>
-              <Text fontSize={20} fontWeight={500}>
-                {!pendingConfirmation ? 'Transaction Submitted' : 'Waiting For Confirmation'}
-              </Text>
-              <AutoColumn gap="12px" justify={'center'}>
-                <Text color="" fontSize={14} fontWeight={600} textAlign="center">
-                  {pendingText}
-                </Text>
-              </AutoColumn>
-              {!pendingConfirmation && (
-                <>
-                  <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
-                    <Text color={theme.primary1} fontSize={14} fontWeight={500}>
-                      View on Etherscan
-                    </Text>
-                  </ExternalLink>
-                  <ButtonPrimary onClick={onDismiss} style={{ margin: '20px 0 0 0' }}>
-                    <Text fontSize={20} fontWeight={500}>
-                      Close
-                    </Text>
-                  </ButtonPrimary>
-                </>
-              )}
-
-              {pendingConfirmation && (
-                <Text color="#565A69" fontSize={12} textAlign="center">
-                  Confirm this transaction in your wallet
-                </Text>
-              )}
-            </AutoColumn>
-          </Section>
-        </Wrapper>
-      )}
+    <Modal
+      isOpen={isOpen}
+      onDismiss={onDismiss}
+      width={width ? width : isWorking || isFinished ? 394 : undefined}
+      {...restProps}
+    >
+      <ModalTitle onClose={onDismiss} title={isWorking || isFinished ? '' : title} />
+      <Content>
+        {!attemptingTxn && <>{content()}</>}
+        {isWorking && (
+          <>
+            <LoadingWrapper
+              message="Waiting For Confirmation"
+              size={SpinnerSize.large}
+              subMessage={pendingText}
+            />
+            <Text fontSize="16px" textAlign="center">
+              Confirm this transaction in your wallet.
+            </Text>
+          </>
+        )}
+        {isFinished && (
+          <>
+            <IconWrapper>
+              <ArrowUp />
+            </IconWrapper>
+            <Text fontSize="24px" margin="0" textAlign="center">
+              Transaction Submitted
+            </Text>
+            <Text fontSize="20px" margin="0" textAlign="center">
+              {pendingText}
+            </Text>
+            <Link href={getEtherscanLink(chainId, hash, 'transaction')}>
+              <span>View on Etherscan</span>
+              <LinkIcon />
+            </Link>
+          </>
+        )}
+      </Content>
     </Modal>
   )
 }
+
+export default ConfirmationModal

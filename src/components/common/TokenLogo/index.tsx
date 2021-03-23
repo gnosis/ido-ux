@@ -7,6 +7,8 @@ import { isAddress } from '../../../utils'
 const Wrapper = styled.div<{ size?: string }>`
   background-color: #606467;
   border-radius: 50%;
+  border: 3px solid #001429;
+  box-sizing: content-box;
   flex-shrink: 0;
   height: ${({ size }) => size};
   overflow: hidden;
@@ -16,6 +18,8 @@ const Wrapper = styled.div<{ size?: string }>`
 `
 
 const Image = styled.img`
+  background: #fff;
+  border-radius: 50%;
   display: block;
   height: 100%;
   width: 100%;

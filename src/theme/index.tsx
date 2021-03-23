@@ -74,7 +74,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
   ...colors(darkMode),
   fonts: {
     defaultSize: '14px',
-    fontFamily: `'Averta', 'Helvetica Neue', 'Arial', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', '-apple-system', 'BlinkMacSystemFont', sans-serif`,
+    fontFamily: `Averta, Arial, 'Helvetica Neue', 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans',-apple-system, BlinkMacSystemFont, sans-serif`,
     fontFamilyCode: `source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace`,
   },
   grids: {
@@ -166,6 +166,19 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     xs: '320px',
     xxl: '1280px',
     xxxl: '1366px',
+  },
+  modal: {
+    overlay: {
+      backgroundColor: darkMode ? 'rgba(0, 20, 41, 0.8)' : 'rgba(0, 20, 41, 0.8)',
+    },
+    body: {
+      backgroundColor: darkMode ? '#001429' : '#F7F8FA',
+      borderColor: `${darkMode ? '#174172' : '#174172'}`,
+      borderRadius: '12px ',
+      boxShadow: darkMode ? '0 0 24px 0 #002249' : '0 0 24px 0 #002249',
+      paddingHorizontal: '30px',
+      paddingVertical: '20px',
+    },
   },
 })
 

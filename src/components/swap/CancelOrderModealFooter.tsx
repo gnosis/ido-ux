@@ -1,29 +1,37 @@
 import React from 'react'
+import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
-import { Text } from 'rebass'
+import { Button } from '../buttons/Button'
+import { AlertIcon } from '../icons/AlertIcon'
+import { IconWrapper } from '../modals/common/pureStyledComponents/IconWrapper'
+import { Text } from '../modals/common/pureStyledComponents/Text'
 
-import { ButtonError } from '../Button'
-import { AutoRow } from '../Row'
+const ActionButton = styled(Button)`
+  margin-top: 40px;
+  width: 100%;
+`
 
-export default function CancelModalFooter({
-  confirmText,
-  onCancelOrder,
-}: {
+interface Props {
   orderId?: string
   onCancelOrder: () => any
   biddingToken?: Token
   confirmText: string
-}) {
+}
+
+const CancelModalFooter: React.FC<Props> = (props) => {
+  const { confirmText, onCancelOrder } = props
   return (
     <>
-      <AutoRow>
-        <ButtonError id="confirm-cancel" onClick={onCancelOrder} style={{ margin: '1px 0 0 0' }}>
-          <Text fontSize={20} fontWeight={500}>
-            {confirmText}
-          </Text>
-        </ButtonError>
-      </AutoRow>
+      <IconWrapper>
+        <AlertIcon />
+      </IconWrapper>
+      <Text fontSize="18px" textAlign="center">
+        This order can&apos;t be recovered after cancellation!
+      </Text>
+      <ActionButton onClick={onCancelOrder}>{confirmText}</ActionButton>
     </>
   )
 }
+
+export default CancelModalFooter
