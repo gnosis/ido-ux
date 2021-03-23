@@ -43,7 +43,7 @@ You will now need to build a command with the following components:
 
 **&quot;--network&quot;** determines the network in which the auction will happen.
 
-_Note: the minimum sell price that the auctioneer determines is calculated by the sell-amount/min-buy-amount ratio._ 
+_Note: the minimum sell price that the auctioneer determines is calculated by the sell-amount/min-buy-amount ratio._
 
 Example of final command to initiate the auction:
 ```
@@ -66,7 +66,7 @@ yarn hardhat clearAuction --auction_id INSERT_AUCTION_ID_HERE --network $ 'rinke
 
 **&quot;--isAtomicClosureAllowed&quot;** Describes whether the auction should be allowed to be closed atomically. Default is false.
 
-**&quot;----allow-list-manager&quot;** If whitelisting of addresses is required, then auctioneers handover their own  allowlistManager, or use our contract in [this link](https://github.com/gnosis/ido-contracts/blob/main/deployments/rinkeby/AllowListOffChainManaged.json)
+**&quot;----allow-list-manager&quot;** If whitelisting of addresses is required, then auctioneers handover their own  allowlistManager, or uses the allowListManager contract provided in this repo. You can find the deployment address in this [folder](https://github.com/gnosis/ido-contracts/blob/main/deployments/).
 
 **&quot;--allow-list-data&quot;** If the auctioneer needs further data in his/her allow_Lst, it needs to be provided in this field. Our implementation needs the public address of the key (abi encode - e.g. 0x000…00useraddress) used for allowing address to place orders.
 
