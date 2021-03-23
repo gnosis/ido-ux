@@ -438,7 +438,7 @@ const AllAuctions: React.FC<Props> = (props) => {
             value={state.globalFilter || ''}
           />
           <DeleteSearchTerm
-            disabled={!state.globalFilter || noData || isLoading}
+            disabled={!state.globalFilter || isLoading}
             onClick={() => {
               setGlobalFilter(undefined)
             }}
