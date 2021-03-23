@@ -102,6 +102,19 @@ const PrivateWrapper = styled.div`
 
 const TextBig = styled(EmptyContentText)`
   font-size: 22px;
+  margin-bottom: 15px;
+  margin-top: 5px;
+`
+
+const EmptyContentTextNoMargin = styled(EmptyContentText)`
+  line-height: 1.2;
+  margin-top: 0;
+`
+
+const EmptyContentTextSmall = styled(EmptyContentText)`
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 0;
 `
 
 interface OrderPlacementProps {
@@ -237,9 +250,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
-            <EmptyContentText style={{ marginTop: '0' }}>
-              You are not allowed place an order.
-            </EmptyContentText>
+            <EmptyContentTextNoMargin>You are not allowed place an order.</EmptyContentTextNoMargin>
+            <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
         ) : (
           <>
