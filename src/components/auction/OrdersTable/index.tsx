@@ -2,11 +2,7 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import {
-  DerivedAuctionInfo,
-  useCurrentUserOrders,
-  useUserAuctionOrders,
-} from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo, useUserAuctionOrders } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderActionHandlers } from '../../../state/orders/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
