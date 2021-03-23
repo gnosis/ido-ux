@@ -7,6 +7,7 @@ import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
+import { ALL_TOKENS } from '../../constants/tokens'
 import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { getChainName } from '../../utils/tools'
@@ -38,8 +39,6 @@ const AuctionId = styled.span`
 
 const CopyButton = styled(ButtonCopy)`
   height: 14px;
-  position: relative;
-  top: -1px;
   width: 14px;
 `
 
@@ -59,13 +58,42 @@ const NetworkName = styled.span`
   text-transform: capitalize;
 `
 
-const Auction = ({ location: { search } }: RouteComponentProps) => {
-  // needed to update the auctionId for header component
-  useDefaultsFromURLSearch(search)
+interface Props extends RouteComponentProps {
+  showTokenWarning: (bothTokensSupported: boolean) => void
+}
+
+const Auction: React.FC<Props> = (props) => {
+  const {
+    location: { search },
+    showTokenWarning,
+  } = props
+
   const auctionIdentifier = parseURL(search)
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
-
   const url = window.location.href
+
+  useDefaultsFromURLSearch(search)
+
+  React.useEffect(() => {
+    if (!derivedAuctionInfo || !auctionIdentifier?.chainId) {
+      showTokenWarning(false)
+      return
+    }
+
+    const allTokenAddresses = Object.keys(ALL_TOKENS[auctionIdentifier?.chainId])
+    const allTokensIncluded =
+      allTokenAddresses.includes(derivedAuctionInfo?.biddingToken.address) &&
+      allTokenAddresses.includes(derivedAuctionInfo?.auctioningToken.address)
+
+    showTokenWarning(!allTokensIncluded)
+  }, [
+    auctionIdentifier?.chainId,
+    showTokenWarning,
+    derivedAuctionInfo?.auctioningToken.address,
+    derivedAuctionInfo?.biddingToken.address,
+    auctionIdentifier,
+    derivedAuctionInfo,
+  ])
 
   return (
     <>
