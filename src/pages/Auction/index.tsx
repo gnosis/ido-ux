@@ -7,9 +7,10 @@ import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { ALL_TOKENS } from '../../constants/tokens'
+import { useToken } from '../../hooks/Tokens'
 import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
+import { useTokenListState } from '../../state/tokenList/hooks'
 import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
@@ -70,29 +71,27 @@ const Auction: React.FC<Props> = (props) => {
 
   const auctionIdentifier = parseURL(search)
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
+  const { tokens } = useTokenListState()
   const url = window.location.href
+  const validBiddingTokenAddress = useToken(derivedAuctionInfo?.biddingToken.address)
+  const validAuctioningTokenAddress = useToken(derivedAuctionInfo?.auctioningToken.address)
 
   useDefaultsFromURLSearch(search)
 
   React.useEffect(() => {
-    if (!derivedAuctionInfo || !auctionIdentifier?.chainId) {
+    if (!derivedAuctionInfo) {
       showTokenWarning(false)
       return
     }
 
-    const allTokenAddresses = Object.keys(ALL_TOKENS[auctionIdentifier?.chainId])
-    const allTokensIncluded =
-      allTokenAddresses.includes(derivedAuctionInfo?.biddingToken.address) &&
-      allTokenAddresses.includes(derivedAuctionInfo?.auctioningToken.address)
-
-    showTokenWarning(!allTokensIncluded)
+    showTokenWarning(!validBiddingTokenAddress || !validAuctioningTokenAddress)
   }, [
-    auctionIdentifier?.chainId,
-    showTokenWarning,
-    derivedAuctionInfo?.auctioningToken.address,
-    derivedAuctionInfo?.biddingToken.address,
-    auctionIdentifier,
+    auctionIdentifier.chainId,
     derivedAuctionInfo,
+    showTokenWarning,
+    tokens,
+    validAuctioningTokenAddress,
+    validBiddingTokenAddress,
   ])
 
   return (
