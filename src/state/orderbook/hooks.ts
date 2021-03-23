@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '..'
 import { additionalServiceApi } from '../../api'
 import { OrderBookData, PricePoint } from '../../api/AdditionalServicesApi'
-import { useSwapState } from '../orderPlacement/hooks'
+import { AuctionIdentifier } from '../orderPlacement/reducer'
 import {
   appendBid,
   pullOrderbookData,
@@ -25,7 +25,12 @@ export function useOrderbookActionHandlers(): {
   onPullOrderbookData: () => void
   onResetUserPrice: (price: number) => void
   onResetUserVolume: (volume: number) => void
-  onResetOrderbookData: (orderbook: OrderBookData, error: Maybe<Error>) => void
+  onResetOrderbookData: (
+    auctionId: number,
+    chainId: number,
+    orderbook: OrderBookData,
+    error: Maybe<Error>,
+  ) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -58,8 +63,8 @@ export function useOrderbookActionHandlers(): {
     [dispatch],
   )
   const onResetOrderbookData = useCallback(
-    (orderbook: OrderBookData, error: Maybe<Error>) => {
-      dispatch(resetOrderbookData({ orderbook, error }))
+    (auctionId: number, chainId: number, orderbook: OrderBookData, error: Maybe<Error>) => {
+      dispatch(resetOrderbookData({ auctionId, chainId, orderbook, error }))
     },
     [dispatch],
   )
@@ -73,8 +78,8 @@ export function useOrderbookActionHandlers(): {
     onResetUserVolume,
   }
 }
-export function useOrderbookDataCallback() {
-  const { auctionId, chainId } = useSwapState()
+export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
+  const { auctionId, chainId } = auctionIdentifer
   const { onResetOrderbookData } = useOrderbookActionHandlers()
   useEffect(() => {
     let cancelled = false
@@ -88,11 +93,11 @@ export function useOrderbookDataCallback() {
           auctionId,
         })
         if (!cancelled) {
-          onResetOrderbookData(rawData, null)
+          onResetOrderbookData(auctionId, chainId, rawData, null)
         }
       } catch (error) {
         console.error('Error populating orderbook with data', error)
-        onResetOrderbookData({ bids: [], asks: [] }, null)
+        onResetOrderbookData(auctionId, chainId, { bids: [], asks: [] }, null)
         if (cancelled) return
       }
     }

@@ -4,11 +4,8 @@ import styled from 'styled-components'
 import { useActiveWeb3React } from '../../../hooks'
 import { useClaimOrderCallback, useGetAuctionProceeds } from '../../../hooks/useClaimOrderCallback'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import {
-  useDerivedAuctionInfo,
-  useDerivedClaimInfo,
-  useSwapState,
-} from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import TokenLogo from '../../common/TokenLogo'
@@ -60,26 +57,31 @@ const Text = styled.div`
   line-height: 1.2;
   margin-left: 10px;
 `
-
-const Claimer: React.FC = () => {
+interface ClaimerProps {
+  auctionIdentifier: AuctionIdentifier
+  derivedAuctionInfo: DerivedAuctionInfo
+}
+const Claimer: React.FC<ClaimerProps> = (props) => {
+  const { auctionIdentifier, derivedAuctionInfo } = props
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
-  const { auctionId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-  const { error } = useDerivedClaimInfo(auctionId)
+  const { error } = useDerivedClaimInfo(auctionIdentifier)
 
   const isValid = !error
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
 
-  const { claimableAuctioningToken, claimableBiddingToken } = useGetAuctionProceeds()
+  const { claimableAuctioningToken, claimableBiddingToken } = useGetAuctionProceeds(
+    auctionIdentifier,
+    derivedAuctionInfo,
+  )
   const [txHash, setTxHash] = useState<string>('')
 
   function resetModal() {
     setPendingConfirmation(true)
   }
 
-  const claimOrderCallback = useClaimOrderCallback()
+  const claimOrderCallback = useClaimOrderCallback(auctionIdentifier)
 
   function onClaimOrder() {
     claimOrderCallback().then((hash) => {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
@@ -104,7 +104,7 @@ export const Header: React.FC = (props) => {
   const { account } = useWeb3React()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
-  const [mobileMenuVisible, setMobileMenuVisible] = React.useState(false)
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
 
   const toggleWalletModal = useWalletModalToggle()
 

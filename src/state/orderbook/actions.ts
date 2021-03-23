@@ -11,6 +11,8 @@ export const removeBid = createAction<{
 }>('removeBid')
 
 export const resetOrderbookData = createAction<{
+  auctionId: number
+  chainId: number
   orderbook: OrderBookData
   error: Maybe<Error>
 }>('ResetOrderbookOrders')

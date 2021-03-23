@@ -4,7 +4,8 @@ import { TokenAmount } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
-import { useDerivedAuctionInfo, useSwapState } from '../state/orderPlacement/hooks'
+import { DerivedAuctionInfo } from '../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { additionalServiceApi } from './../api'
@@ -23,11 +24,11 @@ export interface AuctionProceedings {
 export interface ClaimInformation {
   sellOrdersFormUser: string[]
 }
-export function useGetClaimInfo(): Maybe<ClaimInformation> {
+export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<ClaimInformation> {
   const { account, chainId, library } = useActiveWeb3React()
   const [claimInfo, setClaimInfo] = useState<Maybe<ClaimInformation>>(null)
   const [error, setError] = useState<Maybe<Error>>(null)
-  const { auctionId } = useSwapState()
+  const { auctionId } = auctionIdentifier
 
   useMemo(() => {
     setClaimInfo(null)
@@ -69,9 +70,11 @@ export function useGetClaimInfo(): Maybe<ClaimInformation> {
 
   return claimInfo
 }
-export function useGetAuctionProceeds(): AuctionProceedings {
-  const claimInfo = useGetClaimInfo()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
+export function useGetAuctionProceeds(
+  auctionIdentifier: AuctionIdentifier,
+  derivedAuctionInfo: DerivedAuctionInfo,
+): AuctionProceedings {
+  const claimInfo = useGetClaimInfo(auctionIdentifier)
 
   if (
     !claimInfo ||
@@ -134,12 +137,14 @@ export function useGetAuctionProceeds(): AuctionProceedings {
   }
 }
 
-export function useClaimOrderCallback(): null | (() => Promise<string>) {
+export function useClaimOrderCallback(
+  auctionIdentifier: AuctionIdentifier,
+): null | (() => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const { auctionId } = useSwapState()
-  const claimInfo = useGetClaimInfo()
+  const { auctionId } = auctionIdentifier
+  const claimInfo = useGetClaimInfo(auctionIdentifier)
 
   return useMemo(() => {
     return async function onClaimOrder() {

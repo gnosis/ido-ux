@@ -33,7 +33,6 @@ if (PUBLIC_URL === '.') {
 
 export default function App() {
   const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
-
   return (
     <Suspense fallback={null}>
       <Router>

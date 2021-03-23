@@ -47,20 +47,26 @@
 
 <img src="/assets/GA9.png" alt="drawing" width="500"/>
  
-10. After you have set both the amount of tokens to bid, and the price per bid-token/auction token, you no longer see the enter amount section, instead you see a colored bar with the words “Place Order”. Once you are sure about the parameters you have inputted you have to click on “place order” to include your bid in the auction. 
+10. If it is the first time that you have used that token to bid, you will have to approve the contract to spend that token. First click on the "Approve" button, and then confirm the transaction on Metamask, as shown below.
 
 <img src="/assets/GA10.png" alt="drawing" width="500"/>
 
-11. Once you have clicked on “Place Order”, a confirmation popup will appear that will ask you to confirm the order. As you can see in the image below, the dapp confirmation shows the relevant information of your bid order.
-
 <img src="/assets/GA11.png" alt="drawing" width="500"/>
 
-12. After you have clicked on “Confirm Order”, your wallet will trigger a popup for confirming the transaction. In this case, the Metamask popup will appear asking you to confirm the execution of the transaction from your wallet interface.
+11. After you have set both the amount of tokens to bid, and the price per bid-token/auction token, you no longer see the enter amount section, instead you see a colored bar with the words “Place Order”. Once you are sure about the parameters you have inputted you have to click on “place order” to include your bid in the auction. 
 
 <img src="/assets/GA12.png" alt="drawing" width="500"/>
 
-13. Once the Metamask order has been confirmed, and the transaction has been mined into a block, on the right hand side of the dapp you will see a banner with the price details of your bidding order, and a link to Etherscan so that you can check your transaction details. 
+12. Once you have clicked on “Place Order”, a confirmation popup will appear that will ask you to confirm the order. As you can see in the image below, the dapp confirmation shows the relevant information of your bid order.
 
 <img src="/assets/GA13.png" alt="drawing" width="500"/>
+
+13. After you have clicked on “Confirm Order”, your wallet will trigger a popup for confirming the transaction. In this case, the Metamask popup will appear asking you to confirm the execution of the transaction from your wallet interface.
+
+<img src="/assets/GA14.png" alt="drawing" width="500"/>
+
+14. Once the Metamask order has been confirmed, and the transaction has been mined into a block, on the right hand side of the dapp you will see a banner with the price details of your bidding order, and a link to Etherscan so that you can check your transaction details. 
+
+<img src="/assets/GA15.png" alt="drawing" width="500"/>
 
 Congratulations, you have now successfully participated as a bidder in an auction. 

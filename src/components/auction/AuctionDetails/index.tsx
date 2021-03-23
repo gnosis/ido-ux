@@ -4,12 +4,11 @@ import styled from 'styled-components'
 import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import {
   AuctionState,
+  DerivedAuctionInfo,
   orderToPrice,
   orderToSellOrder,
-  useDerivedAuctionInfo,
-  useDerivedAuctionState,
-  useSwapState,
 } from '../../../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
 import { KeyValue } from '../../common/KeyValue'
 import TokenLogo from '../../common/TokenLogo'
@@ -50,11 +49,15 @@ const TimerWrapper = styled.div`
   max-height: 130px;
   position: relative;
 `
+interface AuctionDetailsProps {
+  auctionIdentifier: AuctionIdentifier
+  auctionState: AuctionState
+  derivedAuctionInfo: DerivedAuctionInfo
+}
 
-const AuctionDetails = () => {
-  const { chainId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-  const { auctionState } = useDerivedAuctionState()
+const AuctionDetails = (props: AuctionDetailsProps) => {
+  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
+  const { chainId } = auctionIdentifier
 
   const auctionTokenAddress = useMemo(
     () => getEtherscanLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
@@ -66,7 +69,7 @@ const AuctionDetails = () => {
     [chainId, derivedAuctionInfo?.biddingToken],
   )
 
-  const { clearingPriceInfo } = useClearingPriceInfo()
+  const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
     derivedAuctionInfo?.biddingToken,
   ])
@@ -151,7 +154,7 @@ const AuctionDetails = () => {
         }
       />
       <TimerWrapper>
-        <AuctionTimer />
+        <AuctionTimer auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
       </TimerWrapper>
       <Cell
         itemKey={
