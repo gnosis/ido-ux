@@ -36,11 +36,13 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
     data = null
   }
 
+  const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
+
   const processedOrderbook = processOrderbookData({
     data,
     userOrder: { price: userOrderPrice, volume: userOrderVolume },
-    baseToken: derivedAuctionInfo?.auctioningToken,
-    quoteToken: derivedAuctionInfo?.biddingToken,
+    baseToken,
+    quoteToken,
   })
 
   return (
@@ -51,11 +53,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
         ) : error || !asks || asks.length === 0 ? (
           <OrderBookError error={error} />
         ) : (
-          <OrderBookChart
-            baseToken={derivedAuctionInfo?.auctioningToken}
-            data={processedOrderbook}
-            quoteToken={derivedAuctionInfo?.biddingToken}
-          />
+          <OrderBookChart baseToken={baseToken} data={processedOrderbook} quoteToken={quoteToken} />
         )}
       </Wrapper>
     </>
