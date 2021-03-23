@@ -143,8 +143,8 @@ const SwapModalFooter: React.FC<Props> = (props) => {
             <ErrorRowStyled>
               <ErrorLock />
               <ErrorText>
-                Remember: Beware, after <strong>{cancelDate}</strong> and until the end of the
-                auction, orders cannot be canceled.
+                Remember: After <strong>{cancelDate}</strong> and until the end of the auction,
+                orders cannot be canceled.
               </ErrorText>
             </ErrorRowStyled>
           )}
