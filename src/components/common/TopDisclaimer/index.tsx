@@ -24,15 +24,16 @@ const InfoIcon = styled(InfoIconDark)`
 
 const Text = styled.div`
   color: ${({ theme }) => theme.text3};
-  flex-shrink: 0;
-  flex-wrap: wrap;
   font-size: 15px;
   font-weight: 700;
+  hyphens: auto;
   line-height: 1.3;
   margin-left: 5px;
   max-width: 100%;
+  overflow-wrap: break-word;
   text-align: left;
   white-space: normal;
+  word-wrap: break-word;
 `
 
 export const TopDisclaimer: React.FC = () => {
