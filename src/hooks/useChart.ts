@@ -6,9 +6,6 @@ import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
 import { PricePointDetails } from '../components/auction/OrderbookChart'
 
-// Add global settings for chart
-am4core.options.queue = true
-am4core.options.onlyShowOnViewport = true
 am4core.useTheme(am4themesSpiritedaway)
 
 const useChart = ({
@@ -24,12 +21,14 @@ const useChart = ({
 }) => {
   const [chart, setChart] = useState(null)
   const elemRef = useRef(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    setLoading(true)
     const currentChart = createChart({ div: elemRef.current, data, baseToken, quoteToken })
 
     setChart(currentChart)
-
+    setLoading(false)
     return () => {
       if (currentChart) {
         currentChart.dispose()
@@ -37,7 +36,7 @@ const useChart = ({
     }
   }, [data, baseToken, quoteToken, createChart])
 
-  return { chart, elemRef }
+  return { chart, elemRef, loading }
 }
 
 export default useChart

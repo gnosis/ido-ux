@@ -1,8 +1,9 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
+import { AuctionIdentifier, parseURL } from '../../../state/orderPlacement/reducer'
 import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
@@ -21,20 +22,21 @@ interface OrderbookProps {
 
 export const OrderBook: React.FC<OrderbookProps> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
-  const { auctionId, chainId } = auctionIdentifier
   useOrderbookDataCallback(auctionIdentifier)
-  const { asks, bids } = useOrderbookState()
   const {
+    asks,
     auctionId: orderbookAuctionId,
+    bids,
     chainId: orderbookChainId,
     error,
     userOrderPrice,
     userOrderVolume,
   } = useOrderbookState()
-  let data = { bids, asks }
-  if (orderbookAuctionId != auctionId && chainId != orderbookChainId) {
-    data = null
-  }
+
+  const location = useLocation()
+  const { auctionId, chainId } = parseURL(location.search)
+
+  const data = { bids, asks }
 
   const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
 
@@ -48,7 +50,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
   return (
     <>
       <Wrapper>
-        {!data ? (
+        {orderbookAuctionId != auctionId || chainId != orderbookChainId ? (
           <InlineLoading size={SpinnerSize.small} />
         ) : error || !asks || asks.length === 0 ? (
           <OrderBookError error={error} />

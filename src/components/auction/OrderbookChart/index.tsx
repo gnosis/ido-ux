@@ -82,7 +82,7 @@ const Wrapper = styled.div`
 const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
   const { baseToken, data, quoteToken } = props
 
-  const { elemRef } = useChart({
+  const { elemRef, loading } = useChart({
     createChart: XYChart,
     data,
     baseToken,
@@ -91,8 +91,8 @@ const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProp
 
   return (
     <>
-      {elemRef && <Wrapper ref={elemRef} />}
-      {!elemRef && <InlineLoading size={SpinnerSize.small} />}
+      {(!elemRef || loading) && <InlineLoading size={SpinnerSize.small} />}
+      {elemRef && !loading && <Wrapper ref={elemRef} />}
     </>
   )
 }
