@@ -305,6 +305,9 @@ export const processOrderbookData = ({
   quoteToken,
   userOrder,
 }: ProcessRawDataParams): PricePointDetails[] => {
+  if (!data) {
+    return []
+  }
   try {
     const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0])
     const value = data.asks[0]?.price ?? 0

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Web3Provider } from '@ethersproject/providers'
@@ -8,7 +9,6 @@ import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
 import MetamaskIcon from '../../../assets/images/metamask.png'
-import { ReactComponent as Close } from '../../../assets/images/x.svg'
 import { fortmatic, injected, portis, walletconnect } from '../../../connectors'
 import { OVERLAY_READY } from '../../../connectors/Fortmatic'
 import { SUPPORTED_WALLETS } from '../../../constants'
@@ -16,98 +16,56 @@ import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
 import { ChainId } from '../../../utils'
-import AccountDetails from '../../AccountDetails'
 import { useNetworkCheck } from '../../Web3Status'
-import Modal from '../Modal'
-import Option from './Option'
-import PendingView from './PendingView'
+import { AlertIcon } from '../../icons/AlertIcon'
+import { Checkbox } from '../../pureStyledComponents/Checkbox'
+import Modal from '../common/Modal'
+import { ModalTitle } from '../common/ModalTitle'
+import Option from '../common/Option'
+import PendingView from '../common/PendingView'
+import { Content } from '../common/pureStyledComponents/Content'
+import { IconWrapper } from '../common/pureStyledComponents/IconWrapper'
+import { Text } from '../common/pureStyledComponents/Text'
 
-const CloseIcon = styled.div`
-  position: absolute;
-  right: 1rem;
-  top: 14px;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
+const CheckboxWrapper = styled.div`
+  align-items: baseline;
+  display: flex;
+  margin-bottom: 40px;
+  margin-top: 12px;
+`
+
+const CheckboxText = styled.span`
+  color: ${({ theme }) => theme.text1};
+  font-size: 15px;
+  font-weight: normal;
+  line-height: 1.4;
+  margin-left: 12px;
+
+  a {
+    color: ${({ theme }) => theme.text1};
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
   }
 `
 
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.text4};
-  }
-`
+const Footer = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.4;
+  margin-left: 12px;
+  text-align: center;
 
-const Wrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  margin: 0;
-  padding: 0;
-  width: 100%;
-`
+  a {
+    color: ${({ theme }) => theme.text1};
+    text-decoration: underline;
 
-const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${(props) => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-`
-
-const ContentWrapper = styled.div`
-  background-color: ${({ theme }) => theme.bg2};
-  padding: 2rem;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
-`
-
-const UpperSection = styled.div`
-  position: relative;
-
-  h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  h5:last-child {
-    margin-bottom: 0px;
-  }
-
-  h4 {
-    margin-top: 0;
-    font-weight: 500;
-  }
-`
-
-const Blurb = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin: 1rem;
-    font-size: 12px;
-  `};
-`
-
-const OptionGrid = styled.div`
-  display: grid;
-  grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
-`
-
-const HoverText = styled.div`
-  :hover {
-    cursor: pointer;
+    &:hover {
+      text-decoration: none;
+    }
   }
 `
 
@@ -118,39 +76,23 @@ const WALLET_VIEWS = {
   PENDING: 'pending',
 }
 
-export default function WalletModal({
-  ENSName,
-  confirmedTransactions,
-  pendingTransactions,
-}: {
-  pendingTransactions: string[] // hashes of pending
-  confirmedTransactions: string[] // hashes of confirmed
-  ENSName?: string
-}) {
-  // important that these are destructed from the account-specific web3-react context
+const WalletModal: React.FC = () => {
   const { account, activate, active, connector, error } = useWeb3React()
-
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-
   const [pendingWallet, setPendingWallet] = useState()
-
   const [pendingError, setPendingError] = useState<boolean>()
-
   const walletModalOpen = useWalletModalOpen()
   const toggleWalletModal = useWalletModalToggle()
-
   const previousAccount = usePrevious(account)
-
   const { errorWrongNetwork } = useNetworkCheck()
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
-  // close on connection, when logged out before
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
       toggleWalletModal()
     }
   }, [account, previousAccount, toggleWalletModal, walletModalOpen])
 
-  // always reset to account view
   useEffect(() => {
     if (walletModalOpen) {
       setPendingError(false)
@@ -158,12 +100,10 @@ export default function WalletModal({
     }
   }, [walletModalOpen])
 
-  // set up uri listener for walletconnect
   const [uri, setUri] = useState()
   useEffect(() => {
     const activateWC = (uri) => {
       setUri(uri)
-      // setWalletView(WALLET_VIEWS.PENDING)
     }
     walletconnect.on(URI_AVAILABLE, activateWC)
     return () => {
@@ -171,7 +111,6 @@ export default function WalletModal({
     }
   }, [])
 
-  // close modal when a connection is successful
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
 
@@ -202,7 +141,6 @@ export default function WalletModal({
       }
       return true
     })
-    // log selected wallet
     ReactGA.event({
       category: 'Wallet',
       action: 'Change Wallet',
@@ -232,21 +170,18 @@ export default function WalletModal({
     }
   }
 
-  // close wallet modal if fortmatic modal is active
   useEffect(() => {
     fortmatic.on(OVERLAY_READY, () => {
       toggleWalletModal()
     })
   }, [toggleWalletModal])
 
-  // get wallets user can switch too, depending on device/browser
-  function getOptions() {
+  const getOptions = () => {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
-      // check for mobile options
+
       if (isMobile) {
-        //disable portis on mobile for now
         if (option.connector === portis) {
           return null
         }
@@ -254,166 +189,130 @@ export default function WalletModal({
         if (!window.web3 && !window.ethereum && option.mobile) {
           return (
             <Option
-              active={option.connector && option.connector === connector}
-              color={option.color}
-              header={option.name}
+              disabled={!termsAccepted}
               icon={option.icon}
-              id={`connect-${key}`}
               key={key}
               link={option.href}
               onClick={() => {
                 option.connector !== connector && !option.href && tryActivation(option.connector)
               }}
-              subheader={null}
+              text={option.name}
             />
           )
         }
         return null
       }
 
-      // overwrite injected when needed
       if (option.connector === injected) {
-        // don't show injected if there's no injected provider
         if (!(window.web3 || window.ethereum)) {
           if (option.name === 'MetaMask') {
             return (
               <Option
-                color={'#E8831D'}
-                header={'Install Metamask'}
+                disabled={!termsAccepted}
                 icon={MetamaskIcon}
-                id={`connect-${key}`}
                 key={key}
                 link={'https://metamask.io/'}
-                subheader={null}
+                text={'Install Metamask'}
               />
             )
           } else {
             return null //dont want to return install twice
           }
-        }
-        // don't return metamask if injected provider isn't metamask
-        else if (option.name === 'MetaMask' && !isMetamask) {
+        } else if (option.name === 'MetaMask' && !isMetamask) {
           return null
-        }
-        // likewise for generic
-        else if (option.name === 'Injected' && isMetamask) {
+        } else if (option.name === 'Injected' && isMetamask) {
           return null
         }
       }
 
-      // return rest of options
       return (
         !isMobile &&
         !option.mobileOnly && (
           <Option
-            active={option.connector === connector}
-            color={option.color}
-            header={option.name}
+            disabled={!termsAccepted}
             icon={option.icon}
-            id={`connect-${key}`}
             key={key}
             link={option.href}
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
                 : !option.href && tryActivation(option.connector)
-            }} //use option.descriptio to bring back multi-line
-            subheader={null}
+            }}
+            text={option.name}
           />
         )
       )
     })
   }
 
-  function getModalContent() {
-    if (error || errorWrongNetwork) {
-      return (
-        <UpperSection>
-          <CloseIcon onClick={toggleWalletModal}>
-            <CloseColor />
-          </CloseIcon>
-          <HeaderRow>
-            {error instanceof UnsupportedChainIdError || errorWrongNetwork
-              ? 'Wrong Network'
-              : 'Error connecting'}
-          </HeaderRow>
-          <ContentWrapper>
-            {error instanceof UnsupportedChainIdError ? (
-              <h5>
-                Please connect to the appropriate Ethereum network. Use one of the followings:
-                Mainnet, Rinkeby or xDai.
-              </h5>
-            ) : errorWrongNetwork ? (
-              errorWrongNetwork
-            ) : (
-              'Error connecting. Try refreshing the page.'
-            )}
-          </ContentWrapper>
-        </UpperSection>
-      )
-    }
-    if (account && walletView === WALLET_VIEWS.ACCOUNT) {
-      return (
-        <AccountDetails
-          confirmedTransactions={confirmedTransactions}
-          // eslint-disable-next-line
-          ENSName={ENSName}
-          openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
-          pendingTransactions={pendingTransactions}
-          toggleWalletModal={toggleWalletModal}
-        />
-      )
-    }
-    return (
-      <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
-          <CloseColor />
-        </CloseIcon>
-        {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow color="blue">
-            <HoverText
-              onClick={() => {
-                setPendingError(false)
-                setWalletView(WALLET_VIEWS.ACCOUNT)
-              }}
-            >
-              Back
-            </HoverText>
-          </HeaderRow>
-        ) : (
-          <HeaderRow>
-            <HoverText>Connect to a wallet</HoverText>
-          </HeaderRow>
-        )}
-        <ContentWrapper>
-          {walletView === WALLET_VIEWS.PENDING ? (
-            <PendingView
-              connector={pendingWallet}
-              error={pendingError}
-              setPendingError={setPendingError}
-              size={220}
-              tryActivation={tryActivation}
-              uri={uri}
-            />
-          ) : (
-            <OptionGrid>{getOptions()}</OptionGrid>
-          )}
-          {walletView !== WALLET_VIEWS.PENDING && (
-            <Blurb>
-              <span>New to Ethereum? &nbsp;</span>{' '}
-              <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
-                Learn more about wallets
-              </ExternalLink>
-            </Blurb>
-          )}
-        </ContentWrapper>
-      </UpperSection>
-    )
-  }
+  const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
+  const viewAccountTransactions = account && walletView === WALLET_VIEWS.ACCOUNT
+  const connectingToWallet = walletView === WALLET_VIEWS.PENDING
+  const title = networkError
+    ? 'Wrong Network'
+    : error && viewAccountTransactions
+    ? ''
+    : error
+    ? 'Error connecting'
+    : 'Connect to a wallet'
+  const errorMessage =
+    error instanceof UnsupportedChainIdError
+      ? 'Please connect to the appropriate Ethereum network.'
+      : errorWrongNetwork
+      ? errorWrongNetwork
+      : 'Error connecting. Try refreshing the page.'
 
   return (
-    <Modal isOpen={walletModalOpen} maxHeight={90} minHeight={null} onDismiss={toggleWalletModal}>
-      <Wrapper>{getModalContent()}</Wrapper>
+    <Modal
+      isOpen={walletModalOpen}
+      onDismiss={toggleWalletModal}
+      width={error || connectingToWallet ? 400 : undefined}
+    >
+      <ModalTitle onClose={toggleWalletModal} title={title} />
+      <Content>
+        {error && (
+          <>
+            <IconWrapper>
+              <AlertIcon />
+            </IconWrapper>
+            <Text fontSize="18px" textAlign="center">
+              {errorMessage}
+            </Text>
+          </>
+        )}
+        {!error && !connectingToWallet && (
+          <>
+            <div>{getOptions()}</div>
+            <CheckboxWrapper onClick={() => setTermsAccepted(!termsAccepted)}>
+              <Checkbox checked={termsAccepted} />
+              <CheckboxText>
+                You accept our{' '}
+                <NavLink target="_blank" to="/terms-and-conditions">
+                  Terms &amp; Conditions
+                </NavLink>{' '}
+                when connecting your wallet to this app.
+              </CheckboxText>
+            </CheckboxWrapper>
+            <Footer>
+              <span>New to Ethereum?</span>{' '}
+              <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
+                Learn more about wallets.
+              </ExternalLink>
+            </Footer>
+          </>
+        )}
+        {!error && connectingToWallet && (
+          <PendingView
+            connector={pendingWallet}
+            error={pendingError}
+            setPendingError={setPendingError}
+            tryActivation={tryActivation}
+            uri={uri}
+          />
+        )}
+      </Content>
     </Modal>
   )
 }
+
+export default WalletModal

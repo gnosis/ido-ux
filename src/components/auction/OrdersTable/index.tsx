@@ -2,7 +2,12 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { useDerivedAuctionInfo, useUserAuctionOrders } from '../../../state/orderPlacement/hooks'
+import {
+  DerivedAuctionInfo,
+  useCurrentUserOrders,
+  useUserAuctionOrders,
+} from '../../../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderActionHandlers } from '../../../state/orders/hooks'
 import { OrderStatus } from '../../../state/orders/reducer'
 import { getChainName } from '../../../utils/tools'
@@ -21,7 +26,6 @@ import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import CancelModalFooter from '../../swap/CancelOrderModealFooter'
-import SwapModalHeader from '../../swap/SwapModalHeader'
 
 const Wrapper = styled(BaseCard)`
   padding: 4px 0;
@@ -45,12 +49,19 @@ const ButtonWrapper = styled.div`
   height: 100%;
   justify-content: flex-end;
 `
+interface OrderTableProps {
+  auctionIdentifier: AuctionIdentifier
+  derivedAuctionInfo: DerivedAuctionInfo
+}
 
-const OrderTable: React.FC = () => {
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-  const cancelOrderCallback = useCancelOrderCallback(derivedAuctionInfo?.biddingToken)
+const OrderTable: React.FC<OrderTableProps> = (props) => {
+  const { auctionIdentifier, derivedAuctionInfo } = props
+  const { loading, orders } = useUserAuctionOrders(auctionIdentifier, derivedAuctionInfo)
+  const cancelOrderCallback = useCancelOrderCallback(
+    auctionIdentifier,
+    derivedAuctionInfo?.biddingToken,
+  )
   const { onDeleteOrder } = useOrderActionHandlers()
-  const { loading, orders } = useUserAuctionOrders()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
@@ -89,20 +100,25 @@ const OrderTable: React.FC = () => {
     cancelOrderCallback,
   ])
 
-  const modalHeader = () => {
-    return <SwapModalHeader />
-  }
-
   const modalBottom = () => {
     return (
       <CancelModalFooter
         biddingToken={derivedAuctionInfo?.biddingToken}
-        confirmText={'Cancel Order'}
+        confirmText={'Cancel'}
         onCancelOrder={onCancelOrder}
         orderId={orderId}
       />
     )
   }
+
+  const cancelDate = React.useMemo(
+    () =>
+      derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
+      derivedAuctionInfo?.orderCancellationEndDate !== 0
+        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
+        : undefined,
+    [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
+  )
 
   const pendingText = `Canceling Order`
   const now = Math.trunc(Date.now() / 1000)
@@ -129,7 +145,7 @@ const OrderTable: React.FC = () => {
       {!ordersEmpty && (
         <Wrapper>
           {orders.map((order, index) => (
-            <CellRow columns={5} key={index}>
+            <CellRow columns={cancelDate ? 6 : 5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -192,6 +208,23 @@ const OrderTable: React.FC = () => {
                   }
                 />
               </Cell>
+              {cancelDate && (
+                <Cell>
+                  <KeyValue
+                    align="flex-start"
+                    itemKey={
+                      <>
+                        <span>Last Cancel Date</span>
+                        <Tooltip
+                          id={`limitPrice_${index}`}
+                          text={`After <strong>${cancelDate}</strong> and until the end of the auction, orders cannot be canceled.`}
+                        />
+                      </>
+                    }
+                    itemValue={cancelDate}
+                  />
+                </Cell>
+              )}
               <Cell>
                 <ButtonWrapper>
                   <ActionButton
@@ -211,7 +244,7 @@ const OrderTable: React.FC = () => {
           ))}
           <ConfirmationModal
             attemptingTxn={attemptingTxn}
-            bottomContent={modalBottom}
+            content={modalBottom}
             hash={txHash}
             isOpen={showConfirm}
             onDismiss={() => {
@@ -220,8 +253,8 @@ const OrderTable: React.FC = () => {
             }}
             pendingConfirmation={pendingConfirmation}
             pendingText={pendingText}
-            title="Confirm Order Cancellation"
-            topContent={modalHeader}
+            title="Order Cancellation"
+            width={394}
           />
           <WarningModal
             content={orderError}

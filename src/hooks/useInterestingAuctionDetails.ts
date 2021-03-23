@@ -15,14 +15,12 @@ export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
           throw new Error('missing dependencies in useInterestingAuctionInfo callback')
         }
         const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails()
-        if (!cancelled) {
-          setMostInterestingAuctions(auctionInfo)
-        }
+        if (cancelled) return
+        setMostInterestingAuctions(auctionInfo)
       } catch (error) {
-        if (!cancelled) {
-          setMostInterestingAuctions(null)
-          console.error('Error getting clearing price info', error)
-        }
+        if (cancelled) return
+        setMostInterestingAuctions(null)
+        console.error('Error getting clearing price info', error)
       }
     }
     fetchApiData()

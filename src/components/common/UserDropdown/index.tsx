@@ -252,8 +252,6 @@ export const UserDropdown: React.FC = (props) => {
       />
       <TransactionsModal
         isOpen={transactionsModalVisible}
-        maxHeight={90}
-        minHeight={null}
         onDismiss={() => setTransactionsModalVisible(false)}
       />
     </>

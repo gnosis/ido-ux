@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 
 import { ClearingPriceAndVolumeData } from '../api/AdditionalServicesApi'
-import { useSwapState } from '../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { additionalServiceApi } from './../api'
 
-export const useClearingPriceInfo = (): {
+export const useClearingPriceInfo = (
+  auctionIdentifer: AuctionIdentifier,
+): {
   clearingPriceInfo: Maybe<ClearingPriceAndVolumeData>
   loadingClearingPrice: boolean
 } => {
-  const { auctionId, chainId } = useSwapState()
+  const { auctionId, chainId } = auctionIdentifer
   const [clearingInfo, setClearingPriceAndVolume] = useState<Maybe<ClearingPriceAndVolumeData>>(
     null,
   )

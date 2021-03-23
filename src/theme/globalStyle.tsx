@@ -1,10 +1,8 @@
 import { createGlobalStyle } from 'styled-components'
 
-import { localFonts } from './fonts'
 import { reactTooltipCSS } from './reactTooltipCSS'
 
 export const GlobalStyle = createGlobalStyle<{ theme: any }>`
-  ${localFonts}
 
   html body {
     -moz-osx-font-smoothing: grayscale;

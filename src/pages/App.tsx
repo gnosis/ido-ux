@@ -5,7 +5,7 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import { CookiesBanner } from '../components/common/CookiesBanner'
 import { Footer } from '../components/layout/Footer'
 import { Header } from '../components/layout/Header'
-import Popups from '../components/modals/Popups'
+import Popups from '../components/popups/Popups'
 import { BaseCard } from '../components/pureStyledComponents/BaseCard'
 import { InnerContainer } from '../components/pureStyledComponents/InnerContainer'
 import { MainScroll } from '../components/pureStyledComponents/MainScroll'
@@ -33,7 +33,6 @@ if (PUBLIC_URL === '.') {
 
 export default function App() {
   const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
-
   return (
     <Suspense fallback={null}>
       <Router>

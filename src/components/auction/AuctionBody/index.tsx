@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { AuctionState, useDerivedAuctionState } from '../../../state/orderPlacement/hooks'
+import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { InlineLoading } from '../../common/InlineLoading'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { AuctionNotStarted } from '../AuctionNotStarted'
@@ -23,21 +24,23 @@ const Grid = styled.div`
   margin: 0 0 40px;
 `
 
-const AuctionBody = () => {
-  const { auctionState, loading } = useDerivedAuctionState()
+interface AuctionBodyProps {
+  auctionIdentifier: AuctionIdentifier
+  derivedAuctionInfo: DerivedAuctionInfo
+  auctionState: Maybe<AuctionState>
+}
+
+const AuctionBody = (props: AuctionBodyProps) => {
+  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],
   )
 
-  const isNotLoading = React.useMemo(() => auctionState !== null && !loading, [
-    loading,
-    auctionState,
-  ])
   return (
     <>
-      {!isNotLoading && <InlineLoading message="Loading..." />}
-      {auctionStarted && isNotLoading && (
+      {!auctionStarted && <InlineLoading message="Loading..." />}
+      {auctionStarted && (
         <SectionTitle as="h2">
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
@@ -45,19 +48,38 @@ const AuctionBody = () => {
           {auctionState === AuctionState.CLAIMING && 'Claim Proceedings'}
         </SectionTitle>
       )}
-      {auctionStarted && isNotLoading && (
+      {auctionStarted && (
         <Grid>
           {(auctionState === AuctionState.ORDER_PLACING ||
-            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && <OrderPlacement />}
-          {auctionState === AuctionState.CLAIMING && <Claimer />}
+            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
+            <OrderPlacement
+              auctionIdentifier={auctionIdentifier}
+              auctionState={auctionState}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
+          )}
+          {auctionState === AuctionState.CLAIMING && (
+            <Claimer
+              auctionIdentifier={auctionIdentifier}
+              derivedAuctionInfo={derivedAuctionInfo}
+            />
+          )}
           {auctionState === AuctionState.PRICE_SUBMISSION && (
             <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
           )}
-          <OrderBook />
+          <OrderBook
+            auctionIdentifier={auctionIdentifier}
+            derivedAuctionInfo={derivedAuctionInfo}
+          />
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
-      {auctionStarted && isNotLoading && <OrdersTable />}
+      {auctionStarted && (
+        <OrdersTable
+          auctionIdentifier={auctionIdentifier}
+          derivedAuctionInfo={derivedAuctionInfo}
+        />
+      )}
     </>
   )
 }

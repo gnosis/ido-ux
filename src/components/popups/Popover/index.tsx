@@ -6,7 +6,7 @@ import { Placement } from '@popperjs/core'
 import Portal from '@reach/portal'
 import { usePopper } from 'react-popper'
 
-import useInterval from '../../hooks/useInterval'
+import useInterval from '../../../hooks/useInterval'
 
 const fadeIn = keyframes`
   from {

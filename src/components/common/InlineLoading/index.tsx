@@ -30,30 +30,67 @@ Wrapper.defaultProps = {
   absolute: false,
 }
 
+const SpinnerWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: 100px;
+  justify-content: center;
+  width: 100%;
+`
+
 const Text = styled.p`
   color: ${({ theme }) => theme.text1};
+  flex-shrink: 0;
   font-size: 22px;
   font-weight: 400;
   line-height: 1.4;
   margin: 0;
-  padding: 15px 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
   text-align: center;
   width: 100%;
+
+  &:last-child {
+    padding-bottom: 15px;
+  }
+`
+
+const SubText = styled.p`
+  color: ${({ theme }) => theme.text1};
+  flex-shrink: 0;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: center;
+  width: 100%;
+
+  &:last-child {
+    padding-bottom: 15px;
+  }
 `
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   absolute?: boolean
   message?: string
+  subMessage?: string
   size?: SpinnerSize
 }
 
 export const InlineLoading: React.FC<Props> = (props: Props) => {
-  const { message, size, ...restProps } = props
+  const { message, size, subMessage, ...restProps } = props
 
   return (
     <Wrapper {...restProps}>
-      <Spinner size={size} />
+      <SpinnerWrapper>
+        <Spinner size={size} />
+      </SpinnerWrapper>
       {message ? <Text>{message}</Text> : null}
+      {subMessage ? <SubText>{subMessage}</SubText> : null}
     </Wrapper>
   )
 }

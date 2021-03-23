@@ -12,13 +12,11 @@ export interface SwapState {
   readonly chainId: number | undefined
   readonly price: string
   readonly sellAmount: string
-  readonly auctionId: number
 }
 
 const initialState: SwapState = {
   chainId: undefined,
   price: '-',
-  auctionId: 1,
   sellAmount: '',
 }
 
@@ -29,22 +27,10 @@ function parseAuctionIdParameter(urlParam: any): number {
 export default createReducer<SwapState>(initialState, (builder) =>
   builder
     .addCase(setDefaultsFromURLSearch, (_, { payload: { queryString } }) => {
-      if (queryString && queryString.length > 1) {
-        const parsedQs = parse(queryString, {
-          parseArrays: false,
-          ignoreQueryPrefix: true,
-        })
-
-        return {
-          ...initialState,
-          chainId: parseAuctionIdParameter(parsedQs.chainId),
-          auctionId: parseAuctionIdParameter(parsedQs.auctionId),
-        }
-      }
-
+      const { chainId } = parseURL(queryString)
       return {
         ...initialState,
-        auctionId: 1,
+        chainId,
       }
     })
     .addCase(setNoDefaultNetworkId, () => {
@@ -65,3 +51,26 @@ export default createReducer<SwapState>(initialState, (builder) =>
       }
     }),
 )
+
+export interface AuctionIdentifier {
+  auctionId: number
+  chainId: number
+}
+export function parseURL(queryString: string): AuctionIdentifier {
+  if (queryString && queryString.length > 1) {
+    const parsedQs = parse(queryString, {
+      parseArrays: false,
+      ignoreQueryPrefix: true,
+    })
+
+    return {
+      chainId: parseAuctionIdParameter(parsedQs.chainId),
+      auctionId: parseAuctionIdParameter(parsedQs.auctionId),
+    }
+  }
+
+  return {
+    chainId: 1,
+    auctionId: 1,
+  }
+}

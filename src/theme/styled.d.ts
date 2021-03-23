@@ -67,6 +67,7 @@ declare module "styled-components" {
     fonts: any;
     header: any;
     layout: any;
+    modal: any;
     paddings: any;
     textField: any;
     themeBreakPoints: any;

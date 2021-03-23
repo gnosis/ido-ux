@@ -7,12 +7,13 @@ import { parseUnits } from '@ethersproject/units'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { additionalServiceApi } from '../../api'
+import { ClearingPriceAndVolumeData } from '../../api/AdditionalServicesApi'
 import { EASY_AUCTION_NETWORKS } from '../../constants'
 import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
 import { useActiveWeb3React } from '../../hooks'
 import { Order, decodeOrder, encodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
-import { useAuctionDetails } from '../../hooks/useAuctionDetails'
+import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDetails'
 import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
@@ -30,6 +31,7 @@ import {
   setDefaultsFromURLSearch,
   setNoDefaultNetworkId,
 } from './actions'
+import { AuctionIdentifier } from './reducer'
 
 export interface SellOrder {
   sellAmount: TokenAmount
@@ -169,11 +171,11 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
   return
 }
 
-export function useGetOrderPlacementError(): {
+export function useGetOrderPlacementError(
+  derivedAuctionInfo: DerivedAuctionInfo,
+): {
   error?: string
 } {
-  const derivedAuctionInfo = useDerivedAuctionInfo()
-
   const { account } = useActiveWeb3React()
 
   const { price, sellAmount } = useSwapState()
@@ -246,12 +248,14 @@ export function useGetOrderPlacementError(): {
   }
 }
 
-export function useDeriveAuctioningAndBiddingToken(): {
+export function useDeriveAuctioningAndBiddingToken(
+  auctionIdentifer: AuctionIdentifier,
+): {
   auctioningToken: Token | undefined
   biddingToken: Token | undefined
 } {
-  const { chainId } = useSwapState()
-  const { auctionDetails } = useAuctionDetails()
+  const { chainId } = auctionIdentifer
+  const { auctionDetails } = useAuctionDetails(auctionIdentifer)
 
   const auctioningToken = useMemo(
     () =>
@@ -286,8 +290,6 @@ export function useDeriveAuctioningAndBiddingToken(): {
 }
 
 export interface DerivedAuctionInfo {
-  biddingTokenBalance: TokenAmount | undefined
-  parsedBiddingAmount: TokenAmount | undefined
   auctioningToken: Token | undefined
   biddingToken: Token | undefined
   clearingPriceSellOrder: Maybe<SellOrder>
@@ -300,20 +302,38 @@ export interface DerivedAuctionInfo {
   initialPrice: Fraction | undefined
   minBiddingAmountPerOrder: string | undefined
   orderCancellationEndDate: number | undefined
+  auctionState: AuctionState | null | undefined
 }
 
-export function useDerivedAuctionInfo(): Maybe<DerivedAuctionInfo> {
-  const { account } = useActiveWeb3React()
-
-  const { sellAmount } = useSwapState()
-  const { auctioningToken, biddingToken } = useDeriveAuctioningAndBiddingToken()
-  const { auctionDetails, auctionInfoLoading } = useAuctionDetails()
-  const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo()
-  const relevantTokenBalances = useTokenBalances(account ?? undefined, [biddingToken])
+export function useDerivedAuctionInfo(
+  auctionIdentifier: AuctionIdentifier,
+): Maybe<DerivedAuctionInfo> {
+  const { chainId } = auctionIdentifier
+  const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
+  const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo(auctionIdentifier)
 
   if (auctionInfoLoading || loadingClearingPrice) {
     return null
   }
+  const auctioningToken = !auctionDetails
+    ? undefined
+    : new Token(
+        chainId as ChainId,
+        auctionDetails.addressAuctioningToken,
+        parseInt(auctionDetails.decimalsAuctioningToken, 16),
+        auctionDetails.symbolAuctioningToken,
+      )
+
+  const biddingToken = !auctionDetails
+    ? undefined
+    : new Token(
+        chainId as ChainId,
+        auctionDetails.addressBiddingToken,
+        parseInt(auctionDetails.decimalsBiddingToken, 16),
+        auctionDetails.symbolBiddingToken,
+      )
+
+  const { auctionState } = deriveAuctionState(auctionDetails, clearingPriceInfo)
   const clearingPriceVolume = clearingPriceInfo?.volume
 
   const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
@@ -335,9 +355,6 @@ export function useDerivedAuctionInfo(): Maybe<DerivedAuctionInfo> {
     auctionDetails?.minimumBiddingAmountPerOrder ?? 0,
   ).toString()
 
-  const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
-  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
-
   const clearingPrice: Fraction | undefined = orderToPrice(clearingPriceSellOrder)
 
   let initialPrice: Fraction | undefined
@@ -354,8 +371,6 @@ export function useDerivedAuctionInfo(): Maybe<DerivedAuctionInfo> {
     )
   }
   return {
-    biddingTokenBalance,
-    parsedBiddingAmount,
     auctioningToken,
     biddingToken,
     clearingPriceSellOrder,
@@ -368,72 +383,59 @@ export function useDerivedAuctionInfo(): Maybe<DerivedAuctionInfo> {
     initialPrice,
     minBiddingAmountPerOrder,
     orderCancellationEndDate: auctionDetails?.orderCancellationEndDate,
+    auctionState,
   }
 }
 
-export function useDerivedAuctionState(): {
+export function deriveAuctionState(
+  auctionDetails: AuctionInfoDetail | null | undefined,
+  clearingPriceInfo: ClearingPriceAndVolumeData | null | undefined,
+): {
   auctionState: Maybe<AuctionState>
-  loading: boolean
 } {
-  const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>(null)
-  const [loading, setLoading] = useState<boolean>(true)
+  const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
 
-  const { auctionDetails, auctionInfoLoading } = useAuctionDetails()
-  const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo()
+  let auctionState: Maybe<AuctionState> = null
+  if (!auctioningTokenAddress) {
+    auctionState = AuctionState.NOT_YET_STARTED
+  } else {
+    const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
 
-  useEffect(() => {
-    const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
-    setLoading(true)
-    if (!auctionInfoLoading && !loadingClearingPrice) {
-      if (!auctioningTokenAddress) {
-        setAuctionState(AuctionState.NOT_YET_STARTED)
-      } else {
-        const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
+    const auctionEndDate = auctionDetails?.endTimeTimestamp
+    const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
 
-        const auctionEndDate = auctionDetails?.endTimeTimestamp
-        const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
-
-        let clearingPrice: Fraction | undefined
-        if (
-          !clearingPriceOrder ||
-          clearingPriceOrder.buyAmount == undefined ||
-          clearingPriceOrder.sellAmount == undefined
-        ) {
-          clearingPrice = undefined
-        } else {
-          clearingPrice = new Fraction(
-            clearingPriceOrder.sellAmount.toString(),
-            clearingPriceOrder.buyAmount.toString(),
-          )
-        }
-
-        let auctionState: Maybe<AuctionState> = null
-        if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
-          auctionState = AuctionState.ORDER_PLACING
-          if (orderCancellationEndDate && orderCancellationEndDate >= new Date().getTime() / 1000) {
-            auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
-          }
-        } else {
-          if (clearingPrice?.toSignificant(1) == '0') {
-            auctionState = AuctionState.PRICE_SUBMISSION
-          } else {
-            if (clearingPrice) auctionState = AuctionState.CLAIMING
-          }
-        }
-        setAuctionState(auctionState)
-      }
-      setLoading(false)
+    let clearingPrice: Fraction | undefined
+    if (
+      !clearingPriceOrder ||
+      clearingPriceOrder.buyAmount == undefined ||
+      clearingPriceOrder.sellAmount == undefined
+    ) {
+      clearingPrice = undefined
+    } else {
+      clearingPrice = new Fraction(
+        clearingPriceOrder.sellAmount.toString(),
+        clearingPriceOrder.buyAmount.toString(),
+      )
     }
-  }, [auctionDetails, clearingPriceInfo, loadingClearingPrice, auctionInfoLoading])
 
-  return {
-    auctionState,
-    loading,
+    if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
+      auctionState = AuctionState.ORDER_PLACING
+      if (orderCancellationEndDate && orderCancellationEndDate >= new Date().getTime() / 1000) {
+        auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
+      }
+    } else {
+      if (clearingPrice?.toSignificant(1) == '0') {
+        auctionState = AuctionState.PRICE_SUBMISSION
+      } else {
+        if (clearingPrice) auctionState = AuctionState.CLAIMING
+      }
+    }
   }
+  return { auctionState }
 }
 
 export function useDerivedClaimInfo(
-  auctionId: number,
+  auctionIdentifier: AuctionIdentifier,
 ): {
   error?: string
   auctioningToken?: Maybe<Token>
@@ -441,7 +443,7 @@ export function useDerivedClaimInfo(
   claimauctioningToken?: Maybe<TokenAmount>
   claimbiddingToken?: Maybe<TokenAmount>
 } {
-  const { chainId } = useActiveWeb3React()
+  const { auctionId, chainId } = auctionIdentifier
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -465,7 +467,7 @@ export function useDerivedClaimInfo(
 
   let error: string | undefined = ''
 
-  const claimableOrders = useGetClaimInfo()?.sellOrdersFormUser
+  const claimableOrders = useGetClaimInfo(auctionIdentifier)?.sellOrdersFormUser
   const claimed = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
     auctionId,
     claimableOrders == undefined || claimableOrders[0] == undefined
@@ -516,10 +518,12 @@ export function useSetNoDefaultNetworkId() {
   }, [dispatch])
 }
 
-export function useCurrentUserOrders() {
+export function useCurrentUserOrders(
+  auctionIdentifier: AuctionIdentifier,
+  derivedAuctionInfo: DerivedAuctionInfo,
+) {
   const { account } = useActiveWeb3React()
-  const { auctionId, chainId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
+  const { auctionId, chainId } = auctionIdentifier
   const { onResetOrder } = useOrderActionHandlers()
 
   useEffect(() => {
@@ -590,10 +594,12 @@ export function useCurrentUserOrders() {
   ])
 }
 
-export function useUserAuctionOrders() {
+export function useUserAuctionOrders(
+  auctionIdentifier: AuctionIdentifier,
+  derivedAuctionInfo: DerivedAuctionInfo,
+) {
+  const { auctionId, chainId } = auctionIdentifier
   const { account } = useActiveWeb3React()
-  const { auctionId, chainId } = useSwapState()
-  const derivedAuctionInfo = useDerivedAuctionInfo()
   const [loading, setLoading] = useState<boolean>(true)
   const [orders, setOrders] = useState<OrderDisplay[]>([])
 

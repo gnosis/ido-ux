@@ -9,16 +9,15 @@ const Wrapper = styled.svg`
   }
 `
 
-export const ErrorIcon: React.FC = (props) => {
-  const { ...restProps } = props
-
+export const ErrorIcon: React.FC<{ className?: string }> = (props) => {
   return (
     <Wrapper
+      className={`errorIcon ${props.className}`}
       height="52"
       viewBox="0 0 24 24"
       width="52"
       xmlns="http://www.w3.org/2000/svg"
-      {...restProps}
+      {...props}
     >
       <g fill="none" fillRule="evenodd">
         <path d="M0 0H24V24H0z" />
