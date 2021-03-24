@@ -1,21 +1,20 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { TokenInfo } from '@uniswap/token-lists'
 
 import { loadTokenListFromAPI } from './actions'
 
 export interface TokenListState {
-  tokens: TokenInfo[]
+  tokens: { [key: string]: string }
 }
 
 const initialState: TokenListState = {
-  tokens: [],
+  tokens: {},
 }
 
 export default createReducer<TokenListState>(initialState, (builder) =>
   builder.addCase(loadTokenListFromAPI, (state: TokenListState, { payload: { tokenList } }) => {
     return {
       ...state,
-      tokens: tokenList ?? [],
+      tokens: tokenList ?? {},
     }
   }),
 )

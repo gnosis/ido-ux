@@ -49,15 +49,12 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const { size = '24px', token, ...restProps } = props
   const { address, symbol } = token
   const { tokens } = useTokenListState()
-  const validToken = isAddress(address) && tokens && tokens.length > 0
-  const tokenInfo =
-    validToken && tokens.find((token) => token.address.toLowerCase() === address.toLowerCase())
-  const imageURL = validToken && tokenInfo && tokenInfo.logoURI ? tokenInfo.logoURI : undefined
-  const tokenSymbol = tokenInfo && tokenInfo.symbol ? tokenInfo.symbol : symbol
+  const validToken = isAddress(address) && tokens
+  const imageURL = validToken && tokens[address.toLowerCase()]
 
   return (
     <Wrapper size={size} {...restProps}>
-      {imageURL ? <Image src={imageURL} /> : <Placeholder size={size}>{tokenSymbol}</Placeholder>}
+      {imageURL ? <Image src={imageURL} /> : <Placeholder size={size}>{symbol}</Placeholder>}
     </Wrapper>
   )
 }

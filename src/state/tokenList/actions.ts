@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { TokenInfo } from '@uniswap/token-lists'
 
-export const loadTokenListFromAPI = createAction<{ tokenList: TokenInfo[] }>('LoadTokenListFromAPI')
+export const loadTokenListFromAPI = createAction<{ tokenList: { [key: string]: string } }>(
+  'LoadTokenListFromAPI',
+)
