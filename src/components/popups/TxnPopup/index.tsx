@@ -8,8 +8,8 @@ import { useRemovePopup } from '../../../state/application/hooks'
 import { TYPE } from '../../../theme'
 import { ExternalLink } from '../../../theme/components'
 import { getEtherscanLink } from '../../../utils'
-import { AutoColumn } from '../../Column'
-import { AutoRow } from '../../Row'
+import { AutoColumn } from '../../swap/Column'
+import { AutoRow } from '../../swap/Row'
 
 const Fader = styled.div<{ count: number }>`
   position: absolute;

@@ -2,10 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
-import { Button } from '../buttons/Button'
-import { AlertIcon } from '../icons/AlertIcon'
-import { IconWrapper } from '../modals/common/pureStyledComponents/IconWrapper'
-import { Text } from '../modals/common/pureStyledComponents/Text'
+import { Button } from '../../../buttons/Button'
+import { AlertIcon } from '../../../icons/AlertIcon'
+import { IconWrapper } from '../pureStyledComponents/IconWrapper'
+import { Text } from '../pureStyledComponents/Text'
 
 const ActionButton = styled(Button)`
   margin-top: 40px;
