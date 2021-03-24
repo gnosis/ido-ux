@@ -17,7 +17,6 @@ const WarningModal: React.FC<Props> = (props) => {
     <Modal isOpen={isOpen} onDismiss={onDismiss} width={394}>
       <ModalTitle onClose={onDismiss} title={title} />
       {content}
-      323132132123
     </Modal>
   )
 }
