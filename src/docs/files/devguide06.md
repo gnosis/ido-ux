@@ -54,7 +54,7 @@ yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780
 
 After the auction time has finished, ANY participant can settle the auction by running this command:
 ```
-yarn hardhat clearAuction --auction_id INSERT_AUCTION_ID_HERE --network $ 'rinkeby'
+yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network $ 'rinkeby'
 ```
 ### Additional commands:
 
