@@ -35,7 +35,6 @@ const SpinnerWrapper = styled(Spinner)`
 
 export default function Web3ReactManager({ children }) {
   const { t } = useTranslation()
-  const { active } = useWeb3React()
   const { activate: activateNetwork, active: networkActive, error: networkError } = useWeb3React(
     NetworkContextName,
   )
@@ -46,10 +45,10 @@ export default function Web3ReactManager({ children }) {
 
   // after eagerly trying injected, if the network connect ever isn't active or in an error state, activate itd
   useEffect(() => {
-    if (triedEager && !networkActive && !networkError && !active) {
+    if (triedEager && !networkActive && !networkError) {
       activateNetwork(network)
     }
-  }, [triedEager, networkActive, networkError, activateNetwork, active])
+  }, [triedEager, networkActive, networkError, activateNetwork])
 
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager)
@@ -58,16 +57,7 @@ export default function Web3ReactManager({ children }) {
   useActiveListener()
 
   // handle delayed loader state
-  const [showLoader, setShowLoader] = useState(false)
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowLoader(true)
-    }, 600)
-
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [])
+  const [showLoader, setShowLoader] = useState(true)
 
   // Fetch token logos by chain ID
   useEffect(() => {
@@ -100,22 +90,21 @@ export default function Web3ReactManager({ children }) {
     return null
   }
 
+  if (showLoader || !networkActive) {
+    return (
+      <MessageWrapper>
+        <SpinnerWrapper src={Circle} />
+      </MessageWrapper>
+    )
+  }
+
   // if the account context isn't active, and there's an error on the network context, it's an irrecoverable error
-  if (!active && networkError) {
+  if (!networkActive && networkError) {
     return (
       <MessageWrapper>
         <Message>{t('unknownError')}</Message>
       </MessageWrapper>
     )
-  }
-
-  // if neither context is active, spin
-  if (!active && !networkActive) {
-    return showLoader ? (
-      <MessageWrapper>
-        <SpinnerWrapper src={Circle} />
-      </MessageWrapper>
-    ) : null
   }
 
   return children
