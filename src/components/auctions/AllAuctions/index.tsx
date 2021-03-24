@@ -6,9 +6,7 @@ import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-tabl
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { Dropdown, DropdownDirection, DropdownItem, DropdownPosition } from '../../common/Dropdown'
-import { InlineLoading } from '../../common/InlineLoading'
 import { KeyValue } from '../../common/KeyValue'
-import { SpinnerSize } from '../../common/Spinner'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -174,10 +172,6 @@ const ChevronLeft = styled(ChevronRight)`
   transform: rotateZ(180deg);
 `
 
-const Loading = styled(InlineLoading)`
-  min-height: 290px;
-`
-
 const DropdownPagination = styled(Dropdown)`
   .dropdownItems {
     min-width: 70px;
@@ -207,11 +201,10 @@ const PaginationItem = styled.div`
 
 interface Props {
   tableData: any[]
-  isLoading: boolean
 }
 
-const AllAuctions: React.FC<Props> = (props) => {
-  const { isLoading = true, tableData, ...restProps } = props
+const AllAuctions = (props: Props) => {
+  const { tableData, ...restProps } = props
   const columns = useMemo(
     () => [
       {
@@ -430,7 +423,6 @@ const AllAuctions: React.FC<Props> = (props) => {
         <SearchWrapper>
           <Magnifier />
           <SearchInput
-            disabled={isLoading}
             onChange={(e) => {
               setGlobalFilter(e.target.value)
             }}
@@ -438,7 +430,7 @@ const AllAuctions: React.FC<Props> = (props) => {
             value={state.globalFilter || ''}
           />
           <DeleteSearchTerm
-            disabled={!state.globalFilter || noData || isLoading}
+            disabled={!state.globalFilter || noData}
             onClick={() => {
               setGlobalFilter(undefined)
             }}
@@ -447,7 +439,6 @@ const AllAuctions: React.FC<Props> = (props) => {
           </DeleteSearchTerm>
         </SearchWrapper>
         <Dropdown
-          disabled={isLoading}
           dropdownButtonContent={
             <ButtonSelect
               content={
@@ -471,9 +462,7 @@ const AllAuctions: React.FC<Props> = (props) => {
           ))}
         />
       </TableControls>
-      {isLoading ? (
-        <Loading message="Loading..." size={SpinnerSize.small} />
-      ) : noData ? (
+      {noData ? (
         <EmptyContentWrapper>
           <InfoIcon />
           <EmptyContentText>
