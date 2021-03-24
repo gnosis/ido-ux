@@ -8,7 +8,7 @@ const XYChart = (args) => {
   const quoteTokenLabel = quoteToken.symbol
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
-  const priceTitle = 'Price'
+  const priceTitle = ` Price (${quoteTokenLabel})`
   const volumeTitle = ` Volume (${quoteTokenLabel})`
 
   const chart = am4core.create(div, am4charts.XYChart)
