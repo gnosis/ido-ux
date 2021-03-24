@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
-import { EASY_AUCTION_NETWORKS, chainNames } from '../../../constants'
+import { EASY_AUCTION_NETWORKS } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -22,6 +22,7 @@ import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalance, useTokenBalances } from '../../../state/wallet/hooks'
 import { ChainId, getTokenDisplay } from '../../../utils'
+import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import TokenLogo from '../../common/TokenLogo'
@@ -361,7 +362,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         title="Warning!"
       />
       <WarningModal
-        content={`In order to place this order, please connect to ${chainNames[auctionChainId]} network`}
+        content={`In order to place this order, please connect to the ${getChainName(
+          auctionChainId,
+        )} network`}
         isOpen={showWarningWrongChainId}
         onDismiss={() => {
           setShowWarningWrongChainId(false)
