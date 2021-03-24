@@ -10,6 +10,7 @@ import {
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getEtherscanLink, getTokenDisplay } from '../../../utils'
+import { abbreviation } from '../../../utils/numeral'
 import { KeyValue } from '../../common/KeyValue'
 import TokenLogo from '../../common/TokenLogo'
 import { Tooltip } from '../../common/Tooltip'
@@ -88,7 +89,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
     const clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
 
     return clearingPriceNumber
-      ? `${clearingPriceNumber} ${getTokenDisplay(
+      ? `${abbreviation(clearingPriceNumber)} ${getTokenDisplay(
           derivedAuctionInfo?.biddingToken,
         )}/${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}`
       : '-'
@@ -176,8 +177,8 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
                   symbol: derivedAuctionInfo?.auctioningToken.symbol,
                 }}
               />
-              <span>{`${derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(
-                2,
+              <span>{`${abbreviation(
+                derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(2),
               )} ${auctioningTokenDisplay}`}</span>
               <ExternalLink href={auctionTokenAddress} />
             </>
@@ -200,9 +201,9 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         }
         itemValue={
           <>
-            {initialPriceToDisplay ? initialPriceToDisplay?.toSignificant(2) : ' - '}
+            {initialPriceToDisplay ? abbreviation(initialPriceToDisplay?.toSignificant(2)) : ' - '}
             {initialPriceToDisplay && auctioningTokenDisplay
-              ? `${biddingTokenDisplay}/${auctioningTokenDisplay}`
+              ? ` ${biddingTokenDisplay}/${auctioningTokenDisplay}`
               : '-'}
           </>
         }

@@ -4,6 +4,7 @@ import styled, { keyframes } from 'styled-components'
 import { HashLink } from 'react-router-hash-link'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
+import { abbreviation } from '../../../utils/numeral'
 import {
   calculateTimeLeft,
   calculateTimeProgress,
@@ -254,7 +255,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         <SellingText>
           Selling{' '}
           <span title={auctionInfo.order.volume + ' ' + auctionInfo.symbolAuctioningToken}>
-            {auctionInfo.order.volume.toFixed(2) + ` `}
+            {abbreviation(auctionInfo.order.volume.toFixed(2)) + ` `}
           </span>
           {auctionInfo.symbolAuctioningToken}
         </SellingText>
@@ -267,8 +268,8 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         <Cell>
           <Subtitle>Current price</Subtitle>
           <Text>
-            {auctionInfo.order.price.toFixed(2)} {` ` + auctionInfo.symbolBiddingToken} per{' '}
-            {auctionInfo.symbolAuctioningToken}
+            {abbreviation(auctionInfo.order.price.toFixed(2))}{' '}
+            {` ` + auctionInfo.symbolBiddingToken} per {auctionInfo.symbolAuctioningToken}
           </Text>
         </Cell>
         <Cell>
