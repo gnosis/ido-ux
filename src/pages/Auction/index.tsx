@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import AuctionBody from '../../components/auction/AuctionBody'
 import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
+import { InlineLoading } from '../../components/common/InlineLoading'
+import { SpinnerSize } from '../../components/common/Spinner'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
@@ -74,8 +76,8 @@ const Auction: React.FC<Props> = (props) => {
   const { tokens } = useTokenListState()
   const url = window.location.href
 
-  const biddingTokenAddress = derivedAuctionInfo?.biddingToken.address
-  const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken.address
+  const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
+  const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
   const validBiddingTokenAddress =
     isAddress(biddingTokenAddress) &&
     tokens &&
@@ -103,29 +105,39 @@ const Auction: React.FC<Props> = (props) => {
     validBiddingTokenAddress,
   ])
 
+  const isLoading = React.useMemo(() => !auctionIdentifier || !derivedAuctionInfo, [
+    auctionIdentifier,
+    derivedAuctionInfo,
+  ])
+
   return (
     <>
-      <Title>Auction Details</Title>
-      <SubTitleWrapper>
-        <SubTitle>
-          <Network>
-            <NetworkIconStyled />
-            <NetworkName>Selling on {getChainName(auctionIdentifier.chainId)} -</NetworkName>
-          </Network>
-          <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
-        </SubTitle>
-        <CopyButton copyValue={url} title="Copy URL" />
-      </SubTitleWrapper>
-      <AuctionDetails
-        auctionIdentifier={auctionIdentifier}
-        auctionState={derivedAuctionInfo?.auctionState}
-        derivedAuctionInfo={derivedAuctionInfo}
-      />
-      <AuctionBody
-        auctionIdentifier={auctionIdentifier}
-        auctionState={derivedAuctionInfo?.auctionState}
-        derivedAuctionInfo={derivedAuctionInfo}
-      />
+      {isLoading && <InlineLoading message="Loading..." size={SpinnerSize.small} />}
+      {!isLoading && (
+        <>
+          <Title>Auction Details</Title>
+          <SubTitleWrapper>
+            <SubTitle>
+              <Network>
+                <NetworkIconStyled />
+                <NetworkName>Selling on {getChainName(auctionIdentifier.chainId)} -</NetworkName>
+              </Network>
+              <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
+            </SubTitle>
+            <CopyButton copyValue={url} title="Copy URL" />
+          </SubTitleWrapper>
+          <AuctionDetails
+            auctionIdentifier={auctionIdentifier}
+            auctionState={derivedAuctionInfo?.auctionState}
+            derivedAuctionInfo={derivedAuctionInfo}
+          />
+          <AuctionBody
+            auctionIdentifier={auctionIdentifier}
+            auctionState={derivedAuctionInfo?.auctionState}
+            derivedAuctionInfo={derivedAuctionInfo}
+          />
+        </>
+      )}
     </>
   )
 }
