@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
-import { EASY_AUCTION_NETWORKS } from '../../../constants'
+import { EASY_AUCTION_NETWORKS, chainNames } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -128,7 +128,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { account, chainId } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { price, sellAmount } = useSwapState()
+  const { chainId: auctionChainId, price, sellAmount } = useSwapState()
   const { error } = useGetOrderPlacementError(derivedAuctionInfo)
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
@@ -138,6 +138,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
+  const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
@@ -225,6 +226,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
 
   const handleShowConfirm = () => {
+    if (chainId !== auctionChainId) {
+      setShowWarningWrongChainId(true)
+      return
+    }
+
     const sameOrder = orders.orders.find((order) => order.price === price)
 
     if (!sameOrder) {
@@ -351,6 +357,14 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         isOpen={showWarning}
         onDismiss={() => {
           setShowWarning(false)
+        }}
+        title="Warning!"
+      />
+      <WarningModal
+        content={`In order to place this order, please connect to ${chainNames[auctionChainId]} network`}
+        isOpen={showWarningWrongChainId}
+        onDismiss={() => {
+          setShowWarningWrongChainId(false)
         }}
         title="Warning!"
       />
