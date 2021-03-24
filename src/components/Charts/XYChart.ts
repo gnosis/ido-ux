@@ -8,7 +8,7 @@ const XYChart = (args) => {
   const quoteTokenLabel = quoteToken.symbol
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
-  const priceTitle = ` Price (${baseTokenLabel})`
+  const priceTitle = ` Price (${quoteTokenLabel})`
   const volumeTitle = ` Volume (${quoteTokenLabel})`
 
   const chart = am4core.create(div, am4charts.XYChart)
@@ -49,10 +49,11 @@ const XYChart = (args) => {
   priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
 
   // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
-  volumeAxis.numberFormatter = new am4core.NumberFormatter()
-  volumeAxis.numberFormatter.numberFormat = '#.0a'
-  priceAxis.numberFormatter = new am4core.NumberFormatter()
-  priceAxis.numberFormatter.numberFormat = '#.0a'
+  // @rafael prefers the whole number
+  // volumeAxis.numberFormatter = new am4core.NumberFormatter()
+  // volumeAxis.numberFormatter.numberFormat = '#.00a'
+  // priceAxis.numberFormatter = new am4core.NumberFormatter()
+  // priceAxis.numberFormatter.numberFormat = '#.00a'
 
   const min = Math.min.apply(
     0,
@@ -104,7 +105,7 @@ const XYChart = (args) => {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
   }
-  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
+  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
 
   // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
   const askSeries = chart.series.push(new am4charts.LineSeries())
@@ -117,7 +118,7 @@ const XYChart = (args) => {
   askSeries.dummyData = {
     description: 'Shows the minimum sell price (x axis) the auctioneer is willing to accept',
   }
-  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${baseTokenLabel}`
+  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
 
   // New order to be placed
   const inputSeries = chart.series.push(new am4charts.LineSeries())

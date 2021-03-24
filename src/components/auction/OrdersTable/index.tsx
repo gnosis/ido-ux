@@ -6,6 +6,7 @@ import { DerivedAuctionInfo, useCurrentUserOrders } from '../../../state/orderPl
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
+import { abbreviation } from '../../../utils/numeral'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
@@ -162,7 +163,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                       />
                     </>
                   }
-                  itemValue={order.sellAmount}
+                  itemValue={abbreviation(order.sellAmount)}
                 />
               </Cell>
               <Cell>
@@ -179,7 +180,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                       />
                     </>
                   }
-                  itemValue={order.price}
+                  itemValue={abbreviation(order.price)}
                 />
               </Cell>
               <Cell>
