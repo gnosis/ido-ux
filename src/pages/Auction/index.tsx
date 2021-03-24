@@ -7,10 +7,10 @@ import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { useToken } from '../../hooks/Tokens'
 import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
+import { isAddress } from '../../utils'
 import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
@@ -73,8 +73,17 @@ const Auction: React.FC<Props> = (props) => {
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
   const { tokens } = useTokenListState()
   const url = window.location.href
-  const validBiddingTokenAddress = useToken(derivedAuctionInfo?.biddingToken.address)
-  const validAuctioningTokenAddress = useToken(derivedAuctionInfo?.auctioningToken.address)
+
+  const biddingTokenAddress = derivedAuctionInfo?.biddingToken.address
+  const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken.address
+  const validBiddingTokenAddress =
+    isAddress(biddingTokenAddress) &&
+    tokens &&
+    tokens[biddingTokenAddress.toLowerCase()] !== undefined
+  const validAuctioningTokenAddress =
+    isAddress(auctioningTokenAddress) &&
+    tokens &&
+    tokens[auctioningTokenAddress.toLowerCase()] !== undefined
 
   useDefaultsFromURLSearch(search)
 
