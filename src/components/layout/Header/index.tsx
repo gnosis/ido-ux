@@ -9,7 +9,6 @@ import { CHAIN_ID } from '../../../constants/config'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { useSwapState } from '../../../state/orderPlacement/hooks'
 import { getChainName } from '../../../utils/tools'
-import { useNetworkCheck } from '../../Web3Status'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
@@ -19,6 +18,7 @@ import WalletModal from '../../modals/WalletModal'
 import { Mainmenu } from '../../navigation/Mainmenu'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
+import { useNetworkCheck } from '../../web3/Web3Status'
 
 const Wrapper = styled.header`
   background-color: ${({ theme }) => theme.mainBackground};

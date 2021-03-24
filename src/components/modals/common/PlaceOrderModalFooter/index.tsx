@@ -4,14 +4,14 @@ import { Fraction, Percent, Token, TokenAmount, Trade } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import DoubleLogo from '../../components/common/DoubleLogo'
-import TokenLogo from '../../components/common/TokenLogo'
-import { ErrorLock } from '../../components/icons/ErrorLock'
-import { ErrorRow, ErrorText, ErrorWrapper } from '../../components/pureStyledComponents/Error'
-import { getTokenDisplay } from '../../utils'
-import { abbreviation } from '../../utils/numeral'
-import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
-import { Button } from '../buttons/Button'
+import { getTokenDisplay } from '../../../../utils'
+import { abbreviation } from '../../../../utils/numeral'
+import { convertPriceIntoBuyAndSellAmount } from '../../../../utils/prices'
+import { Button } from '../../../buttons/Button'
+import DoubleLogo from '../../../common/DoubleLogo'
+import TokenLogo from '../../../common/TokenLogo'
+import { ErrorLock } from '../../../icons/ErrorLock'
+import { ErrorRow, ErrorText, ErrorWrapper } from '../../../pureStyledComponents/Error'
 
 const Row = styled.div`
   align-items: center;

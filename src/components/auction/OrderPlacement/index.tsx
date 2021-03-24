@@ -33,10 +33,10 @@ import { ErrorLock } from '../../icons/ErrorLock'
 import { LockBig } from '../../icons/LockBig'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
+import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
-import SwapModalFooter from '../../swap/PlaceOrderModalFooter'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;

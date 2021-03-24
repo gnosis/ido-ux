@@ -6,10 +6,10 @@ import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
 import { ExternalLink, TYPE } from '../../theme'
 import { getEtherscanLink } from '../../utils'
-import { AutoColumn } from '../Column'
-import { AutoRow, RowBetween } from '../Row'
 import Copy from '../common/Copy'
 import TokenLogo from '../common/TokenLogo'
+import { AutoColumn } from './Column'
+import { AutoRow, RowBetween } from './Row'
 
 export function TransferModalHeader({
   ENSName,

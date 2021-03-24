@@ -4,19 +4,19 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'react-i18next'
 
-import { tokenLogosServiceApi } from '../../api'
-import Circle from '../../assets/images/circle.svg'
-import { network } from '../../connectors'
-import { NetworkContextName } from '../../constants'
-import { useActiveListener, useEagerConnect, useInactiveListener } from '../../hooks'
-import { useTokenListActionHandlers } from '../../state/tokenList/hooks'
-import { Spinner } from '../../theme'
+import { tokenLogosServiceApi } from '../../../api'
+import Circle from '../../../assets/images/circle.svg'
+import { network } from '../../../connectors'
+import { NetworkContextName } from '../../../constants'
+import { useActiveListener, useEagerConnect, useInactiveListener } from '../../../hooks'
+import { useTokenListActionHandlers } from '../../../state/tokenList/hooks'
+import { Spinner } from '../../../theme'
 
 const MessageWrapper = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
+  display: flex;
   height: 20rem;
+  justify-content: center;
 `
 
 const Message = styled.h2`
