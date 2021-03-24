@@ -48,6 +48,12 @@ const XYChart = (args) => {
   priceAxis.title.fill = am4core.color(colors.white)
   priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
 
+  // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
+  volumeAxis.numberFormatter = new am4core.NumberFormatter()
+  volumeAxis.numberFormatter.numberFormat = '#.0a'
+  priceAxis.numberFormatter = new am4core.NumberFormatter()
+  priceAxis.numberFormatter.numberFormat = '#.0a'
+
   const min = Math.min.apply(
     0,
     data.map((order) => order.priceNumber),

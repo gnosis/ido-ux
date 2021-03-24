@@ -9,6 +9,7 @@ import TokenLogo from '../../components/common/TokenLogo'
 import { ErrorLock } from '../../components/icons/ErrorLock'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../components/pureStyledComponents/Error'
 import { getTokenDisplay } from '../../utils'
+import { abbreviation } from '../../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { Button } from '../buttons/Button'
 
@@ -91,7 +92,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         <Text>{biddingTokenDisplay} Tokens sold</Text>
         <Value>
-          <Text>{sellAmount}</Text>
+          <Text>{abbreviation(sellAmount)}</Text>
           <div>
             <TokenLogo
               size="24px"
@@ -103,7 +104,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         <Text>Minimum {auctioningTokenDisplay} received</Text>
         <Value>
-          <Text>{minimumReceived?.toSignificant(2)}</Text>
+          <Text>{abbreviation(minimumReceived?.toSignificant(2))}</Text>
           <div>
             <TokenLogo
               size="24px"
@@ -117,7 +118,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
           Max {biddingTokenDisplay} paid per {auctioningTokenDisplay}
         </Text>
         <Value>
-          <Text>{price}</Text>
+          <Text>{abbreviation(price)}</Text>
           <div>
             <DoubleLogo
               auctioningToken={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}
