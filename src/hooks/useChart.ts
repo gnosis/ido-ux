@@ -24,16 +24,20 @@ const useChart = ({
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    setLoading(true)
-    const currentChart = createChart({ div: elemRef.current, data, baseToken, quoteToken })
+    if (!chart) {
+      setLoading(true)
+      const currentChart = createChart({ div: elemRef.current, data, baseToken, quoteToken })
 
-    setChart(currentChart)
-    setLoading(false)
-    return () => {
-      if (currentChart) {
-        currentChart.dispose()
+      setChart(currentChart)
+      setLoading(false)
+
+      return () => {
+        if (chart) {
+          chart.dispose()
+        }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, baseToken, quoteToken, createChart])
 
   return { chart, elemRef, loading }
