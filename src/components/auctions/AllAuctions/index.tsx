@@ -430,7 +430,7 @@ const AllAuctions = (props: Props) => {
             value={state.globalFilter || ''}
           />
           <DeleteSearchTerm
-            disabled={!state.globalFilter || isLoading}
+            disabled={!state.globalFilter}
             onClick={() => {
               setGlobalFilter(undefined)
             }}
