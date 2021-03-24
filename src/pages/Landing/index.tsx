@@ -9,6 +9,7 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { SpinnerSize } from '../../components/common/Spinner'
 import { Send } from '../../components/icons/Send'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
+import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import AuctionsIcon from './img/eth.svg'
 import Shape1 from './img/shape-1.svg'
@@ -133,6 +134,8 @@ export const Landing: React.FC = () => {
   const allAuctions = useAllAuctionInfo()
   useSetNoDefaultNetworkId()
 
+  const featuredAuctions = useInterestingAuctionInfo()
+
   return (
     <>
       <Welcome>
@@ -171,7 +174,7 @@ export const Landing: React.FC = () => {
           )}
         </AuctionsBlock>
       </Welcome>
-      <Featured />
+      <Featured featuredAuctions={featuredAuctions} />
       <BlockGrid>
         <TextBlock>
           <SubTitle>Best Price Discovery</SubTitle>

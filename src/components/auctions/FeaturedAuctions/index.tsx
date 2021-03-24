@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { useInterestingAuctionInfo } from '../../../hooks/useInterestingAuctionDetails'
+import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -27,12 +27,15 @@ const Loading = styled(InlineLoading)`
   min-height: 290px;
 `
 
-export const FeaturedAuctions: React.FC = (props) => {
-  const { ...restProps } = props
-  const highlightedAuctions = useInterestingAuctionInfo()
+interface Props {
+  featuredAuctions: Maybe<AuctionInfo[]>
+}
 
-  const auctions = React.useMemo(() => highlightedAuctions && highlightedAuctions.slice(0, 3), [
-    highlightedAuctions,
+export const FeaturedAuctions = (props: Props) => {
+  const { featuredAuctions, ...restProps } = props
+
+  const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 3), [
+    featuredAuctions,
   ])
 
   return (
@@ -40,10 +43,10 @@ export const FeaturedAuctions: React.FC = (props) => {
       <SectionTitle as="h2" className="featuredAuctionsTitle">
         Featured Auctions
       </SectionTitle>
-      {(highlightedAuctions === undefined || highlightedAuctions === null) && (
+      {(featuredAuctions === undefined || featuredAuctions === null) && (
         <Loading message="Loading..." size={SpinnerSize.small} />
       )}
-      {highlightedAuctions && highlightedAuctions.length === 0 && (
+      {featuredAuctions && featuredAuctions.length === 0 && (
         <EmptyContentWrapper>
           <InfoIcon />
           <EmptyContentText>No featured auctions.</EmptyContentText>

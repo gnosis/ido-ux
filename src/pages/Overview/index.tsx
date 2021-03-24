@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import AllAuctions from '../../components/auctions/AllAuctions'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import DoubleLogo from '../../components/common/DoubleLogo'
+import { InlineLoading } from '../../components/common/InlineLoading'
+import { SpinnerSize } from '../../components/common/Spinner'
 import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { Private } from '../../components/icons/Private'
@@ -14,6 +16,7 @@ import {
   useAllAuctionInfo,
   useAllAuctionInfoWithParticipation,
 } from '../../hooks/useAllAuctionInfos'
+import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import { getChainName } from '../../utils/tools'
 
@@ -45,8 +48,14 @@ const OverviewWithAccount = ({ account }: { account: string }) => {
   return <OverviewCommon allAuctions={allAuctions} />
 }
 
-const OverviewCommon = ({ allAuctions }: { allAuctions: Maybe<AuctionInfo[]> }) => {
+interface OverviewProps {
+  allAuctions: Maybe<AuctionInfo[]>
+}
+
+const OverviewCommon = ({ allAuctions }: OverviewProps) => {
   const tableData = []
+
+  const featuredAuctions = useInterestingAuctionInfo()
 
   const allAuctionsSorted = allAuctions?.sort((a, b) => {
     const aStatus = new Date(a.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended'
@@ -106,13 +115,24 @@ const OverviewCommon = ({ allAuctions }: { allAuctions: Maybe<AuctionInfo[]> }) 
     })
   })
 
+  const isLoading = React.useMemo(
+    () =>
+      featuredAuctions === undefined ||
+      featuredAuctions === null ||
+      allAuctions === undefined ||
+      allAuctions === null,
+    [allAuctions, featuredAuctions],
+  )
+
   return (
     <>
-      <Featured />
-      <AllAuctions
-        isLoading={allAuctions === undefined || allAuctions === null}
-        tableData={tableData}
-      />
+      {isLoading && <InlineLoading message="Loading..." size={SpinnerSize.small} />}
+      {!isLoading && (
+        <>
+          <Featured featuredAuctions={featuredAuctions} />
+          <AllAuctions tableData={tableData} />
+        </>
+      )}
     </>
   )
 }
