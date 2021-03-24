@@ -5,7 +5,9 @@ import { useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
 import { chainNames } from '../../../constants'
+import { CHAIN_ID } from '../../../constants/config'
 import { useWalletModalToggle } from '../../../state/application/hooks'
+import { useSwapState } from '../../../state/orderPlacement/hooks'
 import { getChainName } from '../../../utils/tools'
 import { useNetworkCheck } from '../../Web3Status'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
@@ -121,6 +123,7 @@ const ErrorText = styled.span`
 
 export const Header: React.FC = (props) => {
   const { account } = useWeb3React()
+  const { chainId = CHAIN_ID } = useSwapState()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
@@ -130,7 +133,6 @@ export const Header: React.FC = (props) => {
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
-
   const chains = Object.keys(chainNames)
   let chainNamesFormatted = ''
 
@@ -145,13 +147,13 @@ export const Header: React.FC = (props) => {
       <UserDropdownStyled />
     ) : errorWrongNetwork ? (
       <Error>
-        <ErrorText>Connect to a valid network</ErrorText>
+        <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
         <Tooltip id="wrongNetwork" text={`Supported netowrks are: ${chainNamesFormatted}`} />
       </Error>
     ) : (
       <ButtonConnectStyled onClick={toggleWalletModal} />
     )
-  }, [isConnected, errorWrongNetwork, chainNamesFormatted, toggleWalletModal])
+  }, [isConnected, errorWrongNetwork, chainId, chainNamesFormatted, toggleWalletModal])
 
   return (
     <>
