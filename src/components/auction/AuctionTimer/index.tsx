@@ -172,7 +172,8 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
       auctionState !== AuctionState.ORDER_PLACING_AND_CANCELING &&
       auctionState !== AuctionState.ORDER_PLACING &&
       auctionState !== AuctionState.CLAIMING &&
-      auctionState !== null
+      auctionState !== null &&
+      auctionState !== undefined
     ) {
       return <TextBig>Auction Settled</TextBig>
     } else {
@@ -192,7 +193,7 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
   return (
     <Wrapper progress={progress}>
       <Center>
-        {auctionState === null && <TextBig>Loading</TextBig>}
+        {!auctionState && <TextBig>Loading...</TextBig>}
         {auctionState === AuctionState.NOT_YET_STARTED && (
           <TextBig>
             Auction

@@ -12,8 +12,6 @@ const Wrapper = styled.div<{ size?: string }>`
   flex-shrink: 0;
   height: ${({ size }) => size};
   overflow: hidden;
-  position: relative;
-  top: -1px;
   width: ${({ size }) => size};
 `
 

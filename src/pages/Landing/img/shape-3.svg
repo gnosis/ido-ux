@@ -1,14 +1,13 @@
-<svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="248"
-    height="248"
-    viewBox="0 0 248 248"
->
-    <path
-        fill="none"
-        stroke="#fff"
-        stroke-miterlimit="10"
-        stroke-width="2px"
-        d="M123.5 125.5L37 212l86.5-86.5v-1L36 37l87.5 87.5h1L212 37l-87.5 87.5-.5.5 87 87-87-87-.5.5zm0 0l.5-.5-.5-.5zm.5-.5l.5-.5h-1zm-.5-.5z"
-    />
+<svg xmlns="http://www.w3.org/2000/svg" width="248" height="248" viewBox="0 0 248 248">
+    <defs>
+        <style>
+            .cls-1{fill:none;stroke:#fff;stroke-miterlimit:10;stroke-width:2px}
+        </style>
+    </defs>
+    <g id="shape-3" transform="translate(-527 -907)">
+        <path id="Stroke_13" d="M175 0L0 175" class="cls-1" transform="translate(564 944)"/>
+        <path id="Stroke_14" d="M0 0l175 175" class="cls-1" transform="translate(563 944)"/>
+        <path id="Stroke_15" d="M.5 0v248" class="cls-1" transform="translate(650 907)"/>
+        <path id="Stroke_17" d="M0 .5h248" class="cls-1" transform="translate(527 1031)"/>
+    </g>
 </svg>

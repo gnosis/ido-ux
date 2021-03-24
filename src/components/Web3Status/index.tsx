@@ -12,7 +12,7 @@ import PortisIcon from '../../assets/images/portisIcon.png'
 import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import LightCircle from '../../assets/svg/lightcircle.svg'
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../../connectors'
-import { NetworkContextName, chainNames } from '../../constants'
+import { NetworkContextName } from '../../constants'
 import { CHAIN_ID } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
 import useENSName from '../../hooks/useENSName'
@@ -135,16 +135,15 @@ function recentTransactionsOnly(a: TransactionDetails) {
   return new Date().getTime() - a.addedTime < 86_400_000
 }
 
-export const useNetworkCheck = (): { errorWrongNetwork: string | undefined } => {
+export const useNetworkCheck = (): { errorWrongNetwork: boolean | undefined } => {
   const { chainId: injectedChainId } = useActiveWeb3React()
   const { chainId = CHAIN_ID } = useSwapState()
   const errorWrongNetwork =
     injectedChainId === undefined || chainId === injectedChainId || chainId === undefined
-      ? undefined
-      : `Please connect to the network: ${chainNames[chainId]}`
-  return {
-    errorWrongNetwork,
-  }
+      ? false
+      : true
+
+  return { errorWrongNetwork }
 }
 
 export default function Web3Status() {
