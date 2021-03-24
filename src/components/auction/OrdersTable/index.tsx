@@ -107,13 +107,24 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     )
   }
 
+  const validCancelDate =
+    derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
+    derivedAuctionInfo?.orderCancellationEndDate !== 0
+
   const cancelDate = React.useMemo(
     () =>
-      derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
-      derivedAuctionInfo?.orderCancellationEndDate !== 0
+      validCancelDate
         ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
         : undefined,
-    [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
+    [derivedAuctionInfo?.orderCancellationEndDate, validCancelDate],
+  )
+
+  const cancelDateFull = React.useMemo(
+    () =>
+      validCancelDate
+        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleString()
+        : undefined,
+    [derivedAuctionInfo?.orderCancellationEndDate, validCancelDate],
   )
 
   const pendingText = `Canceling Order`
@@ -210,7 +221,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                         <span>Last Cancel Date</span>
                         <Tooltip
                           id={`limitPrice_${index}`}
-                          text={`After <strong>${cancelDate}</strong> and until the end of the auction, orders cannot be canceled.`}
+                          text={`After <strong>${cancelDateFull}</strong> and until the end of the auction, orders cannot be canceled.`}
                         />
                       </>
                     }

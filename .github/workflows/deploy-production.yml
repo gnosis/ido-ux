@@ -46,8 +46,10 @@ jobs:
         env:
           REACT_APP_CHAIN_ID: 100
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
-          # todo: Add mainnet and make sure that we refer to production api values
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-api-xdai.gnosis.io/
+          REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-api-rinkeby.gnosis.io/
+          # todo: Add mainnet and remove rinkeby
 
       - name: "Deploy to IPFS with infura"
         run: yarn ipfs-publish

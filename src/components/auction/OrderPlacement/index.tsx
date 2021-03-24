@@ -22,6 +22,7 @@ import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalance, useTokenBalances } from '../../../state/wallet/hooks'
 import { ChainId, getTokenDisplay } from '../../../utils'
+import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import TokenLogo from '../../common/TokenLogo'
@@ -128,7 +129,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { account, chainId } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { price, sellAmount } = useSwapState()
+  const { chainId: auctionChainId, price, sellAmount } = useSwapState()
   const { error } = useGetOrderPlacementError(derivedAuctionInfo)
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
@@ -138,6 +139,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
+  const [showWarningWrongChainId, setShowWarningWrongChainId] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
@@ -225,6 +227,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
 
   const handleShowConfirm = () => {
+    if (chainId !== auctionChainId) {
+      setShowWarningWrongChainId(true)
+      return
+    }
+
     const sameOrder = orders.orders.find((order) => order.price === price)
 
     if (!sameOrder) {
@@ -238,7 +245,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     () =>
       derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
       derivedAuctionInfo?.orderCancellationEndDate !== 0
-        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
+        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleString()
         : undefined,
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
@@ -314,7 +321,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ErrorRow>
                     <ErrorLock />
                     <ErrorText>
-                      Beware, after <strong>{cancelDate}</strong> and until the end of the auction,
+                      Beware: after <strong>{cancelDate}</strong> and until the end of the auction,
                       orders cannot be canceled.
                     </ErrorText>
                   </ErrorRow>
@@ -351,6 +358,16 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         isOpen={showWarning}
         onDismiss={() => {
           setShowWarning(false)
+        }}
+        title="Warning!"
+      />
+      <WarningModal
+        content={`In order to place this order, please connect to the ${getChainName(
+          auctionChainId,
+        )} network`}
+        isOpen={showWarningWrongChainId}
+        onDismiss={() => {
+          setShowWarningWrongChainId(false)
         }}
         title="Warning!"
       />

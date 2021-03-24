@@ -4,10 +4,15 @@ import styled from 'styled-components'
 import { useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
+import { chainNames } from '../../../constants'
+import { CHAIN_ID } from '../../../constants/config'
 import { useWalletModalToggle } from '../../../state/application/hooks'
+import { useSwapState } from '../../../state/orderPlacement/hooks'
+import { getChainName } from '../../../utils/tools'
 import { ButtonConnect } from '../../buttons/ButtonConnect'
 import { ButtonMenu } from '../../buttons/ButtonMenu'
 import { Logo } from '../../common/Logo'
+import { Tooltip } from '../../common/Tooltip'
 import { UserDropdown } from '../../common/UserDropdown'
 import WalletModal from '../../modals/WalletModal'
 import { Mainmenu } from '../../navigation/Mainmenu'
@@ -91,17 +96,34 @@ const MobilemenuStyled = styled(Mobilemenu)`
 
 const Error = styled.span`
   align-items: center;
-  color: ${({ theme }) => theme.primary1};
+  color: ${({ theme }) => theme.error};
   display: flex;
   font-size: 16px;
   font-weight: 600;
   height: 100%;
   line-height: 1.2;
-  margin-left: auto;
+
+  .tooltipComponent {
+    top: 0;
+
+    .tooltipIcon {
+      height: 16px;
+      width: 16px;
+
+      .fill {
+        fill: ${({ theme }) => theme.error};
+      }
+    }
+  }
+`
+
+const ErrorText = styled.span`
+  margin-right: 8px;
 `
 
 export const Header: React.FC = (props) => {
   const { account } = useWeb3React()
+  const { chainId = CHAIN_ID } = useSwapState()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
@@ -111,16 +133,27 @@ export const Header: React.FC = (props) => {
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
+  const chains = Object.keys(chainNames)
+  let chainNamesFormatted = ''
+
+  for (let count = 0; count < chains.length; count++) {
+    const postPend = count !== chains.length - 1 ? ', ' : '.'
+
+    chainNamesFormatted += getChainName(Number(chains[count])) + postPend
+  }
 
   const web3Status = React.useMemo(() => {
-    return isConnected && errorWrongNetwork == undefined ? (
+    return isConnected && !errorWrongNetwork ? (
       <UserDropdownStyled />
     ) : errorWrongNetwork ? (
-      <Error>{errorWrongNetwork}</Error>
+      <Error>
+        <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
+        <Tooltip id="wrongNetwork" text={`Supported netowrks are: ${chainNamesFormatted}`} />
+      </Error>
     ) : (
       <ButtonConnectStyled onClick={toggleWalletModal} />
     )
-  }, [isConnected, errorWrongNetwork, toggleWalletModal])
+  }, [isConnected, errorWrongNetwork, chainId, chainNamesFormatted, toggleWalletModal])
 
   return (
     <>
