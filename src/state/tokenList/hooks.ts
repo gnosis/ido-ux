@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 
-import { TokenInfo } from '@uniswap/token-lists'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
@@ -11,12 +10,12 @@ export function useTokenListState(): AppState['tokenList'] {
 }
 
 export function useTokenListActionHandlers(): {
-  onLoadTokenList: (tokenList: TokenInfo[]) => void
+  onLoadTokenList: (tokenList: { [key: string]: string }) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
   const onLoadTokenList = useCallback(
-    (tokenList: TokenInfo[]) => {
+    (tokenList: { [key: string]: string }) => {
       dispatch(loadTokenListFromAPI({ tokenList }))
     },
     [dispatch],
