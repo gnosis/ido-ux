@@ -245,7 +245,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     () =>
       derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
       derivedAuctionInfo?.orderCancellationEndDate !== 0
-        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
+        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleString()
         : undefined,
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
@@ -321,7 +321,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ErrorRow>
                     <ErrorLock />
                     <ErrorText>
-                      Beware, after <strong>{cancelDate}</strong> and until the end of the auction,
+                      Beware: after <strong>{cancelDate}</strong> and until the end of the auction,
                       orders cannot be canceled.
                     </ErrorText>
                   </ErrorRow>
