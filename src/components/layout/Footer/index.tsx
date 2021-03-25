@@ -1,6 +1,7 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+
+import { HashLink } from 'react-router-hash-link'
 
 import { SettingsIcon } from '../../icons/SettingsIcon'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
@@ -62,7 +63,7 @@ const ExternalLink = styled.a`
   ${LinkCSS}
 `
 
-const Link = styled(NavLink)`
+const Link = styled(HashLink)`
   ${LinkCSS}
 `
 
