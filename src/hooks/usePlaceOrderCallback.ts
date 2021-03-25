@@ -14,6 +14,7 @@ import { useOrderActionHandlers } from '../state/orders/hooks'
 import { OrderStatus } from '../state/orders/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract, getTokenDisplay } from '../utils'
+import { abbreviation } from '../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount } from '../utils/prices'
 import { additionalServiceApi } from './../api'
 import { encodeOrder } from './Order'
@@ -113,11 +114,11 @@ export function usePlaceOrderCallback(
           addTransaction(response, {
             summary:
               'Sell ' +
-              sellAmount +
+              abbreviation(sellAmount) +
               ' ' +
               biddingTokenDisplay +
               ' for ' +
-              (parseFloat(sellAmount) / parseFloat(price)).toPrecision(4) +
+              abbreviation((parseFloat(sellAmount) / parseFloat(price)).toPrecision(4)) +
               ' ' +
               auctioningTokenDisplay,
           })

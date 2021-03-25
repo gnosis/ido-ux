@@ -8,6 +8,7 @@ import { chainNames } from '../constants'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { abbreviation } from '../utils/numeral'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 
@@ -58,10 +59,12 @@ export function useCancelOrderCallback(
           addTransaction(response, {
             summary:
               'Cancel order selling ' +
-              new Fraction(
-                decodedOrder.sellAmount.toString(),
-                BigNumber.from(10).pow(biddingToken.decimals).toString(),
-              ).toSignificant(2) +
+              abbreviation(
+                new Fraction(
+                  decodedOrder.sellAmount.toString(),
+                  BigNumber.from(10).pow(biddingToken.decimals).toString(),
+                ).toSignificant(2),
+              ) +
               ' ' +
               biddingToken.symbol,
           })
