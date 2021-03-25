@@ -118,7 +118,7 @@ const WalletModal: React.FC = () => {
     if (
       walletModalOpen &&
       ((active && !activePrevious) ||
-        (connector && connector !== connectorPrevious && !error && !errorWrongNetwork))
+        (connector && connector !== connectorPrevious && !error && errorWrongNetwork === undefined))
     ) {
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }

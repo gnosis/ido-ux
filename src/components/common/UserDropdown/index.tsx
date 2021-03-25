@@ -169,11 +169,14 @@ export const UserDropdown: React.FC = (props) => {
   const { deactivate, library } = useActiveWeb3React()
 
   const getWalletName = React.useCallback((): string => {
-    const provider = library.provider
+    const provider = library?.provider
 
-    const isMetaMask =
-      Object.prototype.hasOwnProperty.call(provider, 'isMetaMask') && provider.isMetaMask
-    const isWalletConnect = Object.prototype.hasOwnProperty.call(provider, 'wc')
+    const isMetaMask = provider
+      ? Object.prototype.hasOwnProperty.call(provider, 'isMetaMask') && provider?.isMetaMask
+      : undefined
+    const isWalletConnect = provider
+      ? Object.prototype.hasOwnProperty.call(provider, 'wc')
+      : undefined
 
     return isMetaMask ? 'MetaMask' : isWalletConnect ? 'WalletConnect' : 'Unknown'
   }, [library])

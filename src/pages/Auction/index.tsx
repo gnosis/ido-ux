@@ -78,11 +78,14 @@ const Auction: React.FC<Props> = (props) => {
 
   const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
   const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
+
   const validBiddingTokenAddress =
+    biddingTokenAddress !== undefined &&
     isAddress(biddingTokenAddress) &&
     tokens &&
     tokens[biddingTokenAddress.toLowerCase()] !== undefined
   const validAuctioningTokenAddress =
+    auctioningTokenAddress !== undefined &&
     isAddress(auctioningTokenAddress) &&
     tokens &&
     tokens[auctioningTokenAddress.toLowerCase()] !== undefined
@@ -90,17 +93,21 @@ const Auction: React.FC<Props> = (props) => {
   useDefaultsFromURLSearch(search)
 
   React.useEffect(() => {
-    if (!derivedAuctionInfo) {
+    if (
+      !derivedAuctionInfo ||
+      biddingTokenAddress === undefined ||
+      auctioningTokenAddress === undefined
+    ) {
       showTokenWarning(false)
       return
     }
 
     showTokenWarning(!validBiddingTokenAddress || !validAuctioningTokenAddress)
   }, [
-    auctionIdentifier.chainId,
+    auctioningTokenAddress,
+    biddingTokenAddress,
     derivedAuctionInfo,
     showTokenWarning,
-    tokens,
     validAuctioningTokenAddress,
     validBiddingTokenAddress,
   ])
