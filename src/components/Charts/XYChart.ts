@@ -50,8 +50,8 @@ const XYChart = (args) => {
 
   // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
   const numberFormatter = new am4core.NumberFormatter()
-  priceAxis.numberFormatter.numberFormat = '#.00a'
-  priceAxis.numberFormatter.bigNumberPrefixes = [
+  numberFormatter.numberFormat = '#.00a'
+  numberFormatter.bigNumberPrefixes = [
     { number: 1e4, suffix: 'K' }, // Use K only with value greater than 9999.00
     { number: 1e6, suffix: 'M' },
     { number: 1e9, suffix: 'B' },
