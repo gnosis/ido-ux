@@ -18,7 +18,7 @@ export const useNetworkCheck = (): { errorWrongNetwork: NetworkError | undefined
       ? NetworkError.undefinedInjectedChainId
       : chainId === undefined
       ? NetworkError.undefinedChainId
-      : chainId !== injectedChainId
+      : ![1, 4, 100].includes(injectedChainId)
       ? NetworkError.noChainMatch
       : NetworkError.noError
 
