@@ -267,7 +267,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 Your Balance:{' '}
                 <Total>{`${
                   account
-                    ? `${userTokenBalance && userTokenBalance?.toSignificant(6)} ${
+                    ? `${userTokenBalance?.toSignificant(6) || '0'} ${
                         derivedAuctionInfo?.biddingToken?.symbol
                       }`
                     : 'Connect your wallet'

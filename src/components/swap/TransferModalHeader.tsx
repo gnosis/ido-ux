@@ -5,7 +5,7 @@ import { Text } from 'rebass'
 
 import { useActiveWeb3React } from '../../hooks'
 import { ExternalLink, TYPE } from '../../theme'
-import { getEtherscanLink } from '../../utils'
+import { getExplorerLink } from '../../utils'
 import Copy from '../common/Copy'
 import TokenLogo from '../common/TokenLogo'
 import { AutoColumn } from './Column'
@@ -39,7 +39,7 @@ export function TransferModalHeader({
         <AutoColumn gap="lg">
           <TYPE.blue fontSize={36}>{ENSName}</TYPE.blue>
           <AutoRow gap="10px">
-            <ExternalLink href={getEtherscanLink(chainId, ENSName, 'address')}>
+            <ExternalLink href={getExplorerLink(chainId, ENSName, 'address')}>
               <TYPE.blue fontSize={18}>
                 {recipient?.slice(0, 8)}...{recipient?.slice(34, 42)}↗
               </TYPE.blue>
@@ -49,7 +49,7 @@ export function TransferModalHeader({
         </AutoColumn>
       ) : (
         <AutoRow gap="10px">
-          <ExternalLink href={getEtherscanLink(chainId, recipient, 'address')}>
+          <ExternalLink href={getExplorerLink(chainId, recipient, 'address')}>
             <TYPE.blue fontSize={36}>
               {recipient?.slice(0, 6)}...{recipient?.slice(36, 42)}↗
             </TYPE.blue>
