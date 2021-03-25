@@ -8,24 +8,24 @@ import {
   basisPointsToPercent,
   calculateGasMargin,
   calculateSlippageAmount,
-  getEtherscanLink,
+  getExplorerLink,
   isAddress,
   shortenAddress,
 } from '.'
 
 describe('utils', () => {
-  describe('#getEtherscanLink', () => {
+  describe('#getExplorerLink', () => {
     it('correct for tx', () => {
-      expect(getEtherscanLink(1, 'abc', 'transaction')).toEqual('https://etherscan.io/tx/abc')
+      expect(getExplorerLink(1, 'abc', 'transaction')).toEqual('https://etherscan.io/tx/abc')
     })
     it('correct for address', () => {
-      expect(getEtherscanLink(1, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
+      expect(getExplorerLink(1, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
     })
     it('unrecognized chain id defaults to mainnet', () => {
-      expect(getEtherscanLink(2, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
+      expect(getExplorerLink(2, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
     })
     it('enum', () => {
-      expect(getEtherscanLink(ChainId.RINKEBY, 'abc', 'address')).toEqual(
+      expect(getExplorerLink(ChainId.RINKEBY, 'abc', 'address')).toEqual(
         'https://rinkeby.etherscan.io/address/abc',
       )
     })

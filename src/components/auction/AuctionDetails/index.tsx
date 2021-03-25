@@ -9,7 +9,7 @@ import {
   orderToSellOrder,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getEtherscanLink, getTokenDisplay } from '../../../utils'
+import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { KeyValue } from '../../common/KeyValue'
 import TokenLogo from '../../common/TokenLogo'
@@ -61,12 +61,12 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
   const { chainId } = auctionIdentifier
 
   const auctionTokenAddress = useMemo(
-    () => getEtherscanLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
+    () => getExplorerLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
     [chainId, derivedAuctionInfo?.auctioningToken],
   )
 
   const biddingTokenAddress = useMemo(
-    () => getEtherscanLink(chainId, derivedAuctionInfo?.biddingToken?.address, 'address'),
+    () => getExplorerLink(chainId, derivedAuctionInfo?.biddingToken?.address, 'address'),
     [chainId, derivedAuctionInfo?.biddingToken],
   )
 

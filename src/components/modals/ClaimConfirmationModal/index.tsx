@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { ExternalLink } from '../../../theme'
-import { getEtherscanLink } from '../../../utils'
+import { getExplorerLink } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { ArrowUp } from '../../icons/ArrowUp'
@@ -74,8 +74,8 @@ const ClaimConfirmationModal: React.FC<Props> = (props) => {
             <Text fontSize="20px" margin="0" textAlign="center">
               {pendingText}
             </Text>
-            <Link href={getEtherscanLink(chainId, hash, 'transaction')}>
-              <span>View on Etherscan</span>
+            <Link href={getExplorerLink(chainId, hash, 'transaction')}>
+              <span>View transaction</span>
               <LinkIcon />
             </Link>
           </>

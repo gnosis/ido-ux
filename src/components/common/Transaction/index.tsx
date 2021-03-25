@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useActiveWeb3React } from '../../../hooks'
 import { useAllTransactions } from '../../../state/transactions/hooks'
 import { ExternalLink } from '../../../theme'
-import { getEtherscanLink } from '../../../utils'
+import { getExplorerLink } from '../../../utils'
 import { Spinner, SpinnerSize } from '../../common/Spinner'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { OrderPlaced } from '../../icons/OrderPlaced'
@@ -66,7 +66,7 @@ const Transaction = ({ hash }: { hash: string }) => {
       typeof allTransactions[hash].receipt.status === 'undefined')
 
   return (
-    <Wrapper href={getEtherscanLink(chainId, hash, 'transaction')}>
+    <Wrapper href={getExplorerLink(chainId, hash, 'transaction')}>
       <IconWrapper>
         {pending ? (
           <Spinner size={SpinnerSize.extraSmall} />
