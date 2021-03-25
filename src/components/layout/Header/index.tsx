@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { RouteComponentProps, withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useWeb3React } from '@web3-react/core'
@@ -18,7 +19,7 @@ import WalletModal from '../../modals/WalletModal'
 import { Mainmenu } from '../../navigation/Mainmenu'
 import { Mobilemenu } from '../../navigation/Mobilemenu'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
-import { useNetworkCheck } from '../../web3/Web3Status'
+import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 
 const Wrapper = styled.header`
   background-color: ${({ theme }) => theme.mainBackground};
@@ -121,18 +122,28 @@ const ErrorText = styled.span`
   margin-right: 8px;
 `
 
-export const Header: React.FC = (props) => {
+export const Component: React.FC<RouteComponentProps> = (props) => {
+  const { location, ...restProps } = props
   const { account } = useWeb3React()
   const { chainId = CHAIN_ID } = useSwapState()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
-
   const toggleWalletModal = useWalletModalToggle()
 
   const mobileMenuToggle = () => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
+
+  const [isAuctionPage, setIsAuctionPage] = useState(false)
+  React.useEffect(() => {
+    if (location.pathname.includes('/auction')) {
+      setIsAuctionPage(true)
+    } else {
+      setIsAuctionPage(false)
+    }
+  }, [location.pathname])
+
   const chains = Object.keys(chainNames)
   let chainNamesFormatted = ''
 
@@ -142,22 +153,12 @@ export const Header: React.FC = (props) => {
     chainNamesFormatted += getChainName(Number(chains[count])) + postPend
   }
 
-  const web3Status = React.useMemo(() => {
-    return isConnected && !errorWrongNetwork ? (
-      <UserDropdownStyled />
-    ) : errorWrongNetwork ? (
-      <Error>
-        <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
-        <Tooltip id="wrongNetwork" text={`Supported netowrks are: ${chainNamesFormatted}`} />
-      </Error>
-    ) : (
-      <ButtonConnectStyled onClick={toggleWalletModal} />
-    )
-  }, [isConnected, errorWrongNetwork, chainId, chainNamesFormatted, toggleWalletModal])
+  const chainMismatch =
+    isConnected && errorWrongNetwork === NetworkError.noChainMatch && isAuctionPage
 
   return (
     <>
-      <Wrapper className="siteHeader" {...props}>
+      <Wrapper className="siteHeader" {...restProps}>
         <Inner>
           <ButtonMenuStyled onClick={mobileMenuToggle} />
           {mobileMenuVisible && <MobilemenuStyled onClose={() => setMobileMenuVisible(false)} />}
@@ -165,10 +166,19 @@ export const Header: React.FC = (props) => {
             <Logo />
           </LogoLink>
           <Menu />
-          {web3Status}
+          {!isConnected && <ButtonConnectStyled onClick={toggleWalletModal} />}
+          {chainMismatch && (
+            <Error>
+              <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
+              <Tooltip id="wrongNetwork" text={`Supported networks are: ${chainNamesFormatted}`} />
+            </Error>
+          )}
+          {!chainMismatch && <UserDropdownStyled />}
         </Inner>
       </Wrapper>
       <WalletModal />
     </>
   )
 }
+
+export const Header = withRouter(Component)
