@@ -5,7 +5,6 @@ import { About } from '../../../pages/About'
 import Auction from '../../../pages/Auction'
 import { Cookies } from '../../../pages/Cookies'
 import { Documentation } from '../../../pages/Documentation'
-import { Imprint } from '../../../pages/Imprint'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
 import { NotAllowed } from '../../../pages/NotAllowed'
@@ -63,7 +62,6 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
               <Route component={Cookies} exact path="/cookie-policy" strict />
               <Route component={Licenses} exact path="/licenses" strict />
               <Route component={About} exact path="/about" strict />
-              <Route component={Imprint} exact path="/imprint" strict />
               <Route component={Documentation} exact path="/docs" strict />
               <Route component={Documentation} exact path="/docs/batch-auctions" strict />
               <Route component={Documentation} exact path="/docs/use-cases" strict />

@@ -119,9 +119,6 @@ export const Footer: React.FC<Props> = (props) => {
         <Item>
           <Link to="/licenses#topAnchor">Licenses</Link>
         </Item>
-        <Item>
-          <Link to="/imprint#topAnchor">Imprint</Link>
-        </Item>
       </Inner>
     </Wrapper>
   )
