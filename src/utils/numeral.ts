@@ -1,10 +1,10 @@
-import numeral from 'numeral'
+import numbro from 'numbro'
 
 export const abbreviation = (value: string | number) => {
-  const parseValue = numeral(value)
+  const parseValue = numbro(value)
 
-  if (parseValue.value() !== null) {
-    return parseValue.format('0.00a').toUpperCase()
+  if (parseValue && parseValue.value() !== undefined) {
+    return parseValue.format({ spaceSeparated: false, average: true, mantissa: 2 })?.toUpperCase()
   }
 
   return value
