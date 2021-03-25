@@ -75,7 +75,7 @@ const ClaimConfirmationModal: React.FC<Props> = (props) => {
               {pendingText}
             </Text>
             <Link href={getExplorerLink(chainId, hash, 'transaction')}>
-              <span>View transaction</span>
+              <span>View transaction {`on ${chainId === 100 ? 'Blockscout' : 'Etherscan'}`}</span>
               <LinkIcon />
             </Link>
           </>
