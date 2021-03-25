@@ -7,6 +7,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
 import { ChainId, calculateGasMargin, getSigner, isAddress } from '../utils'
+import { abbreviation } from '../utils/numeral'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
 import useENSName from './useENSName'
@@ -46,7 +47,7 @@ export function useSendCallback(
             addTransaction(response, {
               summary:
                 'Send ' +
-                amount.toSignificant(3) +
+                abbreviation(amount.toSignificant(3)) +
                 ' ' +
                 token?.symbol +
                 ' to ' +
@@ -70,7 +71,7 @@ export function useSendCallback(
                 addTransaction(response, {
                   summary:
                     'Send ' +
-                    amount.toSignificant(3) +
+                    abbreviation(amount.toSignificant(3)) +
                     ' ' +
                     token.symbol +
                     ' to ' +
