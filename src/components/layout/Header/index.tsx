@@ -135,15 +135,6 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
     setMobileMenuVisible(!mobileMenuVisible)
   }
 
-  const [isAuctionPage, setIsAuctionPage] = useState(false)
-  React.useEffect(() => {
-    if (location.pathname.includes('/auction')) {
-      setIsAuctionPage(true)
-    } else {
-      setIsAuctionPage(false)
-    }
-  }, [location.pathname])
-
   const chains = Object.keys(chainNames)
   let chainNamesFormatted = ''
 
@@ -153,8 +144,14 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
     chainNamesFormatted += getChainName(Number(chains[count])) + postPend
   }
 
-  const chainMismatch =
-    isConnected && errorWrongNetwork === NetworkError.noChainMatch && isAuctionPage
+  const isAuctionPage = React.useMemo(
+    () => (location.pathname.includes('/auction') ? true : false),
+    [location.pathname],
+  )
+  const chainMismatch = React.useMemo(
+    () => errorWrongNetwork === NetworkError.noChainMatch && isAuctionPage,
+    [errorWrongNetwork, isAuctionPage],
+  )
 
   return (
     <>
@@ -167,13 +164,13 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
           </LogoLink>
           <Menu />
           {!isConnected && <ButtonConnectStyled onClick={toggleWalletModal} />}
-          {chainMismatch && (
+          {isConnected && chainMismatch && (
             <Error>
               <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
               <Tooltip id="wrongNetwork" text={`Supported networks are: ${chainNamesFormatted}`} />
             </Error>
           )}
-          {!chainMismatch && <UserDropdownStyled />}
+          {isConnected && !chainMismatch && <UserDropdownStyled />}
         </Inner>
       </Wrapper>
       <WalletModal />
