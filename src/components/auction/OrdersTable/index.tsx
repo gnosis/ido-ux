@@ -101,7 +101,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     return (
       <CancelModalFooter
         biddingToken={derivedAuctionInfo?.biddingToken}
-        confirmText={'Cancel'}
+        confirmText={'Cancel Order'}
         onCancelOrder={onCancelOrder}
         orderId={orderId}
       />
@@ -128,7 +128,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     [derivedAuctionInfo?.orderCancellationEndDate, validCancelDate],
   )
 
-  const pendingText = `Canceling Order`
+  const pendingText = `Cancelling Order`
   const now = Math.trunc(Date.now() / 1000)
   const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
   const ordersEmpty = !orders.orders || orders.orders.length == 0
@@ -258,7 +258,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
             }}
             pendingConfirmation={pendingConfirmation}
             pendingText={pendingText}
-            title="Order Cancellation"
+            title="Warning!"
             width={394}
           />
           <WarningModal

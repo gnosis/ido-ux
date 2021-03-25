@@ -27,7 +27,7 @@ const CancelModalFooter: React.FC<Props> = (props) => {
         <AlertIcon />
       </IconWrapper>
       <Text fontSize="18px" textAlign="center">
-        This order can&apos;t be recovered after cancellation!
+        You will not be able to recover the order after canceling it.
       </Text>
       <ActionButton onClick={onCancelOrder}>{confirmText}</ActionButton>
     </>
