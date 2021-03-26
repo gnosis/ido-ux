@@ -60,7 +60,7 @@ yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network $ 'rinke
 
 **&quot;--min-funding-threshold&quot;** The minimal funding threshold for executing the settlement. If funding is not reached, everyone will get back their investment. Default is 0.
 
-**&quot;--order-cancellation-period&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
+**&quot;--order-cancellation-time&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
 
 **&quot;--min-buy-amount-per-order&quot;** Describes the minimal buyAmount per order placed in the auction. This can be used in order to protect against too high gas costs for the settlement. Default is 0.01
 
