@@ -92,7 +92,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         <Text>{biddingTokenDisplay} Tokens sold</Text>
         <Value>
-          <Text>{abbreviation(sellAmount)}</Text>
+          <Text>{abbreviation(sellAmount, 10)}</Text>
           <div>
             <TokenLogo
               size="24px"
@@ -104,7 +104,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         <Text>Minimum {auctioningTokenDisplay} received</Text>
         <Value>
-          <Text>{abbreviation(minimumReceived?.toSignificant(2))}</Text>
+          <Text>{abbreviation(minimumReceived?.toSignificant(2), 10)}</Text>
           <div>
             <TokenLogo
               size="24px"
@@ -118,7 +118,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
           Max {biddingTokenDisplay} paid per {auctioningTokenDisplay}
         </Text>
         <Value>
-          <Text>{abbreviation(price)}</Text>
+          <Text>{abbreviation(price, 10)}</Text>
           <div>
             <DoubleLogo
               auctioningToken={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}

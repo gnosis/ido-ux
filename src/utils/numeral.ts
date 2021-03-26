@@ -1,6 +1,6 @@
 import numbro from 'numbro'
 
-export const abbreviation = (_value: string | number) => {
+export const abbreviation = (_value: string | number, mantissa = 6) => {
   const value = Number(_value)
 
   if (!isNaN(value)) {
@@ -12,7 +12,7 @@ export const abbreviation = (_value: string | number) => {
       optionalMantissa: true,
       trimMantissa: true,
       average: false,
-      mantissa: 6,
+      mantissa,
     }
 
     // If the value is greater than 9999, it will be short. For example: 10000 => 10k or 1000000 => 1m
