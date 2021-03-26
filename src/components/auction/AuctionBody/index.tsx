@@ -45,7 +45,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
             'Place Order'}
-          {auctionState === AuctionState.CLAIMING && 'Claim Proceedings'}
+          {auctionState === AuctionState.CLAIMING && 'Claim Proceeds'}
         </SectionTitle>
       )}
       {auctionStarted && (
