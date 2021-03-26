@@ -383,6 +383,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         pendingConfirmation={pendingConfirmation}
         pendingText={pendingText}
         title="Confirm Order"
+        width={504}
       />
     </>
   )
