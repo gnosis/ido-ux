@@ -58,15 +58,15 @@ yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network $ 'rinke
 ```
 ### Additional commands:
 
-**&quot;--minFundingThreshold&quot;** The minimal funding threshold for executing the settlement. If funding is not reached, everyone will get back their investment. Default is 0.
+**&quot;--min-funding-threshold&quot;** The minimal funding threshold for executing the settlement. If funding is not reached, everyone will get back their investment. Default is 0.
 
-**&quot;--orderCancellationPeriod&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
+**&quot;--order-cancellation-period&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
 
-**&quot;--minBuyAmountPerOrder&quot;** Describes the minimal buyAmount per order placed in the auction. This can be used in order to protect against too high gas costs for the settlement. Default is 0.01
+**&quot;--min-buy-amount-per-order&quot;** Describes the minimal buyAmount per order placed in the auction. This can be used in order to protect against too high gas costs for the settlement. Default is 0.01
 
-**&quot;--isAtomicClosureAllowed&quot;** Describes whether the auction should be allowed to be closed atomically. Default is false.
+**&quot;--is-atomic-closure-allowed&quot;** Describes whether the auction should be allowed to be closed atomically. Default is false.
 
-**&quot;----allow-list-manager&quot;** If whitelisting of addresses is required, then auctioneers handover their own  allowlistManager, or uses the allowListManager contract provided in this repo. You can find the deployment address in this [folder](https://github.com/gnosis/ido-contracts/blob/main/deployments/).
+**&quot;--allow-list-manager&quot;** If whitelisting of addresses is required, then auctioneers handover their own  allowlistManager, or uses the allowListManager contract provided in this repo. You can find the deployment address in this [folder](https://github.com/gnosis/ido-contracts/blob/main/deployments/).
 
 **&quot;--allow-list-data&quot;** If the auctioneer needs further data in his/her allow_Lst, it needs to be provided in this field. Our implementation needs the public address of the key (abi encode - e.g. 0x000…00useraddress) used for allowing address to place orders.
 
