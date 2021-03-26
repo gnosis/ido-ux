@@ -145,7 +145,7 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
           </Text>
         </TokenItem>
       </TokensWrapper>
-      {!isValid && (
+      {!isValid && account && (
         <ErrorWrapper>
           <ErrorRow>
             <ErrorInfo />
