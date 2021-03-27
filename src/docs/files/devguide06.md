@@ -15,7 +15,7 @@ yarn build
 
 Do the following command in order to set the network you will use:
 ```
-export NETWORK= 'rinkeby'
+export NETWORK= rinkeby
 ```
 Select the gas price:
 ```
@@ -47,14 +47,14 @@ _Note: the minimum sell price that the auctioneer determines is calculated by th
 
 Example of final command to initiate the auction:
 ```
-yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780140aa0cd5a" --bidding-token "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa" --sell-amount 0.1 --min-buy-amount 50 --auction-end-date 1616497200 --network 'rinkeby'
+yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780140aa0cd5a" --bidding-token "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa" --sell-amount 0.1 --min-buy-amount 50 --auction-end-date 1616497200 --network rinkeby
 ```
 
 ### Closing an auction
 
 After the auction time has finished, ANY participant can settle the auction by running this command:
 ```
-yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network $ 'rinkeby'
+yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network rinkeby
 ```
 ### Additional commands:
 
