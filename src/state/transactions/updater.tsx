@@ -3,10 +3,13 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useActiveWeb3React } from '../../hooks'
+import { getLogger } from '../../utils/logger'
 import { useAddPopup, useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { finalizeOrderPlacement } from '../orders/actions'
 import { finalizeTransaction } from './actions'
+
+const logger = getLogger('transactions/updater')
 
 export default function Updater() {
   const { chainId, library } = useActiveWeb3React()
@@ -70,7 +73,7 @@ export default function Updater() {
             }
           })
           .catch((error) => {
-            console.error(`failed to check transaction hash: ${hash}`, error)
+            logger.error(`failed to check transaction hash: ${hash}`, error)
           })
       })
   }, [chainId, library, transactions, lastBlockNumber, dispatch, addPopup])

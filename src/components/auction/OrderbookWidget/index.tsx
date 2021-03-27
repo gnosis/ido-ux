@@ -1,13 +1,15 @@
 import { Token } from 'uniswap-xdai-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
+import { getLogger } from '../../../utils/logger'
 import { Offer, OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
+
+const logger = getLogger('OrderbookWidget')
 
 const SMALL_VOLUME_THRESHOLD = 0.001
 
 export const logDebug = (...args: any[]): void => {
-  // eslint-disable-next-line no-console
-  console.log(...args)
+  logger.log(...args)
 }
 
 const addClearingPriceInfo = (
@@ -327,7 +329,7 @@ export const processOrderbookData = ({
     if (debug) _printOrderBook(pricePoints, baseToken.symbol, quoteToken.symbol)
     return pricePoints
   } catch (error) {
-    console.error('Error processing data', error)
+    logger.error('Error processing data', error)
     return []
   }
 }

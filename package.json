@@ -107,6 +107,7 @@
     "jazzicon": "^1.5.0",
     "levenary": "^1.1.1",
     "lodash.flatmap": "^4.5.0",
+    "logdown": "^3.3.1",
     "modali": "^1.2.0",
     "numbro": "^2.3.2",
     "polished": "^3.3.2",

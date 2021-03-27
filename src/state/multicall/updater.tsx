@@ -7,6 +7,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useMulticallContract } from '../../hooks/useContract'
 import useDebounce from '../../hooks/useDebounce'
 import chunkArray from '../../utils/chunkArray'
+import { getLogger } from '../../utils/logger'
 import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import {
@@ -15,6 +16,8 @@ import {
   parseCallKey,
   updateMulticallResults,
 } from './actions'
+
+const logger = getLogger('multicall/updater')
 
 // chunk calls so we do not exceed the gas limit
 const CALL_CHUNK_SIZE = 500
@@ -147,7 +150,7 @@ export default function Updater() {
           )
         })
         .catch((error: any) => {
-          console.error('Failed to fetch multicall chunk', chunk, chainId, error)
+          logger.error('Failed to fetch multicall chunk', chunk, chainId, error)
           dispatch(
             errorFetchingMulticallResults({
               calls: chunk,

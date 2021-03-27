@@ -4,6 +4,7 @@ import { Token } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
+import { additionalServiceApi } from '../api'
 import { EASY_AUCTION_NETWORKS } from '../constants'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
@@ -14,12 +15,14 @@ import { useOrderActionHandlers } from '../state/orders/hooks'
 import { OrderStatus } from '../state/orders/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract, getTokenDisplay } from '../utils'
+import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount } from '../utils/prices'
-import { additionalServiceApi } from './../api'
 import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
+
+const logger = getLogger('usePlaceOrderCallback')
 
 export const queueStartElement =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -80,7 +83,7 @@ export function usePlaceOrderCallback(
           },
         })
       } catch (error) {
-        console.error(`Error trying to get previous order for auctionId ${auctionId}`)
+        logger.error(`Error trying to get previous order for auctionId ${auctionId}`)
       }
 
       let estimate,
@@ -143,7 +146,7 @@ export function usePlaceOrderCallback(
           return response.hash
         })
         .catch((error) => {
-          console.error(`Swap or gas estimate failed`, error)
+          logger.error(`Swap or gas estimate failed`, error)
           throw error
         })
     }

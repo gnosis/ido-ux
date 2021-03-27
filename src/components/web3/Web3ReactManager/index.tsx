@@ -11,6 +11,9 @@ import { NetworkContextName } from '../../../constants'
 import { useActiveListener, useEagerConnect, useInactiveListener } from '../../../hooks'
 import { useTokenListActionHandlers } from '../../../state/tokenList/hooks'
 import { Spinner } from '../../../theme'
+import { getLogger } from '../../../utils/logger'
+
+const logger = getLogger('Web3ReactManager')
 
 const MessageWrapper = styled.div`
   align-items: center;
@@ -72,7 +75,7 @@ export default function Web3ReactManager({ children }) {
           setShowLoader(false)
         }
       } catch (error) {
-        console.error('Error getting token list', error)
+        logger.error('Error getting token list', error)
         if (cancelled) return
         onLoadTokenList(null)
         setShowLoader(false)

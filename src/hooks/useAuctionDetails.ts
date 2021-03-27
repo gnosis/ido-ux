@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('useAuctionDetails')
 
 export interface AuctionInfoDetail {
   auctionId: number
@@ -56,7 +59,7 @@ export const useAuctionDetails = (
         if (cancelled) return
         setLoading(false)
         setAuctionInfo(null)
-        console.error('Error getting auction details', error)
+        logger.error('Error getting auction details', error)
       }
     }
     fetchApiData()

@@ -7,7 +7,10 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESS } from '../constants/v1'
 import { ChainId, getContract } from '../utils'
+import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
+
+const logger = getLogger('useContract')
 
 // returns null on errors
 export function useContract(
@@ -27,7 +30,7 @@ export function useContract(
         withSignerIfPossible && account ? account : undefined,
       )
     } catch (error) {
-      console.error('Failed to get contract', error)
+      logger.error('Failed to get contract', error)
       return null
     }
   }, [address, ABI, library, withSignerIfPossible, account])
