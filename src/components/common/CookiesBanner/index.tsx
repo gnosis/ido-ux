@@ -6,9 +6,12 @@ import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
 import { GOOGLE_ANALYTICS_ID } from '../../../constants/config'
+import { getLogger } from '../../../utils/logger'
 import { Button } from '../../buttons/Button'
 import { CloseIcon } from '../../icons/CloseIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
+
+const logger = getLogger('CookiesBanner')
 
 const INNER_WIDTH = '840px'
 
@@ -196,7 +199,7 @@ export const CookiesBanner: React.FC<Props> = (props) => {
 
   const loadGoogleAnalytics = useCallback(() => {
     if (!GOOGLE_ANALYTICS_ID) {
-      console.warn(
+      logger.warn(
         'In order to use Google Analytics you need to add a trackingID using the REACT_APP_GOOGLE_ANALYTICS_ID environment variable.',
       )
       return

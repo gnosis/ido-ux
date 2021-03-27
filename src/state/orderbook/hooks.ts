@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '..'
 import { additionalServiceApi } from '../../api'
 import { OrderBookData, PricePoint } from '../../api/AdditionalServicesApi'
+import { getLogger } from '../../utils/logger'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
 import {
   appendBid,
@@ -14,6 +15,8 @@ import {
   resetUserPrice,
   resetUserVolume,
 } from './actions'
+
+const logger = getLogger('orderbook/hooks')
 
 export function useOrderbookState(): AppState['orderbook'] {
   return useSelector<AppState, AppState['orderbook']>((state) => state.orderbook)
@@ -96,7 +99,7 @@ export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
           onResetOrderbookData(auctionId, chainId, rawData, null)
         }
       } catch (error) {
-        console.error('Error populating orderbook with data', error)
+        logger.error('Error populating orderbook with data', error)
         onResetOrderbookData(auctionId, chainId, { bids: [], asks: [] }, null)
         if (cancelled) return
       }

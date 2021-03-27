@@ -2,6 +2,10 @@ import { TokenInfo, TokenList } from '@uniswap/token-lists'
 import schema from '@uniswap/token-lists/src/tokenlist.schema.json'
 import Ajv from 'ajv'
 
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('TokenLogosServiceApi')
+
 const TOKEN_LIST_RESOURCES = [
   'https://tokens.coingecko.com/uniswap/all.json',
   'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
@@ -27,14 +31,14 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
       const data = await response.json()
 
       if (!tokenListValidator(data)) {
-        console.error(tokenListValidator.errors)
+        logger.error(tokenListValidator.errors)
 
         throw new Error('Token list failed validation')
       }
 
       return (data as TokenList).tokens
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       throw new Error(`Failed to fetch token list from URL ${url}`)
     }
@@ -54,7 +58,7 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
         })
       })
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       throw new Error('Failed to get all tokens')
     }

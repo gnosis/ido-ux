@@ -7,6 +7,9 @@ import { isMobile } from 'react-device-detect'
 import { injected } from '../connectors'
 import { NetworkContextName } from '../constants'
 import { useOrderActionHandlers } from '../state/orders/hooks'
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('hooks/index')
 
 export function useActiveWeb3React() {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -60,7 +63,7 @@ export const useInactiveListener = (suppress = false) => {
       const handleChainChanged = () => {
         // eat errors
         activate(injected, undefined, true).catch((error) => {
-          console.error('Failed to activate after chain changed', error)
+          logger.error('Failed to activate after chain changed', error)
         })
       }
 
@@ -68,7 +71,7 @@ export const useInactiveListener = (suppress = false) => {
         if (accounts.length > 0) {
           // eat errors
           activate(injected, undefined, true).catch((error) => {
-            console.error('Failed to activate after accounts changed', error)
+            logger.error('Failed to activate after accounts changed', error)
           })
         }
       }
@@ -76,7 +79,7 @@ export const useInactiveListener = (suppress = false) => {
       const handleNetworkChanged = () => {
         // eat errors
         activate(injected, undefined, true).catch((error) => {
-          console.error('Failed to activate after networks changed', error)
+          logger.error('Failed to activate after networks changed', error)
         })
       }
 

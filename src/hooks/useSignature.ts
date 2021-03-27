@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 
 import { additionalServiceApi } from '../api'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('useSignature')
 
 export const useSignature = (
   auctionIdentifier: AuctionIdentifier,
@@ -31,7 +34,7 @@ export const useSignature = (
       } catch (error) {
         if (!cancelled) return
         setSignature(null)
-        console.error('Error getting auction details', error)
+        logger.error('Error getting auction details', error)
       }
     }
     fetchApiData()

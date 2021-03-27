@@ -7,8 +7,11 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
 import { calculateGasMargin } from '../utils'
+import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
+
+const logger = getLogger('useApproveCallback')
 
 export enum ApprovalState {
   UNKNOWN,
@@ -48,17 +51,17 @@ export function useApproveCallback(
 
   const approve = useCallback(async (): Promise<void> => {
     if (approval !== ApprovalState.NOT_APPROVED) {
-      console.error('approve was called unnecessarily')
+      logger.error('approve was called unnecessarily')
       return
     }
 
     if (!tokenContract) {
-      console.error('tokenContract is null')
+      logger.error('tokenContract is null')
       return
     }
 
     if (!amountToApprove) {
-      console.error('missing amount to approve')
+      logger.error('missing amount to approve')
       return
     }
 
@@ -82,8 +85,7 @@ export function useApproveCallback(
         })
       })
       .catch((error: Error) => {
-        // eslint-disable-next-line no-console
-        console.debug('Failed to approve token', error)
+        logger.debug('Failed to approve token', error)
         throw error
       })
   }, [approval, tokenContract, addressToApprove, amountToApprove, addTransaction])

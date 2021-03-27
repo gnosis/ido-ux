@@ -3,6 +3,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
 import { AuctionInfo } from '../hooks/useAllAuctionInfos'
 import { AuctionInfoDetail } from '../hooks/useAuctionDetails'
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('AdditionalServicesApi')
 
 export interface AdditionalServicesApi {
   getOrderBookUrl(params: OrderBookParams): string
@@ -207,7 +210,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return allAuctions.flat()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       throw new Error(`Failed to query all auctions: ${error.message}`)
     }
@@ -242,7 +245,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return allAuctions.flat()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       throw new Error(`Failed to query all auctions: ${error.message}`)
     }
@@ -253,6 +256,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       const url = await this.getAuctionDetailsUrl(params)
 
       const res = await fetch(url)
+
       if (!res.ok) {
         // backend returns {"message":"invalid url query"}
         // for bad requests
@@ -260,7 +264,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return res.json()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       const { auctionId } = params
 
@@ -297,7 +301,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       )
       return allInterestingAuctionsOrdered.flat()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
       throw new Error(`Failed to query interesting auctions: ${error.message}`)
     }
   }
@@ -314,7 +318,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return await res.json()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       const { auctionId, order } = params
 
@@ -338,7 +342,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return await res.json()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       const { auctionId, user } = params
 
@@ -359,7 +363,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return await res.json()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       const { auctionId, user } = params
 
@@ -387,7 +391,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
         volume: BigNumber.from(result[1]),
       }
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       const { auctionId } = params
 
@@ -409,7 +413,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return await res.json()
     } catch (error) {
-      console.error(error)
+      logger.error(error)
 
       const { auctionId } = params
 
@@ -438,7 +442,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       const response = await res.json()
       return response.includes('not available for user') ? '0x' : response
     } catch (error) {
-      console.error(error)
+      logger.error(error)
       return null
     }
   }

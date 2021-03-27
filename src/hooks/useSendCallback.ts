@@ -7,10 +7,13 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
 import { ChainId, calculateGasMargin, getSigner, isAddress } from '../utils'
+import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
 import useENSName from './useENSName'
+
+const logger = getLogger('useSendCallback')
 
 // returns a callback for sending a token amount, treating WETH as ETH
 // returns null with invalid arguments
@@ -56,7 +59,7 @@ export function useSendCallback(
             return response.hash
           })
           .catch((error: Error) => {
-            console.error('Failed to transfer ETH', error)
+            logger.error('Failed to transfer ETH', error)
             throw error
           })
       } else {
@@ -81,7 +84,7 @@ export function useSendCallback(
               }),
           )
           .catch((error) => {
-            console.error('Failed token transfer', error)
+            logger.error('Failed token transfer', error)
             throw error
           })
       }
