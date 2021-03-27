@@ -8,6 +8,7 @@ import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { SpinnerSize } from '../../components/common/Spinner'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
+import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
 import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
@@ -67,6 +68,7 @@ interface Props extends RouteComponentProps {
 
 const Auction: React.FC<Props> = (props) => {
   const {
+    history,
     location: { search },
     showTokenWarning,
   } = props
@@ -112,15 +114,17 @@ const Auction: React.FC<Props> = (props) => {
     validBiddingTokenAddress,
   ])
 
-  const isLoading = React.useMemo(() => !auctionIdentifier || !derivedAuctionInfo, [
-    auctionIdentifier,
-    derivedAuctionInfo,
-  ])
+  const isLoading = React.useMemo(() => derivedAuctionInfo === null, [derivedAuctionInfo])
+
+  const invalidAuction = React.useMemo(
+    () => !auctionIdentifier || derivedAuctionInfo === undefined,
+    [auctionIdentifier, derivedAuctionInfo],
+  )
 
   return (
     <>
       {isLoading && <InlineLoading message="Loading..." size={SpinnerSize.small} />}
-      {!isLoading && (
+      {!isLoading && !invalidAuction && (
         <>
           <Title>Auction Details</Title>
           <SubTitleWrapper>
@@ -142,6 +146,17 @@ const Auction: React.FC<Props> = (props) => {
             auctionIdentifier={auctionIdentifier}
             auctionState={derivedAuctionInfo?.auctionState}
             derivedAuctionInfo={derivedAuctionInfo}
+          />
+        </>
+      )}
+      {!isLoading && invalidAuction && (
+        <>
+          <WarningModal
+            content={`This auction doesn't exist or it hasn't started yet.`}
+            isOpen
+            // onAccept={() => history.push('/overview')}
+            onDismiss={() => history.push('/overview')}
+            title="Warning!"
           />
         </>
       )}

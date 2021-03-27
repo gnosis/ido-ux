@@ -38,18 +38,17 @@ const Close = styled.button`
 `
 
 interface Props {
-  onClose: () => void
-  showCloseButton?: boolean
+  onClose?: () => void
   title?: string
 }
 
 export const ModalTitle: React.FC<Props> = (props) => {
-  const { onClose, showCloseButton = true, title, ...restProps } = props
+  const { onClose, title, ...restProps } = props
 
   return (
     <Wrapper {...restProps}>
       {title && <Title>{title}</Title>}
-      {showCloseButton && (
+      {onClose && (
         <Close onClick={onClose}>
           <CloseIcon />
         </Close>
