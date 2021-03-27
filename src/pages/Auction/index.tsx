@@ -154,7 +154,6 @@ const Auction: React.FC<Props> = (props) => {
           <WarningModal
             content={`This auction doesn't exist or it hasn't started yet.`}
             isOpen
-            // onAccept={() => history.push('/overview')}
             onDismiss={() => history.push('/overview')}
             title="Warning!"
           />
