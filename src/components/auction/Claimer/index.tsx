@@ -16,7 +16,7 @@ import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Er
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
-  min-height: 380px;
+  min-height: 352px;
   min-width: 100%;
 `
 
