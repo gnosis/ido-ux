@@ -61,7 +61,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
     ...restProps
   } = props
   const { chainId } = useActiveWeb3React()
-
   const isWorking = attemptingTxn && pendingConfirmation
   const isFinished = attemptingTxn && !pendingConfirmation
 
@@ -69,7 +68,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
     <Modal
       isOpen={isOpen}
       onDismiss={onDismiss}
-      width={width ? width : isWorking || isFinished ? 394 : undefined}
+      width={isWorking || isFinished ? 394 : width ? width : undefined}
       {...restProps}
     >
       <ModalTitle onClose={onDismiss} title={isWorking || isFinished ? '' : title} />
