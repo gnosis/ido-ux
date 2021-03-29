@@ -128,26 +128,26 @@ const SwapModalFooter: React.FC<Props> = (props) => {
           </div>
         </Value>
       </Row>
-      {(cancelDate || orderPlacingOnly) && (
+      {orderPlacingOnly && !cancelDate && (
         <ErrorWrapper>
-          {orderPlacingOnly && (
-            <ErrorRowStyled>
-              <ErrorLock />
-              <ErrorText>
-                Remember: You won&apos;t be able to cancel this order after you click the{' '}
-                <strong>&quot;Confirm&quot;</strong>
-                button.
-              </ErrorText>
-            </ErrorRowStyled>
-          )}
-          {cancelDate && (
-            <ErrorRowStyled>
-              <ErrorLock />
-              <ErrorText>
-                Remember: After <strong>{cancelDate}</strong> orders cannot be canceled.
-              </ErrorText>
-            </ErrorRowStyled>
-          )}
+          <ErrorRowStyled>
+            <ErrorLock />
+            <ErrorText>
+              Remember: You won&apos;t be able to cancel this order after you click the{' '}
+              <strong>&quot;Confirm&quot;</strong>
+              button.
+            </ErrorText>
+          </ErrorRowStyled>
+        </ErrorWrapper>
+      )}
+      {cancelDate && (
+        <ErrorWrapper>
+          <ErrorRowStyled>
+            <ErrorLock />
+            <ErrorText>
+              Remember: After <strong>{cancelDate}</strong> orders cannot be canceled.
+            </ErrorText>
+          </ErrorRowStyled>
         </ErrorWrapper>
       )}
       <ActionButton onClick={onPlaceOrder}>{confirmText}</ActionButton>
