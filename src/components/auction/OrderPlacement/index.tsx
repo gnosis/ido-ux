@@ -333,7 +333,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 )}
                 {cancelDate && (
                   <ErrorRow>
-                    <ErrorLock />
+                    <ErrorInfo />
                     <ErrorText>
                       Beware: after <strong>{cancelDate}</strong> and until the end of the auction,
                       orders cannot be canceled.

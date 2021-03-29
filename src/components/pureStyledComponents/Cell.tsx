@@ -39,6 +39,7 @@ CellRow.defaultProps = {
 }
 
 export const Cell = styled.span`
+  /* min-width: fit-content; */
   padding: 0 10px;
 
   &:first-child {

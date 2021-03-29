@@ -11,6 +11,7 @@ import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
+import { ErrorInfo } from '../../icons/ErrorInfo'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
 import { OrderPlaced } from '../../icons/OrderPlaced'
@@ -21,6 +22,7 @@ import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
+import { SubTitle, SubTitleWrapper } from '../../pureStyledComponents/SubTitle'
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -30,9 +32,21 @@ const TableWrapper = styled(BaseCard)`
   padding: 4px 0;
 `
 
-const SectionTitle = styled(PageTitle)`
+const Title = styled(PageTitle)`
   margin-bottom: 16px;
   margin-top: 0;
+`
+
+const SubTitleStyled = styled(SubTitle)`
+  font-size: 17px;
+`
+
+const SubTitleWrapperStyled = styled(SubTitleWrapper)`
+  margin-bottom: 12px;
+`
+
+const ErrorIcon = styled(ErrorInfo)`
+  margin-right: 8px;
 `
 
 const ActionButton = styled(Button)`
@@ -116,20 +130,13 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
     derivedAuctionInfo?.orderCancellationEndDate !== 0
 
-  const cancelDate = React.useMemo(
-    () =>
-      validCancelDate
-        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
-        : undefined,
-    [derivedAuctionInfo?.orderCancellationEndDate, validCancelDate],
+  const orderCancellationEndDate = React.useMemo(
+    () => new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000),
+    [derivedAuctionInfo?.orderCancellationEndDate],
   )
-
   const cancelDateFull = React.useMemo(
-    () =>
-      validCancelDate
-        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleString()
-        : undefined,
-    [derivedAuctionInfo?.orderCancellationEndDate, validCancelDate],
+    () => (validCancelDate ? orderCancellationEndDate.toLocaleString() : undefined),
+    [orderCancellationEndDate, validCancelDate],
   )
 
   const pendingText = `Cancelling Order`
@@ -144,7 +151,16 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <SectionTitle as="h2">Your Orders</SectionTitle>
+      <Title as="h2">Your Orders</Title>
+      {validCancelDate && (
+        <SubTitleWrapperStyled>
+          <ErrorIcon />
+          <SubTitleStyled as="h3">
+            You&apos;ll be unable to cancel orders after&nbsp;<strong>{cancelDateFull}</strong>
+            &nbsp; right until the end of the auction.
+          </SubTitleStyled>
+        </SubTitleWrapperStyled>
+      )}
       {ordersEmpty && (
         <EmptyContentWrapper>
           <InfoIcon />
@@ -154,7 +170,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {!ordersEmpty && (
         <TableWrapper>
           {ordersSortered.map((order, index) => (
-            <CellRow columns={cancelDate ? 6 : 5} key={index}>
+            <CellRow columns={5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -192,7 +208,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   align="flex-start"
                   itemKey={<span>Status</span>}
                   itemValue={
-                    order.status == OrderStatus.PLACED ? (
+                    order.status === OrderStatus.PLACED ? (
                       <>
                         <span>Placed</span>
                         <OrderPlaced />
@@ -217,23 +233,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   }
                 />
               </Cell>
-              {cancelDate && (
-                <Cell>
-                  <KeyValue
-                    align="flex-start"
-                    itemKey={
-                      <>
-                        <span>Last Cancel Date</span>
-                        <Tooltip
-                          id={`limitPrice_${index}`}
-                          text={`After <strong>${cancelDateFull}</strong> and until the end of the auction, orders cannot be canceled.`}
-                        />
-                      </>
-                    }
-                    itemValue={cancelDate}
-                  />
-                </Cell>
-              )}
               <Cell>
                 <ButtonWrapper>
                   <ActionButton
