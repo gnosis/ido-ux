@@ -287,7 +287,7 @@ export function findClearingPrice(
     if (totalSellVolume >= initialAuctionOrder.volume * order.price) {
       const coveredBuyAmount =
         initialAuctionOrder.volume * order.price - (totalSellVolume - order.volume)
-      if (coveredBuyAmount < order.volume) {
+      if (coveredBuyAmount > 0 && coveredBuyAmount < order.volume) {
         return order.price
       } else {
         return (totalSellVolume - order.volume) / initialAuctionOrder.volume
@@ -312,11 +312,27 @@ export const processOrderbookData = ({
   }
   try {
     const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0])
-    const value = data.asks[0]?.price ?? 0
-    const bids = processData(data.bids, userOrder, value, value, Offer.Bid)
+    const min_value = Math.min(clearingPrice * 2, data.asks[0]?.price ?? 0)
+    const bids = processData(data.bids, userOrder, min_value, min_value, Offer.Bid)
+    bids.sort((lhs, rhs) => -(lhs.price - rhs.price))
 
-    const asks = processData(data.asks, null, bids[0].price, value, Offer.Ask)
-    let pricePoints = bids.concat(asks)
+    const max_value = Math.min(clearingPrice * 2, bids[0].price ?? 0)
+    const asks = processData(data.asks, null, max_value, min_value, Offer.Ask)
+    // Filter for price-points close to clearing price
+    const asksFiltered = asks.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
+    let bidsFiltered = bids.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
+    bidsFiltered.sort((lhs, rhs) => lhs.price - rhs.price)
+    // append one last bid value at height of last element:
+    if (bidsFiltered.length > 0) {
+      const newLastElement = bidsFiltered.slice(-1)[0]
+      newLastElement.priceFormatted = max_value.toString()
+      newLastElement.priceNumber = max_value
+      newLastElement.price = max_value
+      newLastElement.volume = 0.001
+      bidsFiltered = bidsFiltered.concat(newLastElement)
+    }
+
+    let pricePoints = bidsFiltered.concat(asksFiltered)
 
     if (clearingPrice) {
       const priceInfo = addClearingPriceInfo(clearingPrice, pricePoints)
@@ -325,6 +341,7 @@ export const processOrderbookData = ({
 
     // Sort points by price
     pricePoints.sort((lhs, rhs) => lhs.price - rhs.price)
+
     const debug = false
     if (debug) _printOrderBook(pricePoints, baseToken.symbol, quoteToken.symbol)
     return pricePoints
