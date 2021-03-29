@@ -2,7 +2,10 @@ import { darken } from 'polished'
 import React, { ButtonHTMLAttributes } from 'react'
 import styled from 'styled-components'
 
+import { getLogger } from '../../../utils/logger'
 import { ChevronRight } from '../../icons/ChevronRight'
+
+const logger = getLogger('ButtonConnect')
 
 const Wrapper = styled.button`
   align-items: center;
@@ -47,8 +50,7 @@ export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = 
     <Wrapper
       className={`buttonConnect ${className}`}
       onClick={() => {
-        // eslint-disable-next-line no-console
-        console.log('connect')
+        logger.log('connect')
       }}
       {...restProps}
     >

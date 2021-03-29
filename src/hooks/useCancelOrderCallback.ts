@@ -8,9 +8,12 @@ import { chainNames } from '../constants'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+
+const logger = getLogger('useCancelOrderCallback')
 
 export function useCancelOrderCallback(
   auctionIdentifier: AuctionIdentifier,
@@ -71,7 +74,7 @@ export function useCancelOrderCallback(
           return response.hash
         })
         .catch((error) => {
-          console.error(`Cancellation or gas estimate failed`, error)
+          logger.error(`Cancellation or gas estimate failed`, error)
           throw error
         })
     }

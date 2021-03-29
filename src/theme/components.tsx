@@ -6,6 +6,10 @@ import styled, { keyframes } from 'styled-components'
 
 import ReactGA from 'react-ga'
 
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('theme/components')
+
 export const Button = styled.button.attrs<{ warning: boolean }, { backgroundColor: string }>(
   ({ theme, warning }) => ({
     backgroundColor: warning ? theme.red1 : theme.primary1,
@@ -123,8 +127,7 @@ export function ExternalLink({
       // don't prevent default, don't redirect if it's a new tab
       if (target === '_blank' || event.ctrlKey || event.metaKey) {
         ReactGA.outboundLink({ label: href }, () => {
-          // eslint-disable-next-line no-console
-          console.debug('Fired outbound link event', href)
+          logger.debug('Fired outbound link event', href)
         })
       } else {
         event.preventDefault()

@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 
 import { additionalServiceApi } from '../api'
 import { PricePoint } from '../api/AdditionalServicesApi'
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('useAllAuctionInfo')
 
 export interface AuctionInfo {
   addressAuctioningToken: string
@@ -43,7 +46,7 @@ export const useAllAuctionInfo = (): Maybe<AuctionInfo[]> => {
         setAllAuctions(auctionInfo)
       } catch (error) {
         setAllAuctions(null)
-        console.error('Error getting useAllAuctionInfo info', error)
+        logger.error('Error getting useAllAuctionInfo info', error)
 
         if (cancelled) return
       }
@@ -76,7 +79,7 @@ export const useAllAuctionInfoWithParticipation = (account: string): Maybe<Aucti
         setAllAuctions(auctionInfo)
       } catch (error) {
         setAllAuctions(null)
-        console.error('Error getting all auction with participation info', error)
+        logger.error('Error getting all auction with participation info', error)
 
         if (cancelled) return
       }

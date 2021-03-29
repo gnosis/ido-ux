@@ -5,7 +5,10 @@ import { useDispatch } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import useDebounce from '../../hooks/useDebounce'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
+import { getLogger } from '../../utils/logger'
 import { updateBlockNumber } from './actions'
+
+const logger = getLogger('Updater')
 
 export default function Updater() {
   const { chainId, library } = useActiveWeb3React()
@@ -33,7 +36,7 @@ export default function Updater() {
     library
       .getBlockNumber()
       .then((blockNumber) => dispatch(updateBlockNumber({ chainId, blockNumber })))
-      .catch((error) => console.error(`Failed to get block number for chainId ${chainId}`, error))
+      .catch((error) => logger.error(`Failed to get block number for chainId ${chainId}`, error))
 
     library.on('block', blockListener)
     return () => {

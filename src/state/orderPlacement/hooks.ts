@@ -18,6 +18,7 @@ import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { ChainId } from '../../utils'
+import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
@@ -32,6 +33,8 @@ import {
   setNoDefaultNetworkId,
 } from './actions'
 import { AuctionIdentifier } from './reducer'
+
+const logger = getLogger('orderPlacement/hooks')
 
 export interface SellOrder {
   sellAmount: TokenAmount
@@ -164,8 +167,7 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
     }
   } catch (error) {
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
-    // eslint-disable-next-line no-console
-    console.debug(`Failed to parse input amount: "${value}"`, error)
+    logger.debug(`Failed to parse input amount: "${value}"`, error)
   }
   // necessary for all paths to return a value
   return
@@ -307,14 +309,20 @@ export interface DerivedAuctionInfo {
 
 export function useDerivedAuctionInfo(
   auctionIdentifier: AuctionIdentifier,
-): Maybe<DerivedAuctionInfo> {
+): Maybe<DerivedAuctionInfo> | undefined {
   const { chainId } = auctionIdentifier
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo(auctionIdentifier)
 
-  if (auctionInfoLoading || loadingClearingPrice) {
+  const isLoading = auctionInfoLoading || loadingClearingPrice
+  const noAuctionData = !auctionDetails || !clearingPriceInfo
+
+  if (isLoading) {
     return null
+  } else if (noAuctionData) {
+    return undefined
   }
+
   const auctioningToken = !auctionDetails
     ? undefined
     : new Token(
@@ -547,7 +555,7 @@ export function useCurrentUserOrders(
           user: account,
         })
       } catch (error) {
-        console.error('Error getting current orders: ', error)
+        logger.error('Error getting current orders: ', error)
       }
 
       const sellOrderDisplays: OrderDisplay[] = []
@@ -556,7 +564,7 @@ export function useCurrentUserOrders(
 
         // in some of the orders the buyAmount field is zero
         if (order.buyAmount.isZero()) {
-          console.error(`Order buyAmount shouldn't be zero`)
+          logger.error(`Order buyAmount shouldn't be zero`)
           continue
         }
 

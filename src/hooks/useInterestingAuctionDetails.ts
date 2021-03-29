@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 
-import { additionalServiceApi } from './../api'
+import { additionalServiceApi } from '../api'
+import { getLogger } from '../utils/logger'
 import { AuctionInfo } from './useAllAuctionInfos'
+
+const logger = getLogger('useInterestingAuctionInfo')
 
 export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
   const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
@@ -20,7 +23,7 @@ export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
       } catch (error) {
         if (cancelled) return
         setMostInterestingAuctions(null)
-        console.error('Error getting clearing price info', error)
+        logger.error('Error getting clearing price info', error)
       }
     }
     fetchApiData()

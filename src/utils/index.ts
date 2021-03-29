@@ -13,6 +13,9 @@ import { EASY_AUCTION_NETWORKS, ROUTER_ADDRESS } from '../constants'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
+import { getLogger } from '../utils/logger'
+
+const logger = getLogger('utils/index')
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -144,8 +147,7 @@ export async function getTokenInfoWithFallback(
       .name()
       .then(parseBytes32String)
       .catch((e: Error) => {
-        // eslint-disable-next-line no-console
-        console.debug('Failed to get name for token address', e, tokenAddress)
+        logger.debug('Failed to get name for token address', e, tokenAddress)
         return 'Unknown'
       }),
   )
@@ -156,14 +158,12 @@ export async function getTokenInfoWithFallback(
       .symbol()
       .then(parseBytes32String)
       .catch((e: Error) => {
-        // eslint-disable-next-line no-console
-        console.debug('Failed to get symbol for token address', e, tokenAddress)
+        logger.debug('Failed to get symbol for token address', e, tokenAddress)
         return 'UNKNOWN'
       })
   })
   const decimalsPromise: Promise<Maybe<number>> = token.decimals().catch((e: Error) => {
-    // eslint-disable-next-line no-console
-    console.debug('Failed to get decimals for token address', e, tokenAddress)
+    logger.debug('Failed to get decimals for token address', e, tokenAddress)
     return null
   })
 

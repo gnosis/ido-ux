@@ -8,9 +8,12 @@ import { DerivedAuctionInfo } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+
+const logger = getLogger('useClaimOrderCallback')
 
 export const queueStartElement =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -24,6 +27,7 @@ export interface AuctionProceedings {
 export interface ClaimInformation {
   sellOrdersFormUser: string[]
 }
+
 export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<ClaimInformation> {
   const { account, chainId, library } = useActiveWeb3React()
   const [claimInfo, setClaimInfo] = useState<Maybe<ClaimInformation>>(null)
@@ -52,7 +56,7 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
         setClaimInfo({ sellOrdersFormUser })
       } catch (error) {
         if (cancelled) return
-        console.error('Error getting withdraw info', error)
+        logger.error('Error getting withdraw info', error)
         setError(error)
       }
     }
@@ -64,7 +68,7 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
   }, [account, chainId, library, auctionId, setClaimInfo])
 
   if (error) {
-    console.error('error while fetching claimInfo', error)
+    logger.error('error while fetching claimInfo', error)
     return null
   }
 
@@ -182,7 +186,7 @@ export function useClaimOrderCallback(
           return response.hash
         })
         .catch((error) => {
-          console.error(`Claiming or gas estimate failed`, error)
+          logger.error(`Claiming or gas estimate failed`, error)
           throw error
         })
     }
