@@ -97,7 +97,7 @@ export function useGetAuctionProceeds(
   let claimableBiddingToken = new TokenAmount(derivedAuctionInfo?.biddingToken, '0')
   for (const order of claimInfo.sellOrdersFormUser) {
     const decodedOrder = decodeOrder(order)
-    if (decodedOrder == derivedAuctionInfo?.clearingPriceOrder) {
+    if (JSON.stringify(decodedOrder) == JSON.stringify(derivedAuctionInfo?.clearingPriceOrder)) {
       claimableBiddingToken = claimableBiddingToken.add(
         new TokenAmount(
           derivedAuctionInfo?.biddingToken,
