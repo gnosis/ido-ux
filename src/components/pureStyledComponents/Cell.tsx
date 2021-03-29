@@ -23,7 +23,13 @@ export const CellRowCSS = css<CellRowProps>`
   display: grid;
   grid-template-columns: ${(props) => getColumns(props.columns)};
   padding: 13px 0;
+  position: relative;
   text-decoration: none;
+  z-index: 1;
+
+  &:hover {
+    z-index: 5;
+  }
 
   &:last-child {
     border-bottom: none;

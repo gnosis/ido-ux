@@ -17,7 +17,7 @@ const HigherLogo = styled(TokenLogo)`
 `
 
 const CoveredLogo = styled(TokenLogo)`
-  z-index: 1;
+  z-index: 3;
 `
 
 interface DoubleTokenLogoProps {
