@@ -2,8 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
-import { InlineLoading } from '../../common/InlineLoading'
-import { SpinnerSize } from '../../common/Spinner'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
@@ -23,10 +21,6 @@ const SectionTitle = styled(PageTitle)`
   margin: 0 0 40px;
 `
 
-const Loading = styled(InlineLoading)`
-  min-height: 290px;
-`
-
 interface Props {
   featuredAuctions: Maybe<AuctionInfo[]>
 }
@@ -43,9 +37,6 @@ export const FeaturedAuctions = (props: Props) => {
       <SectionTitle as="h2" className="featuredAuctionsTitle">
         Featured Auctions
       </SectionTitle>
-      {(featuredAuctions === undefined || featuredAuctions === null) && (
-        <Loading message="Loading..." size={SpinnerSize.small} />
-      )}
       {featuredAuctions && featuredAuctions.length === 0 && (
         <EmptyContentWrapper>
           <InfoIcon />

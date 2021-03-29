@@ -6,7 +6,6 @@ import { HashLink } from 'react-router-hash-link'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import { ButtonCSS } from '../../components/buttons/buttonStylingTypes'
 import { InlineLoading } from '../../components/common/InlineLoading'
-import { SpinnerSize } from '../../components/common/Spinner'
 import { Send } from '../../components/icons/Send'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
@@ -132,11 +131,18 @@ const TextGradient = styled.span`
 
 export const Landing: React.FC = () => {
   const allAuctions = useAllAuctionInfo()
-  useSetNoDefaultNetworkId()
-
   const featuredAuctions = useInterestingAuctionInfo()
 
-  return (
+  useSetNoDefaultNetworkId()
+
+  const isLoading = React.useMemo(() => !featuredAuctions || !allAuctions, [
+    allAuctions,
+    featuredAuctions,
+  ])
+
+  return isLoading ? (
+    <InlineLoading />
+  ) : (
     <>
       <Welcome>
         <WelcomeTextBlock>
@@ -151,27 +157,21 @@ export const Landing: React.FC = () => {
           </WelcomeText>
         </WelcomeTextBlock>
         <AuctionsBlock>
-          {allAuctions === undefined || allAuctions === null ? (
-            <InlineLoading message="Loading..." size={SpinnerSize.small} />
-          ) : (
-            <>
-              <AuctionsImage alt="" src={AuctionsIcon} />
-              {allAuctions && allAuctions.length > 0 && (
-                <AuctionsText>
-                  {
-                    allAuctions.filter(
-                      (auction) => new Date(auction.endTimeTimestamp * 1000) > new Date(),
-                    ).length
-                  }{' '}
-                  active auctions
-                </AuctionsText>
-              )}
-              <AuctionsButton to="/overview#topAnchor">
-                <SendIcon />
-                View Auctions
-              </AuctionsButton>
-            </>
+          <AuctionsImage alt="" src={AuctionsIcon} />
+          {allAuctions && allAuctions.length > 0 && (
+            <AuctionsText>
+              {
+                allAuctions.filter(
+                  (auction) => new Date(auction.endTimeTimestamp * 1000) > new Date(),
+                ).length
+              }{' '}
+              active auctions
+            </AuctionsText>
           )}
+          <AuctionsButton to="/overview#topAnchor">
+            <SendIcon />
+            View Auctions
+          </AuctionsButton>
         </AuctionsBlock>
       </Welcome>
       <Featured featuredAuctions={featuredAuctions} />

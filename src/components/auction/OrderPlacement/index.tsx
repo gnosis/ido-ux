@@ -25,6 +25,8 @@ import { ChainId, getTokenDisplay } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
 import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
@@ -40,6 +42,7 @@ import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
+  min-height: 352px;
   min-width: 100%;
 `
 
@@ -250,17 +253,28 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
 
+  const isLoading = React.useMemo(
+    () => !auctionInfo || (auctionInfo && auctionInfo.auctionInfoLoading),
+    [auctionInfo],
+  )
+  const isPrivate = React.useMemo(
+    () => auctionInfo && auctionInfo.auctionDetails && auctionInfo.auctionDetails.isPrivateAuction,
+    [auctionInfo],
+  )
+
   return (
     <>
       <Wrapper>
-        {auctionInfo?.auctionDetails?.isPrivateAuction && signature && signature.length < 4 ? (
+        {isLoading && <InlineLoading size={SpinnerSize.small} />}
+        {!isLoading && isPrivate && (
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
             <EmptyContentTextNoMargin>You are not allowed place an order.</EmptyContentTextNoMargin>
             <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
-        ) : (
+        )}
+        {!isLoading && !isPrivate && (
           <>
             <BalanceWrapper>
               <Balance>

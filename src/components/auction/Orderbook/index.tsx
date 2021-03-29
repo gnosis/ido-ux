@@ -13,6 +13,7 @@ import { processOrderbookData } from '../OrderbookWidget'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
+  min-height: 352px;
   min-width: 100%;
 `
 interface OrderbookProps {

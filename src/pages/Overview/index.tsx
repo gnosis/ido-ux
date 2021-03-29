@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import AllAuctions from '../../components/auctions/AllAuctions'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import { InlineLoading } from '../../components/common/InlineLoading'
-import { SpinnerSize } from '../../components/common/Spinner'
 import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { Private } from '../../components/icons/Private'
@@ -126,7 +125,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
 
   return (
     <>
-      {isLoading && <InlineLoading message="Loading..." size={SpinnerSize.small} />}
+      {isLoading && <InlineLoading />}
       {!isLoading && (
         <>
           <Featured featuredAuctions={featuredAuctions} />
