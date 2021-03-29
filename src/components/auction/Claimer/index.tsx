@@ -120,7 +120,7 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
             )}
           </Token>
           <Text>
-            {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(2)} ` : `0.00`}
+            {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
           </Text>
         </TokenItem>
         <TokenItem>
@@ -141,7 +141,7 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
             )}
           </Token>
           <Text>
-            {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(2)}` : `0.00`}
+            {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
           </Text>
         </TokenItem>
       </TokensWrapper>
