@@ -57,15 +57,18 @@ export function usePlaceOrderCallback(
       if (!chainId || !library || !account || !userId || !signature) {
         throw new Error('missing dependencies in onPlaceOrder callback')
       }
+
       const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
         auctioningToken,
         biddingToken,
         price,
         sellAmount,
       )
+
       if (sellAmountScaled == undefined || buyAmountScaled == undefined) {
-        return 'price was not correct'
+        return 'Price was not correct.'
       }
+
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
         library,
@@ -152,17 +155,17 @@ export function usePlaceOrderCallback(
     }
   }, [
     account,
-    userId,
     addTransaction,
+    auctionId,
+    auctioningToken,
+    biddingToken,
     chainId,
     library,
-    auctionId,
-    biddingToken,
-    price,
-    auctioningToken,
-    sellAmount,
-    onNewOrder,
     onNewBid,
+    onNewOrder,
+    price,
+    sellAmount,
     signature,
+    userId,
   ])
 }

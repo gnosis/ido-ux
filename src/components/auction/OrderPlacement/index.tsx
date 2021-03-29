@@ -196,10 +196,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const onPlaceOrder = () => {
     setAttemptingTxn(true)
 
-    placeOrderCallback().then((hash) => {
-      setTxHash(hash)
-      setPendingConfirmation(false)
-    })
+    placeOrderCallback()
+      .then((hash) => {
+        setTxHash(hash)
+        setPendingConfirmation(false)
+      })
+      .catch(() => {
+        resetModal()
+        setShowConfirm(false)
+      })
   }
 
   const modalBottom = (orderPlacingOnly?: boolean, cancelDate?: string) => {
@@ -368,7 +373,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         )}
       </Wrapper>
       <WarningModal
-        content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+        content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
         isOpen={showWarning}
         onDismiss={() => {
           setShowWarning(false)
