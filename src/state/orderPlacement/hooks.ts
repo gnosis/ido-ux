@@ -526,7 +526,7 @@ export function useSetNoDefaultNetworkId() {
   }, [dispatch])
 }
 
-export function useCurrentUserOrders(
+export function useAllUserOrders(
   auctionIdentifier: AuctionIdentifier,
   derivedAuctionInfo: DerivedAuctionInfo,
 ) {
@@ -549,7 +549,7 @@ export function useCurrentUserOrders(
       let sellOrdersFormUser: string[] = []
 
       try {
-        sellOrdersFormUser = await additionalServiceApi.getCurrentUserOrders({
+        sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
           networkId: chainId,
           auctionId,
           user: account,

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { DerivedAuctionInfo, useCurrentUserOrders } from '../../../state/orderPlacement/hooks'
+import { DerivedAuctionInfo, useAllUserOrders } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
@@ -61,7 +61,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     derivedAuctionInfo?.biddingToken,
   )
   const { onDeleteOrder } = useOrderActionHandlers()
-  useCurrentUserOrders(auctionIdentifier, derivedAuctionInfo)
+  useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
