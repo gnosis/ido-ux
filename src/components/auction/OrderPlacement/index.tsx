@@ -253,13 +253,20 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
 
-  const isLoading = React.useMemo(() => !auctionInfo || !signature, [auctionInfo, signature])
+  const isLoading = React.useMemo(
+    () => !auctionInfo || (auctionInfo && auctionInfo.auctionInfoLoading),
+    [auctionInfo],
+  )
+  const isPrivate = React.useMemo(
+    () => auctionInfo && auctionInfo.auctionDetails && auctionInfo.auctionDetails.isPrivateAuction,
+    [auctionInfo],
+  )
 
   return (
     <>
       <Wrapper>
         {isLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!isLoading && auctionInfo?.auctionDetails?.isPrivateAuction && signature?.length < 4 && (
+        {!isLoading && isPrivate && (
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
@@ -267,7 +274,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
         )}
-        {!isLoading && !auctionInfo?.auctionDetails?.isPrivateAuction && (
+        {!isLoading && !isPrivate && (
           <>
             <BalanceWrapper>
               <Balance>
