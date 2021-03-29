@@ -2,11 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
-import DoubleLogo from '../../common/DoubleLogo'
 import { FormLabel } from '../../form/FormLabel'
 import { Input as NumericalInput } from '../../form/NumericalInput'
 import { FormRow } from '../../pureStyledComponents/FormRow'
 import { TextfieldCSS } from '../../pureStyledComponents/Textfield'
+import DoubleLogo from '../../token/DoubleLogo'
 
 const TextfieldWrapper = styled.div`
   ${TextfieldCSS}

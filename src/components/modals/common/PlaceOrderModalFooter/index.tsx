@@ -8,10 +8,10 @@ import { getTokenDisplay } from '../../../../utils'
 import { abbreviation } from '../../../../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount } from '../../../../utils/prices'
 import { Button } from '../../../buttons/Button'
-import DoubleLogo from '../../../common/DoubleLogo'
-import TokenLogo from '../../../common/TokenLogo'
 import { ErrorLock } from '../../../icons/ErrorLock'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../../pureStyledComponents/Error'
+import DoubleLogo from '../../../token/DoubleLogo'
+import TokenLogo from '../../../token/TokenLogo'
 
 const Row = styled.div`
   align-items: center;

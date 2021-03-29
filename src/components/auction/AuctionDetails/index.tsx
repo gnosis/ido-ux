@@ -12,10 +12,10 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { KeyValue } from '../../common/KeyValue'
-import TokenLogo from '../../common/TokenLogo'
 import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
+import TokenLogo from '../../token/TokenLogo'
 import { AuctionTimer } from '../AuctionTimer'
 
 const Wrapper = styled(BaseCard)`

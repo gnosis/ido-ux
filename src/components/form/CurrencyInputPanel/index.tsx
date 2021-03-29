@@ -3,11 +3,11 @@ import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import { useActiveWeb3React } from '../../../hooks'
-import TokenLogo from '../../common/TokenLogo'
 import { ControlButton, FormLabel } from '../../form/FormLabel'
 import { Input as NumericalInput } from '../../form/NumericalInput'
 import { FormRow } from '../../pureStyledComponents/FormRow'
 import { TextfieldCSS } from '../../pureStyledComponents/Textfield'
+import TokenLogo from '../../token/TokenLogo'
 
 const TextfieldWrapper = styled.div`
   ${TextfieldCSS}
