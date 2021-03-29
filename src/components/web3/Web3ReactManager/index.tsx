@@ -5,13 +5,12 @@ import { useWeb3React } from '@web3-react/core'
 import { useTranslation } from 'react-i18next'
 
 import { tokenLogosServiceApi } from '../../../api'
-import Circle from '../../../assets/images/circle.svg'
 import { network } from '../../../connectors'
 import { NetworkContextName } from '../../../constants'
 import { useActiveListener, useEagerConnect, useInactiveListener } from '../../../hooks'
 import { useTokenListActionHandlers } from '../../../state/tokenList/hooks'
-import { Spinner } from '../../../theme'
 import { getLogger } from '../../../utils/logger'
+import { InlineLoading } from '../../common/InlineLoading'
 
 const logger = getLogger('Web3ReactManager')
 
@@ -24,16 +23,6 @@ const MessageWrapper = styled.div`
 
 const Message = styled.h2`
   color: ${({ theme }) => theme.secondary1};
-`
-
-const SpinnerWrapper = styled(Spinner)`
-  font-size: 4rem;
-
-  svg {
-    path {
-      color: ${({ theme }) => theme.secondary1};
-    }
-  }
 `
 
 export default function Web3ReactManager({ children }) {
@@ -94,11 +83,7 @@ export default function Web3ReactManager({ children }) {
   }
 
   if (showLoader || !networkActive) {
-    return (
-      <MessageWrapper>
-        <SpinnerWrapper src={Circle} />
-      </MessageWrapper>
-    )
+    return <InlineLoading />
   }
 
   // if the account context isn't active, and there's an error on the network context, it's an irrecoverable error
