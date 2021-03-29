@@ -6,7 +6,6 @@ import AuctionBody from '../../components/auction/AuctionBody'
 import AuctionDetails from '../../components/auction/AuctionDetails'
 import { ButtonCopy } from '../../components/buttons/ButtonCopy'
 import { InlineLoading } from '../../components/common/InlineLoading'
-import { SpinnerSize } from '../../components/common/Spinner'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
@@ -115,7 +114,6 @@ const Auction: React.FC<Props> = (props) => {
   ])
 
   const isLoading = React.useMemo(() => derivedAuctionInfo === null, [derivedAuctionInfo])
-
   const invalidAuction = React.useMemo(
     () => !auctionIdentifier || derivedAuctionInfo === undefined,
     [auctionIdentifier, derivedAuctionInfo],
@@ -123,7 +121,7 @@ const Auction: React.FC<Props> = (props) => {
 
   return (
     <>
-      {isLoading && <InlineLoading message="Loading..." size={SpinnerSize.small} />}
+      {isLoading && <InlineLoading />}
       {!isLoading && !invalidAuction && (
         <>
           <Title>Auction Details</Title>

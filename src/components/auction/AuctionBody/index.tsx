@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { InlineLoading } from '../../common/InlineLoading'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { AuctionNotStarted } from '../AuctionNotStarted'
 import { AuctionPending } from '../AuctionPending'
@@ -39,7 +38,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
 
   return (
     <>
-      {!auctionStarted && <InlineLoading message="Loading..." />}
       {auctionStarted && (
         <SectionTitle as="h2">
           {(auctionState === AuctionState.ORDER_PLACING ||

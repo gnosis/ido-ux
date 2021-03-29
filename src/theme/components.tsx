@@ -2,7 +2,7 @@ import { darken } from 'polished'
 import React, { HTMLProps, useCallback } from 'react'
 import { X } from 'react-feather'
 import { Link } from 'react-router-dom'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 
 import ReactGA from 'react-ga'
 
@@ -141,21 +141,6 @@ export function ExternalLink({
   )
   return <StyledLink href={href} onClick={handleClick} rel={rel} target={target} {...rest} />
 }
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`
-
-export const Spinner = styled.img`
-  animation: 2s ${rotate} linear infinite;
-  width: 16px;
-  height: 16px;
-`
 
 export const CursorPointer = styled.div`
   :hover {

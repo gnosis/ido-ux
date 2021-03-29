@@ -22,7 +22,11 @@ import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
-const Wrapper = styled(BaseCard)`
+const Wrapper = styled.div`
+  padding-bottom: 50px;
+`
+
+const TableWrapper = styled(BaseCard)`
   padding: 4px 0;
 `
 
@@ -50,7 +54,7 @@ interface OrderTableProps {
 }
 
 const OrderTable: React.FC<OrderTableProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
+  const { auctionIdentifier, derivedAuctionInfo, ...restProps } = props
   const orders: OrderState | undefined = useOrderState()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
@@ -139,7 +143,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
 
   return (
-    <>
+    <Wrapper {...restProps}>
       <SectionTitle as="h2">Your Orders</SectionTitle>
       {ordersEmpty && (
         <EmptyContentWrapper>
@@ -148,7 +152,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
         </EmptyContentWrapper>
       )}
       {!ordersEmpty && (
-        <Wrapper>
+        <TableWrapper>
           {ordersSortered.map((order, index) => (
             <CellRow columns={cancelDate ? 6 : 5} key={index}>
               <Cell>
@@ -270,9 +274,9 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
             }}
             title="Warning!"
           />
-        </Wrapper>
+        </TableWrapper>
       )}
-    </>
+    </Wrapper>
   )
 }
 
