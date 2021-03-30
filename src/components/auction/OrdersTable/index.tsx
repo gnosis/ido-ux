@@ -37,10 +37,6 @@ const Title = styled(PageTitle)`
   margin-top: 0;
 `
 
-const SubTitleStyled = styled(SubTitle)`
-  font-size: 17px;
-`
-
 const SubTitleWrapperStyled = styled(SubTitleWrapper)`
   margin-bottom: 12px;
 `
@@ -155,10 +151,10 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {validCancelDate && (
         <SubTitleWrapperStyled>
           <ErrorIcon />
-          <SubTitleStyled as="h3">
+          <SubTitle as="h3">
             You&apos;ll be unable to cancel orders after&nbsp;<strong>{cancelDateFull}</strong>
             &nbsp; right until the end of the auction.
-          </SubTitleStyled>
+          </SubTitle>
         </SubTitleWrapperStyled>
       )}
       {ordersEmpty && (
