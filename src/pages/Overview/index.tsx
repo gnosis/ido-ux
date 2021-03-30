@@ -3,12 +3,12 @@ import styled from 'styled-components'
 
 import AllAuctions from '../../components/auctions/AllAuctions'
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
-import DoubleLogo from '../../components/common/DoubleLogo'
 import { InlineLoading } from '../../components/common/InlineLoading'
 import { Tooltip } from '../../components/common/Tooltip'
 import { ChevronRightBig } from '../../components/icons/ChevronRightBig'
 import { Private } from '../../components/icons/Private'
 import { YesIcon } from '../../components/icons/YesIcon'
+import DoubleLogo from '../../components/token/DoubleLogo'
 import { useActiveWeb3React } from '../../hooks'
 import {
   AuctionInfo,

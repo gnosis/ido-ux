@@ -14,8 +14,8 @@ import {
   getMinutes,
   getSeconds,
 } from '../../../utils/tools'
-import DoubleLogo from '../../common/DoubleLogo'
 import { NetworkIcon } from '../../icons/NetworkIcon'
+import DoubleLogo from '../../token/DoubleLogo'
 
 const Wrapper = styled(HashLink)`
   align-items: center;

@@ -27,7 +27,6 @@ import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
-import TokenLogo from '../../common/TokenLogo'
 import CurrencyInputPanel from '../../form/CurrencyInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
@@ -39,6 +38,7 @@ import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
+import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -196,10 +196,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const onPlaceOrder = () => {
     setAttemptingTxn(true)
 
-    placeOrderCallback().then((hash) => {
-      setTxHash(hash)
-      setPendingConfirmation(false)
-    })
+    placeOrderCallback()
+      .then((hash) => {
+        setTxHash(hash)
+        setPendingConfirmation(false)
+      })
+      .catch(() => {
+        resetModal()
+        setShowConfirm(false)
+      })
   }
 
   const modalBottom = (orderPlacingOnly?: boolean, cancelDate?: string) => {
@@ -368,7 +373,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         )}
       </Wrapper>
       <WarningModal
-        content={`Pick a different price, you already has an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+        content={`Pick a different price, you already have an order for ${price} ${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
         isOpen={showWarning}
         onDismiss={() => {
           setShowWarning(false)

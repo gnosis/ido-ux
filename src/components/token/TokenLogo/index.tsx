@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { useTokenListState } from '../../../state/tokenList/hooks'
 import { isAddress } from '../../../utils'
+import { UnregisteredToken } from '../UnregisteredToken'
 
 const Wrapper = styled.div<{ size?: string }>`
   background-color: #606467;
@@ -23,21 +24,6 @@ const Image = styled.img`
   width: 100%;
 `
 
-const Placeholder = styled.div<{ size?: string }>`
-  align-items: center;
-  color: #fff;
-  display: flex;
-  font-size: calc(${(props) => props.size} * 0.26);
-  font-weight: bold;
-  height: 100%;
-  justify-content: center;
-  letter-spacing: 0px;
-  line-height: 1.3;
-  text-align: center;
-  width: 100%;
-  white-space: nowrap;
-`
-
 interface TokenLogoProps {
   token: { address: string; symbol?: string }
   size?: string
@@ -50,10 +36,12 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const validToken = isAddress(address) && tokens
   const imageURL = validToken && tokens[address.toLowerCase()]
 
-  return (
+  return imageURL ? (
     <Wrapper size={size} {...restProps}>
-      {imageURL ? <Image src={imageURL} /> : <Placeholder size={size}>{symbol}</Placeholder>}
+      <Image src={imageURL} />
     </Wrapper>
+  ) : (
+    <UnregisteredToken size={size} symbol={symbol} {...restProps} />
   )
 }
 

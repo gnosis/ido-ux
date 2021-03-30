@@ -8,11 +8,11 @@ import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPla
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
-import TokenLogo from '../../common/TokenLogo'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
+import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -120,7 +120,7 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
             )}
           </Token>
           <Text>
-            {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(2)} ` : `0.00`}
+            {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
           </Text>
         </TokenItem>
         <TokenItem>
@@ -141,7 +141,7 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
             )}
           </Token>
           <Text>
-            {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(2)}` : `0.00`}
+            {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
           </Text>
         </TokenItem>
       </TokensWrapper>

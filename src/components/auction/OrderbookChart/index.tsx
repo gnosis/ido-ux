@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import useChart from '../../../hooks/useChart'
-import XYChart from '../../Charts/XYChart'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
+import XYChart from '../Charts/XYChart'
 
 export enum Offer {
   Bid,
