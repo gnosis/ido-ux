@@ -336,7 +336,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     </ErrorText>
                   </ErrorRow>
                 )}
-                {cancelDate && (
+                {cancelDate && !orderPlacingOnly && (
                   <ErrorRow>
                     <ErrorInfo />
                     <ErrorText>
