@@ -42,6 +42,7 @@ export const useAllAuctionInfo = (): Maybe<AuctionInfo[]> => {
           throw new Error('missing dependencies in useAllAuctionInfo callback')
         }
         const auctionInfo = await additionalServiceApi.getAllAuctionDetails()
+
         if (cancelled) return
         setAllAuctions(auctionInfo)
       } catch (error) {
@@ -51,6 +52,7 @@ export const useAllAuctionInfo = (): Maybe<AuctionInfo[]> => {
         if (cancelled) return
       }
     }
+
     fetchApiData()
 
     return (): void => {

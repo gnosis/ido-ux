@@ -5,7 +5,6 @@ import { HashLink } from 'react-router-hash-link'
 
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import { ButtonCSS } from '../../components/buttons/buttonStylingTypes'
-import { InlineLoading } from '../../components/common/InlineLoading'
 import { Send } from '../../components/icons/Send'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
@@ -135,14 +134,7 @@ export const Landing: React.FC = () => {
 
   useSetNoDefaultNetworkId()
 
-  const isLoading = React.useMemo(() => !featuredAuctions || !allAuctions, [
-    allAuctions,
-    featuredAuctions,
-  ])
-
-  return isLoading ? (
-    <InlineLoading />
-  ) : (
+  return (
     <>
       <Welcome>
         <WelcomeTextBlock>
@@ -174,7 +166,7 @@ export const Landing: React.FC = () => {
           </AuctionsButton>
         </AuctionsBlock>
       </Welcome>
-      <Featured featuredAuctions={featuredAuctions} />
+      {featuredAuctions && <Featured featuredAuctions={featuredAuctions} />}
       <BlockGrid>
         <TextBlock>
           <SubTitle>Best Price Discovery</SubTitle>
