@@ -84,10 +84,15 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
   const claimOrderCallback = useClaimOrderCallback(auctionIdentifier)
 
   function onClaimOrder() {
-    claimOrderCallback().then((hash) => {
-      setTxHash(hash)
-      setPendingConfirmation(false)
-    })
+    claimOrderCallback()
+      .then((hash) => {
+        setTxHash(hash)
+        setPendingConfirmation(false)
+      })
+      .catch(() => {
+        resetModal()
+        setShowConfirm(false)
+      })
   }
 
   const pendingText = `Claiming Funds`
