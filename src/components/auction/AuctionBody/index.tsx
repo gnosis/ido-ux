@@ -75,6 +75,7 @@ const AuctionBody = (props: AuctionBodyProps) => {
       {auctionStarted && (
         <OrdersTable
           auctionIdentifier={auctionIdentifier}
+          auctionState={auctionState}
           derivedAuctionInfo={derivedAuctionInfo}
         />
       )}
