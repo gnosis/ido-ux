@@ -37,7 +37,7 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
             return memo.length > 0 ? `${memo}; ${add}` : `${add}`
           }, '') ?? 'unknown error'
 
-        logger.error(`Token list failed validation  ${validationErrors}`)
+        logger.error(`Token list ${url} failed validation  ${validationErrors}`)
       }
 
       return data?.tokens ?? []
