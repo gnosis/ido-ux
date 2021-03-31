@@ -25,10 +25,15 @@ const Title = styled(PageTitle)`
 const Grid = styled.div`
   column-gap: 20px;
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 1fr;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-template-columns: 240px 1fr;
+  }
 `
 
 const Sidebar = styled.div`
+  background-color: ${({ theme }) => theme.mainBackground};
   color: ${({ theme }) => theme.text1};
   display: flex;
   flex-direction: column;
