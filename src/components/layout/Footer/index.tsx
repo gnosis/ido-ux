@@ -18,20 +18,24 @@ const Wrapper = styled.footer`
 `
 
 const Inner = styled(InnerContainer)`
-  align-items: center;
-  flex-flow: row;
-  flex-grow: 1;
-  flex-shrink: 0;
-  justify-content: center;
+  column-gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   list-style: none;
   margin: 0;
   padding-bottom: 0;
   padding-left: ${(props) => props.theme.layout.horizontalPadding};
   padding-right: ${(props) => props.theme.layout.horizontalPadding};
   padding-top: 0;
+  row-gap: 10px;
 
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.mdPre}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    align-items: center;
+    display: flex;
     flex-direction: row;
+    flex-grow: 1;
+    flex-shrink: 0;
+    justify-content: center;
     justify-content: center;
   }
 `
