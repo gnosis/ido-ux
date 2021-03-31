@@ -55,16 +55,21 @@ const KeyValueStyled = styled(KeyValue)`
 `
 
 const TableControls = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 28px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
 `
 
 const SearchWrapper = styled.div`
   ${TextfieldCSS};
   align-items: center;
   display: flex;
+  margin-bottom: 12px;
   max-width: 100%;
   padding-right: 0;
   width: 565px;
@@ -73,6 +78,10 @@ const SearchWrapper = styled.div`
     background-color: ${({ theme }) => theme.textField.backgroundColorActive};
     border-color: ${({ theme }) => (props) =>
       props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-bottom: 0;
   }
 `
 
