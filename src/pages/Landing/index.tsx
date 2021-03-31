@@ -90,10 +90,12 @@ const AuctionsText = styled.p`
 `
 
 const Featured = styled(FeaturedAuctions)`
-  margin-bottom: 60px;
+  &.featuredAuctions {
+    margin-bottom: 60px;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-bottom: 120px;
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+      margin-bottom: 120px;
+    }
   }
 `
 
@@ -217,7 +219,9 @@ export const Landing: React.FC = () => {
           </AuctionsButton>
         </AuctionsBlock>
       </Welcome>
-      {featuredAuctions && <Featured featuredAuctions={featuredAuctions} />}
+      {featuredAuctions && (
+        <Featured className="featuredAuctions" featuredAuctions={featuredAuctions} />
+      )}
       <BlockGrid>
         <TextBlock>
           <SubTitle>Best Price Discovery</SubTitle>

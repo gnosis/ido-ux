@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
@@ -30,11 +30,11 @@ const SectionTitle = styled(PageTitle)`
   }
 `
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLDivElement> {
   featuredAuctions: Maybe<AuctionInfo[]>
 }
 
-export const FeaturedAuctions = (props: Props) => {
+export const FeaturedAuctions: React.FC<Props> = (props) => {
   const { featuredAuctions, ...restProps } = props
 
   const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 3), [
