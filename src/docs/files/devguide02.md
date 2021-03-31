@@ -10,7 +10,7 @@
 
 5. The smart contract sorts bids from highest to lowest price. Bids include a limit order for the token price and the amount of tokens to buy.
 
-6. The smart contract works backward from the highest bid, cumulatively adding each bid’s amount of tokens to buy, until the sell amount of tokens (pre-defined by the auctioneer) is reached.
+6. The smart contract works backward from the highest bid, cumulatively adding each bid’s amount of tokens to sell, until the bid's sum multiplied by the price of the highest bid equals the sell amount of tokens (pre-defined by the auctioneer).
 
 7. The price of the bid (added to all previous bids’ amount of tokens) that reaches the amount of tokens to sell is selected as the final clearing price for all participants. 
 
