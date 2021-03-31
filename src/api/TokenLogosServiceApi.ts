@@ -7,7 +7,8 @@ import { getLogger } from '../utils/logger'
 const logger = getLogger('TokenLogosServiceApi')
 
 const TOKEN_LIST_RESOURCES = [
-  'https://tokens.coingecko.com/uniswap/all.json',
+  // 'https://tokens.coingecko.com/uniswap/all.json',
+  'https://tokens.1inch.eth.link',
   'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
   'https://tokens.honeyswap.org',
 ]
@@ -28,19 +29,23 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
         throw new Error('Invalid token list response.')
       }
 
-      const data = await response.json()
+      const data: TokenList = await response.json()
 
       if (!tokenListValidator(data)) {
-        logger.error(tokenListValidator.errors)
+        const validationErrors =
+          tokenListValidator.errors?.reduce<string>((memo, error) => {
+            const add = `${error.dataPath} ${error.message ?? ''}`
+            return memo.length > 0 ? `${memo}; ${add}` : `${add}`
+          }, '') ?? 'unknown error'
 
-        throw new Error('Token list failed validation')
+        logger.error(`Token list ${url} failed validation  ${validationErrors}`)
       }
 
-      return (data as TokenList).tokens
+      return data?.tokens ?? []
     } catch (error) {
-      logger.error(error)
+      logger.error(`Failed to fetch token list from URL ${url}`, error)
 
-      throw new Error(`Failed to fetch token list from URL ${url}`)
+      return []
     }
   }
 
@@ -58,9 +63,9 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
         })
       })
     } catch (error) {
-      logger.error(error)
+      logger.error('Failed to get all tokens', error)
 
-      throw new Error('Failed to get all tokens')
+      return {}
     }
 
     return tokens
