@@ -139,7 +139,7 @@ export const Landing: React.FC = () => {
       <Welcome>
         <WelcomeTextBlock>
           <WelcomeTitle>
-            The most fair mechanism
+            The fairest mechanism
             <br />
             <TextGradient>to launch assets on Ethereum</TextGradient>
           </WelcomeTitle>
@@ -195,8 +195,9 @@ export const Landing: React.FC = () => {
         <TextBlock>
           <SubTitle>Easy to use</SubTitle>
           <Text>
-            Bidders can easily participate in auctions by just determining two parameters, (amount
-            &amp; price), while auctioneers can start an auction running a simple script.
+            Bidders can easily participate in auctions by just determining two parameters, amount
+            &amp; price, while auctioneers can start an auction by using the Gnosis Safe App or by
+            running a simple script.
           </Text>
         </TextBlock>
         <ImageBlock align="left">
