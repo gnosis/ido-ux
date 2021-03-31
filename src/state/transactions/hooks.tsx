@@ -72,16 +72,31 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   return transactionsFilteredByConnectedAccount
 }
 
+/**
+ * Returns whether a transaction happened in the last day (86400 seconds * 1000 milliseconds / second)
+ * @param tx to check for recency
+ */
+export function isTransactionRecent(tx: TransactionDetails): boolean {
+  return new Date().getTime() - tx.addedTime < 86_400_000
+}
+
 // returns whether a token has a pending approval transaction
 export function useHasPendingApproval(tokenAddress?: string): boolean {
   const allTransactions = useAllTransactions()
-  return typeof tokenAddress !== 'string'
-    ? false
-    : Object.keys(allTransactions).some((hash) => {
-        if (allTransactions[hash]?.receipt) {
+  return useMemo(() => {
+    return (
+      typeof tokenAddress === 'string' &&
+      Object.keys(allTransactions).some((hash) => {
+        const tx = allTransactions[hash]
+        if (!tx) return false
+        if (tx.receipt) {
           return false
         } else {
-          return allTransactions[hash]?.approvalOfToken === tokenAddress
+          const { approvalOfToken } = tx
+          if (!approvalOfToken) return false
+          return approvalOfToken === tokenAddress && isTransactionRecent(tx)
         }
       })
+    )
+  }, [allTransactions, tokenAddress])
 }
