@@ -28,19 +28,23 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
         throw new Error('Invalid token list response.')
       }
 
-      const data = await response.json()
+      const data: TokenList = await response.json()
 
       if (!tokenListValidator(data)) {
-        logger.error(tokenListValidator.errors)
+        const validationErrors =
+          tokenListValidator.errors?.reduce<string>((memo, error) => {
+            const add = `${error.dataPath} ${error.message ?? ''}`
+            return memo.length > 0 ? `${memo}; ${add}` : `${add}`
+          }, '') ?? 'unknown error'
 
-        throw new Error('Token list failed validation')
+        logger.error(`Token list failed validation  ${validationErrors}`)
       }
 
-      return (data as TokenList).tokens
+      return data?.tokens ?? []
     } catch (error) {
-      logger.error(error)
+      logger.error(`Failed to fetch token list from URL ${url}`, error)
 
-      throw new Error(`Failed to fetch token list from URL ${url}`)
+      return []
     }
   }
 
@@ -58,9 +62,9 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
         })
       })
     } catch (error) {
-      logger.error(error)
+      logger.error('Failed to get all tokens', error)
 
-      throw new Error('Failed to get all tokens')
+      return {}
     }
 
     return tokens
