@@ -16,12 +16,23 @@ import Shape3 from './img/shape-3.svg'
 
 const Welcome = styled.div`
   display: flex;
+  flex-direction: column;
   margin: 0 0 60px;
-  padding: 50px 0 0 0;
+  padding-top: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    flex-direction: row;
+    padding-top: 50px;
+  }
 `
 
 const WelcomeTextBlock = styled.div`
+  margin-bottom: 30px;
   padding: 0 25px 0 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-bottom: 0;
+  }
 `
 
 const WelcomeTitle = styled.h1`
@@ -69,17 +80,32 @@ const AuctionsText = styled.p`
 `
 
 const Featured = styled(FeaturedAuctions)`
-  margin-bottom: 120px;
+  margin-bottom: 60px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-bottom: 120px;
+  }
 `
 
 const BlockGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: 0 0 120px;
-  padding: 0 50px;
+  grid-template-columns: 1fr;
+  margin-bottom: 60px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 120px;
+    padding: 0 50px;
+  }
 `
 
-const TextBlock = styled.div``
+const TextBlock = styled.div`
+  order: 1;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    order: unset;
+  }
+`
 
 const SubTitle = styled.h2`
   color: ${({ theme }) => theme.primary1};
@@ -87,7 +113,11 @@ const SubTitle = styled.h2`
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 30px;
-  text-align: left;
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    text-align: left;
+  }
 `
 
 const Text = styled.p`
@@ -97,13 +127,24 @@ const Text = styled.p`
   line-height: 1.5;
   margin: 0;
   opacity: 0.8;
-  text-align: left;
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    text-align: left;
+  }
 `
 
 const ImageBlock = styled.div<{ align: string }>`
-  ${(props) => props.align === 'left' && 'padding-left: 60px; justify-content: flex-start;'}
-  ${(props) => props.align === 'right' && 'padding-right: 60px; justify-content: flex-end;'}
   display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  order: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    ${(props) => props.align === 'left' && 'padding-left: 60px; justify-content: flex-start;'}
+    ${(props) => props.align === 'right' && 'padding-right: 60px; justify-content: flex-end;'}
+    margin-bottom: 0;
+  }
 `
 
 const AuctionsButton = styled(HashLink)`
