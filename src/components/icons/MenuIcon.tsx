@@ -3,23 +3,29 @@ import styled from 'styled-components'
 
 const Wrapper = styled.svg`
   .fill {
-    fill: #ccc;
+    fill: #fff;
   }
 `
 
 export const MenuIcon: React.FC<{ className?: string }> = (props) => (
   <Wrapper
     className={`menuIcon ${props.className}`}
-    height="32px"
-    version="1.1"
-    viewBox="0 0 32 32"
-    width="32px"
+    height="22"
+    viewBox="0 0 32 22"
+    width="32"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
+    <path className="fill" d="M1 2h30a1 1 0 0 0 0-2H1a1 1 0 1 0 0 2z" />
     <path
       className="fill"
-      d="M4,10h24c1.104,0,2-0.896,2-2s-0.896-2-2-2H4C2.896,6,2,6.896,2,8S2.896,10,4,10z M28,14H4c-1.104,0-2,0.896-2,2  s0.896,2,2,2h24c1.104,0,2-0.896,2-2S29.104,14,28,14z M28,22H4c-1.104,0-2,0.896-2,2s0.896,2,2,2h24c1.104,0,2-0.896,2-2  S29.104,22,28,22z"
+      d="M31 7.812H1a1 1 0 1 0 0 2h30a1 1 0 0 0 0-2z"
+      transform="translate(0 2.187)"
+    />
+    <path
+      className="fill"
+      d="M31 15.625H1a1 1 0 1 0 0 2h30a1 1 0 1 0 0-2z"
+      transform="translate(0 4.375)"
     />
   </Wrapper>
 )
