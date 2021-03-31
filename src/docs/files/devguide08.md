@@ -100,7 +100,7 @@ As you can see in the image below, if you try to input a value of more tokens th
 
 <img src="/assets/GA_SafeApp_32.png" alt="drawing" width="500"/>
 
-22.That's it! You have successfully set up and deployed an auction using the Gnosis Safe App for Gnosis Auction. 
+22. That's it! You have successfully set up and deployed an auction using the Gnosis Safe App for Gnosis Auction. 
 
 PS: We strongly recommend auctioneers to use the method described above instead of using the script, since we believe that the Gnosis Safe is better suited for handling large amounts of digital assets
 
