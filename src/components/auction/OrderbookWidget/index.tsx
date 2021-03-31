@@ -83,18 +83,22 @@ const processData = (
     pricePoints.sort((lhs, rhs) => -1 * (lhs.price - rhs.price))
 
     pricePoints.push({
-      price: (highestValue * 101) / 100,
+      price: (highestValue * 104) / 100,
       volume: 0,
     })
 
     pricePoints.sort((lhs, rhs) => -1 * (lhs.price - rhs.price))
+    pricePoints.push({
+      price: (lowestValue * 96) / 100,
+      volume: 0,
+    })
   } else {
     pricePoints.push({
-      price: (highestValue * 101) / 100,
+      price: (highestValue * 104) / 100,
       volume: 0,
     })
     pricePoints.push({
-      price: (pricePoints[0].price * 99) / 100,
+      price: (pricePoints[0].price * 96) / 100,
       volume: 0,
     })
     pricePoints.sort((lhs, rhs) => lhs.price - rhs.price)
