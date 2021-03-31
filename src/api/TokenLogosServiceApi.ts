@@ -8,7 +8,7 @@ const logger = getLogger('TokenLogosServiceApi')
 
 const TOKEN_LIST_RESOURCES = [
   // 'https://tokens.coingecko.com/uniswap/all.json',
-  'https://defi.cmc.eth.link/',
+  'https://tokens.1inch.eth.link',
   'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
   'https://tokens.honeyswap.org',
 ]
