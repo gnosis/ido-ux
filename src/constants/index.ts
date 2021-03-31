@@ -17,7 +17,6 @@ export const chainNames = {
   100: 'xdai',
 }
 
-export const ROUTER_ADDRESS = '0xf164fC0Ec4E93095b804a4795bBe1e041497b92a'
 export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0xeefBa1e63905eF1D7ACbA5a8513c70307C1cE441',
   [ChainId.RINKEBY]: '0x307C1384EFeF241d6CBBFb1F85a04C54307Ac9F6',
