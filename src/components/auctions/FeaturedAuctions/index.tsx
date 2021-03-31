@@ -12,9 +12,14 @@ const Wrapper = styled.div`
 `
 
 const Row = styled.div`
-  column-gap: 40px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
+  row-gap: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    column-gap: 40px;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 `
 
 const SectionTitle = styled(PageTitle)`
