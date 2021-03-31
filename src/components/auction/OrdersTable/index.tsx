@@ -277,6 +277,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
             content={orderError}
             isOpen={showWarning}
             onDismiss={() => {
+              resetModal()
               setOrderError(null)
               setShowWarning(false)
             }}
