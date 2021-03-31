@@ -196,7 +196,8 @@ export const Landing: React.FC = () => {
           <SubTitle>Easy to use</SubTitle>
           <Text>
             Bidders can easily participate in auctions by just determining two parameters, amount
-            &amp; price, while auctioneers can start an auction by using the Gnosis Safe App or by running a simple script.
+            &amp; price, while auctioneers can start an auction by using the Gnosis Safe App or by
+            running a simple script.
           </Text>
         </TextBlock>
         <ImageBlock align="left">
