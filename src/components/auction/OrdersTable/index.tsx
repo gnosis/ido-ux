@@ -2,7 +2,11 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
-import { DerivedAuctionInfo, useAllUserOrders } from '../../../state/orderPlacement/hooks'
+import {
+  AuctionState,
+  DerivedAuctionInfo,
+  useAllUserOrders,
+} from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
@@ -11,6 +15,7 @@ import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
+import { ErrorInfo } from '../../icons/ErrorInfo'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
 import { OrderPlaced } from '../../icons/OrderPlaced'
@@ -21,6 +26,7 @@ import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRow } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
+import { SubTitle, SubTitleWrapper } from '../../pureStyledComponents/SubTitle'
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -30,9 +36,17 @@ const TableWrapper = styled(BaseCard)`
   padding: 4px 0;
 `
 
-const SectionTitle = styled(PageTitle)`
+const Title = styled(PageTitle)`
   margin-bottom: 16px;
   margin-top: 0;
+`
+
+const SubTitleWrapperStyled = styled(SubTitleWrapper)`
+  margin-bottom: 12px;
+`
+
+const ErrorIcon = styled(ErrorInfo)`
+  margin-right: 8px;
 `
 
 const ActionButton = styled(Button)`
@@ -50,25 +64,23 @@ const ButtonWrapper = styled.div`
 `
 interface OrderTableProps {
   auctionIdentifier: AuctionIdentifier
+  auctionState: AuctionState
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
 const OrderTable: React.FC<OrderTableProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo, ...restProps } = props
+  const { auctionIdentifier, auctionState, derivedAuctionInfo, ...restProps } = props
   const orders: OrderState | undefined = useOrderState()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
   )
   const { onDeleteOrder } = useOrderActionHandlers()
-  useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
-
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [orderError, setOrderError] = useState<string>()
-
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
 
@@ -112,39 +124,52 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     )
   }
 
-  const validCancelDate =
+  const hasLastCancellationDate =
     derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
     derivedAuctionInfo?.orderCancellationEndDate !== 0
-
-  const cancelDate = React.useMemo(
-    () =>
-      validCancelDate
-        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleDateString()
-        : undefined,
-    [derivedAuctionInfo?.orderCancellationEndDate, validCancelDate],
-  )
-
+  const orderCancellationEndMilliseconds = derivedAuctionInfo?.orderCancellationEndDate * 1000
+  const orderCancellationEndDate = React.useMemo(() => new Date(orderCancellationEndMilliseconds), [
+    orderCancellationEndMilliseconds,
+  ])
   const cancelDateFull = React.useMemo(
-    () =>
-      validCancelDate
-        ? new Date(derivedAuctionInfo?.orderCancellationEndDate * 1000).toLocaleString()
-        : undefined,
-    [derivedAuctionInfo?.orderCancellationEndDate, validCancelDate],
+    () => (hasLastCancellationDate ? orderCancellationEndDate.toLocaleString() : undefined),
+    [orderCancellationEndDate, hasLastCancellationDate],
   )
 
   const pendingText = `Cancelling Order`
-  const now = Math.trunc(Date.now() / 1000)
-  const isOrderCancelationAllowed = now < derivedAuctionInfo?.orderCancellationEndDate
+  const now = Math.trunc(Date.now())
   const ordersEmpty = !orders.orders || orders.orders.length == 0
 
   // the array is frozen in strict mode, we will need to copy the array before sorting it
   const ordersSortered = orders.orders
     .slice()
     .sort((orderA, orderB) => Number(orderB.price) - Number(orderA.price))
+  const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
+  const isOrderCancellationExpired =
+    hasLastCancellationDate && now > orderCancellationEndMilliseconds && orderPlacingOnly
+  const orderSubmissionFinished =
+    auctionState === AuctionState.CLAIMING || auctionState === AuctionState.PRICE_SUBMISSION
+  const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
+
+  useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
 
   return (
     <Wrapper {...restProps}>
-      <SectionTitle as="h2">Your Orders</SectionTitle>
+      <Title as="h2">Your Orders</Title>
+      {!orderSubmissionFinished && (hasLastCancellationDate || orderPlacingOnly) && (
+        <SubTitleWrapperStyled>
+          <ErrorIcon />
+          {orderPlacingOnly && (
+            <SubTitle as="h3">Orders for this auction can&apos;t be cancelled</SubTitle>
+          )}
+          {!orderPlacingOnly && !isOrderCancellationExpired && (
+            <SubTitle as="h3">
+              The order cancellation period expires on&nbsp;<strong>{cancelDateFull}</strong>. You
+              can&apos;t cancel your orders after that.
+            </SubTitle>
+          )}
+        </SubTitleWrapperStyled>
+      )}
       {ordersEmpty && (
         <EmptyContentWrapper>
           <InfoIcon />
@@ -154,7 +179,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {!ordersEmpty && (
         <TableWrapper>
           {ordersSortered.map((order, index) => (
-            <CellRow columns={cancelDate ? 6 : 5} key={index}>
+            <CellRow columns={hideCancelButton ? 4 : 5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -192,7 +217,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   align="flex-start"
                   itemKey={<span>Status</span>}
                   itemValue={
-                    order.status == OrderStatus.PLACED ? (
+                    order.status === OrderStatus.PLACED ? (
                       <>
                         <span>Placed</span>
                         <OrderPlaced />
@@ -217,38 +242,21 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   }
                 />
               </Cell>
-              {cancelDate && (
+              {!hideCancelButton && (
                 <Cell>
-                  <KeyValue
-                    align="flex-start"
-                    itemKey={
-                      <>
-                        <span>Last Cancel Date</span>
-                        <Tooltip
-                          id={`limitPrice_${index}`}
-                          text={`After <strong>${cancelDateFull}</strong> and until the end of the auction, orders cannot be canceled.`}
-                        />
-                      </>
-                    }
-                    itemValue={cancelDate}
-                  />
-                </Cell>
-              )}
-              <Cell>
-                <ButtonWrapper>
-                  <ActionButton
-                    disabled={!isOrderCancelationAllowed}
-                    onClick={() => {
-                      if (isOrderCancelationAllowed) {
+                  <ButtonWrapper>
+                    <ActionButton
+                      disabled={isOrderCancellationExpired}
+                      onClick={() => {
                         setOrderId(order.id)
                         setShowConfirm(true)
-                      }
-                    }}
-                  >
-                    Cancel
-                  </ActionButton>
-                </ButtonWrapper>
-              </Cell>
+                      }}
+                    >
+                      Cancel
+                    </ActionButton>
+                  </ButtonWrapper>
+                </Cell>
+              )}
             </CellRow>
           ))}
           <ConfirmationModal

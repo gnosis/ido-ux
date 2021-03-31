@@ -9,6 +9,7 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
+import { SubTitle, SubTitleWrapper } from '../../components/pureStyledComponents/SubTitle'
 import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
@@ -17,22 +18,6 @@ import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
-`
-
-const SubTitleWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  margin: 0 0 40px;
-`
-
-const SubTitle = styled.h2`
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
-  display: flex;
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 0 6px 0 0;
 `
 
 const AuctionId = styled.span`

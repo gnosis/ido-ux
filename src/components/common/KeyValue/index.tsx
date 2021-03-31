@@ -6,7 +6,7 @@ const Wrapper = styled.div`
   flex-direction: column;
 `
 
-const Value = styled.div<{ align: string }>`
+const Value = styled.div<{ align?: string; noWrap?: boolean }>`
   align-items: center;
   color: ${({ theme }) => theme.text1};
   display: flex;
@@ -17,6 +17,7 @@ const Value = styled.div<{ align: string }>`
   justify-content: ${(props) => props.align};
   line-height: 1;
   margin: 0 0 2px;
+  white-space: ${(props) => (props.noWrap ? 'nowrap' : 'normal')};
 
   &:last-child {
     margin-bottom: 0;
@@ -31,7 +32,7 @@ const Value = styled.div<{ align: string }>`
   }
 `
 
-const Key = styled.div<{ align: string }>`
+const Key = styled.div<{ align?: string }>`
   align-items: center;
   color: ${({ theme }) => theme.text1};
   display: flex;
@@ -58,20 +59,22 @@ Key.defaultProps = {
 
 Value.defaultProps = {
   align: 'center',
+  noWrap: false,
 }
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   align?: string
   itemKey?: React.ReactNode | null | undefined
   itemValue: React.ReactNode
+  noWrap?: boolean
 }
 
 export const KeyValue: React.FC<Props> = (props) => {
-  const { align, itemKey, itemValue, ...restProps } = props
+  const { align, itemKey, itemValue, noWrap, ...restProps } = props
 
   return (
     <Wrapper {...restProps}>
-      <Value align={align} className="itemValue">
+      <Value align={align} className="itemValue" noWrap={noWrap}>
         {itemValue}
       </Value>
       {itemKey && (
