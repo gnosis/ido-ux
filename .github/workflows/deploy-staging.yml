@@ -1,7 +1,10 @@
 name: Deploy
 
 # Run on every commit
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   ci:
@@ -46,13 +49,13 @@ jobs:
       - name: Build Web Apps
         run: yarn build
         env:
-          REACT_APP_CHAIN_ID: 4
-          REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-v1-api-rinkeby.dev.gnosisdev.com/
+          REACT_APP_CHAIN_ID: 1
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-api-xdai.gnosis.io/
+          REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-api-rinkeby.gnosis.io/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-v1-api-mainnet.dev.gnosisdev.com/
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-api-mainnet.gnosis.io/
       - name: Get PR number
         uses: jwalton/gh-find-current-pr@v1
         id: findPr
@@ -69,22 +72,9 @@ jobs:
       - name: "Deploy to S3: PRaul"
         if: success() && steps.findPr.outputs.number
         run: aws s3 sync build s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/${{ env.REPO_NAME_SLUG }}/pr${{ steps.findPr.outputs.number }} --delete
-    
-      - name: "PRaul: Comment PR with app URLs"
-        uses: mshick/add-pr-comment@v1
-        with:
-          message: |
-            * **🔭 [IDO UI](${{ env.REVIEW_FEATURE_URL }})**: Easy IDO auction
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]'
-        if: success() && steps.findPr.outputs.number
-        env:
-          REVIEW_FEATURE_URL: https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
 
-      - name: "Deploy to S3: Develop"
-        if: github.ref == 'refs/heads/develop'
-        run: aws s3 sync build s3://${{ secrets.AWS_DEV_BUCKET_NAME }} --delete
-
-
+      - name: "Deploy to S3: Staging"
+        if: github.ref == 'refs/heads/main'
+        run: aws s3 sync build s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/current --delete
 
       
