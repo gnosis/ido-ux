@@ -64,11 +64,12 @@ yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network rinkeby
 
 **&quot;--min-buy-amount-per-order&quot;** Describes the minimal buyAmount per order placed in the auction. This can be used in order to protect against too high gas costs for the settlement. Default is 0.01
 
-**&quot;--is-atomic-closure-allowed&quot;** Describes whether the auction should be allowed to be closed atomically. Default is false.
+**&quot;--is-atomic-closure-allowed&quot;** This parameter enables users to close the auction atomically and submit a final bid by calling the `settleAuctionAtomically` function in the smart contract once the `auction-end-date` has been reached. The auctioneer determines whether this parameter is on or off by specifying True or False.  
 
-**&quot;--allow-list-manager&quot;** If whitelisting of addresses is required, then auctioneers handover their own  allowlistManager, or uses the allowListManager contract provided in this repo. You can find the deployment address in this [folder](https://github.com/gnosis/ido-contracts/blob/main/deployments/).
+**&quot;--allow-list-manager&quot;** If whitelisting of addresses is required, the auctioneer can provide his/her own allowlistManager contract, or use the AllowListOffChainManaged.json file provided in [this repo](https://github.com/gnosis/ido-contracts/tree/main/deployments). The command needs to be followed by the contract address of the allowlistManager being used. 
 
-**&quot;--allow-list-data&quot;** If the auctioneer needs further data in his/her allow_Lst, it needs to be provided in this field. Our implementation needs the public address of the key (abi encode - e.g. 0x000…00useraddress) used for allowing address to place orders.
+**&quot;--allow-list-data&quot;** If the auctioneer needs further data in his/her allowList, the data needs to be provided in this field. Our implementation needs the public address of the key (abi encode - e.g. 0x000…00useraddress) used for allowing address to place orders.
+
 
 An example of a more complex auction:
 ```
