@@ -58,7 +58,10 @@ const DropdownButton = styled.div`
 const Address = styled.div`
   align-items: center;
   display: flex;
-  margin-top: 10px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-top: 10px;
+  }
 `
 
 const AddressText = styled.div`
