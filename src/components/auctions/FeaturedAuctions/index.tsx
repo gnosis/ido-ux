@@ -23,7 +23,11 @@ const Row = styled.div`
 `
 
 const SectionTitle = styled(PageTitle)`
-  margin: 0 0 40px;
+  margin: 0 0 25px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin: 0 0 40px;
+  }
 `
 
 interface Props {

@@ -41,6 +41,11 @@ const WelcomeTitle = styled.h1`
   font-weight: 700;
   line-height: 1.3;
   margin: 0 0 40px;
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    text-align: left;
+  }
 `
 
 const WelcomeText = styled.p`
@@ -49,6 +54,11 @@ const WelcomeText = styled.p`
   font-weight: 400;
   line-height: 1.5;
   margin: 0;
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    text-align: left;
+  }
 `
 
 const AuctionsBlock = styled.div`
