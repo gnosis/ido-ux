@@ -164,6 +164,7 @@ const PaginationTextCSS = css`
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
   font-weight: normal;
+  white-space: nowrap;
 `
 
 const PaginationText = styled.span`
@@ -188,6 +189,7 @@ const PaginationButton = styled.button`
   padding: 0;
   user-select: none;
   width: 25px;
+  white-space: nowrap;
 
   &:hover {
     .fill {
@@ -219,6 +221,7 @@ const DropdownPagination = styled(Dropdown)`
 const PaginationDropdownButton = styled.div`
   ${PaginationTextCSS}
   cursor: pointer;
+  white-space: nowrap;
 `
 
 const PaginationItem = styled.div`
@@ -231,6 +234,7 @@ const PaginationItem = styled.div`
   height: 32px;
   line-height: 1.2;
   padding: 0 10px;
+  white-space: nowrap;
 
   &:hover {
     background-color: ${(props) => props.theme.dropdown.item.backgroundColorHover};
