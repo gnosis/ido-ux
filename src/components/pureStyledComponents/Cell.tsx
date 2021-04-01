@@ -20,19 +20,21 @@ export interface CellRowProps {
 
 export const CellRowCSS = css<CellRowProps>`
   border-bottom: 1px solid ${({ theme }) => theme.border};
+  column-gap: 10px;
   display: grid;
   grid-template-columns: ${(props) => getColumns(props.columns)};
-  padding: 13px 0;
+  padding: 13px 15px;
   position: relative;
   text-decoration: none;
   z-index: 1;
 
-  &:hover {
-    z-index: 5;
+  &:last-child,
+  &:last-of-type {
+    border-bottom: none;
   }
 
-  &:last-child {
-    border-bottom: none;
+  &:hover {
+    z-index: 5;
   }
 `
 
@@ -44,15 +46,4 @@ CellRow.defaultProps = {
   columns: 1,
 }
 
-export const Cell = styled.span`
-  /* min-width: fit-content; */
-  padding: 0 10px;
-
-  &:first-child {
-    padding-left: 15px;
-  }
-
-  &:last-child {
-    padding-right: 15px;
-  }
-`
+export const Cell = styled.span``

@@ -12,7 +12,7 @@ import { Delete } from '../../icons/Delete'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { Magnifier } from '../../icons/Magnifier'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { Cell, CellRowCSS, CellRowProps } from '../../pureStyledComponents/Cell'
+import { Cell, CellRowCSS, CellRowProps, getColumns } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { TexfieldPartsCSS, TextfieldCSS } from '../../pureStyledComponents/Textfield'
@@ -33,17 +33,46 @@ const SectionTitle = styled(PageTitle)`
 const RowLink = styled(NavLink)<CellRowProps>`
   ${CellRowCSS}
   cursor: pointer;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding-left: 10px;
+  padding-right: 10px;
+  row-gap: 15px;
 
   &:first-child {
     padding-top: 17px;
   }
 
-  &:last-child {
+  &:last-child,
+  &:last-of-type {
     padding-bottom: 17px;
   }
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-template-columns: ${(props) => getColumns(props.columns)};
+    padding-left: 15px;
+    padding-right: 30px;
+  }
+`
+
+const TableCell = styled(Cell)`
+  &:last-child {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    &:last-child {
+      position: unset;
+      right: auto;
+      top: auto;
+      transform: none;
+    }
   }
 `
 
@@ -493,14 +522,14 @@ const AllAuctions = (props: Props) => {
                   {row.cells.map(
                     (cell, j) =>
                       cell.render('show') && (
-                        <Cell key={j}>
+                        <TableCell key={j}>
                           <KeyValueStyled
                             align={cell.render('align')}
                             itemKey={cell.render('Header')}
                             itemValue={cell.render('Cell')}
                             style={cell.render('style')}
                           />
-                        </Cell>
+                        </TableCell>
                       ),
                   )}
                 </RowLink>
