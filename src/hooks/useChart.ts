@@ -1,46 +1,63 @@
 import { useEffect, useRef, useState } from 'react'
 import { Token } from 'uniswap-xdai-sdk'
 
-import * as am4core from '@amcharts/amcharts4/core'
-import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
+import * as am4charts from '@amcharts/amcharts4/charts'
 
+import { XYChartProps, drawInformation } from '../components/auction/Charts/XYChart'
 import { PricePointDetails } from '../components/auction/OrderbookChart'
 
-am4core.useTheme(am4themesSpiritedaway)
-
-const useChart = ({
-  baseToken,
-  createChart,
-  data,
-  quoteToken,
-}: {
-  createChart: any
+interface Props {
+  createChart: (props: XYChartProps) => am4charts.XYChart
   data: Maybe<PricePointDetails[]>
   baseToken: Token
   quoteToken: Token
-}) => {
-  const [chart, setChart] = useState(null)
-  const elemRef = useRef(null)
+}
+
+const useChart = (props: Props) => {
+  const { baseToken, createChart, data, quoteToken } = props
+
   const [loading, setLoading] = useState(false)
 
+  // Using refs allows us to combine React with some libraries,
+  // It’s handy for keeping any mutable value around similar to how you’d use instance fields in classes.
+  // Also useRef doesn’t notify you when its content changes.
+  // Mutating the .current property doesn’t cause a re-render. So is good if you need to access or update another state  at specific times
+  const mountPoint = useRef<Maybe<HTMLDivElement>>(null)
+  const chartRef = useRef<Maybe<am4charts.XYChart>>(null)
+
   useEffect(() => {
-    if (!chart) {
-      setLoading(true)
-      const currentChart = createChart({ div: elemRef.current, data, baseToken, quoteToken })
+    if (!mountPoint.current) return
+    setLoading(true)
+    const chart = createChart({
+      chartElement: mountPoint.current,
+    })
 
-      setChart(currentChart)
-      setLoading(false)
+    chartRef.current = chart
 
-      return () => {
-        if (chart) {
-          chart.dispose()
-        }
-      }
+    setLoading(false)
+    // dispose on mount only
+    return (): void => chart.dispose()
+  }, [createChart])
+
+  useEffect(() => {
+    if (!chartRef.current || data === null) return
+
+    if (data.length === 0) {
+      chartRef.current.data = []
+      return
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, baseToken, quoteToken, createChart])
 
-  return { chart, elemRef, loading }
+    drawInformation({
+      chart: chartRef.current,
+      baseToken,
+      quoteToken,
+      data,
+    })
+
+    chartRef.current.data = data
+  }, [baseToken, quoteToken, data])
+
+  return { chartRef, mountPoint, loading }
 }
 
 export default useChart

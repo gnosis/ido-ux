@@ -5,7 +5,7 @@ import { Token } from 'uniswap-xdai-sdk'
 import useChart from '../../../hooks/useChart'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
-import XYChart from '../Charts/XYChart'
+import { XYChart } from '../Charts/XYChart'
 
 export enum Offer {
   Bid,
@@ -82,7 +82,7 @@ const Wrapper = styled.div`
 const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
   const { baseToken, data, quoteToken } = props
 
-  const { elemRef, loading } = useChart({
+  const { loading, mountPoint } = useChart({
     createChart: XYChart,
     data,
     baseToken,
@@ -91,8 +91,8 @@ const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProp
 
   return (
     <>
-      {(!elemRef || loading) && <InlineLoading size={SpinnerSize.small} />}
-      {elemRef && !loading && <Wrapper ref={elemRef} />}
+      {(!mountPoint || loading) && <InlineLoading size={SpinnerSize.small} />}
+      {mountPoint && !loading && <Wrapper ref={mountPoint} />}
     </>
   )
 }
