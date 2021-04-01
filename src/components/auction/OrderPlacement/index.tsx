@@ -266,12 +266,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     () => auctionInfo && auctionInfo.auctionDetails && auctionInfo.auctionDetails.isPrivateAuction,
     [auctionInfo],
   )
+  const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
 
   return (
     <>
       <Wrapper>
         {isLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!isLoading && isPrivate && (
+        {!isLoading && isPrivate && !signatureAvailable && (
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
@@ -279,7 +280,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
         )}
-        {!isLoading && !isPrivate && (
+        {!isLoading && (!isPrivate || signatureAvailable) && (
           <>
             <BalanceWrapper>
               <Balance>
