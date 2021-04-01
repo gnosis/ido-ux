@@ -1,19 +1,21 @@
+import { Token } from 'uniswap-xdai-sdk'
+
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
+import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
-const XYChart = (args) => {
-  const { baseToken, data, div, quoteToken } = args
+import { PricePointDetails } from '../OrderbookChart'
 
-  const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = quoteToken.symbol
-  const market = quoteTokenLabel + '-' + baseTokenLabel
+export interface XYChartProps {
+  chartElement: HTMLElement
+}
 
-  const priceTitle = ` Price (${quoteTokenLabel})`
-  const volumeTitle = ` Volume (${quoteTokenLabel})`
+export const XYChart = (props: XYChartProps): am4charts.XYChart => {
+  const { chartElement } = props
 
-  const chart = am4core.create(div, am4charts.XYChart)
-  // Add data
-  chart.data = data
+  am4core.useTheme(am4themesSpiritedaway)
+
+  const chart = am4core.create(chartElement, am4charts.XYChart)
 
   chart.paddingTop = 20
   chart.marginTop = 20
@@ -37,14 +39,12 @@ const XYChart = (args) => {
   volumeAxis.renderer.grid.template.stroke = am4core.color(colors.white)
   volumeAxis.renderer.grid.template.strokeWidth = 0.5
   volumeAxis.renderer.grid.template.strokeOpacity = 0.5
-  volumeAxis.title.text = volumeTitle
   volumeAxis.title.fill = am4core.color(colors.white)
   volumeAxis.renderer.labels.template.fill = am4core.color(colors.white)
 
   priceAxis.renderer.grid.template.stroke = am4core.color(colors.white)
   priceAxis.renderer.grid.template.strokeWidth = 0.5
   priceAxis.renderer.grid.template.strokeOpacity = 0.5
-  priceAxis.title.text = priceTitle
   priceAxis.title.fill = am4core.color(colors.white)
   priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
 
@@ -61,76 +61,44 @@ const XYChart = (args) => {
   volumeAxis.numberFormatter = numberFormatter
   priceAxis.numberFormatter = numberFormatter
 
-  const min = Math.min.apply(
-    0,
-    data.map((order) => order.priceNumber),
-  )
-  // Reduce the min in a 5%
-  priceAxis.min = min - min * 0.05
-
-  const max = Math.max.apply(
-    0,
-    data.map((order) => order.priceNumber),
-  )
-  // Reduce the max in a 5%
-  priceAxis.max = max + max * 0.05
-
   priceAxis.strictMinMax = true
+  priceAxis.extraMin = 0.02
+  priceAxis.extraMax = 0.02
   priceAxis.renderer.grid.template.disabled = true
   priceAxis.renderer.labels.template.disabled = true
-
-  const createGrid = (value) => {
-    const range = priceAxis.axisRanges.create()
-    range.value = value
-    range.label.text = '{value}'
-  }
-
-  const factor = (priceAxis.max - priceAxis.min) / 5
-
-  const firstGrid = priceAxis.min + factor
-  const secondGrid = priceAxis.min + factor * 2
-  const thirdGrid = priceAxis.min + factor * 3
-  const fourGrid = priceAxis.min + factor * 4
-  const fiveGrid = priceAxis.min + factor * 5
-
-  createGrid(firstGrid.toFixed(2))
-  createGrid(secondGrid.toFixed(2))
-  createGrid(thirdGrid.toFixed(2))
-  createGrid(fourGrid.toFixed(2))
-  createGrid(fiveGrid.toFixed(2))
 
   // Create serie, green line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
-  bidSeries.strokeWidth = 2
+  bidSeries.strokeWidth = 1
   bidSeries.stroke = am4core.color(colors.green)
   bidSeries.fill = bidSeries.stroke
-  bidSeries.fillOpacity = 0.2
+  bidSeries.startLocation = 0.5
+  bidSeries.fillOpacity = 0.1
   bidSeries.dummyData = {
     description:
       'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
   }
-  bidSeries.tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
 
   // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
-  const askSeries = chart.series.push(new am4charts.LineSeries())
+  const askSeries = chart.series.push(new am4charts.StepLineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
-  askSeries.strokeWidth = 2
+  askSeries.strokeWidth = 1
   askSeries.stroke = am4core.color(colors.red)
   askSeries.fill = askSeries.stroke
+  askSeries.startLocation = 0.5
   askSeries.fillOpacity = 0.1
   askSeries.dummyData = {
     description: 'Shows the minimum sell price (x axis) the auctioneer is willing to accept',
   }
-  askSeries.tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
 
   // New order to be placed
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.strokeWidth = 4
+  inputSeries.strokeWidth = 1
   inputSeries.stroke = am4core.color(colors.orange)
   inputSeries.fill = inputSeries.stroke
   inputSeries.fillOpacity = 0.1
@@ -181,4 +149,58 @@ const XYChart = (args) => {
   return chart
 }
 
-export default XYChart
+interface DrawInformation {
+  chart: am4charts.XYChart
+  baseToken: Token
+  quoteToken: Token
+  data: PricePointDetails[]
+}
+
+export const drawInformation = (props: DrawInformation) => {
+  const { baseToken, chart, data, quoteToken } = props
+  const baseTokenLabel = baseToken.symbol
+  const quoteTokenLabel = quoteToken.symbol
+  const market = quoteTokenLabel + '-' + baseTokenLabel
+
+  const priceTitle = ` Price`
+  const volumeTitle = ` Volume (${quoteTokenLabel})`
+
+  const [xAxis] = chart.xAxes
+  const [yAxis] = chart.yAxes
+
+  xAxis.title.text = priceTitle
+  yAxis.title.text = volumeTitle
+
+  const series = chart.series
+
+  series.values[0].tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
+  series.values[1].tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
+
+  const min = Math.min.apply(
+    0,
+    data.map((order) => order.priceNumber),
+  )
+
+  const max = Math.max.apply(
+    0,
+    data.map((order) => order.priceNumber),
+  )
+
+  const createGrid = (value) => {
+    const range = xAxis.axisRanges.create() as any
+    range.value = value
+    range.label.text = '{value}'
+  }
+
+  const factor = (max - min) / 5
+
+  const firstGrid = min + factor
+  const secondGrid = min + factor * 2
+  const thirdGrid = min + factor * 3
+  const fourGrid = min + factor * 4
+
+  createGrid(firstGrid.toFixed(2))
+  createGrid(secondGrid.toFixed(2))
+  createGrid(thirdGrid.toFixed(2))
+  createGrid(fourGrid.toFixed(2))
+}
