@@ -43,12 +43,6 @@ export function usePlaceOrderCallback(
   const { price, sellAmount } = useSwapState()
   const { onNewBid } = useOrderbookActionHandlers()
 
-  console.log(signature)
-
-  console.log(auctionIdentifer)
-  console.log(auctioningToken)
-  console.log(biddingToken)
-
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
     easyAuctionABI,
