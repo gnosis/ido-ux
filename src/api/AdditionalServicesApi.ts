@@ -198,15 +198,24 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
         promises.push(fetch(url))
       }
-      const results = await Promise.all(promises)
+      // The Promise.allSettled() method returns a promise that resolves
+      // after all of the given promises have either fulfilled or rejected.
+      const results: PromiseSettledResult<Response>[] = await Promise.allSettled(promises)
+
       const allAuctions = []
       for (const res of results) {
-        if (!res.ok) {
-          // backend returns {"message":"invalid url query"}
-          // for bad requests
-          throw await res.json()
+        if (res.status === 'rejected') {
+          logger.error('Error getting all auction details with user participation: ', res.reason)
         }
-        allAuctions.push(await res.json())
+
+        if (res.status === 'fulfilled') {
+          if (!res.value.ok) {
+            // backend returns {"message":"invalid url query"}
+            // for bad requests
+            throw await res.value.json()
+          }
+          allAuctions.push(await res.value.json())
+        }
       }
       return allAuctions.flat()
     } catch (error) {
@@ -285,15 +294,24 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
         promises.push(fetch(url))
       }
-      const results = await Promise.all(promises)
+
+      // The Promise.allSettled() method returns a promise that resolves
+      // after all of the given promises have either fulfilled or rejected.
+      const results: PromiseSettledResult<Response>[] = await Promise.allSettled(promises)
       const allInterestingAuctions = []
       for (const res of results) {
-        if (!res.ok) {
-          // backend returns {"message":"invalid url query"}
-          // for bad requests
-          throw await res.json()
+        if (res.status === 'rejected') {
+          logger.error('Error getting most interesting auction details: ', res.reason)
         }
-        allInterestingAuctions.push(await res.json())
+
+        if (res.status === 'fulfilled') {
+          if (!res.value.ok) {
+            // backend returns {"message":"invalid url query"}
+            // for bad requests
+            throw await res.value.json()
+          }
+          allInterestingAuctions.push(await res.value.json())
+        }
       }
 
       const allInterestingAuctionsOrdered = allInterestingAuctions.sort(
