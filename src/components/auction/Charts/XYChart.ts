@@ -64,8 +64,6 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceAxis.strictMinMax = true
   priceAxis.extraMin = 0.02
   priceAxis.extraMax = 0.02
-  priceAxis.renderer.grid.template.disabled = true
-  priceAxis.renderer.labels.template.disabled = true
 
   // Create serie, green line shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
@@ -157,7 +155,7 @@ interface DrawInformation {
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chart, data, quoteToken } = props
+  const { baseToken, chart, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
   const quoteTokenLabel = quoteToken.symbol
   const market = quoteTokenLabel + '-' + baseTokenLabel
@@ -175,32 +173,4 @@ export const drawInformation = (props: DrawInformation) => {
 
   series.values[0].tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
   series.values[1].tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
-
-  const min = Math.min.apply(
-    0,
-    data.map((order) => order.priceNumber),
-  )
-
-  const max = Math.max.apply(
-    0,
-    data.map((order) => order.priceNumber),
-  )
-
-  const createGrid = (value) => {
-    const range = xAxis.axisRanges.create() as any
-    range.value = value
-    range.label.text = '{value}'
-  }
-
-  const factor = (max - min) / 5
-
-  const firstGrid = min + factor
-  const secondGrid = min + factor * 2
-  const thirdGrid = min + factor * 3
-  const fourGrid = min + factor * 4
-
-  createGrid(firstGrid.toFixed(2))
-  createGrid(secondGrid.toFixed(2))
-  createGrid(thirdGrid.toFixed(2))
-  createGrid(fourGrid.toFixed(2))
 }
