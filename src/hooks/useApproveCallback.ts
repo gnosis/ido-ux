@@ -32,7 +32,7 @@ export function useApproveCallback(
     account ?? undefined,
     addressToApprove,
   )
-  const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address)
+  const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address, addressToApprove)
 
   // check the current approval status
   const approval = useMemo(() => {
@@ -81,7 +81,7 @@ export function useApproveCallback(
       .then((response: TransactionResponse) => {
         addTransaction(response, {
           summary: 'Approve ' + amountToApprove?.token?.symbol,
-          approvalOfToken: amountToApprove?.token?.address,
+          approval: { tokenAddress: amountToApprove?.token?.address, spender: addressToApprove },
         })
       })
       .catch((error: Error) => {
