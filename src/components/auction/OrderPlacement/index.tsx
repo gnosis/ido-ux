@@ -266,11 +266,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     () => auctionInfo && auctionInfo.auctionDetails && auctionInfo.auctionDetails.isPrivateAuction,
     [auctionInfo],
   )
-
-  const signatureAvailable = React.useMemo(
-    () => !isPrivate || (signature && signature.length > 10),
-    [isPrivate, signature],
-  )
+  const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
 
   return (
     <>
