@@ -273,7 +273,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     <>
       <Wrapper>
         {isLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!isLoading && isPrivate && signature && signature.length > 10 && (
+        {!isLoading && isPrivate && signature && signature.length < 10 && (
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
