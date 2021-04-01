@@ -367,7 +367,9 @@ export const Privacy: React.FC = () => {
             Google, as a US based company, may share your personal data within the Google Group or
             with external third parties. This may involve transferring your data outside the EEA.
             Whenever they transfer your personal data outside the EEA, they ensure a similar degree
-            of protection is afforded to it
+            of protection is afforded to it .
+          </Paragraph>
+          <Paragraph>
             <a
               href="https://policies.google.com/privacy?hl=en_GB#enforcement"
               rel="noreferrer"
