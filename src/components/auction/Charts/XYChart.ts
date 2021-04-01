@@ -80,13 +80,12 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   }
 
   // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
-  const askSeries = chart.series.push(new am4charts.StepLineSeries())
+  const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
   askSeries.strokeWidth = 1
   askSeries.stroke = am4core.color(colors.red)
   askSeries.fill = askSeries.stroke
-  askSeries.startLocation = 0.5
   askSeries.fillOpacity = 0.1
   askSeries.dummyData = {
     description: 'Shows the minimum sell price (x axis) the auctioneer is willing to accept',
