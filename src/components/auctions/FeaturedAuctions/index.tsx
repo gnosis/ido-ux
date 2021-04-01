@@ -8,7 +8,13 @@ import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import AuctionInfoCard from '../AuctionInfoCard'
 
 const Wrapper = styled.div`
-  margin-bottom: 40px;
+  margin: 0 auto 40px;
+  max-width: 100%;
+  width: 400px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    width: auto;
+  }
 `
 
 const Row = styled.div`
