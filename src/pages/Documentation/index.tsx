@@ -13,6 +13,7 @@ import userFlowDocMarkdown from '../../docs/files/devguide04.md'
 import participateAsABidderDocMarkdown from '../../docs/files/devguide05.md'
 import participateAsAuctioneerDocMarkdown from '../../docs/files/devguide06.md'
 import faqDocMarkdown from '../../docs/files/devguide07.md'
+import startingAnAuctionWithSafe from '../../docs/files/devguide08.md'
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -169,6 +170,8 @@ export const Documentation: React.FC = (props) => {
       fetchGuide(participateAsABidderDocMarkdown)
     if (location.pathname === '/docs/participate-as-auctioneer')
       fetchGuide(participateAsAuctioneerDocMarkdown)
+    if (location.pathname === '/docs/starting-an-auction-with-safe')
+      fetchGuide(startingAnAuctionWithSafe)
     if (location.pathname === '/docs/faq') fetchGuide(faqDocMarkdown)
   }, [location, fetchGuide])
 
@@ -195,8 +198,11 @@ export const Documentation: React.FC = (props) => {
           <IndexLink activeClassName="isActive" to="/docs/participate-as-auctioneer#topAnchor">
             Participate as auctioneer
           </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/starting-an-auction-with-safe#topAnchor">
+            Starting an Auction with Gnosis Safe App
+          </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/faq#topAnchor">
-            Faq
+            FAQ
           </IndexLink>
         </Sidebar>
         <Content>
