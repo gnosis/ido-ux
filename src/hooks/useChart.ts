@@ -18,6 +18,10 @@ const useChart = (props: Props) => {
 
   const [loading, setLoading] = useState(false)
 
+  // Using refs allows us to combine React with some libraries,
+  // It’s handy for keeping any mutable value around similar to how you’d use instance fields in classes.
+  // Also useRef doesn’t notify you when its content changes.
+  // Mutating the .current property doesn’t cause a re-render. So is good if you need to access or update another state  at specific times
   const mountPoint = useRef<Maybe<HTMLDivElement>>(null)
   const chartRef = useRef<Maybe<am4charts.XYChart>>(null)
 
