@@ -53,9 +53,13 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   numberFormatter.numberFormat = '#.00a'
   numberFormatter.bigNumberPrefixes = [
     { number: 1e4, suffix: 'K' }, // Use K only with value greater than 9999.00
-    { number: 1e6, suffix: 'M' },
-    { number: 1e9, suffix: 'B' },
-    { number: 1e12, suffix: 'T' },
+    { number: 1e6, suffix: 'M' }, // Million
+    { number: 1e9, suffix: 'B' }, // Billion
+    { number: 1e12, suffix: 'T' }, // Trillion
+    { number: 1e15, suffix: 'P' }, // Quadrillion
+    { number: 1e18, suffix: 'E' }, // Quintillion
+    { number: 1e21, suffix: 'Z' }, // Sextillion
+    { number: 1e24, suffix: 'Y' }, // Septillion
   ]
 
   volumeAxis.numberFormatter = numberFormatter
