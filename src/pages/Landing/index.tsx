@@ -68,11 +68,15 @@ const AuctionsBlock = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 0 0 0 auto;
+  margin: 0 auto;
   max-width: 100%;
   min-height: 340px;
   padding: 25px;
   width: 400px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin: 0 0 0 auto;
+  }
 `
 
 const AuctionsImage = styled.img`
