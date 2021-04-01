@@ -71,12 +71,17 @@ const Total = styled.span`
 `
 
 const ApprovalWrapper = styled.div`
-  align-items: center;
   border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.primary1};
-  display: flex;
-  margin-bottom: 10px;
+  display: block;
+  margin-bottom: 40px;
   padding: 7px 12px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    align-items: center;
+    display: flex;
+    margin-bottom: 10px;
+  }
 `
 
 const ApprovalText = styled.p`
@@ -84,8 +89,12 @@ const ApprovalText = styled.p`
   font-size: 13px;
   font-weight: normal;
   line-height: 1.23;
-  margin: 0 25px 0 0;
+  margin: 0 0 15px 0;
   text-align: left;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin: 0 25px 0 0;
+  }
 `
 
 const ApprovalButton = styled(Button)`
@@ -94,6 +103,11 @@ const ApprovalButton = styled(Button)`
   font-weight: 600;
   height: 26px;
   padding: 0 14px;
+  width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    width: auto;
+  }
 `
 
 const PrivateWrapper = styled.div`
