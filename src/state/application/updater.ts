@@ -11,7 +11,7 @@ import { updateBlockNumber } from './actions'
 const logger = getLogger('Updater')
 
 export default function Updater() {
-  const { chainId, library } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   const dispatch = useDispatch()
 
   const windowVisible = useIsWindowVisible()
@@ -22,7 +22,7 @@ export default function Updater() {
 
   // update block number
   useEffect(() => {
-    if (!library || !chainId) return
+    if (!account || !library || !chainId) return
 
     const blockListener = (blockNumber: number) => {
       setMaxBlockNumber((maxBlockNumber) => {
@@ -42,14 +42,14 @@ export default function Updater() {
     return () => {
       library.removeListener('block', blockListener)
     }
-  }, [dispatch, chainId, library])
+  }, [dispatch, account, chainId, library])
 
   useEffect(() => {
-    if (!chainId || !debouncedMaxBlockNumber) return
+    if (!account || !chainId || !debouncedMaxBlockNumber) return
     if (windowVisible) {
       dispatch(updateBlockNumber({ chainId, blockNumber: debouncedMaxBlockNumber }))
     }
-  }, [chainId, debouncedMaxBlockNumber, windowVisible, dispatch])
+  }, [chainId, account, debouncedMaxBlockNumber, windowVisible, dispatch])
 
   return null
 }
