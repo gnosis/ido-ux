@@ -291,7 +291,7 @@ export function findClearingPrice(
     if (totalSellVolume >= initialAuctionOrder.volume * order.price) {
       const coveredBuyAmount =
         initialAuctionOrder.volume * order.price - (totalSellVolume - order.volume)
-      if (coveredBuyAmount > 0 && coveredBuyAmount < order.volume) {
+      if (coveredBuyAmount >= 0 && coveredBuyAmount <= order.volume) {
         return order.price
       } else {
         return (totalSellVolume - order.volume) / initialAuctionOrder.volume
