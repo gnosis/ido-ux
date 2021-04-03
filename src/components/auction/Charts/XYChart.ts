@@ -52,7 +52,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const numberFormatter = new am4core.NumberFormatter()
   numberFormatter.numberFormat = '#.00a'
   numberFormatter.bigNumberPrefixes = [
-    { number: 1e4, suffix: 'K' }, // Use K only with value greater than 9999.00
+    { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
     { number: 1e6, suffix: 'M' }, // Million
     { number: 1e9, suffix: 'B' }, // Billion
     { number: 1e12, suffix: 'T' }, // Trillion
