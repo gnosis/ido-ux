@@ -84,7 +84,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
   if (sellAmount != undefined && buyAmountScaled != undefined) {
     minimumReceived = new Fraction(
       buyAmountScaled.toString(),
-      BigNumber.from(10).pow(biddingToken.decimals).toString(),
+      BigNumber.from(10).pow(auctioningToken.decimals).toString(),
     )
   }
 
