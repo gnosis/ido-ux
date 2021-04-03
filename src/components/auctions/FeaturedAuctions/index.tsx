@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
@@ -8,24 +8,39 @@ import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import AuctionInfoCard from '../AuctionInfoCard'
 
 const Wrapper = styled.div`
-  margin-bottom: 40px;
+  margin: 0 auto 40px;
+  max-width: 100%;
+  width: 400px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    width: auto;
+  }
 `
 
 const Row = styled.div`
-  column-gap: 40px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
+  row-gap: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    column-gap: 40px;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 `
 
 const SectionTitle = styled(PageTitle)`
-  margin: 0 0 40px;
+  margin: 0 0 25px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin: 0 0 40px;
+  }
 `
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLDivElement> {
   featuredAuctions: Maybe<AuctionInfo[]>
 }
 
-export const FeaturedAuctions = (props: Props) => {
+export const FeaturedAuctions: React.FC<Props> = (props) => {
   const { featuredAuctions, ...restProps } = props
 
   const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 3), [

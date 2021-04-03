@@ -23,7 +23,7 @@ import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import CancelModalFooter from '../../modals/common/CancelModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { Cell, CellRow } from '../../pureStyledComponents/Cell'
+import { Cell, CellRow, getColumns } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { SubTitle, SubTitleWrapper } from '../../pureStyledComponents/SubTitle'
@@ -49,11 +49,23 @@ const ErrorIcon = styled(ErrorInfo)`
   margin-right: 8px;
 `
 
-const ActionButton = styled(Button)`
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  height: 28px;
+const Row = styled(CellRow)`
+  grid-template-columns: 1fr 1fr;
+  row-gap: 15px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-template-columns: ${(props) => getColumns(props.columns)};
+  }
+`
+
+const ButtonCell = styled(Cell)`
+  grid-column-end: -1;
+  grid-column-start: 1;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-column-end: unset;
+    grid-column-start: unset;
+  }
 `
 
 const ButtonWrapper = styled.div`
@@ -62,6 +74,19 @@ const ButtonWrapper = styled.div`
   height: 100%;
   justify-content: flex-end;
 `
+
+const ActionButton = styled(Button)`
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  height: 28px;
+  width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    width: auto;
+  }
+`
+
 interface OrderTableProps {
   auctionIdentifier: AuctionIdentifier
   auctionState: AuctionState
@@ -179,7 +204,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {!ordersEmpty && (
         <TableWrapper>
           {ordersSortered.map((order, index) => (
-            <CellRow columns={hideCancelButton ? 4 : 5} key={index}>
+            <Row columns={hideCancelButton ? 4 : 5} key={index}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -243,7 +268,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                 />
               </Cell>
               {!hideCancelButton && (
-                <Cell>
+                <ButtonCell>
                   <ButtonWrapper>
                     <ActionButton
                       disabled={isOrderCancellationExpired}
@@ -255,9 +280,9 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                       Cancel
                     </ActionButton>
                   </ButtonWrapper>
-                </Cell>
+                </ButtonCell>
               )}
-            </CellRow>
+            </Row>
           ))}
           <ConfirmationModal
             attemptingTxn={attemptingTxn}

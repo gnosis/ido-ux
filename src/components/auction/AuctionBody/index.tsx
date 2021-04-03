@@ -17,10 +17,15 @@ const SectionTitle = styled(PageTitle)`
 `
 
 const Grid = styled.div`
-  column-gap: 18px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
+  row-gap: 20px;
   margin: 0 0 40px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    column-gap: 18px;
+    grid-template-columns: 1fr 1fr;
+  }
 `
 
 interface AuctionBodyProps {

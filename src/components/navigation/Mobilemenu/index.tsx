@@ -2,39 +2,56 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { ChevronRight } from '../../icons/ChevronRight'
 import { navItems } from '../sections'
 
 const Wrapper = styled.nav`
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: ${({ theme }) => theme.modal.overlay.backgroundColor};
+  display: block;
+  height: calc(100vh - ${({ theme }) => theme.header.height});
+  left: 0;
+  position: fixed;
+  top: ${({ theme }) => theme.header.height};
+  width: 100%;
+  z-index: 12345;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    display: none;
+  }
 `
 
 const Inner = styled.div`
-  background-color: #fff;
-  box-shadow: 0 3px 9px -5px rgba(212, 213, 211, 0.8);
+  background-color: ${({ theme }) => theme.mainBackground};
+  border-top: 1px solid ${({ theme }) => theme.border};
+  box-shadow: 0 20px 25px 0 rgb(0 34 73 / 40%);
 `
 
 const Item = styled(NavLink)`
   align-items: center;
-  background-color: #fff;
-  border-bottom: 1px solid #000;
-  color: #000;
+  background-color: ${({ theme }) => theme.mainBackground};
+  border-bottom: 1px solid ${({ theme }) => theme.border};
+  color: ${({ theme }) => theme.text1};
   display: flex;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 400;
-  height: 44px;
-  justify-content: flex-start;
-  line-height: 1;
-  padding: 0 10px;
+  height: 42px;
+  justify-content: space-between;
+  line-height: 1.2;
+  padding: 0 14px;
   text-decoration: none;
-  text-transform: uppercase;
   transition: all 0.1s linear;
 
   &.active {
+    color: ${({ theme }) => theme.primary1};
+
+    .fill {
+      fill: ${({ theme }) => theme.primary1};
+    }
   }
 
   &.active:active,
   &:active {
-    color: #fff;
+    color: ${({ theme }) => theme.primary1};
     opacity: 0.5;
   }
 `
@@ -56,10 +73,15 @@ export const Mobilemenu: React.FC<Props> = (props) => {
   return (
     <Wrapper onClick={onCloseDelay} {...restProps}>
       <Inner>
+        <Item activeClassName="active" to={'/start'}>
+          <span>Home</span>
+          <ChevronRight />
+        </Item>
         {navItems.map((item, index) => {
           return (
             <Item activeClassName="active" key={index} to={item.url}>
-              {item.title}
+              <span>{item.title}</span>
+              <ChevronRight />
             </Item>
           )
         })}

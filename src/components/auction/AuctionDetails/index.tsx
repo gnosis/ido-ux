@@ -21,21 +21,59 @@ import { AuctionTimer } from '../AuctionTimer'
 const Wrapper = styled(BaseCard)`
   align-items: center;
   display: grid;
-  grid-template-columns: 1fr 3px 1fr 154px 1fr 3px 1fr;
-  margin: 0 0 50px;
+  margin: 0 0 28px;
   max-width: 100%;
   min-height: 130px;
+  grid-template-columns: 1fr 3px 1fr;
+  grid-template-areas:
+    'top top top'
+    'col1 sep1 col2'
+    'col3 sep2 col4';
+  padding-bottom: 20px;
+  row-gap: 15px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-template-areas: none;
+    grid-template-columns: 1fr 3px 1fr 154px 1fr 3px 1fr;
+    padding-bottom: 0;
+    margin: 0 0 50px;
+  }
 `
 
 const Cell = styled(KeyValue)`
-  padding: 0 10px;
-
-  &:first-child {
-    padding-left: 0;
+  &.col1 {
+    grid-area: col1;
   }
 
-  &:last-child {
-    padding-right: 0;
+  &.col2 {
+    grid-area: col2;
+  }
+
+  &.col3 {
+    grid-area: col3;
+  }
+
+  &.col4 {
+    grid-area: col4;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    padding: 0 10px;
+
+    &.col1,
+    &.col2,
+    &.col3,
+    &.col4 {
+      grid-area: unset;
+    }
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
   }
 `
 
@@ -44,12 +82,34 @@ const Break = styled.div`
   border-radius: 3px;
   min-height: 50px;
   width: 3px;
+
+  &.sep1 {
+    grid-area: sep1;
+  }
+  &.sep2 {
+    grid-area: sep2;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    &.sep1,
+    &.sep2 {
+      grid-area: unset;
+    }
+  }
 `
 
 const TimerWrapper = styled.div`
+  grid-area: top;
+  margin: -65px auto 15px;
   max-height: 130px;
   position: relative;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-area: unset;
+    margin: 0;
+  }
 `
+
 interface AuctionDetailsProps {
   auctionIdentifier: AuctionIdentifier
   auctionState: AuctionState
@@ -112,6 +172,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
   return (
     <Wrapper noPadding>
       <Cell
+        className="col1"
         itemKey={
           <>
             <span>{titlePrice}</span>
@@ -125,8 +186,9 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         }
         itemValue={clearingPriceDisplay ? clearingPriceDisplay : '-'}
       />
-      <Break />
+      <Break className="sep1" />
       <Cell
+        className="col2"
         itemKey={
           <>
             <span>Bidding with</span>
@@ -154,10 +216,11 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
           )
         }
       />
-      <TimerWrapper>
+      <TimerWrapper className="top">
         <AuctionTimer auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
       </TimerWrapper>
       <Cell
+        className="col3"
         itemKey={
           <>
             <span>Total auctioned</span>
@@ -187,9 +250,9 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
           )
         }
       />
-
-      <Break />
+      <Break className="sep2" />
       <Cell
+        className="col4"
         itemKey={
           <>
             <span>Min Sell Price</span>

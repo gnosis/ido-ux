@@ -25,10 +25,14 @@ const Chevron = styled(ChevronRightBig)`
 `
 
 const Featured = styled(FeaturedAuctions)`
-  margin-top: 40px;
+  margin-top: 20px;
 
   .featuredAuctionsTitle {
     margin-bottom: 25px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-top: 40px;
   }
 `
 

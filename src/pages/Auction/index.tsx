@@ -18,6 +18,19 @@ import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
+  margin-top: 10px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-top: 40px;
+  }
+`
+
+const SubTitleWrapperStyled = styled(SubTitleWrapper)`
+  margin-bottom: 110px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-bottom: 40px;
+  }
 `
 
 const AuctionId = styled.span`
@@ -110,7 +123,7 @@ const Auction: React.FC<Props> = (props) => {
       {!isLoading && !invalidAuction && (
         <>
           <Title>Auction Details</Title>
-          <SubTitleWrapper>
+          <SubTitleWrapperStyled>
             <SubTitle>
               <Network>
                 <NetworkIconStyled />
@@ -119,7 +132,7 @@ const Auction: React.FC<Props> = (props) => {
               <AuctionId>Auction Id #{auctionIdentifier.auctionId}</AuctionId>
             </SubTitle>
             <CopyButton copyValue={url} title="Copy URL" />
-          </SubTitleWrapper>
+          </SubTitleWrapperStyled>
           <AuctionDetails
             auctionIdentifier={auctionIdentifier}
             auctionState={derivedAuctionInfo?.auctionState}
