@@ -11,7 +11,7 @@ import { TransactionDetails, TransactionState } from './reducer'
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
   response: TransactionResponse,
-  customData?: { summary?: string; approvalOfToken?: string },
+  customData?: { summary?: string; approval?: { tokenAddress: string; spender: string } },
 ) => void {
   const { account, chainId } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
@@ -19,7 +19,10 @@ export function useTransactionAdder(): (
   return useCallback(
     (
       response: TransactionResponse,
-      { approvalOfToken, summary }: { summary?: string; approvalOfToken?: string } = {},
+      {
+        approval,
+        summary,
+      }: { summary?: string; approval?: { tokenAddress: string; spender: string } } = {},
     ) => {
       if (!account) return
       if (!chainId) return
@@ -33,7 +36,7 @@ export function useTransactionAdder(): (
           hash,
           from: account,
           chainId,
-          approvalOfToken,
+          approval,
           summary,
         }),
       )
@@ -72,16 +75,35 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   return transactionsFilteredByConnectedAccount
 }
 
+/**
+ * Returns whether a transaction happened in the last day (86400 seconds * 1000 milliseconds / second)
+ * @param tx to check for recency
+ */
+export function isTransactionRecent(tx: TransactionDetails): boolean {
+  return new Date().getTime() - tx.addedTime < 86_400_000
+}
+
 // returns whether a token has a pending approval transaction
-export function useHasPendingApproval(tokenAddress?: string): boolean {
+export function useHasPendingApproval(tokenAddress?: string, spender?: string): boolean {
   const allTransactions = useAllTransactions()
-  return typeof tokenAddress !== 'string'
-    ? false
-    : Object.keys(allTransactions).some((hash) => {
-        if (allTransactions[hash]?.receipt) {
+  return useMemo(() => {
+    return (
+      typeof tokenAddress === 'string' &&
+      typeof spender === 'string' &&
+      Object.keys(allTransactions).some((hash) => {
+        const tx = allTransactions[hash]
+        if (!tx) return false
+        if (tx.receipt) {
           return false
         } else {
-          return allTransactions[hash]?.approvalOfToken === tokenAddress
+          if (!tx.approval) return false
+          return (
+            tokenAddress === tx.approval?.tokenAddress &&
+            spender === tx.approval.spender &&
+            isTransactionRecent(tx)
+          )
         }
       })
+    )
+  }, [allTransactions, spender, tokenAddress])
 }

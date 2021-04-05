@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useAllTransactions } from '../../../state/transactions/hooks'
+import { isTransactionRecent, useAllTransactions } from '../../../state/transactions/hooks'
 import { TransactionDetails } from '../../../state/transactions/reducer'
 import Transaction from '../../common/Transaction'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -23,13 +23,9 @@ export const TransactionsModal: React.FC<Props> = (props) => {
     return b.addedTime - a.addedTime
   }
 
-  const recentTransactionsOnly = (a: TransactionDetails) => {
-    return new Date().getTime() - a.addedTime < 86_400_000
-  }
-
   const sortedRecentTransactions = React.useMemo(() => {
     const txs = Object.values(allTransactions)
-    return txs.filter(recentTransactionsOnly).sort(newTranscationsFirst)
+    return txs.filter(isTransactionRecent).sort(newTranscationsFirst)
   }, [allTransactions])
 
   const pending = sortedRecentTransactions.filter((tx) => !tx.receipt).map((tx) => tx.hash)

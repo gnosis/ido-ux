@@ -27,6 +27,10 @@ const Text = styled.div`
   line-height: 1.4;
 `
 
+const TextNoWrap = styled(Text)`
+  white-space: nowrap;
+`
+
 const Value = styled.div`
   align-items: center;
   column-gap: 10px;
@@ -80,7 +84,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
   if (sellAmount != undefined && buyAmountScaled != undefined) {
     minimumReceived = new Fraction(
       buyAmountScaled.toString(),
-      BigNumber.from(10).pow(biddingToken.decimals).toString(),
+      BigNumber.from(10).pow(auctioningToken.decimals).toString(),
     )
   }
 
@@ -92,7 +96,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         <Text>{biddingTokenDisplay} Tokens sold</Text>
         <Value>
-          <Text>{abbreviation(sellAmount, 10)}</Text>
+          <TextNoWrap>{abbreviation(sellAmount, 10)}</TextNoWrap>
           <div>
             <TokenLogo
               size="24px"
@@ -104,7 +108,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         <Text>Minimum {auctioningTokenDisplay} received</Text>
         <Value>
-          <Text>{abbreviation(minimumReceived?.toSignificant(2), 10)}</Text>
+          <TextNoWrap>{abbreviation(minimumReceived?.toSignificant(2), 10)}</TextNoWrap>
           <div>
             <TokenLogo
               size="24px"
@@ -118,7 +122,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
           Max {biddingTokenDisplay} paid per {auctioningTokenDisplay}
         </Text>
         <Value>
-          <Text>{abbreviation(price, 10)}</Text>
+          <TextNoWrap>{abbreviation(price, 10)}</TextNoWrap>
           <div>
             <DoubleLogo
               auctioningToken={{ address: auctioningToken.address, symbol: auctioningToken.symbol }}

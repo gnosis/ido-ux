@@ -71,12 +71,17 @@ const Total = styled.span`
 `
 
 const ApprovalWrapper = styled.div`
-  align-items: center;
   border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.primary1};
-  display: flex;
-  margin-bottom: 10px;
+  display: block;
+  margin-bottom: 40px;
   padding: 7px 12px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    align-items: center;
+    display: flex;
+    margin-bottom: 10px;
+  }
 `
 
 const ApprovalText = styled.p`
@@ -84,8 +89,12 @@ const ApprovalText = styled.p`
   font-size: 13px;
   font-weight: normal;
   line-height: 1.23;
-  margin: 0 25px 0 0;
+  margin: 0 0 15px 0;
   text-align: left;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin: 0 25px 0 0;
+  }
 `
 
 const ApprovalButton = styled(Button)`
@@ -94,6 +103,11 @@ const ApprovalButton = styled(Button)`
   font-weight: 600;
   height: 26px;
   padding: 0 14px;
+  width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    width: auto;
+  }
 `
 
 const PrivateWrapper = styled.div`
@@ -207,21 +221,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       })
   }
 
-  const modalBottom = (orderPlacingOnly?: boolean, cancelDate?: string) => {
-    return (
-      <SwapModalFooter
-        auctioningToken={derivedAuctionInfo?.auctioningToken}
-        biddingToken={derivedAuctionInfo?.biddingToken}
-        cancelDate={cancelDate}
-        confirmText={'Confirm'}
-        onPlaceOrder={onPlaceOrder}
-        orderPlacingOnly={orderPlacingOnly}
-        price={price}
-        sellAmount={sellAmount}
-      />
-    )
-  }
-
   const pendingText = `Placing order`
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
     derivedAuctionInfo,
@@ -332,8 +331,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ErrorRow>
                     <ErrorLock />
                     <ErrorText>
-                      New orders can&apos;t be cancelled once you confirm the transaction in the
-                      next step.
+                      New orders can&apos;t be canceled once you confirm the transaction in the next
+                      step.
                     </ErrorText>
                   </ErrorRow>
                 )}
@@ -393,7 +392,18 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       />
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
-        content={() => modalBottom(orderPlacingOnly, cancelDate)}
+        content={
+          <SwapModalFooter
+            auctioningToken={derivedAuctionInfo?.auctioningToken}
+            biddingToken={derivedAuctionInfo?.biddingToken}
+            cancelDate={cancelDate}
+            confirmText={'Confirm'}
+            onPlaceOrder={onPlaceOrder}
+            orderPlacingOnly={orderPlacingOnly}
+            price={price}
+            sellAmount={sellAmount}
+          />
+        }
         hash={txHash}
         isOpen={showConfirm}
         onDismiss={() => {

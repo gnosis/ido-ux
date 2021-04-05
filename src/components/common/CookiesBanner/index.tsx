@@ -59,18 +59,24 @@ const Link = styled(NavLink)`
 `
 
 const ButtonContainer = styled.div`
-  &.buttonContainer {
+  display: block;
+  position: relative;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     align-items: center;
     display: flex;
-    inset: auto;
     justify-content: center;
-    position: relative;
   }
 `
 
 const Labels = styled.div`
   align-items: center;
   display: flex;
+  margin-bottom: 30px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-bottom: 0;
+  }
 `
 
 const Label = styled.div<{ clickable?: boolean }>`
@@ -98,15 +104,12 @@ const CheckboxStyled = styled(Checkbox)`
 `
 
 const ButtonAccept = styled(Button)`
-  &.buttonAccept {
-    bottom: auto;
-    font-size: 18px;
-    height: 36px;
-    left: auto;
+  font-size: 18px;
+  height: 36px;
+  width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     max-width: 170px;
-    position: relative;
-    right: auto;
-    top: auto;
   }
 `
 

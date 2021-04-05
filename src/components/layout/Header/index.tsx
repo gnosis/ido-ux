@@ -34,20 +34,26 @@ const Inner = styled(InnerContainer)`
   flex-flow: row;
   flex-grow: 1;
   flex-shrink: 0;
-  height: ${(props) => props.theme.header.height};
+  height: ${({ theme }) => theme.header.height};
   justify-content: space-between;
-  padding-left: ${(props) => props.theme.layout.horizontalPadding};
-  padding-right: ${(props) => props.theme.layout.horizontalPadding};
+  padding-left: ${({ theme }) => theme.layout.horizontalPadding};
+  padding-right: ${({ theme }) => theme.layout.horizontalPadding};
 `
 
-const LogoLink = styled(HashLink)``
+const LogoLink = styled(HashLink)`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    display: block;
+  }
+`
 
 const ButtonMenuStyled = styled(ButtonMenu)`
   display: block;
   position: relative;
   z-index: 5;
 
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     display: none;
   }
 `
@@ -57,7 +63,7 @@ const ButtonConnectStyled = styled(ButtonConnect)`
   position: relative;
   z-index: 5;
 
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     margin-left: 0;
   }
 `
@@ -67,7 +73,7 @@ const UserDropdownStyled = styled(UserDropdown)`
   position: relative;
   z-index: 5;
 
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     margin-left: 0;
   }
 `
@@ -75,23 +81,9 @@ const UserDropdownStyled = styled(UserDropdown)`
 const Menu = styled(Mainmenu)`
   display: none;
 
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     display: flex;
     margin-left: auto;
-  }
-`
-
-const MobilemenuStyled = styled(Mobilemenu)`
-  display: block;
-  height: calc(100vh - ${(props) => props.theme.header.height});
-  left: 0;
-  position: fixed;
-  top: ${(props) => props.theme.header.height};
-  width: 100%;
-  z-index: 12345;
-
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
-    display: none;
   }
 `
 
@@ -156,8 +148,8 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
     <>
       <Wrapper className="siteHeader" {...restProps}>
         <Inner>
-          <ButtonMenuStyled onClick={mobileMenuToggle} />
-          {mobileMenuVisible && <MobilemenuStyled onClose={() => setMobileMenuVisible(false)} />}
+          <ButtonMenuStyled className={mobileMenuVisible && 'active'} onClick={mobileMenuToggle} />
+          {mobileMenuVisible && <Mobilemenu onClose={() => setMobileMenuVisible(false)} />}
           <LogoLink className="logoLink" to="/#topAnchor">
             <Logo />
           </LogoLink>
@@ -169,7 +161,7 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
               <Tooltip id="wrongNetwork" text={`Supported networks are: ${chainNamesFormatted}`} />
             </Error>
           )}
-          {isConnected && !chainMismatch && <UserDropdownStyled />}
+          {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}
         </Inner>
       </Wrapper>
       <WalletModal />

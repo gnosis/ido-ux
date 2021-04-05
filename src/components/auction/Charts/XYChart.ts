@@ -52,10 +52,14 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const numberFormatter = new am4core.NumberFormatter()
   numberFormatter.numberFormat = '#.00a'
   numberFormatter.bigNumberPrefixes = [
-    { number: 1e4, suffix: 'K' }, // Use K only with value greater than 9999.00
-    { number: 1e6, suffix: 'M' },
-    { number: 1e9, suffix: 'B' },
-    { number: 1e12, suffix: 'T' },
+    { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
+    { number: 1e6, suffix: 'M' }, // Million
+    { number: 1e9, suffix: 'B' }, // Billion
+    { number: 1e12, suffix: 'T' }, // Trillion
+    { number: 1e15, suffix: 'P' }, // Quadrillion
+    { number: 1e18, suffix: 'E' }, // Quintillion
+    { number: 1e21, suffix: 'Z' }, // Sextillion
+    { number: 1e24, suffix: 'Y' }, // Septillion
   ]
 
   volumeAxis.numberFormatter = numberFormatter
@@ -104,7 +108,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   }
 
   // Dotted white line -> shows the Current price, which is the closing price of the auction if
-  // no more bids are submitted or canceled and the auction ends
+  // no more bids are submitted or cancelled and the auction ends
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
@@ -115,7 +119,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.fillOpacity = 0.1
   priceSeries.dummyData = {
     description:
-      'Shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends',
+      'Shows the Current price, which is the closing price of the auction if no more bids are submitted or cancelled and the auction ends',
   }
 
   // Add cursor

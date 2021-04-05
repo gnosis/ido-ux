@@ -5,11 +5,11 @@ import styled from 'styled-components'
 import { Web3Provider } from '@ethersproject/providers'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
-import { isMobile } from 'react-device-detect'
+// import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
 import MetamaskIcon from '../../../assets/images/metamask.png'
-import { fortmatic, injected, portis, walletconnect } from '../../../connectors'
+import { fortmatic, injected, walletconnect } from '../../../connectors'
 import { OVERLAY_READY } from '../../../connectors/Fortmatic'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
@@ -181,27 +181,27 @@ const WalletModal: React.FC = () => {
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
 
-      if (isMobile) {
-        if (option.connector === portis) {
-          return null
-        }
+      // if (isMobile) {
+      //   if (option.connector === portis) {
+      //     return null
+      //   }
 
-        if (!window.web3 && !window.ethereum && option.mobile) {
-          return (
-            <Option
-              disabled={!termsAccepted}
-              icon={option.icon}
-              key={key}
-              link={option.href}
-              onClick={() => {
-                option.connector !== connector && !option.href && tryActivation(option.connector)
-              }}
-              text={option.name}
-            />
-          )
-        }
-        return null
-      }
+      //   if (!window.web3 && !window.ethereum && option.mobile) {
+      //     return (
+      //       <Option
+      //         disabled={!termsAccepted}
+      //         icon={option.icon}
+      //         key={key}
+      //         link={option.href}
+      //         onClick={() => {
+      //           option.connector !== connector && !option.href && tryActivation(option.connector)
+      //         }}
+      //         text={option.name}
+      //       />
+      //     )
+      //   }
+      //   return null
+      // }
 
       if (option.connector === injected) {
         if (!(window.web3 || window.ethereum)) {
@@ -226,21 +226,21 @@ const WalletModal: React.FC = () => {
       }
 
       return (
-        !isMobile &&
-        !option.mobileOnly && (
-          <Option
-            disabled={!termsAccepted}
-            icon={option.icon}
-            key={key}
-            link={option.href}
-            onClick={() => {
-              option.connector === connector
-                ? setWalletView(WALLET_VIEWS.ACCOUNT)
-                : !option.href && tryActivation(option.connector)
-            }}
-            text={option.name}
-          />
-        )
+        // !isMobile &&
+        // !option.mobileOnly && (
+        <Option
+          disabled={!termsAccepted}
+          icon={option.icon}
+          key={key}
+          link={option.href}
+          onClick={() => {
+            option.connector === connector
+              ? setWalletView(WALLET_VIEWS.ACCOUNT)
+              : !option.href && tryActivation(option.connector)
+          }}
+          text={option.name}
+        />
+        // )
       )
     })
   }

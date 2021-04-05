@@ -12,7 +12,7 @@ import { Delete } from '../../icons/Delete'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { Magnifier } from '../../icons/Magnifier'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { Cell, CellRowCSS, CellRowProps } from '../../pureStyledComponents/Cell'
+import { Cell, CellRowCSS, CellRowProps, getColumns } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { TexfieldPartsCSS, TextfieldCSS } from '../../pureStyledComponents/Textfield'
@@ -33,17 +33,46 @@ const SectionTitle = styled(PageTitle)`
 const RowLink = styled(NavLink)<CellRowProps>`
   ${CellRowCSS}
   cursor: pointer;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding-left: 10px;
+  padding-right: 10px;
+  row-gap: 15px;
 
   &:first-child {
     padding-top: 17px;
   }
 
-  &:last-child {
+  &:last-child,
+  &:last-of-type {
     padding-bottom: 17px;
   }
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-template-columns: ${(props) => getColumns(props.columns)};
+    padding-left: 15px;
+    padding-right: 30px;
+  }
+`
+
+const TableCell = styled(Cell)`
+  &:last-child {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    &:last-child {
+      position: unset;
+      right: auto;
+      top: auto;
+      transform: none;
+    }
   }
 `
 
@@ -55,16 +84,21 @@ const KeyValueStyled = styled(KeyValue)`
 `
 
 const TableControls = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 28px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
 `
 
 const SearchWrapper = styled.div`
   ${TextfieldCSS};
   align-items: center;
   display: flex;
+  margin-bottom: 12px;
   max-width: 100%;
   padding-right: 0;
   width: 565px;
@@ -73,6 +107,10 @@ const SearchWrapper = styled.div`
     background-color: ${({ theme }) => theme.textField.backgroundColorActive};
     border-color: ${({ theme }) => (props) =>
       props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-bottom: 0;
   }
 `
 
@@ -126,6 +164,7 @@ const PaginationTextCSS = css`
   color: ${({ theme }) => theme.text1};
   font-size: 13px;
   font-weight: normal;
+  white-space: nowrap;
 `
 
 const PaginationText = styled.span`
@@ -150,6 +189,7 @@ const PaginationButton = styled.button`
   padding: 0;
   user-select: none;
   width: 25px;
+  white-space: nowrap;
 
   &:hover {
     .fill {
@@ -181,6 +221,7 @@ const DropdownPagination = styled(Dropdown)`
 const PaginationDropdownButton = styled.div`
   ${PaginationTextCSS}
   cursor: pointer;
+  white-space: nowrap;
 `
 
 const PaginationItem = styled.div`
@@ -193,6 +234,7 @@ const PaginationItem = styled.div`
   height: 32px;
   line-height: 1.2;
   padding: 0 10px;
+  white-space: nowrap;
 
   &:hover {
     background-color: ${(props) => props.theme.dropdown.item.backgroundColorHover};
@@ -484,14 +526,14 @@ const AllAuctions = (props: Props) => {
                   {row.cells.map(
                     (cell, j) =>
                       cell.render('show') && (
-                        <Cell key={j}>
+                        <TableCell key={j}>
                           <KeyValueStyled
                             align={cell.render('align')}
                             itemKey={cell.render('Header')}
                             itemValue={cell.render('Cell')}
                             style={cell.render('style')}
                           />
-                        </Cell>
+                        </TableCell>
                       ),
                   )}
                 </RowLink>

@@ -58,7 +58,10 @@ const DropdownButton = styled.div`
 const Address = styled.div`
   align-items: center;
   display: flex;
-  margin-top: 10px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-top: 10px;
+  }
 `
 
 const AddressText = styled.div`
@@ -162,7 +165,12 @@ const UserDropdownButton = () => {
   )
 }
 
-export const UserDropdown: React.FC = (props) => {
+interface Props {
+  disabled?: boolean
+}
+
+export const UserDropdown: React.FC<Props> = (props) => {
+  const { disabled = false, ...restProps } = props
   const [transactionsModalVisible, setTransactionsModalVisible] = React.useState(false)
   const [darkMode, toggleDarkMode] = useDarkModeManager()
 
@@ -248,10 +256,11 @@ export const UserDropdown: React.FC = (props) => {
       <Wrapper
         activeItemHighlight={false}
         closeOnClick={false}
+        disabled={disabled}
         dropdownButtonContent={<UserDropdownButton />}
         dropdownPosition={DropdownPosition.right}
         items={headerDropdownItems}
-        {...props}
+        {...restProps}
       />
       <TransactionsModal
         isOpen={transactionsModalVisible}

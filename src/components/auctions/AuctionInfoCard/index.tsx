@@ -268,7 +268,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         <Cell>
           <Subtitle>Current price</Subtitle>
           <Text>
-            {abbreviation(auctionInfo.order.price.toFixed(2))}{' '}
+            {abbreviation(auctionInfo.currentClearingPrice.toFixed(2))}{' '}
             {` ` + auctionInfo.symbolBiddingToken} per {auctionInfo.symbolAuctioningToken}
           </Text>
         </Cell>

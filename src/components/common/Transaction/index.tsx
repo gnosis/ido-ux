@@ -16,9 +16,9 @@ const Wrapper = styled(ExternalLink)`
   border: solid 1px ${({ theme }) => theme.primary2};
   cursor: pointer;
   display: flex;
-  height: 38px;
   justify-content: flex-start;
   margin: 0 0 12px;
+  min-height: 38px;
   padding: 8px 12px;
   text-decoration: none;
   width: 100%;
