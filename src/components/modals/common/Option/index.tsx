@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ExternalLink } from '../../../../theme'
-
 const Wrapper = styled.button<{ disabled?: boolean }>`
   align-items: center;
   background-color: transparent;
@@ -64,23 +62,15 @@ const Image = styled.img`
 interface Props {
   disabled?: boolean
   icon: string
-  link?: Maybe<string>
   onClick?: null | (() => void)
   subText?: Maybe<React.ReactNode>
   text: React.ReactNode
 }
 
 const Option: React.FC<Props> = (props) => {
-  const {
-    disabled = false,
-    icon,
-    link = null,
-    onClick = null,
-    subText = null,
-    text,
-    ...restProps
-  } = props
-  const content = (
+  const { disabled = false, icon, onClick = null, subText = null, text, ...restProps } = props
+
+  return (
     <Wrapper disabled={disabled} onClick={onClick} {...restProps}>
       <IconWrapper>
         <Image alt={'Icon'} src={icon} />
@@ -91,8 +81,6 @@ const Option: React.FC<Props> = (props) => {
       </TextWrapper>
     </Wrapper>
   )
-
-  return link ? <ExternalLink href={link}>{content}</ExternalLink> : content
 }
 
 export default Option
