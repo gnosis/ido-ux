@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Token } from 'uniswap-xdai-sdk'
 
 import { Button } from '../../../buttons/Button'
 import { AlertIcon } from '../../../icons/AlertIcon'
@@ -13,10 +12,8 @@ const ActionButton = styled(Button)`
 `
 
 interface Props {
-  orderId?: string
-  onCancelOrder: () => any
-  biddingToken?: Token
   confirmText: string
+  onCancelOrder: () => any
 }
 
 const CancelModalFooter: React.FC<Props> = (props) => {

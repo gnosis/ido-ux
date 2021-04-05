@@ -37,7 +37,7 @@ const Link = styled(ExternalLink)`
 
 interface ConfirmationModalProps {
   attemptingTxn: boolean
-  content: () => React.ReactChild
+  content: React.ReactElement
   hash: string
   isOpen: boolean
   onDismiss: () => void
@@ -73,7 +73,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = (props) => {
     >
       <ModalTitle onClose={onDismiss} title={isWorking || isFinished ? '' : title} />
       <Content>
-        {!attemptingTxn && <>{content()}</>}
+        {!attemptingTxn && <>{content}</>}
         {isWorking && (
           <>
             <LoadingWrapper

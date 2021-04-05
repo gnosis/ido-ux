@@ -138,17 +138,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     cancelOrderCallback,
   ])
 
-  const modalBottom = () => {
-    return (
-      <CancelModalFooter
-        biddingToken={derivedAuctionInfo?.biddingToken}
-        confirmText={'Cancel Order'}
-        onCancelOrder={onCancelOrder}
-        orderId={orderId}
-      />
-    )
-  }
-
   const hasLastCancellationDate =
     derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
     derivedAuctionInfo?.orderCancellationEndDate !== 0
@@ -181,16 +170,16 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   return (
     <Wrapper {...restProps}>
       <Title as="h2">Your Orders</Title>
-      {!orderSubmissionFinished && (hasLastCancellationDate || orderPlacingOnly) && (
+      {!ordersEmpty && !orderSubmissionFinished && (hasLastCancellationDate || orderPlacingOnly) && (
         <SubTitleWrapperStyled>
           <ErrorIcon />
           {orderPlacingOnly && (
-            <SubTitle as="h3">Orders for this auction can&apos;t be cancelled</SubTitle>
+            <SubTitle as="h3">Orders for this auction can&apos;t be canceled.</SubTitle>
           )}
           {!orderPlacingOnly && !isOrderCancellationExpired && (
             <SubTitle as="h3">
-              The order cancellation period expires on&nbsp;<strong>{cancelDateFull}</strong>. You
-              can&apos;t cancel your orders after that.
+              The order cancelation period expires on&nbsp;<strong>{cancelDateFull}</strong>. Orders
+              can&apos;t be canceled after this date.
             </SubTitle>
           )}
         </SubTitleWrapperStyled>
@@ -286,7 +275,9 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
           ))}
           <ConfirmationModal
             attemptingTxn={attemptingTxn}
-            content={modalBottom}
+            content={
+              <CancelModalFooter confirmText={'Cancel Order'} onCancelOrder={onCancelOrder} />
+            }
             hash={txHash}
             isOpen={showConfirm}
             onDismiss={() => {

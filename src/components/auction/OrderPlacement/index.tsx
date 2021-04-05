@@ -221,21 +221,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       })
   }
 
-  const modalBottom = (orderPlacingOnly?: boolean, cancelDate?: string) => {
-    return (
-      <SwapModalFooter
-        auctioningToken={derivedAuctionInfo?.auctioningToken}
-        biddingToken={derivedAuctionInfo?.biddingToken}
-        cancelDate={cancelDate}
-        confirmText={'Confirm'}
-        onPlaceOrder={onPlaceOrder}
-        orderPlacingOnly={orderPlacingOnly}
-        price={price}
-        sellAmount={sellAmount}
-      />
-    )
-  }
-
   const pendingText = `Placing order`
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
     derivedAuctionInfo,
@@ -346,8 +331,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ErrorRow>
                     <ErrorLock />
                     <ErrorText>
-                      New orders can&apos;t be cancelled once you confirm the transaction in the
-                      next step.
+                      New orders can&apos;t be canceled once you confirm the transaction in the next
+                      step.
                     </ErrorText>
                   </ErrorRow>
                 )}
@@ -407,7 +392,18 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       />
       <ConfirmationModal
         attemptingTxn={attemptingTxn}
-        content={() => modalBottom(orderPlacingOnly, cancelDate)}
+        content={
+          <SwapModalFooter
+            auctioningToken={derivedAuctionInfo?.auctioningToken}
+            biddingToken={derivedAuctionInfo?.biddingToken}
+            cancelDate={cancelDate}
+            confirmText={'Confirm'}
+            onPlaceOrder={onPlaceOrder}
+            orderPlacingOnly={orderPlacingOnly}
+            price={price}
+            sellAmount={sellAmount}
+          />
+        }
         hash={txHash}
         isOpen={showConfirm}
         onDismiss={() => {

@@ -108,7 +108,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   }
 
   // Dotted white line -> shows the Current price, which is the closing price of the auction if
-  // no more bids are submitted or canceled and the auction ends
+  // no more bids are submitted or cancelled and the auction ends
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
@@ -119,7 +119,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.fillOpacity = 0.1
   priceSeries.dummyData = {
     description:
-      'Shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends',
+      'Shows the Current price, which is the closing price of the auction if no more bids are submitted or cancelled and the auction ends',
   }
 
   // Add cursor
