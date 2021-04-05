@@ -8,6 +8,8 @@ import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPla
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
@@ -104,83 +106,90 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
     [derivedAuctionInfo],
   )
 
+  const isLoading = !claimableBiddingToken || !claimableAuctioningToken
+
   return (
     <Wrapper>
-      <TokensWrapper>
-        <TokenItem>
-          <Token>
-            {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
-              <>
-                <TokenLogo
-                  size={'34px'}
-                  token={{
-                    address: derivedAuctionInfo?.biddingToken.address,
-                    symbol: biddingTokenDisplay,
-                  }}
-                />
-                <Text>{biddingTokenDisplay}</Text>
-              </>
-            ) : (
-              '-'
-            )}
-          </Token>
-          <Text>
-            {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
-          </Text>
-        </TokenItem>
-        <TokenItem>
-          <Token>
-            {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
-              <>
-                <TokenLogo
-                  size={'34px'}
-                  token={{
-                    address: derivedAuctionInfo?.auctioningToken.address,
-                    symbol: auctioningTokenDisplay,
-                  }}
-                />
-                <Text>{auctioningTokenDisplay}</Text>
-              </>
-            ) : (
-              '-'
-            )}
-          </Token>
-          <Text>
-            {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
-          </Text>
-        </TokenItem>
-      </TokensWrapper>
-      {!isValid && account && (
-        <ErrorWrapper>
-          <ErrorRow>
-            <ErrorInfo />
-            <ErrorText>{error}</ErrorText>
-          </ErrorRow>
-        </ErrorWrapper>
+      {isLoading && <InlineLoading size={SpinnerSize.small} />}
+      {!isLoading && (
+        <>
+          <TokensWrapper>
+            <TokenItem>
+              <Token>
+                {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
+                  <>
+                    <TokenLogo
+                      size={'34px'}
+                      token={{
+                        address: derivedAuctionInfo?.biddingToken.address,
+                        symbol: biddingTokenDisplay,
+                      }}
+                    />
+                    <Text>{biddingTokenDisplay}</Text>
+                  </>
+                ) : (
+                  '-'
+                )}
+              </Token>
+              <Text>
+                {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
+              </Text>
+            </TokenItem>
+            <TokenItem>
+              <Token>
+                {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
+                  <>
+                    <TokenLogo
+                      size={'34px'}
+                      token={{
+                        address: derivedAuctionInfo?.auctioningToken.address,
+                        symbol: auctioningTokenDisplay,
+                      }}
+                    />
+                    <Text>{auctioningTokenDisplay}</Text>
+                  </>
+                ) : (
+                  '-'
+                )}
+              </Token>
+              <Text>
+                {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
+              </Text>
+            </TokenItem>
+          </TokensWrapper>
+          {!isValid && account && (
+            <ErrorWrapper>
+              <ErrorRow>
+                <ErrorInfo />
+                <ErrorText>{error}</ErrorText>
+              </ErrorRow>
+            </ErrorWrapper>
+          )}
+          {!account ? (
+            <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+          ) : (
+            <ActionButton
+              disabled={!isValid}
+              onClick={() => {
+                setShowConfirm(true)
+                onClaimOrder()
+              }}
+            >
+              Claim
+            </ActionButton>
+          )}
+          <ClaimConfirmationModal
+            hash={txHash}
+            isOpen={showConfirm}
+            onDismiss={() => {
+              resetModal()
+              setShowConfirm(false)
+            }}
+            pendingConfirmation={pendingConfirmation}
+            pendingText={pendingText}
+          />
+        </>
       )}
-      {!account ? (
-        <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-      ) : (
-        <ActionButton
-          disabled={!isValid}
-          onClick={() => {
-            setShowConfirm(true)
-            onClaimOrder()
-          }}
-        >
-          Claim
-        </ActionButton>
-      )}
-      <ClaimConfirmationModal
-        hash={txHash}
-        isOpen={showConfirm}
-        onDismiss={() => {
-          resetModal()
-          setShowConfirm(false)
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={pendingText}
-      />
     </Wrapper>
   )
 }
