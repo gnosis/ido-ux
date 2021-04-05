@@ -74,7 +74,7 @@ export function useCancelOrderCallback(
           return response.hash
         })
         .catch((error) => {
-          logger.error(`Cancellation or gas estimate failed`, error)
+          logger.error(`Cancelation or gas estimate failed`, error)
           throw error
         })
     }
