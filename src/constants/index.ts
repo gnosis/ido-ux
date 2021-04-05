@@ -45,52 +45,6 @@ const MAINNET_WALLETS = {
   },
 }
 
-// const EXTRA_WALLETS = {
-//   WALLET_LINK: {
-//     connector: walletlink,
-//     name: 'Coinbase Wallet',
-//     icon: CoinbaseWalletIcon,
-//     description: 'Use Coinbase Wallet app on mobile device',
-//     href: null,
-//     color: '#315CF5',
-//   },
-//   COINBASE_LINK: {
-//     name: 'Open in Coinbase Wallet',
-//     icon: CoinbaseWalletIcon,
-//     description: 'Open in Coinbase Wallet app.',
-//     href: 'https://go.cb-w.com/mtUDhEZPy1',
-//     color: '#315CF5',
-//     mobile: true,
-//     mobileOnly: true,
-//   },
-//   TRUST_WALLET_LINK: {
-//     name: 'Open in Trust Wallet',
-//     icon: TrustWalletIcon,
-//     description: 'iOS and Android app.',
-//     href: 'https://link.trustwallet.com/open_url?coin_id=60&url=https://uniswap.exchange/swap',
-//     color: '#1C74CC',
-//     mobile: true,
-//     mobileOnly: true,
-//   },
-//   FORTMATIC: {
-//     connector: fortmatic,
-//     name: 'Fortmatic',
-//     icon: FortmaticIcon,
-//     description: 'Login using Fortmatic hosted wallet',
-//     href: null,
-//     color: '#6748FF',
-//     mobile: true,
-//   },
-//   Portis: {
-//     connector: portis,
-//     name: 'Portis',
-//     icon: PortisIcon,
-//     description: 'Login using Portis hosted wallet',
-//     href: null,
-//     color: '#4A6C9B',
-//     mobile: true,
-//   },
-// }
 export const SUPPORTED_WALLETS = MAINNET_WALLETS
 
 export const NetworkContextName = 'NETWORK'
