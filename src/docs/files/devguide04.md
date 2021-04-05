@@ -5,7 +5,7 @@ In Gnosis Auction, there are two types of participants: one seller (EOA or smart
 #### 1. The seller sets six parameters:
 
 - Auctioning-token:  refers to the token you want to sell in the auction, with the token address as a string.
-- Bidding-token: refers to the token the bidders will use to bid on the auctioned token (e.g. USDC, ETH, or DAI), with the token address as a string. Multiple bidding tokens can be specified.
+- Bidding-token: refers to the token the bidders will use to bid on the auctioned token (e.g. USDC, ETH, or DAI), with the token address as a string.
 - Sell-amount: refers to the amount of tokens that you will sell, with the amount as an integer. 
 - Min-buy-amount: refers to the minimum amount of buy tokens you are willing to accept. The minimum sell price of the auction is calculated by dividing the sell-amount/min-buy-amount.
 - Duration: refers to how long is the auction going to last for. 
