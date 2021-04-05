@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   width: 400px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    width: auto;
+    width: 100%;
   }
 `
 
