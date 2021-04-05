@@ -51,6 +51,9 @@ const MAINNET_WALLETS = {
   },
 }
 
+// TODO This wallets are unsupported temporarily.
+// Add again as SUPPORTED_WALLETS = [...EXTRA_WALLETS, ...MAIN_WALLETS]
+// When the times comes.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EXTRA_WALLETS = {
   WALLET_LINK: {
