@@ -74,18 +74,14 @@ As you can see in the image below, if you try to input a value of more tokens th
 <img src="/assets/GA_SafeApp_23.png" alt="drawing" width="500"/>
 <img src="/assets/GA_SafeApp_24.png" alt="drawing" width="500"/>
 
-16. In the event that you would like the auction to have the possibility of being atomically closed, you will need to check on the Atomic Closure Allowance box. Allowing the auction to be closed atomically will allow the last bid to be submitted along with the price, which can lead to atomic arbitrage. 
+16. **Optional Step:** In the event that you would like the auction to have the possibility of the auction being atomically closed, you will need to check on the Atomic Closure Allowance box. Allowing the auction to be closed atomically will allow the last bid to be submitted along with the price, which can lead to atomic arbitrage. 
 
 <img src="/assets/GA_SafeApp_25.png" alt="drawing" width="500"/>
 
-17. In case you would like to create a whitelist for the auction, you need to deploy an allow list contract. Once you have done that, you have to check in the box. The interface will prompt you to include the ninth parameter (optional), which is the contract address of the allowlist. With this contract address, auctioneers can restrict the auction participants to anyone who is included in such a list. 
+17. **Optional Step:** In case you would like to create a whitelist for the auction, you need to deploy an Allow List contract. Once you have done that, you have to check in the box. The interface will prompt you to include the ninth parameter, which is the signing address (Public Key) that has been used to deploy the Allow List contract that holds the addresses of the auction’s valid participants. With an Allow List contract, auctioneers can restrict the auction participants to anyone who is included in such a list. 
 
 <img src="/assets/GA_SafeApp_26.png" alt="drawing" width="500"/>
 <img src="/assets/GA_SafeApp_27.png" alt="drawing" width="500"/>
-
-18. The tenth parameter (Optional) you need to fill in is the signing address (Public Key) that has been used to deploy the Allow List contract that holds the addresses of the auction’s valid participants. 
-
-<img src="/assets/GA_SafeApp_28.png" alt="drawing" width="500"/>
 <img src="/assets/GA_SafeApp_29.png" alt="drawing" width="500"/>
 
 19. Finally, you need to click on the “Build transaction” button to deploy the auction.
