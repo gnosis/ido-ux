@@ -52,6 +52,7 @@ export function usePlaceOrderCallback(
   ]).result
   return useMemo(() => {
     let previousOrder: string
+    let gasPrice: BigNumber = BigNumber.from(20000000000) // 20 gwei
 
     return async function onPlaceOrder() {
       if (!chainId || !library || !account || !userId || !signature) {
@@ -109,10 +110,22 @@ export function usePlaceOrderCallback(
       const biddingTokenDisplay = getTokenDisplay(biddingToken)
       const auctioningTokenDisplay = getTokenDisplay(auctioningToken)
 
+      try {
+        if (ChainId.XDAI === chainId) {
+          gasPrice = BigNumber.from(1000000000) // 1 gwei
+        } else {
+          // get gas price from web3 provider.
+          gasPrice = await library?.getGasPrice()
+        }
+      } catch (error) {
+        logger.error('Error trying to get gas price: ', error)
+      }
+
       return estimate(...args, value ? { value } : {})
         .then((estimatedGasLimit) =>
           method(...args, {
             ...(value ? { value } : {}),
+            gasPrice: gasPrice,
             gasLimit: calculateGasMargin(estimatedGasLimit),
           }),
         )
