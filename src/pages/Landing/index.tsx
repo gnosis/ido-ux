@@ -201,8 +201,8 @@ export const Landing: React.FC = () => {
             <TextGradient>to launch assets on Ethereum</TextGradient>
           </WelcomeTitle>
           <WelcomeText>
-            Gnosis Auction is a protocol that enables
-            <br /> anyone to auction-off assets with fair pricing.
+            Gnosis Auction is a platform for conducting
+            <br /> fair, transparent, and decentralized token price discovery.
           </WelcomeText>
         </WelcomeTextBlock>
         <AuctionsBlock>
