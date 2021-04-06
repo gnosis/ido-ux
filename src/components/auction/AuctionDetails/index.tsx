@@ -150,8 +150,8 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
 
     return clearingPriceNumber
       ? `${abbreviation(clearingPriceNumber)} ${getTokenDisplay(
-          derivedAuctionInfo?.biddingToken,
-        )}/${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}`
+          derivedAuctionInfo?.auctioningToken,
+        )}/${getTokenDisplay(derivedAuctionInfo?.biddingToken)}`
       : '-'
   }, [derivedAuctionInfo?.auctioningToken, derivedAuctionInfo?.biddingToken, clearingPriceInfo])
 
@@ -266,7 +266,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
           <>
             {initialPriceToDisplay ? abbreviation(initialPriceToDisplay?.toSignificant(2)) : ' - '}
             {initialPriceToDisplay && auctioningTokenDisplay
-              ? ` ${biddingTokenDisplay}/${auctioningTokenDisplay}`
+              ? ` ${auctioningTokenDisplay}/${biddingTokenDisplay}`
               : '-'}
           </>
         }
