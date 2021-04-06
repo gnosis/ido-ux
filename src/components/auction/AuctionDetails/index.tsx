@@ -65,6 +65,7 @@ const Cell = styled(KeyValue)`
   .itemValue {
     flex-direction: column;
     flex-grow: 0;
+    margin-bottom: 0;
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
@@ -89,7 +90,8 @@ const Cell = styled(KeyValue)`
     }
 
     .itemValue {
-      flex-direction: column;
+      flex-direction: row;
+      margin-bottom: 2px;
     }
   }
 `
@@ -159,6 +161,7 @@ const TokenValue = styled.span`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     font-size: 18px;
+    margin-bottom: 0;
     margin-right: 8px;
   }
 `
