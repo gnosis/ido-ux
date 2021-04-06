@@ -39,17 +39,12 @@ const Item = styled(NavLink)`
   }
 `
 
-const IconWrapper = styled.span`
-  margin-right: 8px;
-`
-
 export const Mainmenu: React.FC = (props) => {
   return (
     <Wrapper {...props}>
       {navItems.map((item, index) => {
         return (
           <Item activeClassName="active" key={index} to={item.url}>
-            {item.icon && <IconWrapper>{item.icon}</IconWrapper>}
             {item.title}
           </Item>
         )
