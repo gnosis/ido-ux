@@ -135,7 +135,7 @@ const TimerWrapper = styled.div`
 const TokenSymbol = styled.span`
   align-items: center;
   display: flex;
-  font-size: 16px;
+  font-size: 15px;
   justify-content: center;
 
   & > * {
@@ -208,7 +208,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
       <>
         <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
         <TokenSymbol>
-          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)}/
+          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per{' '}
           {getTokenDisplay(derivedAuctionInfo?.biddingToken)}
         </TokenSymbol>
       </>
@@ -329,7 +329,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
             </TokenValue>
             <TokenSymbol>
               {initialPriceToDisplay && auctioningTokenDisplay
-                ? ` ${auctioningTokenDisplay}/${biddingTokenDisplay}`
+                ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
                 : '-'}
             </TokenSymbol>
           </>
