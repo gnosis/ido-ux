@@ -47,11 +47,11 @@ jobs:
         run: yarn build
         env:
           REACT_APP_CHAIN_ID: 4
-          REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847
+          REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-v1-api-rinkeby.dev.gnosisdev.com/
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
-          REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847
+          REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-v1-api-mainnet.dev.gnosisdev.com/
       - name: Get PR number
         uses: jwalton/gh-find-current-pr@v1
