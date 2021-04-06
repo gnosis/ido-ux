@@ -25,12 +25,16 @@ const Wrapper = styled(HashLink)`
   flex-flow: column;
   justify-content: space-between;
   min-height: 290px;
-  padding: 12px 18px;
+  padding: 12px;
   text-decoration: none;
   transition: all 0.15s linear;
 
   &:hover {
     box-shadow: 10px -10px 24px 0 rgba(0, 34, 73, 0.7);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    padding: 12px 18px;
   }
 `
 
@@ -43,11 +47,16 @@ const Top = styled.span`
 
 const Tokens = styled.span`
   color: ${({ theme }) => theme.text1};
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
   text-transform: uppercase;
+  white-space: nowrap;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    font-size: 24px;
+  }
 `
 
 const Badge = styled.span`
@@ -57,7 +66,12 @@ const Badge = styled.span`
   color: ${({ theme }) => theme.primary1};
   display: flex;
   height: 34px;
-  padding: 0 18px;
+  padding: 0 12px;
+  white-space: nowrap;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    padding: 0 18px;
+  }
 `
 
 const Blinker = keyframes`
