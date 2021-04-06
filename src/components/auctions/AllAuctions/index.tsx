@@ -32,10 +32,11 @@ const SectionTitle = styled(PageTitle)`
 
 const RowLink = styled(NavLink)<CellRowProps>`
   ${CellRowCSS}
+  column-gap: 6px;
   cursor: pointer;
   grid-template-columns: 1fr 1fr 1fr;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 8px;
+  padding-right: 25px;
   row-gap: 15px;
 
   &:first-child {
@@ -52,16 +53,17 @@ const RowLink = styled(NavLink)<CellRowProps>`
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    column-gap: 10px;
     grid-template-columns: ${(props) => getColumns(props.columns)};
     padding-left: 15px;
-    padding-right: 30px;
+    padding-right: 15px;
   }
 `
 
 const TableCell = styled(Cell)`
   &:last-child {
     position: absolute;
-    right: 0;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
   }
