@@ -34,9 +34,9 @@ const RowLink = styled(NavLink)<CellRowProps>`
   ${CellRowCSS}
   column-gap: 6px;
   cursor: pointer;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding-left: 8px;
-  padding-right: 25px;
+  grid-template-columns: 1fr 1fr;
+  padding-left: 10px;
+  padding-right: 20px;
   row-gap: 15px;
 
   &:first-child {
@@ -63,7 +63,7 @@ const RowLink = styled(NavLink)<CellRowProps>`
 const TableCell = styled(Cell)`
   &:last-child {
     position: absolute;
-    right: 10px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
   }
@@ -157,9 +157,21 @@ const Pagination = styled.div`
   align-items: center;
   border-top: 1px solid ${({ theme }) => theme.border};
   display: flex;
-  height: 56px;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 56px;
   padding: 0 15px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+`
+
+const PaginationBlock = styled.span`
+  align-items: center;
+  display: flex;
+  justify-content: center;
 `
 
 const PaginationTextCSS = css`
@@ -176,7 +188,12 @@ const PaginationText = styled.span`
 
 const PaginationBreak = styled.span`
   ${PaginationTextCSS}
+  display: none;
   margin: 0 12px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    display: block;
+  }
 `
 
 const PaginationButton = styled.button`
@@ -186,7 +203,7 @@ const PaginationButton = styled.button`
   cursor: pointer;
   display: flex;
   justify-content: center;
-  height: 35px;
+  height: auto;
   outline: none;
   padding: 0;
   user-select: none;
@@ -207,6 +224,10 @@ const PaginationButton = styled.button`
     .fill {
       color: ${({ theme }) => theme.text1};
     }
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    height: 35px;
   }
 `
 
@@ -542,38 +563,42 @@ const AllAuctions = (props: Props) => {
               )
             })}
             <Pagination>
-              <PaginationText>Items per page</PaginationText>{' '}
-              <DropdownPagination
-                dropdownButtonContent={
-                  <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
-                }
-                dropdownDirection={DropdownDirection.upwards}
-                dropdownPosition={DropdownPosition.right}
-                items={[5, 10, 20, 30].map((pageSize) => (
-                  <PaginationItem
-                    key={pageSize}
-                    onClick={() => {
-                      setPageSize(Number(pageSize))
-                    }}
-                  >
-                    {pageSize}
-                  </PaginationItem>
-                ))}
-              />
+              <PaginationBlock>
+                <PaginationText>Items per page</PaginationText>{' '}
+                <DropdownPagination
+                  dropdownButtonContent={
+                    <PaginationDropdownButton>{pageSize} ▼</PaginationDropdownButton>
+                  }
+                  dropdownDirection={DropdownDirection.upwards}
+                  dropdownPosition={DropdownPosition.right}
+                  items={[5, 10, 20, 30].map((pageSize) => (
+                    <PaginationItem
+                      key={pageSize}
+                      onClick={() => {
+                        setPageSize(Number(pageSize))
+                      }}
+                    >
+                      {pageSize}
+                    </PaginationItem>
+                  ))}
+                />
+              </PaginationBlock>
               <PaginationBreak>|</PaginationBreak>
-              <PaginationText>
-                {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
-                {rows.length < (pageIndex + 1) * pageSize
-                  ? rows.length
-                  : (pageIndex + 1) * pageSize}{' '}
-                of {rows.length} auctions
-              </PaginationText>{' '}
-              <PaginationButton disabled={!canPreviousPage} onClick={() => previousPage()}>
-                <ChevronLeft />
-              </PaginationButton>
-              <PaginationButton disabled={!canNextPage} onClick={() => nextPage()}>
-                <ChevronRight />
-              </PaginationButton>
+              <PaginationBlock>
+                <PaginationText>
+                  {pageIndex + 1 === 1 ? 1 : pageIndex * pageSize + 1} -{' '}
+                  {rows.length < (pageIndex + 1) * pageSize
+                    ? rows.length
+                    : (pageIndex + 1) * pageSize}{' '}
+                  of {rows.length} auctions
+                </PaginationText>{' '}
+                <PaginationButton disabled={!canPreviousPage} onClick={() => previousPage()}>
+                  <ChevronLeft />
+                </PaginationButton>
+                <PaginationButton disabled={!canNextPage} onClick={() => nextPage()}>
+                  <ChevronRight />
+                </PaginationButton>
+              </PaginationBlock>
             </Pagination>
           </Table>
         </>
