@@ -18,7 +18,7 @@ Gnosis Auction’s mechanism adds few major benefits over existing approaches av
 - **Fair pricing -** All bidders will receive the same clearing price, which is determined when that auction concludes. 
 - **Order Settlement -** Auctions can settle more than 10,000 bid orders with the same settlement price.
 - **Permisionaless -** Auctions can be deployed without the need to ask for permission.
-- **Composable -**Auction setup is modular enough to satisfy many different use cases’ needs.
+- **Composable -** Auction setup is modular enough to satisfy many different use cases’ needs.
 - **Gnosis Auction is built on the proven success of past blockchain-based auction developments.**
 
 
