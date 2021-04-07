@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -8,7 +8,7 @@ import ReactGA from 'react-ga'
 import { GOOGLE_ANALYTICS_ID } from '../../../constants/config'
 import { getLogger } from '../../../utils/logger'
 import { Button } from '../../buttons/Button'
-import { CloseIcon } from '../../icons/CloseIcon'
+import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
 
 const logger = getLogger('CookiesBanner')
@@ -42,11 +42,15 @@ const Text = styled.p`
   line-height: 1.4;
   margin: 0 auto 20px;
   max-width: 100%;
-  padding: 0 20px;
+  padding: 0;
   position: relative;
   text-align: center;
   width: ${INNER_WIDTH};
   z-index: 1;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    padding: 0 20px;
+  }
 `
 
 const Link = styled(NavLink)`
@@ -106,99 +110,98 @@ const CheckboxStyled = styled(Checkbox)`
 const ButtonAccept = styled(Button)`
   font-size: 18px;
   height: 36px;
+  margin-bottom: 10px;
   width: 100%;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    max-width: 170px;
+  &:last-child {
+    margin-bottom: 0;
   }
-`
 
-const ButtonClose = styled.button`
-  align-items: center;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  outline: none;
-  padding: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: all 0.15s linear;
-  z-index: 5;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-bottom: 0;
+    margin-right: 15px;
+    max-width: 170px;
 
-  &:hover {
-    opacity: 0.5;
+    &:last-child {
+      margin-right: 0;
+    }
   }
 `
 
 const VISIBLE_COOKIES_BANNER = 'VISIBLE_COOKIES_BANNER'
-const COOKIES_FALSE = 'false'
 const ACCEPT_GOOGLE_ANALYTICS = 'ACCEPT_GOOGLE_ANALYTICS'
+const FALSE = 'false'
+const TRUE = 'true'
 
 interface Props {
-  isBannerVisible: boolean
-  onHide: () => void
+  isVisible: boolean
+  onHide?: () => void
 }
 
 export const CookiesBanner: React.FC<Props> = (props) => {
-  const { isBannerVisible, onHide } = props
+  const { isVisible, onHide, ...restProps } = props
   const storage = window.localStorage
+  const location = useLocation()
 
-  const isCookiesBannerVisible = useCallback(
-    () => !(storage.getItem(VISIBLE_COOKIES_BANNER) === COOKIES_FALSE),
+  const isBannerCookieTrue = useMemo(
+    () =>
+      !storage.getItem(VISIBLE_COOKIES_BANNER) ||
+      storage.getItem(VISIBLE_COOKIES_BANNER) === undefined ||
+      storage.getItem(VISIBLE_COOKIES_BANNER) === '' ||
+      storage.getItem(VISIBLE_COOKIES_BANNER) === TRUE,
     [storage],
   )
 
-  const location = useLocation()
-  const [cookiesWarningVisible, setCookiesWarningVisible] = useState(isCookiesBannerVisible())
+  const isGoogleAnalyticsCookieTrue = useMemo(
+    () => storage.getItem(ACCEPT_GOOGLE_ANALYTICS) === TRUE,
+    [storage],
+  )
 
-  const showCookiesWarning = useCallback(() => {
-    setCookiesWarningVisible(true)
-    storage.setItem(VISIBLE_COOKIES_BANNER, '')
+  const [warningVisible, setWarningVisible] = useState(isBannerCookieTrue || isVisible)
+  const [googleAnalyticsAccepted, setGoogleAnalyticsAccepted] = useState(
+    isGoogleAnalyticsCookieTrue,
+  )
+
+  const showWarning = useCallback(() => {
+    setWarningVisible(true)
+    storage.setItem(VISIBLE_COOKIES_BANNER, TRUE)
   }, [storage])
 
-  const isGoogleAnalyticsAccepted = useCallback(
-    () => storage.getItem(ACCEPT_GOOGLE_ANALYTICS) === ACCEPT_GOOGLE_ANALYTICS,
-    [storage],
-  )
+  const hideWarning = useCallback(() => {
+    setWarningVisible(false)
+    storage.setItem(VISIBLE_COOKIES_BANNER, FALSE)
 
-  const hideCookiesWarning = useCallback(() => {
-    setCookiesWarningVisible(false)
-    storage.setItem(VISIBLE_COOKIES_BANNER, COOKIES_FALSE)
-    onHide()
-    if (!isGoogleAnalyticsAccepted()) {
-      setGoogleAnalyticsAccepted(false)
+    if (onHide) {
+      onHide()
     }
-  }, [isGoogleAnalyticsAccepted, onHide, storage])
-
-  const [googleAnalyticsAccepted, setGoogleAnalyticsAccepted] = useState(
-    isGoogleAnalyticsAccepted(),
-  )
+  }, [onHide, storage])
 
   const acceptGoogleAnalytics = useCallback(() => {
     setGoogleAnalyticsAccepted(true)
-    storage.setItem(ACCEPT_GOOGLE_ANALYTICS, ACCEPT_GOOGLE_ANALYTICS)
+    storage.setItem(ACCEPT_GOOGLE_ANALYTICS, TRUE)
   }, [storage])
 
   const rejectGoogleAnalytics = useCallback(() => {
     setGoogleAnalyticsAccepted(false)
-    storage.setItem(ACCEPT_GOOGLE_ANALYTICS, '')
+    storage.setItem(ACCEPT_GOOGLE_ANALYTICS, FALSE)
   }, [storage])
 
   const toggleAcceptGoogleAnalytics = useCallback(() => {
     if (googleAnalyticsAccepted) {
       rejectGoogleAnalytics()
     } else {
-      setGoogleAnalyticsAccepted(true)
+      acceptGoogleAnalytics()
     }
-  }, [googleAnalyticsAccepted, rejectGoogleAnalytics])
+  }, [acceptGoogleAnalytics, googleAnalyticsAccepted, rejectGoogleAnalytics])
+
+  const acceptSelected = useCallback(() => {
+    hideWarning()
+  }, [hideWarning])
 
   const acceptAll = useCallback(() => {
     acceptGoogleAnalytics()
-    hideCookiesWarning()
-  }, [acceptGoogleAnalytics, hideCookiesWarning])
+    hideWarning()
+  }, [acceptGoogleAnalytics, hideWarning])
 
   const loadGoogleAnalytics = useCallback(() => {
     if (!GOOGLE_ANALYTICS_ID) {
@@ -224,16 +227,12 @@ export const CookiesBanner: React.FC<Props> = (props) => {
   }, [location])
 
   useEffect(() => {
-    if (googleAnalyticsAccepted) {
-      loadGoogleAnalytics()
-    }
-    if (isBannerVisible) {
-      showCookiesWarning()
-    }
-  }, [googleAnalyticsAccepted, isBannerVisible, loadGoogleAnalytics, showCookiesWarning])
+    googleAnalyticsAccepted && loadGoogleAnalytics()
+    isVisible && showWarning()
+  }, [googleAnalyticsAccepted, loadGoogleAnalytics, showWarning, isVisible])
 
-  return cookiesWarningVisible ? (
-    <Wrapper>
+  return warningVisible ? (
+    <Wrapper {...restProps}>
       <Content>
         <Text>
           We use cookies to give you the best experience and to help improve our website. Please
@@ -250,13 +249,11 @@ export const CookiesBanner: React.FC<Props> = (props) => {
               <CheckboxStyled checked={googleAnalyticsAccepted} /> Analytics
             </Label>
           </Labels>
-          <ButtonAccept className="buttonAccept" onClick={acceptAll}>
-            Accept All
+          <ButtonAccept buttonType={ButtonType.primaryInverted} onClick={acceptSelected}>
+            Accept Selected
           </ButtonAccept>
+          <ButtonAccept onClick={acceptAll}>Accept All</ButtonAccept>
         </ButtonContainer>
-        <ButtonClose onClick={hideCookiesWarning}>
-          <CloseIcon />
-        </ButtonClose>
       </Content>
     </Wrapper>
   ) : null

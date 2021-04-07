@@ -11,7 +11,6 @@ import { NotAllowed } from '../../../pages/NotAllowed'
 import Overview from '../../../pages/Overview'
 import { Privacy } from '../../../pages/Privacy'
 import { Terms } from '../../../pages/Terms'
-import { CookiesBanner } from '../../common/CookiesBanner'
 import { TopDisclaimer } from '../../common/TopDisclaimer'
 import { Footer } from '../../layout/Footer'
 import { Header } from '../../layout/Header'
@@ -24,7 +23,6 @@ import Web3ReactManager from '../../web3/Web3ReactManager'
 
 const Routes: React.FC<RouteComponentProps> = (props) => {
   const { history } = props
-  const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
   const [showTopWarning, setShowTopWarning] = React.useState(false)
 
   const tokenSupport = (bothTokensSupported: boolean) => {
@@ -84,18 +82,8 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
             </Switch>
           </Web3ReactManager>
         </InnerContainer>
-        <Footer
-          onCookiesBannerShow={() => {
-            setShowCookiesBanner(true)
-          }}
-        />
+        <Footer />
       </MainScroll>
-      <CookiesBanner
-        isBannerVisible={showCookiesBanner}
-        onHide={() => {
-          setShowCookiesBanner(false)
-        }}
-      />
     </MainWrapper>
   )
 }

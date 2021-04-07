@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { HashLink } from 'react-router-hash-link'
 
+import { CookiesBanner } from '../../common/CookiesBanner'
 import { SettingsIcon } from '../../icons/SettingsIcon'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 
@@ -92,14 +93,11 @@ const SettingsIconStyled = styled(SettingsIcon)`
   }
 `
 
-interface Props {
-  onCookiesBannerShow: () => void
-}
-
-export const Footer: React.FC<Props> = (props) => {
-  const { onCookiesBannerShow, ...restProps } = props
+export const Footer: React.FC = (props) => {
+  const { ...restProps } = props
   const date = new Date()
   const year = date.getFullYear()
+  const [showCookiesBanner, setShowCookiesBanner] = React.useState(false)
 
   return (
     <Wrapper className="siteFooter" {...restProps}>
@@ -117,7 +115,7 @@ export const Footer: React.FC<Props> = (props) => {
         </Item>
         <Item>
           <Link to="/cookie-policy#topAnchor">Cookies</Link>
-          <IconWrapper onClick={onCookiesBannerShow}>
+          <IconWrapper onClick={() => setShowCookiesBanner(true)}>
             <SettingsIconStyled />
           </IconWrapper>
         </Item>
@@ -125,6 +123,12 @@ export const Footer: React.FC<Props> = (props) => {
           <Link to="/licenses#topAnchor">Licenses</Link>
         </Item>
       </Inner>
+      <CookiesBanner
+        isVisible={showCookiesBanner}
+        onHide={() => {
+          setShowCookiesBanner(false)
+        }}
+      />
     </Wrapper>
   )
 }
