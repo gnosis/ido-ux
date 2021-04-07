@@ -11,6 +11,10 @@ const Wrapper = styled.div`
   margin-bottom: 20px;
 `
 
+const QR = styled(QRCode)`
+  border: 10px solid #fff;
+`
+
 interface WalletConnectDataProps {
   size: number
   uri?: string
@@ -22,7 +26,7 @@ const WalletConnectData: React.FC<WalletConnectDataProps> = (props) => {
   return (
     uri && (
       <Wrapper {...restProps}>
-        <QRCode size={size} value={uri} />
+        <QR size={size} value={uri} />
       </Wrapper>
     )
   )
