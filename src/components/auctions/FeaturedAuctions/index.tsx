@@ -23,7 +23,7 @@ const Row = styled.div`
   row-gap: 20px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    column-gap: 40px;
+    column-gap: 30px;
     grid-template-columns: 1fr 1fr 1fr;
   }
 `

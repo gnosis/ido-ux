@@ -34,7 +34,7 @@ const Wrapper = styled(HashLink)`
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    padding: 12px 18px;
+    padding: 12px 15px;
   }
 `
 
@@ -53,10 +53,6 @@ const Tokens = styled.span`
   margin: 0;
   text-transform: uppercase;
   white-space: nowrap;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    font-size: 24px;
-  }
 `
 
 const Badge = styled.span`
@@ -65,13 +61,10 @@ const Badge = styled.span`
   border-radius: 17px;
   color: ${({ theme }) => theme.primary1};
   display: flex;
-  height: 34px;
+  height: 31px;
+  line-height: 1;
   padding: 0 12px;
   white-space: nowrap;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    padding: 0 18px;
-  }
 `
 
 const Blinker = keyframes`
@@ -133,6 +126,7 @@ const PriceAndDuration = styled.span`
 const Cell = styled.span`
   display: flex;
   flex-direction: column;
+  max-width: 49%;
 `
 
 const Subtitle = styled.span<{ textAlign?: string }>`
@@ -145,6 +139,7 @@ const Subtitle = styled.span<{ textAlign?: string }>`
   opacity: 0.7;
   padding: 0 0 5px;
   text-align: ${(props) => props.textAlign};
+  white-space: nowrap;
 `
 
 Subtitle.defaultProps = {
@@ -157,6 +152,7 @@ const Text = styled.span`
   font-weight: 700;
   line-height: 1.2;
   margin-top: auto;
+  white-space: nowrap;
 `
 
 const ProgressBar = styled.span`
@@ -166,7 +162,8 @@ const ProgressBar = styled.span`
   height: 5px;
   margin-bottom: 3px;
   margin-top: auto;
-  width: 120px;
+  max-width: 100%;
+  width: 110px;
 `
 
 const Progress = styled.span<{ width: string }>`
