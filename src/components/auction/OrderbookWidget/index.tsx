@@ -329,9 +329,10 @@ export const processOrderbookData = ({
     // append one last bid value at height of last element:
     if (bidsFiltered.length > 0) {
       const newLastElement = bidsFiltered.slice(-1)[0]
-      newLastElement.priceFormatted = max_value.toString()
-      newLastElement.priceNumber = max_value
-      newLastElement.price = max_value
+      const overall_max_value = Math.max(max_value, newLastElement.price)
+      newLastElement.priceFormatted = overall_max_value.toString()
+      newLastElement.priceNumber = overall_max_value
+      newLastElement.price = overall_max_value
       newLastElement.volume = 0.001
       bidsFiltered = bidsFiltered.concat(newLastElement)
     }
