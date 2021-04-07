@@ -6,9 +6,8 @@ import FortmaticIcon from '../assets/images/fortmaticIcon.png'
 import MetamaskIcon from '../assets/images/metamask.svg'
 import PortisIcon from '../assets/images/portisIcon.png'
 import TrustWalletIcon from '../assets/images/trustWallet.png'
-// import WalletConnectIcon from '../assets/images/wallet-connect.svg'
-// import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
-import { fortmatic, injected, portis, walletlink } from '../connectors'
+import WalletConnectIcon from '../assets/images/wallet-connect.svg'
+import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 import { ChainId } from '../utils'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { CHAIN_ID } from './config'
@@ -42,14 +41,14 @@ const MAINNET_WALLETS = {
     href: null,
     color: '#E8831D',
   },
-  // WALLET_CONNECT: {
-  //   connector: walletconnect,
-  //   name: 'WalletConnect',
-  //   icon: WalletConnectIcon,
-  //   description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-  //   href: null,
-  //   color: '#4196FC',
-  // },
+  WALLET_CONNECT: {
+    connector: walletconnect,
+    name: 'WalletConnect',
+    icon: WalletConnectIcon,
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+    href: null,
+    color: '#4196FC',
+  },
 }
 
 // TODO This wallets are unsupported temporarily.
