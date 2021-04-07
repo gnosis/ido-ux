@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { Web3Provider } from '@ethersproject/providers'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
-// import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
 import MetamaskIcon from '../../../assets/images/metamask.png'
@@ -67,6 +66,10 @@ const Footer = styled.div`
       text-decoration: none;
     }
   }
+`
+
+const Options = styled.div`
+  min-height: 130px;
 `
 
 const WALLET_VIEWS = {
@@ -178,40 +181,18 @@ const WalletModal: React.FC = () => {
 
   const getOptions = () => {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
+
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
-
-      // if (isMobile) {
-      //   if (option.connector === portis) {
-      //     return null
-      //   }
-
-      //   if (!window.web3 && !window.ethereum && option.mobile) {
-      //     return (
-      //       <Option
-      //         disabled={!termsAccepted}
-      //         icon={option.icon}
-      //         key={key}
-      //         link={option.href}
-      //         onClick={() => {
-      //           option.connector !== connector && !option.href && tryActivation(option.connector)
-      //         }}
-      //         text={option.name}
-      //       />
-      //     )
-      //   }
-      //   return null
-      // }
 
       if (option.connector === injected) {
         if (!(window.web3 || window.ethereum)) {
           if (option.name === 'MetaMask') {
             return (
               <Option
-                disabled={!termsAccepted}
                 icon={MetamaskIcon}
                 key={key}
-                link={'https://metamask.io/'}
+                onClick={() => window.open('https://metamask.io/')}
                 text={'Install Metamask'}
               />
             )
@@ -226,13 +207,10 @@ const WalletModal: React.FC = () => {
       }
 
       return (
-        // !isMobile &&
-        // !option.mobileOnly && (
         <Option
           disabled={!termsAccepted}
           icon={option.icon}
           key={key}
-          link={option.href}
           onClick={() => {
             option.connector === connector
               ? setWalletView(WALLET_VIEWS.ACCOUNT)
@@ -240,7 +218,6 @@ const WalletModal: React.FC = () => {
           }}
           text={option.name}
         />
-        // )
       )
     })
   }
@@ -282,7 +259,7 @@ const WalletModal: React.FC = () => {
         )}
         {!error && !connectingToWallet && (
           <>
-            <div>{getOptions()}</div>
+            <Options>{getOptions()}</Options>
             <CheckboxWrapper onClick={() => setTermsAccepted(!termsAccepted)}>
               <Checkbox checked={termsAccepted} />
               <CheckboxText>

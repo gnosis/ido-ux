@@ -3,12 +3,13 @@ import { JSBI, Percent } from 'uniswap-xdai-sdk'
 import ArrowRightIcon from '../assets/images/arrow-right.svg'
 import CoinbaseWalletIcon from '../assets/images/coinbaseWalletIcon.svg'
 import FortmaticIcon from '../assets/images/fortmaticIcon.png'
-import MetamaskIcon from '../assets/images/metamask.png'
+import MetamaskIcon from '../assets/images/metamask.svg'
 import PortisIcon from '../assets/images/portisIcon.png'
 import TrustWalletIcon from '../assets/images/trustWallet.png'
-import WalletConnectIcon from '../assets/images/walletConnectIcon.png'
+import WalletConnectIcon from '../assets/images/wallet-connect.svg'
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 import { ChainId } from '../utils'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { CHAIN_ID } from './config'
 
 export const chainNames = {
@@ -49,59 +50,58 @@ const MAINNET_WALLETS = {
     color: '#4196FC',
   },
 }
-export const SUPPORTED_WALLETS =
-  CHAIN_ID !== 1
-    ? MAINNET_WALLETS
-    : {
-        ...MAINNET_WALLETS,
-        ...{
-          WALLET_LINK: {
-            connector: walletlink,
-            name: 'Coinbase Wallet',
-            icon: CoinbaseWalletIcon,
-            description: 'Use Coinbase Wallet app on mobile device',
-            href: null,
-            color: '#315CF5',
-          },
-          COINBASE_LINK: {
-            name: 'Open in Coinbase Wallet',
-            icon: CoinbaseWalletIcon,
-            description: 'Open in Coinbase Wallet app.',
-            href: 'https://go.cb-w.com/mtUDhEZPy1',
-            color: '#315CF5',
-            mobile: true,
-            mobileOnly: true,
-          },
-          TRUST_WALLET_LINK: {
-            name: 'Open in Trust Wallet',
-            icon: TrustWalletIcon,
-            description: 'iOS and Android app.',
-            href:
-              'https://link.trustwallet.com/open_url?coin_id=60&url=https://uniswap.exchange/swap',
-            color: '#1C74CC',
-            mobile: true,
-            mobileOnly: true,
-          },
-          FORTMATIC: {
-            connector: fortmatic,
-            name: 'Fortmatic',
-            icon: FortmaticIcon,
-            description: 'Login using Fortmatic hosted wallet',
-            href: null,
-            color: '#6748FF',
-            mobile: true,
-          },
-          Portis: {
-            connector: portis,
-            name: 'Portis',
-            icon: PortisIcon,
-            description: 'Login using Portis hosted wallet',
-            href: null,
-            color: '#4A6C9B',
-            mobile: true,
-          },
-        },
-      }
+
+// TODO This wallets are unsupported temporarily.
+// Add again as SUPPORTED_WALLETS = [...EXTRA_WALLETS, ...MAIN_WALLETS]
+// When the times comes.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const EXTRA_WALLETS = {
+  WALLET_LINK: {
+    connector: walletlink,
+    name: 'Coinbase Wallet',
+    icon: CoinbaseWalletIcon,
+    description: 'Use Coinbase Wallet app on mobile device',
+    href: null,
+    color: '#315CF5',
+  },
+  COINBASE_LINK: {
+    name: 'Open in Coinbase Wallet',
+    icon: CoinbaseWalletIcon,
+    description: 'Open in Coinbase Wallet app.',
+    href: 'https://go.cb-w.com/mtUDhEZPy1',
+    color: '#315CF5',
+    mobile: true,
+    mobileOnly: true,
+  },
+  TRUST_WALLET_LINK: {
+    name: 'Open in Trust Wallet',
+    icon: TrustWalletIcon,
+    description: 'iOS and Android app.',
+    href: 'https://link.trustwallet.com/open_url?coin_id=60&url=https://uniswap.exchange/swap',
+    color: '#1C74CC',
+    mobile: true,
+    mobileOnly: true,
+  },
+  FORTMATIC: {
+    connector: fortmatic,
+    name: 'Fortmatic',
+    icon: FortmaticIcon,
+    description: 'Login using Fortmatic hosted wallet',
+    href: null,
+    color: '#6748FF',
+    mobile: true,
+  },
+  Portis: {
+    connector: portis,
+    name: 'Portis',
+    icon: PortisIcon,
+    description: 'Login using Portis hosted wallet',
+    href: null,
+    color: '#4A6C9B',
+    mobile: true,
+  },
+}
+export const SUPPORTED_WALLETS = MAINNET_WALLETS
 
 export const NetworkContextName = 'NETWORK'
 

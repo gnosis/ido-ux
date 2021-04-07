@@ -24,11 +24,12 @@ const Wrapper = styled(BaseCard)`
   margin: 0 0 28px;
   max-width: 100%;
   min-height: 130px;
-  grid-template-columns: 1fr 3px 1fr;
   grid-template-areas:
     'top top top'
     'col1 sep1 col2'
     'col3 sep2 col4';
+  grid-template-columns: 1fr 3px 1fr;
+  grid-template-rows: 1fr;
   padding-bottom: 20px;
   row-gap: 15px;
 
@@ -41,8 +42,12 @@ const Wrapper = styled(BaseCard)`
 `
 
 const Cell = styled(KeyValue)`
+  height: 100%;
+  justify-content: center;
+  padding: 5px 0;
+
   &.col1 {
-    grid-area: col1;
+    grid-area: col3;
   }
 
   &.col2 {
@@ -50,14 +55,23 @@ const Cell = styled(KeyValue)`
   }
 
   &.col3 {
-    grid-area: col3;
+    grid-area: col1;
   }
 
   &.col4 {
     grid-area: col4;
   }
 
+  .itemValue {
+    flex-direction: column;
+    flex-grow: 0;
+    margin-bottom: 0;
+  }
+
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    flex-grow: 1;
+    justify-content: center;
+    height: auto;
     padding: 0 10px;
 
     &.col1,
@@ -74,12 +88,18 @@ const Cell = styled(KeyValue)`
     &:last-child {
       padding-right: 0;
     }
+
+    .itemValue {
+      flex-direction: row;
+      margin-bottom: 2px;
+    }
   }
 `
 
 const Break = styled.div`
   background-color: ${({ theme }) => theme.primary1};
   border-radius: 3px;
+  height: 100%;
   min-height: 50px;
   width: 3px;
 
@@ -91,6 +111,8 @@ const Break = styled.div`
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    height: auto;
+
     &.sep1,
     &.sep2 {
       grid-area: unset;
@@ -107,6 +129,40 @@ const TimerWrapper = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-area: unset;
     margin: 0;
+  }
+`
+
+const TokenSymbol = styled.span`
+  align-items: center;
+  display: flex;
+  font-size: 15px;
+  justify-content: center;
+
+  & > * {
+    margin-right: 8px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    font-size: 18px;
+  }
+`
+
+const TokenValue = styled.span`
+  align-items: center;
+  display: flex;
+  font-size: 25px;
+  justify-content: center;
+  margin-bottom: 5px;
+  margin-right: 0;
+
+  & > * {
+    margin-right: 8px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    font-size: 18px;
+    margin-bottom: 0;
+    margin-right: 8px;
   }
 `
 
@@ -148,11 +204,17 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
       )
     const clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
 
-    return clearingPriceNumber
-      ? `${abbreviation(clearingPriceNumber)} ${getTokenDisplay(
-          derivedAuctionInfo?.biddingToken,
-        )}/${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}`
-      : '-'
+    return clearingPriceNumber ? (
+      <>
+        <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
+        <TokenSymbol>
+          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per{' '}
+          {getTokenDisplay(derivedAuctionInfo?.biddingToken)}
+        </TokenSymbol>
+      </>
+    ) : (
+      '-'
+    )
   }, [derivedAuctionInfo?.auctioningToken, derivedAuctionInfo?.biddingToken, clearingPriceInfo])
 
   const titlePrice = useMemo(
@@ -200,7 +262,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         }
         itemValue={
           derivedAuctionInfo?.biddingToken ? (
-            <>
+            <TokenSymbol>
               <TokenLogo
                 size={'20px'}
                 token={{
@@ -210,7 +272,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
               />
               <span>{biddingTokenDisplay}</span>
               <ExternalLink href={biddingTokenAddress} />
-            </>
+            </TokenSymbol>
           ) : (
             '-'
           )
@@ -233,17 +295,13 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         itemValue={
           derivedAuctionInfo?.auctioningToken && derivedAuctionInfo?.initialAuctionOrder ? (
             <>
-              <TokenLogo
-                size={'20px'}
-                token={{
-                  address: derivedAuctionInfo?.auctioningToken.address,
-                  symbol: derivedAuctionInfo?.auctioningToken.symbol,
-                }}
-              />
-              <span>{`${abbreviation(
-                derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(2),
-              )} ${auctioningTokenDisplay}`}</span>
-              <ExternalLink href={auctionTokenAddress} />
+              <TokenValue>
+                {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(2))}
+              </TokenValue>
+              <TokenSymbol>
+                <span>{auctioningTokenDisplay}</span>
+                <ExternalLink href={auctionTokenAddress} />
+              </TokenSymbol>
             </>
           ) : (
             '-'
@@ -264,10 +322,16 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         }
         itemValue={
           <>
-            {initialPriceToDisplay ? abbreviation(initialPriceToDisplay?.toSignificant(2)) : ' - '}
-            {initialPriceToDisplay && auctioningTokenDisplay
-              ? ` ${biddingTokenDisplay}/${auctioningTokenDisplay}`
-              : '-'}
+            <TokenValue>
+              {initialPriceToDisplay
+                ? abbreviation(initialPriceToDisplay?.toSignificant(2))
+                : ' - '}
+            </TokenValue>
+            <TokenSymbol>
+              {initialPriceToDisplay && auctioningTokenDisplay
+                ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                : '-'}
+            </TokenSymbol>
           </>
         }
       />
