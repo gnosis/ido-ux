@@ -91,6 +91,7 @@ const Label = styled.div<{ clickable?: boolean }>`
   font-weight: normal;
   line-height: 1.4;
   margin: 0 25px 0 0;
+  white-space: nowrap;
 
   &:last-child {
     margin-right: 80px;
