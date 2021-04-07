@@ -10,7 +10,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
-import { decodeOrder } from './Order'
+import { decodeOrder, encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 
 const logger = getLogger('useClaimOrderCallback')
@@ -31,12 +31,10 @@ export interface ClaimInformation {
 export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<ClaimInformation> {
   const { account, chainId, library } = useActiveWeb3React()
   const [claimInfo, setClaimInfo] = useState<Maybe<ClaimInformation>>(null)
-  const [error, setError] = useState<Maybe<Error>>(null)
   const { auctionId } = auctionIdentifier
 
   useMemo(() => {
     setClaimInfo(null)
-    setError(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auctionId, chainId])
   useEffect(() => {
@@ -57,7 +55,15 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
       } catch (error) {
         if (cancelled) return
         logger.error('Error getting withdraw info', error)
-        setError(error)
+        setClaimInfo({
+          sellOrdersFormUser: [
+            encodeOrder({
+              sellAmount: BigNumber.from(0),
+              buyAmount: BigNumber.from(0),
+              userId: BigNumber.from(0),
+            }),
+          ],
+        })
       }
     }
     fetchApiData()
@@ -66,11 +72,6 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
       cancelled = true
     }
   }, [account, chainId, library, auctionId, setClaimInfo])
-
-  if (error) {
-    logger.error('error while fetching claimInfo', error)
-    return null
-  }
 
   return claimInfo
 }
