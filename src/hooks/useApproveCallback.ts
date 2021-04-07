@@ -39,6 +39,7 @@ export function useApproveCallback(
     if (!amountToApprove) return ApprovalState.UNKNOWN
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
+    if (amountToApprove.lessThan(currentAllowance)) return ApprovalState.APPROVED
     if (pendingApproval) return ApprovalState.PENDING
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove)
