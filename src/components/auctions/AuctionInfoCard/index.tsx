@@ -25,12 +25,16 @@ const Wrapper = styled(HashLink)`
   flex-flow: column;
   justify-content: space-between;
   min-height: 290px;
-  padding: 12px 18px;
+  padding: 12px;
   text-decoration: none;
   transition: all 0.15s linear;
 
   &:hover {
     box-shadow: 10px -10px 24px 0 rgba(0, 34, 73, 0.7);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    padding: 12px 15px;
   }
 `
 
@@ -43,11 +47,12 @@ const Top = styled.span`
 
 const Tokens = styled.span`
   color: ${({ theme }) => theme.text1};
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
   text-transform: uppercase;
+  white-space: nowrap;
 `
 
 const Badge = styled.span`
@@ -56,8 +61,10 @@ const Badge = styled.span`
   border-radius: 17px;
   color: ${({ theme }) => theme.primary1};
   display: flex;
-  height: 34px;
-  padding: 0 18px;
+  height: 31px;
+  line-height: 1;
+  padding: 0 12px;
+  white-space: nowrap;
 `
 
 const Blinker = keyframes`
@@ -119,6 +126,7 @@ const PriceAndDuration = styled.span`
 const Cell = styled.span`
   display: flex;
   flex-direction: column;
+  max-width: 49%;
 `
 
 const Subtitle = styled.span<{ textAlign?: string }>`
@@ -131,6 +139,7 @@ const Subtitle = styled.span<{ textAlign?: string }>`
   opacity: 0.7;
   padding: 0 0 5px;
   text-align: ${(props) => props.textAlign};
+  white-space: nowrap;
 `
 
 Subtitle.defaultProps = {
@@ -143,6 +152,7 @@ const Text = styled.span`
   font-weight: 700;
   line-height: 1.2;
   margin-top: auto;
+  white-space: nowrap;
 `
 
 const ProgressBar = styled.span`
@@ -152,7 +162,8 @@ const ProgressBar = styled.span`
   height: 5px;
   margin-bottom: 3px;
   margin-top: auto;
-  width: 120px;
+  max-width: 100%;
+  width: 110px;
 `
 
 const Progress = styled.span<{ width: string }>`
