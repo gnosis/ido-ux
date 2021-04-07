@@ -176,5 +176,5 @@ export const drawInformation = (props: DrawInformation) => {
   const series = chart.series
 
   series.values[0].tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
-  series.values[1].tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
+  series.values[1].tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumePerPriceFormatted}[/] ${quoteTokenLabel}`
 }
