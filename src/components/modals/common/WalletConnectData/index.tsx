@@ -3,6 +3,10 @@ import styled from 'styled-components'
 
 import QRCode from 'qrcode.react'
 
+const QR = styled(QRCode)`
+  border: 10px solid #fff;
+`
+
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
   align-items: center;
@@ -22,7 +26,7 @@ const WalletConnectData: React.FC<WalletConnectDataProps> = (props) => {
   return (
     uri && (
       <Wrapper {...restProps}>
-        <QRCode size={size} value={uri} />
+        <QR size={size} value={uri} />
       </Wrapper>
     )
   )
