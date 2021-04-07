@@ -4,9 +4,12 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useActiveWeb3React } from '../../hooks'
+import { getLogger } from '../../utils/logger'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction } from './actions'
 import { TransactionDetails, TransactionState } from './reducer'
+
+const logger = getLogger('TX Debug Hooks')
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
@@ -86,7 +89,8 @@ export function isTransactionRecent(tx: TransactionDetails): boolean {
 // returns whether a token has a pending approval transaction
 export function useHasPendingApproval(tokenAddress?: string, spender?: string): boolean {
   const allTransactions = useAllTransactions()
-  return useMemo(() => {
+
+  const hasPendingApproval = useMemo(() => {
     return (
       typeof tokenAddress === 'string' &&
       typeof spender === 'string' &&
@@ -106,4 +110,22 @@ export function useHasPendingApproval(tokenAddress?: string, spender?: string): 
       })
     )
   }, [allTransactions, spender, tokenAddress])
+
+  if (hasPendingApproval) {
+    logger.log('Debug TXs', allTransactions)
+    logger.log(
+      'Debug TXs Filtered',
+      Object.keys(allTransactions)
+        .map((hash) => allTransactions[hash])
+        .filter(
+          (tx) =>
+            !!tx &&
+            !tx.receipt &&
+            tx.approval &&
+            tx.approval.tokenAddress === tokenAddress &&
+            tx.approval.spender === spender,
+        ),
+    )
+  }
+  return hasPendingApproval
 }
