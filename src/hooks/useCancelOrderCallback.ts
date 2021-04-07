@@ -12,6 +12,7 @@ import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('useCancelOrderCallback')
 
@@ -21,6 +22,7 @@ export function useCancelOrderCallback(
 ): null | ((orderId: string) => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
+  const gasPrice = useGasPrice()
   const { auctionId, chainId: orderChainId } = auctionIdentifier
 
   return useMemo(() => {
@@ -55,6 +57,7 @@ export function useCancelOrderCallback(
         .then((estimatedGasLimit) =>
           method(...args, {
             ...(value ? { value } : {}),
+            gasPrice,
             gasLimit: calculateGasMargin(estimatedGasLimit),
           }),
         )
@@ -78,5 +81,15 @@ export function useCancelOrderCallback(
           throw error
         })
     }
-  }, [account, orderChainId, addTransaction, chainId, library, auctionId, biddingToken])
+  }, [
+    chainId,
+    library,
+    account,
+    orderChainId,
+    auctionId,
+    gasPrice,
+    addTransaction,
+    biddingToken.decimals,
+    biddingToken.symbol,
+  ])
 }

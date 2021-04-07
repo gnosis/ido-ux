@@ -21,6 +21,7 @@ import { convertPriceIntoBuyAndSellAmount } from '../utils/prices'
 import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
+import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('usePlaceOrderCallback')
 
@@ -42,6 +43,7 @@ export function usePlaceOrderCallback(
   const { auctionId } = auctionIdentifer
   const { price, sellAmount } = useSwapState()
   const { onNewBid } = useOrderbookActionHandlers()
+  const gasPrice = useGasPrice()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -52,7 +54,6 @@ export function usePlaceOrderCallback(
   ]).result
   return useMemo(() => {
     let previousOrder: string
-    let gasPrice: BigNumber = BigNumber.from(20000000000) // 20 gwei
 
     return async function onPlaceOrder() {
       if (!chainId || !library || !account || !userId || !signature) {
@@ -110,17 +111,6 @@ export function usePlaceOrderCallback(
       const biddingTokenDisplay = getTokenDisplay(biddingToken)
       const auctioningTokenDisplay = getTokenDisplay(auctioningToken)
 
-      try {
-        if (ChainId.XDAI === chainId) {
-          gasPrice = BigNumber.from(1000000000) // 1 gwei
-        } else {
-          // get gas price from web3 provider.
-          gasPrice = await library?.getGasPrice()
-        }
-      } catch (error) {
-        logger.error('Error trying to get gas price: ', error)
-      }
-
       return estimate(...args, value ? { value } : {})
         .then((estimatedGasLimit) =>
           method(...args, {
@@ -173,6 +163,7 @@ export function usePlaceOrderCallback(
     auctioningToken,
     biddingToken,
     chainId,
+    gasPrice,
     library,
     onNewBid,
     onNewOrder,
