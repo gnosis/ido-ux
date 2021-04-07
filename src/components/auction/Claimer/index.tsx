@@ -23,6 +23,7 @@ const Wrapper = styled(BaseCard)`
 `
 
 const ActionButton = styled(Button)`
+  flex-shrink: 0;
   height: 52px;
   margin-top: auto;
 `
