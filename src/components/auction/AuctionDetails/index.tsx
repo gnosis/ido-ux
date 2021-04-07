@@ -208,8 +208,8 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
       <>
         <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
         <TokenSymbol>
-          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per{' '}
-          {getTokenDisplay(derivedAuctionInfo?.biddingToken)}
+          {getTokenDisplay(derivedAuctionInfo?.biddingToken)} per{' '}
+          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
         </TokenSymbol>
       </>
     ) : (
@@ -303,7 +303,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
                 }}
               />
               <TokenValue>
-                {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(2))}
+                {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4))}
               </TokenValue>
               <TokenSymbol>
                 <span>{auctioningTokenDisplay}</span>
@@ -336,7 +336,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
             </TokenValue>
             <TokenSymbol>
               {initialPriceToDisplay && auctioningTokenDisplay
-                ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                ? ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
                 : '-'}
             </TokenSymbol>
           </>
