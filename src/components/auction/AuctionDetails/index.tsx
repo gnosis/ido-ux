@@ -295,6 +295,13 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         itemValue={
           derivedAuctionInfo?.auctioningToken && derivedAuctionInfo?.initialAuctionOrder ? (
             <>
+              <TokenLogo
+                size={'20px'}
+                token={{
+                  address: derivedAuctionInfo?.auctioningToken.address,
+                  symbol: derivedAuctionInfo?.auctioningToken.symbol,
+                }}
+              />
               <TokenValue>
                 {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(2))}
               </TokenValue>
