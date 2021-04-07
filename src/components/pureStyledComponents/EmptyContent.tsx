@@ -19,4 +19,5 @@ export const EmptyContentText = styled.p`
   font-weight: 600;
   line-height: 1.5;
   margin: 16px 0 0 0;
+  text-align: center;
 `
