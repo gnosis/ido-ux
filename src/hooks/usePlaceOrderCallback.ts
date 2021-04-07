@@ -115,7 +115,7 @@ export function usePlaceOrderCallback(
         .then((estimatedGasLimit) =>
           method(...args, {
             ...(value ? { value } : {}),
-            gasPrice: gasPrice,
+            gasPrice,
             gasLimit: calculateGasMargin(estimatedGasLimit),
           }),
         )

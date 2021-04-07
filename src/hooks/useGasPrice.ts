@@ -8,8 +8,8 @@ import { useActiveWeb3React } from './index'
 
 const logger = getLogger('useGasPrice')
 
-export const useGasPrice = (): Maybe<BigNumber> => {
-  const [gasPrice, setGasPrice] = useState<Maybe<BigNumber>>(BigNumber.from(20000000000)) // 20 gwei
+export const useGasPrice = (): BigNumber => {
+  const [gasPrice, setGasPrice] = useState<BigNumber>(BigNumber.from(20000000000)) // 20 gwei
   const { chainId, library } = useActiveWeb3React()
 
   useEffect(() => {
