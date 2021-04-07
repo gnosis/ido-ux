@@ -1,6 +1,42 @@
 ### How to Participate as an auctioneer
 
-In order to participate as an auctioneer, it is currently needed to copy the following [repository](https://github.com/gnosis/ido-contracts). We will go through the steps on Rinkeby.
+This guide will first list all the parametrs in order to run an auction, and then go through an example of setting up an auction on the Rinkeby testnet.
+
+### Required Parameters
+
+All auctions need to include the following parameters:
+
+**&quot;--auctioning-token&quot;** refers to the token you want to sell in the auction, add the address as a string
+
+**&quot;--bidding-token&quot;** refers to the token the bidders will use to bid on the auctioned token, add the address as a string
+
+**&quot;--sell-amount&quot;** refers to the amount of tokens that you will sell, add amount as integer
+
+**&quot;--min-buy-amount&quot;** refers to the minimum amount of buy tokens you are willing to accept. The minimum sell price of the auction is calculated by dividing the --sell-amount/--min-buy-amount
+
+**&quot;--auction-end-date&quot;** determines the end date and time of the auction in Unix Timestamp format. Use [this website](https://www.epochconverter.com/) in order to convert from human date and time format to Unix Timestamp.
+
+**&quot;--network&quot;** determines the network in which the auction will happen.
+
+### Additional Parameters
+
+Additionally, Auctioneers can further customize the auction by using the following optional parameters:
+
+**&quot;--min-funding-threshold&quot;** The minimal funding threshold for executing the settlement. If funding is not reached, everyone will get back their investment. Default is 0.
+
+**&quot;--order-cancellation-date&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
+
+**&quot;--min-buy-amount-per-order&quot;** Describes the minimal buyAmount per order placed in the auction. Auctioneers can define if there is minimum order size in their auction. Default is 0.01
+
+**&quot;--is-atomic-closure-allowed&quot;** This parameter enables users to close the auction atomically and submit a final bid by calling the `settleAuctionAtomically` function in the smart contract once the `auction-end-date` has been reached. The auctioneer determines whether this parameter is on or off by specifying True or False.  
+
+**&quot;--allow-list-manager&quot;** If whitelisting of addresses is required, the auctioneer can provide his/her own allowlistManager contract, or use the AllowListOffChainManaged.json file provided in [this repo](https://github.com/gnosis/ido-contracts/tree/main/deployments). The command needs to be followed by the contract address of the allowlistManager being used. 
+
+**&quot;--allow-list-data&quot;** If the auctioneer needs further data in his/her allowList, the data needs to be provided in this field. Our implementation needs the public address of the key (abi encode - e.g. 0x000…00useraddress) used for allowing addresses to place orders.
+
+### Example
+
+In order to participate as an auctioneer, it is currently needed to copy the following [repository](https://github.com/gnosis/ido-contracts).
 
 First install all dependencies, and switch the right folder by using the following commands:
 ```
@@ -29,21 +65,6 @@ Add the private key of the address with the funds to sell:
 ```
 export PK=PRIVATE_KEY_HERE
 ```
-You will now need to build a command with the following components:
-
-**&quot;--auctioning-token&quot;** refers to the token you want to sell in the auction, add the address as a string
-
-**&quot;--bidding-token&quot;** refers to the token the bidders will use to bid on the auctioned token, add the address as a string
-
-**&quot;--sell-amount&quot;** refers to the amount of tokens that you will sell, add amount as integer
-
-**&quot;--min-buy-amount&quot;** refers to the minimum amount of buy tokens you are willing to accept. The minimum sell price of the auction is calculated by dividing the --sell-amount/--min-buy-amount
-
-**&quot;--auction-end-date&quot;** determines the end date and time of the auction in Unix Timestamp format. Use [this website](https://www.epochconverter.com/) in order to convert from human date and time format to Unix Timestamp.
-
-**&quot;--network&quot;** determines the network in which the auction will happen.
-
-_Note: the minimum sell price that the auctioneer determines is calculated by the sell-amount/min-buy-amount ratio._
 
 Example of final command to initiate the auction:
 ```
@@ -56,20 +77,6 @@ After the auction time has finished, ANY participant can settle the auction by r
 ```
 yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network rinkeby
 ```
-### Additional commands:
-
-**&quot;--min-funding-threshold&quot;** The minimal funding threshold for executing the settlement. If funding is not reached, everyone will get back their investment. Default is 0.
-
-**&quot;--order-cancellation-date&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
-
-**&quot;--min-buy-amount-per-order&quot;** Describes the minimal buyAmount per order placed in the auction. This can be used in order to protect against too high gas costs for the settlement. Default is 0.01
-
-**&quot;--is-atomic-closure-allowed&quot;** This parameter enables users to close the auction atomically and submit a final bid by calling the `settleAuctionAtomically` function in the smart contract once the `auction-end-date` has been reached. The auctioneer determines whether this parameter is on or off by specifying True or False.  
-
-**&quot;--allow-list-manager&quot;** If whitelisting of addresses is required, the auctioneer can provide his/her own allowlistManager contract, or use the AllowListOffChainManaged.json file provided in [this repo](https://github.com/gnosis/ido-contracts/tree/main/deployments). The command needs to be followed by the contract address of the allowlistManager being used. 
-
-**&quot;--allow-list-data&quot;** If the auctioneer needs further data in his/her allowList, the data needs to be provided in this field. Our implementation needs the public address of the key (abi encode - e.g. 0x000…00useraddress) used for allowing address to place orders.
-
 
 An example of a more complex auction:
 ```
