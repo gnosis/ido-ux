@@ -191,6 +191,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
 
   const disconnect = React.useCallback(async () => {
     deactivate()
+    localStorage.removeItem('walletconnect')
   }, [deactivate])
 
   const UserDropdownContent = () => {
