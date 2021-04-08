@@ -267,6 +267,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [auctionInfo],
   )
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
+  const isPlaceOrderDisabled =
+    !isValid || notApproved || showWarning || showWarningWrongChainId || showConfirm
 
   return (
     <>
@@ -366,7 +368,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             {!account ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
             ) : (
-              <ActionButton disabled={!isValid || notApproved} onClick={handleShowConfirm}>
+              <ActionButton disabled={isPlaceOrderDisabled} onClick={handleShowConfirm}>
                 Place Order
               </ActionButton>
             )}
