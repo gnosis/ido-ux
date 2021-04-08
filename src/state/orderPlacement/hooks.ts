@@ -228,18 +228,6 @@ export function useGetOrderPlacementError(
   ) {
     error = 'Please wait a sec'
   }
-  if (
-    derivedAuctionInfo?.initialAuctionOrder != null &&
-    derivedAuctionInfo?.auctioningToken != undefined &&
-    derivedAuctionInfo?.biddingToken != undefined &&
-    buyAmountScaled &&
-    sellAmountScaled
-      ?.mul(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.raw.toString())
-      .lte(buyAmountScaled.mul(derivedAuctionInfo?.initialAuctionOrder?.buyAmount.raw.toString()))
-  ) {
-    error =
-      error ?? 'Price must be higher than ' + derivedAuctionInfo?.initialPrice?.toSignificant(5)
-  }
 
   if (
     derivedAuctionInfo?.clearingPriceSellOrder != null &&
@@ -256,6 +244,19 @@ export function useGetOrderPlacementError(
   ) {
     error =
       error ?? 'Price must be higher than ' + derivedAuctionInfo?.clearingPrice?.toSignificant(5)
+  }
+
+  if (
+    derivedAuctionInfo?.initialAuctionOrder != null &&
+    derivedAuctionInfo?.auctioningToken != undefined &&
+    derivedAuctionInfo?.biddingToken != undefined &&
+    buyAmountScaled &&
+    sellAmountScaled
+      ?.mul(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.raw.toString())
+      .lte(buyAmountScaled.mul(derivedAuctionInfo?.initialAuctionOrder?.buyAmount.raw.toString()))
+  ) {
+    error =
+      error ?? 'Price must be higher than ' + derivedAuctionInfo?.initialPrice?.toSignificant(5)
   }
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
