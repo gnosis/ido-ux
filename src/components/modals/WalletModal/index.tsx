@@ -152,14 +152,14 @@ const WalletModal: React.FC = () => {
 
     try {
       // We check the metamask networkId
-      const provider = new Web3Provider(window.ethereum, 'any')
-      const { chainId: walletNetworkId } = await provider.getNetwork()
-      if (!Object.values(ChainId).includes(walletNetworkId)) {
-        throw new UnsupportedChainIdError(
-          walletNetworkId,
-          Object.keys(ChainId).map((chainId) => Number(chainId)),
-        )
-      }
+      // const provider = new Web3Provider(window.ethereum, 'any')
+      // const { chainId: walletNetworkId } = await provider.getNetwork()
+      // if (!Object.values(ChainId).includes(walletNetworkId)) {
+      //   throw new UnsupportedChainIdError(
+      //     walletNetworkId,
+      //     Object.keys(ChainId).map((chainId) => Number(chainId)),
+      //   )
+      // }
 
       setPendingWallet(connector) // set wallet for pending view
       setWalletView(WALLET_VIEWS.PENDING)
