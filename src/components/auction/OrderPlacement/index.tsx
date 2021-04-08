@@ -47,13 +47,14 @@ const Wrapper = styled(BaseCard)`
 `
 
 const ActionButton = styled(Button)`
+  flex-shrink: 0;
   height: 52px;
   margin-top: auto;
 `
 
 const BalanceWrapper = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   margin-bottom: 20px;
 `
 

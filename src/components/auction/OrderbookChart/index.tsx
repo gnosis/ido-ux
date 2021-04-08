@@ -18,38 +18,55 @@ export enum Offer {
  */
 export interface PricePointDetails {
   // Basic data
+  price: number
+  totalVolume: number // cumulative volume
   type: Offer
   volume: number // volume for the price point
-  totalVolume: number // cumulative volume
-  price: number
 
   // Data for representation
-  priceNumber: number
-  priceFormatted: string
-  totalVolumeNumber: number
-  totalVolumeFormatted: string
   askValueY: Maybe<number>
   bidValueY: Maybe<number>
-  newOrderValueY: Maybe<number>
   clearingPriceValueY: Maybe<number>
+  newOrderValueY: Maybe<number>
+  priceFormatted: string
+  priceNumber: number
+  totalVolumeFormatted: string
+  totalVolumeNumber: number
 }
 
 export interface OrderBookChartProps {
   baseToken: Token
-  quoteToken: Token
   data: Maybe<PricePointDetails[]>
+  quoteToken: Token
 }
 
 const Wrapper = styled.div`
-  align-content: center;
   align-items: center;
   box-sizing: border-box;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text1};
   display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
   height: 100%;
   justify-content: center;
   position: relative;
   width: 100%;
+
+  > div {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 0;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+
+    > svg {
+      display: block;
+      max-height: 100%;
+      max-width: 100%;
+    }
+  }
 
   .amcharts-Sprite-group {
     pointer-events: none;
