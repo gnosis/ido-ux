@@ -12,7 +12,6 @@ import { abbreviation } from '../utils/numeral'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
 import useENSName from './useENSName'
-import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('useSendCallback')
 
@@ -27,7 +26,6 @@ export function useSendCallback(
   const ensName = useENSName(recipient)
   const tokenContract = useTokenContract(amount?.token?.address)
   const balance = useTokenBalanceTreatingWETHasETH(account ?? undefined, amount?.token)
-  const gasPrice = useGasPrice()
 
   return useMemo(() => {
     if (!amount) return null
@@ -70,7 +68,6 @@ export function useSendCallback(
           .then((estimatedGasLimit) =>
             tokenContract
               .transfer(recipient, amount.raw.toString(), {
-                gasPrice,
                 gasLimit: calculateGasMargin(estimatedGasLimit),
               })
               .then((response: TransactionResponse) => {
@@ -93,15 +90,14 @@ export function useSendCallback(
       }
     }
   }, [
-    amount,
-    recipient,
-    balance,
-    chainId,
+    addTransaction,
     library,
     account,
-    tokenContract,
-    addTransaction,
+    chainId,
+    amount,
     ensName,
-    gasPrice,
+    recipient,
+    tokenContract,
+    balance,
   ])
 }
