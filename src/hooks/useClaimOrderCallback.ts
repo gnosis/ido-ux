@@ -55,7 +55,9 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
         setClaimInfo({ sellOrdersFormUser })
       } catch (error) {
         if (cancelled) return
-        logger.error('Error getting withdraw info', error)
+        // mute the error on this level, just return a default claimInfo
+        // logger.error('Error getting withdraw info', error)
+
         setClaimInfo({
           sellOrdersFormUser: [
             encodeOrder({

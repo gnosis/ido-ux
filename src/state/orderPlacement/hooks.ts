@@ -555,7 +555,8 @@ export function useAllUserOrders(
           user: account,
         })
       } catch (error) {
-        logger.error('Error getting current orders: ', error)
+        // mute the error on this level
+        // logger.error('Error getting current orders: ', error)
       }
 
       const sellOrderDisplays: OrderDisplay[] = []

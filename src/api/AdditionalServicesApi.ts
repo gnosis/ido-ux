@@ -360,8 +360,6 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       }
       return await res.json()
     } catch (error) {
-      logger.error(error)
-
       const { auctionId, user } = params
 
       throw new Error(
