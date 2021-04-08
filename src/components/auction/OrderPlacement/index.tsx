@@ -47,13 +47,14 @@ const Wrapper = styled(BaseCard)`
 `
 
 const ActionButton = styled(Button)`
+  flex-shrink: 0;
   height: 52px;
   margin-top: auto;
 `
 
 const BalanceWrapper = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   margin-bottom: 20px;
 `
 
@@ -147,7 +148,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { chainId: auctionChainId, price, sellAmount } = useSwapState()
-  const { error } = useGetOrderPlacementError(derivedAuctionInfo)
+  const { error } = useGetOrderPlacementError(derivedAuctionInfo, auctionState)
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
   const auctionInfo = useAuctionDetails(auctionIdentifier)

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { Web3Provider } from '@ethersproject/providers'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 import ReactGA from 'react-ga'
@@ -14,7 +13,6 @@ import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
-import { ChainId } from '../../../utils'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import { useNetworkCheck } from '../../web3/Web3Status'
@@ -152,14 +150,14 @@ const WalletModal: React.FC = () => {
 
     try {
       // We check the metamask networkId
-      const provider = new Web3Provider(window.ethereum, 'any')
-      const { chainId: walletNetworkId } = await provider.getNetwork()
-      if (!Object.values(ChainId).includes(walletNetworkId)) {
-        throw new UnsupportedChainIdError(
-          walletNetworkId,
-          Object.keys(ChainId).map((chainId) => Number(chainId)),
-        )
-      }
+      // const provider = new Web3Provider(window.ethereum, 'any')
+      // const { chainId: walletNetworkId } = await provider.getNetwork()
+      // if (!Object.values(ChainId).includes(walletNetworkId)) {
+      //   throw new UnsupportedChainIdError(
+      //     walletNetworkId,
+      //     Object.keys(ChainId).map((chainId) => Number(chainId)),
+      //   )
+      // }
 
       setPendingWallet(connector) // set wallet for pending view
       setWalletView(WALLET_VIEWS.PENDING)

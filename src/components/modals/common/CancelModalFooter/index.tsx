@@ -24,7 +24,7 @@ const CancelModalFooter: React.FC<Props> = (props) => {
         <AlertIcon />
       </IconWrapper>
       <Text fontSize="18px" textAlign="center">
-        You will not be able to recover the order after canceling it.
+        You will need to place a new order if you still want to participate in this auction.
       </Text>
       <ActionButton onClick={onCancelOrder}>{confirmText}</ActionButton>
     </>
