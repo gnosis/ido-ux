@@ -175,6 +175,7 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 
 export function useGetOrderPlacementError(
   derivedAuctionInfo: DerivedAuctionInfo,
+  auctionState: AuctionState,
 ): {
   error?: string
 } {
@@ -227,6 +228,24 @@ export function useGetOrderPlacementError(
   ) {
     error = 'Please wait a sec'
   }
+
+  if (
+    derivedAuctionInfo?.clearingPriceSellOrder != null &&
+    derivedAuctionInfo?.clearingPrice != null &&
+    derivedAuctionInfo?.auctioningToken != undefined &&
+    derivedAuctionInfo?.biddingToken != undefined &&
+    auctionState == AuctionState.ORDER_PLACING &&
+    buyAmountScaled &&
+    sellAmountScaled
+      ?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.buyAmount.raw.toString())
+      .lte(
+        buyAmountScaled.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
+      )
+  ) {
+    error =
+      error ?? 'Price must be higher than ' + derivedAuctionInfo?.clearingPrice?.toSignificant(5)
+  }
+
   if (
     derivedAuctionInfo?.initialAuctionOrder != null &&
     derivedAuctionInfo?.auctioningToken != undefined &&
