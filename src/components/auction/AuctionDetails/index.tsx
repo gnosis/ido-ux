@@ -208,8 +208,8 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
       <>
         <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
         <TokenSymbol>
-          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per{' '}
-          {getTokenDisplay(derivedAuctionInfo?.biddingToken)}
+          {getTokenDisplay(derivedAuctionInfo?.biddingToken)} per{' '}
+          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
         </TokenSymbol>
       </>
     ) : (
@@ -262,17 +262,20 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         }
         itemValue={
           derivedAuctionInfo?.biddingToken ? (
-            <TokenSymbol>
-              <TokenLogo
-                size={'20px'}
-                token={{
-                  address: derivedAuctionInfo?.biddingToken.address,
-                  symbol: derivedAuctionInfo?.biddingToken.symbol,
-                }}
-              />
-              <span>{biddingTokenDisplay}</span>
-              <ExternalLink href={biddingTokenAddress} />
-            </TokenSymbol>
+            <>
+              <TokenValue>&nbsp;</TokenValue>
+              <TokenSymbol>
+                <span>{biddingTokenDisplay}</span>
+                <TokenLogo
+                  size={'20px'}
+                  token={{
+                    address: derivedAuctionInfo?.biddingToken.address,
+                    symbol: derivedAuctionInfo?.biddingToken.symbol,
+                  }}
+                />
+                <ExternalLink href={biddingTokenAddress} />
+              </TokenSymbol>
+            </>
           ) : (
             '-'
           )
@@ -295,18 +298,18 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         itemValue={
           derivedAuctionInfo?.auctioningToken && derivedAuctionInfo?.initialAuctionOrder ? (
             <>
-              <TokenLogo
-                size={'20px'}
-                token={{
-                  address: derivedAuctionInfo?.auctioningToken.address,
-                  symbol: derivedAuctionInfo?.auctioningToken.symbol,
-                }}
-              />
               <TokenValue>
-                {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(2))}
+                {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4))}
               </TokenValue>
               <TokenSymbol>
                 <span>{auctioningTokenDisplay}</span>
+                <TokenLogo
+                  size={'20px'}
+                  token={{
+                    address: derivedAuctionInfo?.auctioningToken.address,
+                    symbol: derivedAuctionInfo?.auctioningToken.symbol,
+                  }}
+                />
                 <ExternalLink href={auctionTokenAddress} />
               </TokenSymbol>
             </>
@@ -336,7 +339,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
             </TokenValue>
             <TokenSymbol>
               {initialPriceToDisplay && auctioningTokenDisplay
-                ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                ? ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
                 : '-'}
             </TokenSymbol>
           </>
