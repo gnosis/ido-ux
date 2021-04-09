@@ -265,7 +265,7 @@ const WalletModal: React.FC = () => {
                 <NavLink target="_blank" to="/terms-and-conditions">
                   Terms &amp; Conditions
                 </NavLink>{' '}
-                . Check-box to connect your wallet to this app.
+                .
               </CheckboxText>
             </CheckboxWrapper>
             <Footer>
