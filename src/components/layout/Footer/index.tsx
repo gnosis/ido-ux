@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components'
 
 import { HashLink } from 'react-router-hash-link'
 
-import { SettingsIcon } from '../../icons/SettingsIcon'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 
 const Wrapper = styled.footer`
@@ -71,33 +70,12 @@ const Link = styled(HashLink)`
   ${LinkCSS}
 `
 
-const IconWrapper = styled.span`
-  cursor: pointer;
-  display: inline-block;
-  height: 14px;
-  margin-left: 6px;
-  position: relative;
-  width: 14px;
-`
-
-const SettingsIconStyled = styled(SettingsIcon)`
-  fill: ${({ theme }) => theme.text1};
-  height: 11px;
-  width: 11px;
-
-  &:hover {
-    .fill {
-      fill: ${({ theme }) => theme.primary2};
-    }
-  }
-`
-
 interface Props {
   onCookiesBannerShow: () => void
 }
 
 export const Footer: React.FC<Props> = (props) => {
-  const { onCookiesBannerShow, ...restProps } = props
+  const { ...restProps } = props
   const date = new Date()
   const year = date.getFullYear()
 
@@ -111,15 +89,6 @@ export const Footer: React.FC<Props> = (props) => {
         </Item>
         <Item>
           <Link to="/terms-and-conditions#topAnchor">Terms</Link>
-        </Item>
-        <Item>
-          <Link to="/privacy-policy#topAnchor">Privacy</Link>
-        </Item>
-        <Item>
-          <Link to="/cookie-policy#topAnchor">Cookies</Link>
-          <IconWrapper onClick={onCookiesBannerShow}>
-            <SettingsIconStyled />
-          </IconWrapper>
         </Item>
         <Item>
           <Link to="/licenses#topAnchor">Licenses</Link>
