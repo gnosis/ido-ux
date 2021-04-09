@@ -80,11 +80,7 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
             </Switch>
           </Web3ReactManager>
         </InnerContainer>
-        <Footer
-          onCookiesBannerShow={() => {
-            setShowCookiesBanner(true)
-          }}
-        />
+        <Footer />
       </MainScroll>
       <CookiesBanner
         isBannerVisible={showCookiesBanner}

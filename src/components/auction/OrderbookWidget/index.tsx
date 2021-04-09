@@ -2,7 +2,7 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
 import { getLogger } from '../../../utils/logger'
-import { Offer, OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
+import { Offer, Props as OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
 
 const logger = getLogger('OrderbookWidget')
 

@@ -34,7 +34,7 @@ export interface PricePointDetails {
   totalVolumeNumber: number
 }
 
-export interface OrderBookChartProps {
+export interface Props {
   baseToken: Token
   data: Maybe<PricePointDetails[]>
   quoteToken: Token
@@ -47,7 +47,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-grow: 1;
   flex-shrink: 0;
-  height: 100%;
   justify-content: center;
   position: relative;
   width: 100%;
@@ -57,14 +56,15 @@ const Wrapper = styled.div`
     display: flex;
     flex-grow: 1;
     flex-shrink: 0;
-    height: 100%;
     justify-content: center;
+    min-height: 300px;
     width: 100%;
 
     > svg {
       display: block;
       max-height: 100%;
       max-width: 100%;
+      min-height: 300px;
     }
   }
 
@@ -96,7 +96,7 @@ const Wrapper = styled.div`
   }
 `
 
-const OrderBookChart: React.FC<OrderBookChartProps> = (props: OrderBookChartProps) => {
+const OrderBookChart: React.FC<Props> = (props) => {
   const { baseToken, data, quoteToken } = props
 
   const { loading, mountPoint } = useChart({

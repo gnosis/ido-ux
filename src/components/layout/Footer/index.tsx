@@ -35,13 +35,12 @@ const Inner = styled(InnerContainer)`
     flex-grow: 1;
     flex-shrink: 0;
     justify-content: center;
-    justify-content: center;
   }
 `
 
 const Item = styled.li`
   color: ${({ theme }) => theme.text1};
-  margin-right: 30px;
+  margin: 0;
   opacity: 0.8;
 
   &:hover {
@@ -50,6 +49,10 @@ const Item = styled.li`
 
   &:last-child {
     margin-right: 0;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-right: 30px;
   }
 `
 
@@ -70,17 +73,13 @@ const Link = styled(HashLink)`
   ${LinkCSS}
 `
 
-interface Props {
-  onCookiesBannerShow: () => void
-}
-
-export const Footer: React.FC<Props> = (props) => {
+export const Footer: React.FC = (props) => {
   const { ...restProps } = props
   const date = new Date()
   const year = date.getFullYear()
 
   return (
-    <Wrapper className="siteFooter" {...restProps}>
+    <Wrapper {...restProps}>
       <Inner as="ul">
         <Item>
           <ExternalLink

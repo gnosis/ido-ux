@@ -31,18 +31,19 @@ const Wrapper = styled(BaseCard)`
   grid-template-columns: 1fr 3px 1fr;
   grid-template-rows: 1fr;
   padding-bottom: 20px;
+  padding-top: 75px;
   row-gap: 15px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-template-areas: none;
     grid-template-columns: 1fr 3px 1fr 154px 1fr 3px 1fr;
-    padding-bottom: 0;
     margin: 0 0 50px;
+    padding: 0;
   }
 `
 
 const Cell = styled(KeyValue)`
-  height: 100%;
+  min-height: 90px;
   justify-content: center;
   padding: 5px 0;
 
@@ -71,7 +72,7 @@ const Cell = styled(KeyValue)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     flex-grow: 1;
     justify-content: center;
-    height: auto;
+    min-height: 0;
     padding: 0 10px;
 
     &.col1,
@@ -99,8 +100,8 @@ const Cell = styled(KeyValue)`
 const Break = styled.div`
   background-color: ${({ theme }) => theme.primary1};
   border-radius: 3px;
-  height: 100%;
-  min-height: 50px;
+  min-height: 90px;
+
   width: 3px;
 
   &.sep1 {
@@ -111,7 +112,7 @@ const Break = styled.div`
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    height: auto;
+    min-height: 50px;
 
     &.sep1,
     &.sep2 {
@@ -122,13 +123,20 @@ const Break = styled.div`
 
 const TimerWrapper = styled.div`
   grid-area: top;
-  margin: -65px auto 15px;
+  left: 50%;
+  margin: 0 auto 15px;
   max-height: 130px;
-  position: relative;
+  position: absolute;
+  top: -145px;
+  transform: translateX(-50%);
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-area: unset;
+    left: unset;
     margin: 0;
+    position: unset;
+    top: unset;
+    transform: none;
   }
 `
 
@@ -166,13 +174,13 @@ const TokenValue = styled.span`
   }
 `
 
-interface AuctionDetailsProps {
+interface Props {
   auctionIdentifier: AuctionIdentifier
   auctionState: AuctionState
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-const AuctionDetails = (props: AuctionDetailsProps) => {
+const AuctionDetails = (props: Props) => {
   const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
   const { chainId } = auctionIdentifier
 
