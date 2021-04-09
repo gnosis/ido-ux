@@ -261,11 +261,11 @@ const WalletModal: React.FC = () => {
             <CheckboxWrapper onClick={() => setTermsAccepted(!termsAccepted)}>
               <Checkbox checked={termsAccepted} />
               <CheckboxText>
-                You accept our{' '}
+                I have read, understood and agree to the{' '}
                 <NavLink target="_blank" to="/terms-and-conditions">
                   Terms &amp; Conditions
                 </NavLink>{' '}
-                when connecting your wallet to this app.
+                .
               </CheckboxText>
             </CheckboxWrapper>
             <Footer>

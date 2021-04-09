@@ -83,8 +83,12 @@ export const Footer: React.FC<Props> = (props) => {
     <Wrapper className="siteFooter" {...restProps}>
       <Inner as="ul">
         <Item>
-          <ExternalLink href="https://gnosis.io/" rel="noopener noreferrer" target="_blank">
-            {`©${year} Gnosis`}
+          <ExternalLink
+            href="https://forum.gnosis.io/c/dao/20"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {`©${year} GnosisDAO Forum`}
           </ExternalLink>
         </Item>
         <Item>
