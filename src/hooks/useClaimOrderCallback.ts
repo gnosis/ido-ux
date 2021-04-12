@@ -155,11 +155,13 @@ export function useClaimOrderCallback(
       if (!chainId || !library || !account || !claimInfo) {
         throw new Error('missing dependencies in onPlaceOrder callback')
       }
+
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
         library,
         account,
       )
+
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
@@ -182,7 +184,6 @@ export function useClaimOrderCallback(
           addTransaction(response, {
             summary: 'Claiming tokens',
           })
-
           return response.hash
         })
         .catch((error) => {

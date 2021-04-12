@@ -464,11 +464,10 @@ export function deriveAuctionState(
 export function useDerivedClaimInfo(
   auctionIdentifier: AuctionIdentifier,
 ): {
-  error?: string
   auctioningToken?: Maybe<Token>
   biddingToken?: Maybe<Token>
-  claimauctioningToken?: Maybe<TokenAmount>
-  claimbiddingToken?: Maybe<TokenAmount>
+  error?: string | undefined
+  isLoadingClaimInfo?: boolean
 } {
   const { auctionId, chainId } = auctionIdentifier
 
@@ -480,8 +479,6 @@ export function useDerivedClaimInfo(
   const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId]).result
   const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
 
-  const auctionEndDate = auctionInfo?.auctionEndDate
-
   const biddingTokenAddress: string | undefined = auctionInfo?.biddingToken.toString()
 
   const auctioningToken = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
@@ -491,8 +488,6 @@ export function useDerivedClaimInfo(
     biddingToken,
     auctioningToken,
   )
-
-  let error: string | undefined = ''
 
   const claimableOrders = useGetClaimInfo(auctionIdentifier)?.sellOrdersFormUser
   const claimed = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
@@ -506,22 +501,28 @@ export function useDerivedClaimInfo(
       : claimableOrders[0],
   ]).result
 
-  if (clearingPriceSellOrder?.buyAmount.raw.toString() === '0') {
-    error = 'Price not yet supplied to auction.'
-  } else if (auctionEndDate >= new Date().getTime() / 1000) {
-    error = 'Auction has not yet ended.'
-  } else if (claimableOrders === undefined || claimableOrders?.length > 0) {
-    if (!claimed || !claimed[0]) {
-      error = 'You already claimed your funds.'
-    }
-  } else if (claimableOrders?.length === 0) {
-    error = 'You had no participation on this auction.'
-  }
+  const error =
+    clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
+      ? 'Price not yet supplied to auction.'
+      : claimableOrders && claimableOrders.length > 0 && claimed && !claimed[0]
+      ? 'You already claimed your funds.'
+      : claimableOrders && claimableOrders.length === 0
+      ? 'You had no participation on this auction.'
+      : ''
+
+  const isLoadingClaimInfo =
+    !auctionInfo ||
+    !auctioningToken ||
+    !biddingToken ||
+    !clearingPriceSellOrder ||
+    !claimableOrders ||
+    !claimed
 
   return {
-    error,
     auctioningToken,
     biddingToken,
+    error,
+    isLoadingClaimInfo,
   }
 }
 
