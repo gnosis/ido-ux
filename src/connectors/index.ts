@@ -38,20 +38,10 @@ export const injected = new InjectedConnector({
 
 const rpcForWalletConnect: {
   [chainId: number]: string
-} =
-  CHAIN_ID === 4
-    ? { 4: NETWORK_URL_RINKEBY }
-    : CHAIN_ID === 100
-    ? { 100: NETWORK_URL_XDAI }
-    : { 1: NETWORK_URL_MAINNET }
+} = { 4: NETWORK_URL_RINKEBY, 100: NETWORK_URL_XDAI, 1: NETWORK_URL_MAINNET }
 
-// The WalletConnectConnector only supports a single RPC when configured,
-// so we are going to use the RPC associated with the Chain_Id environment variable configuration
-// Doing this, we will support every network, including xDai
 export const walletconnect = new WalletConnectConnector({
-  rpc: {
-    ...rpcForWalletConnect,
-  },
+  rpc: rpcForWalletConnect,
   bridge: 'https://safe-walletconnect.gnosis.io',
   qrcode: false,
   pollingInterval: POLLING_INTERVAL,
