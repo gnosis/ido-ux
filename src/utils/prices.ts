@@ -2,7 +2,18 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { STABLE_TOKEN_ADDRESSES } from '../constants/config'
 import { tryParseAmount } from '../state/orderPlacement/hooks'
+
+export function shouldPricesBeInverted(auctioningTokenAddress: string): boolean {
+  return STABLE_TOKEN_ADDRESSES.includes(auctioningTokenAddress)
+}
+
+export function getInverse(price: number, digits: number): number {
+  const re = new RegExp('(\\d+\\.\\d{' + digits + '})(\\d)'),
+    m = (1 / price).toString().match(re)
+  return m ? parseFloat(m[1]) : (1 / price).valueOf()
+}
 
 export function convertPriceIntoBuyAndSellAmount(
   auctioningToken: Token | undefined,

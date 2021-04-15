@@ -1,5 +1,8 @@
 import React from 'react'
+import { Repeat } from 'react-feather'
 import styled, { css } from 'styled-components'
+
+import { StyledBalanceMaxMini } from '../../swap/styleds'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -51,14 +54,22 @@ export const ControlButton = styled.button`
 interface Props {
   extraControls?: React.ReactNode
   text: string
+  onInvertPrices?: () => void
 }
 
 export const FormLabel: React.FC<Props> = (props) => {
-  const { extraControls, text, ...restProps } = props
+  const { extraControls, onInvertPrices, text, ...restProps } = props
 
   return (
     <Wrapper {...restProps}>
       <Label>{text}</Label>
+      {onInvertPrices ? (
+        <StyledBalanceMaxMini onClick={() => onInvertPrices()}>
+          <Repeat size={18} />
+        </StyledBalanceMaxMini>
+      ) : (
+        ''
+      )}
       {extraControls && extraControls}
     </Wrapper>
   )

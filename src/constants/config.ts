@@ -27,3 +27,8 @@ export const PORTIS_ID = process.env.REACT_APP_PORTIS_ID || ''
 // Other stuff
 export const GOOGLE_ANALYTICS_ID = process.env.REACT_APP_GOOGLE_ANALYTICS_ID || ''
 export const GIT_COMMIT_HASH = process.env.REACT_APP_GIT_COMMIT_HASH || ''
+
+export const STABLE_TOKEN_ADDRESSES = [
+  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC mainnet
+  '0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa', // DAI rinkeby
+]

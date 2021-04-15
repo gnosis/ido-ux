@@ -75,7 +75,7 @@ export const StyledBalanceMaxMini = styled.button<{ active?: boolean }>`
   color: ${({ theme }) => theme.text2};
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: left;
   float: right;
 
   :hover {

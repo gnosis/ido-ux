@@ -140,8 +140,8 @@ const processData = (
         // Data for representation
         priceNumber: price,
         totalVolumeNumber: totalVolume,
-        priceFormatted: price.toFixed(2),
-        totalVolumeFormatted: totalVolume.toFixed(2),
+        priceFormatted: price.toFixed(5),
+        totalVolumeFormatted: totalVolume.toFixed(5),
         askValueY,
         bidValueY,
         newOrderValueY: null,
@@ -162,8 +162,8 @@ const processData = (
           // Data for representation
           priceNumber: price,
           totalVolumeNumber: acc.totalVolume + volume,
-          priceFormatted: price.toFixed(2),
-          totalVolumeFormatted: (acc.totalVolume + volume).toFixed(2),
+          priceFormatted: price.toFixed(5),
+          totalVolumeFormatted: (acc.totalVolume + volume).toFixed(5),
           askValueY: (acc.totalVolume + volume) * price,
           bidValueY,
           newOrderValueY: null,

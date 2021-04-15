@@ -17,7 +17,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract, getTokenDisplay } from '../utils'
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
-import { convertPriceIntoBuyAndSellAmount } from '../utils/prices'
+import { convertPriceIntoBuyAndSellAmount, getInverse } from '../utils/prices'
 import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
@@ -33,6 +33,7 @@ export const queueLastElement = '0xffffffffffffffffffffffffffffffffffffffff00000
 export function usePlaceOrderCallback(
   auctionIdentifer: AuctionIdentifier,
   signature: string | null,
+  isPriceInverted: boolean,
   auctioningToken: Token,
   biddingToken: Token,
 ): null | (() => Promise<string>) {
@@ -40,7 +41,11 @@ export function usePlaceOrderCallback(
   const addTransaction = useTransactionAdder()
   const { onNewOrder } = useOrderActionHandlers()
   const { auctionId } = auctionIdentifer
-  const { price, sellAmount } = useSwapState()
+  const { price: priceFromSwapState, sellAmount } = useSwapState()
+  const price = (isPriceInverted
+    ? getInverse(Number(priceFromSwapState), 16)
+    : priceFromSwapState
+  ).toString()
   const { onNewBid } = useOrderbookActionHandlers()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(

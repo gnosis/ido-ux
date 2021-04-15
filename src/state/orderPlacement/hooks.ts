@@ -19,7 +19,7 @@ import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { ChainId } from '../../utils'
 import { getLogger } from '../../utils/logger'
-import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
+import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
@@ -27,6 +27,7 @@ import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
 import { useTokenBalances } from '../wallet/hooks'
 import {
+  invertPrice,
   priceInput,
   sellAmountInput,
   setDefaultsFromURLSearch,
@@ -127,7 +128,8 @@ export function useSwapState(): AppState['swap'] {
 
 export function useSwapActionHandlers(): {
   onUserSellAmountInput: (sellAmount: string) => void
-  onUserPriceInput: (price: string) => void
+  onUserPriceInput: (price: string, isInvertedPrice: boolean) => void
+  onInvertPrices: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -138,17 +140,23 @@ export function useSwapActionHandlers(): {
     },
     [dispatch],
   )
+  const onInvertPrices = useCallback(() => {
+    dispatch(invertPrice())
+  }, [dispatch])
+
   const onUserPriceInput = useCallback(
-    (price: string) => {
+    (price: string, isInvertedPrice: boolean) => {
       if (isNumeric(price)) {
-        dispatch(resetUserPrice({ price: parseFloat(price) }))
+        dispatch(
+          resetUserPrice({ price: isInvertedPrice ? 1 / parseFloat(price) : parseFloat(price) }),
+        )
       }
       dispatch(priceInput({ price }))
     },
     [dispatch],
   )
 
-  return { onUserPriceInput, onUserSellAmountInput }
+  return { onUserPriceInput, onUserSellAmountInput, onInvertPrices }
 }
 
 function isNumeric(str: string) {
@@ -176,12 +184,16 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 export function useGetOrderPlacementError(
   derivedAuctionInfo: DerivedAuctionInfo,
   auctionState: AuctionState,
+  showPricesInverted: boolean,
 ): {
   error?: string
 } {
   const { account } = useActiveWeb3React()
 
-  const { price, sellAmount } = useSwapState()
+  const { price: priceFromState, sellAmount } = useSwapState()
+  const price = showPricesInverted
+    ? getInverse(Number(priceFromState), 16).toString()
+    : priceFromState
 
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
@@ -243,7 +255,9 @@ export function useGetOrderPlacementError(
       )
   ) {
     error =
-      error ?? 'Price must be higher than ' + derivedAuctionInfo?.clearingPrice?.toSignificant(5)
+      error ?? showPricesInverted
+        ? 'Price must be lower than ' + derivedAuctionInfo?.clearingPrice?.invert().toSignificant(5)
+        : 'Price must be higher than ' + derivedAuctionInfo?.clearingPrice?.toSignificant(5)
   }
 
   if (
@@ -256,7 +270,9 @@ export function useGetOrderPlacementError(
       .lte(buyAmountScaled.mul(derivedAuctionInfo?.initialAuctionOrder?.buyAmount.raw.toString()))
   ) {
     error =
-      error ?? 'Price must be higher than ' + derivedAuctionInfo?.initialPrice?.toSignificant(5)
+      error ?? showPricesInverted
+        ? 'Price must be lower than ' + derivedAuctionInfo?.initialPrice?.invert().toSignificant(5)
+        : 'Price must be higher than ' + derivedAuctionInfo?.initialPrice?.toSignificant(5)
   }
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]

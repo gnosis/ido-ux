@@ -51,7 +51,6 @@ const useChart = (props: Props) => {
       chart: chartRef.current,
       baseToken,
       quoteToken,
-      data,
     })
 
     chartRef.current.data = data
