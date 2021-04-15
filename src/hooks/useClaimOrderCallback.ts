@@ -29,10 +29,10 @@ export interface ClaimInformation {
 }
 
 export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<ClaimInformation> {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const [claimInfo, setClaimInfo] = useState<Maybe<ClaimInformation>>(null)
   const [error, setError] = useState<Maybe<Error>>(null)
-  const { auctionId } = auctionIdentifier
+  const { auctionId, chainId } = auctionIdentifier
 
   useMemo(() => {
     setClaimInfo(null)
@@ -144,10 +144,10 @@ export function useGetAuctionProceeds(
 export function useClaimOrderCallback(
   auctionIdentifier: AuctionIdentifier,
 ): null | (() => Promise<string>) {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const { auctionId } = auctionIdentifier
+  const { auctionId, chainId } = auctionIdentifier
   const claimInfo = useGetClaimInfo(auctionIdentifier)
 
   return useMemo(() => {
