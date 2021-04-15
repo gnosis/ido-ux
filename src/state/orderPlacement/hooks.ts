@@ -10,6 +10,7 @@ import { additionalServiceApi } from '../../api'
 import { ClearingPriceAndVolumeData } from '../../api/AdditionalServicesApi'
 import { EASY_AUCTION_NETWORKS } from '../../constants'
 import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
 import { Order, decodeOrder, encodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
@@ -192,7 +193,7 @@ export function useGetOrderPlacementError(
 
   const { price: priceFromState, sellAmount } = useSwapState()
   const price = showPricesInverted
-    ? getInverse(Number(priceFromState), 16).toString()
+    ? getInverse(Number(priceFromState), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
     : priceFromState
 
   const relevantTokenBalances = useTokenBalances(account ?? undefined, [

@@ -4,6 +4,7 @@ import { Fraction, Percent, Token, TokenAmount, Trade } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../../constants/config'
 import { getTokenDisplay } from '../../../../utils'
 import { abbreviation } from '../../../../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../../utils/prices'
@@ -78,7 +79,10 @@ const SwapModalFooter: React.FC<Props> = (props) => {
   const { buyAmountScaled } = convertPriceIntoBuyAndSellAmount(
     auctioningToken,
     biddingToken,
-    (isPriceInverted ? getInverse(Number(price), 16) : price).toString(),
+    (isPriceInverted
+      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION)
+      : price
+    ).toString(),
     sellAmount,
   )
 

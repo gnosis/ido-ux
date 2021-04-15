@@ -29,3 +29,4 @@ export const GOOGLE_ANALYTICS_ID = process.env.REACT_APP_GOOGLE_ANALYTICS_ID || 
 export const GIT_COMMIT_HASH = process.env.REACT_APP_GIT_COMMIT_HASH || ''
 
 export const MAX_DECIMALS_PRICE_FORMAT = 5
+export const NUMBER_OF_DIGITS_FOR_INVERSION = 16

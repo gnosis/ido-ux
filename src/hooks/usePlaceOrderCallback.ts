@@ -7,6 +7,7 @@ import { Contract } from '@ethersproject/contracts'
 import { additionalServiceApi } from '../api'
 import { EASY_AUCTION_NETWORKS } from '../constants'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../constants/config'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
 import { useSwapState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
@@ -43,7 +44,7 @@ export function usePlaceOrderCallback(
   const { auctionId } = auctionIdentifer
   const { price: priceFromSwapState, sellAmount } = useSwapState()
   const price = (isPriceInverted
-    ? getInverse(Number(priceFromSwapState), 16)
+    ? getInverse(Number(priceFromSwapState), NUMBER_OF_DIGITS_FOR_INVERSION)
     : priceFromSwapState
   ).toString()
   const { onNewBid } = useOrderbookActionHandlers()

@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { parse } from 'qs'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { getInverse } from '../../utils/prices'
 import {
   invertPrice,
@@ -51,7 +52,7 @@ export default createReducer<SwapState>(initialState, (builder) =>
     .addCase(invertPrice, (state) => {
       return {
         ...state,
-        price: getInverse(Number(state.price), 16).toString(),
+        price: getInverse(Number(state.price), NUMBER_OF_DIGITS_FOR_INVERSION).toString(),
         showPriceInverted: !state.showPriceInverted,
       }
     })

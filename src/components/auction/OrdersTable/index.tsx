@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import {
   AuctionState,
@@ -229,7 +230,9 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                     </>
                   }
                   itemValue={abbreviation(
-                    showPriceInverted ? getInverse(Number(order.price), 16) : order.price,
+                    showPriceInverted
+                      ? getInverse(Number(order.price), NUMBER_OF_DIGITS_FOR_INVERSION)
+                      : order.price,
                   )}
                 />
               </Cell>
