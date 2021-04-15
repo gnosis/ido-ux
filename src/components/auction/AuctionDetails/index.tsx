@@ -7,6 +7,7 @@ import {
   DerivedAuctionInfo,
   orderToPrice,
   orderToSellOrder,
+  useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -194,6 +195,7 @@ const AuctionDetails = (props: Props) => {
     [chainId, derivedAuctionInfo?.biddingToken],
   )
 
+  const { showPriceInverted } = useSwapState()
   const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
   const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
     derivedAuctionInfo?.biddingToken,
@@ -210,20 +212,31 @@ const AuctionDetails = (props: Props) => {
         derivedAuctionInfo?.biddingToken,
         derivedAuctionInfo?.auctioningToken,
       )
-    const clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
+    const clearingPriceNumber = showPriceInverted
+      ? orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
+      : orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
+
+    const priceSymbolStrings = showPriceInverted
+      ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per
+    ${getTokenDisplay(derivedAuctionInfo?.biddingToken)}`
+      : `${getTokenDisplay(derivedAuctionInfo?.biddingToken)} per
+    ${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
+`
 
     return clearingPriceNumber ? (
       <>
         <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
-        <TokenSymbol>
-          {getTokenDisplay(derivedAuctionInfo?.biddingToken)} per{' '}
-          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
-        </TokenSymbol>
+        <TokenSymbol>{priceSymbolStrings}</TokenSymbol>
       </>
     ) : (
       '-'
     )
-  }, [derivedAuctionInfo?.auctioningToken, derivedAuctionInfo?.biddingToken, clearingPriceInfo])
+  }, [
+    derivedAuctionInfo?.auctioningToken,
+    showPriceInverted,
+    derivedAuctionInfo?.biddingToken,
+    clearingPriceInfo,
+  ])
 
   const titlePrice = useMemo(
     () =>
@@ -331,7 +344,7 @@ const AuctionDetails = (props: Props) => {
         className="col4"
         itemKey={
           <>
-            <span>Min Sell Price</span>
+            <span>{showPriceInverted ? `Max Sell Price` : `Min Sell Price`}</span>
             <Tooltip
               id="minSellPrice"
               text={'Minimum bidding price the auctioneer defined for participation.'}
@@ -342,12 +355,16 @@ const AuctionDetails = (props: Props) => {
           <>
             <TokenValue>
               {initialPriceToDisplay
-                ? abbreviation(initialPriceToDisplay?.toSignificant(2))
+                ? showPriceInverted
+                  ? initialPriceToDisplay?.invert().toSignificant(5)
+                  : abbreviation(initialPriceToDisplay?.toSignificant(2))
                 : ' - '}
             </TokenValue>
             <TokenSymbol>
               {initialPriceToDisplay && auctioningTokenDisplay
-                ? ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
+                ? showPriceInverted
+                  ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                  : ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
                 : '-'}
             </TokenSymbol>
           </>

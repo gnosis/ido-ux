@@ -6,3 +6,4 @@ export const setDefaultsFromURLSearch = createAction<{
 export const setNoDefaultNetworkId = createAction('setNoDefaultNetworkId')
 export const sellAmountInput = createAction<{ sellAmount: string }>('sellAmountInput')
 export const priceInput = createAction<{ price: string }>('priceInput')
+export const invertPrice = createAction('invertPrice')

@@ -1,7 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit'
 import { parse } from 'qs'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
+import { getInverse } from '../../utils/prices'
 import {
+  invertPrice,
   priceInput,
   sellAmountInput,
   setDefaultsFromURLSearch,
@@ -12,12 +15,14 @@ export interface SwapState {
   readonly chainId: number | undefined
   readonly price: string
   readonly sellAmount: string
+  readonly showPriceInverted: boolean
 }
 
 const initialState: SwapState = {
   chainId: undefined,
   price: '-',
   sellAmount: '',
+  showPriceInverted: false,
 }
 
 function parseAuctionIdParameter(urlParam: any): number {
@@ -42,6 +47,13 @@ export default createReducer<SwapState>(initialState, (builder) =>
       return {
         ...state,
         sellAmount,
+      }
+    })
+    .addCase(invertPrice, (state) => {
+      return {
+        ...state,
+        price: getInverse(Number(state.price), NUMBER_OF_DIGITS_FOR_INVERSION).toString(),
+        showPriceInverted: !state.showPriceInverted,
       }
     })
     .addCase(priceInput, (state, { payload: { price } }) => {

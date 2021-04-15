@@ -4,6 +4,13 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { tryParseAmount } from '../state/orderPlacement/hooks'
 
+export function getInverse(price: number, nrDigits: number): number {
+  // if 1/price has more than `nrDigits`, we make a cut off and only take the first `nrDigits`
+  const re = new RegExp('(\\d+\\.\\d{' + nrDigits + '})(\\d)'),
+    m = (1 / price).toString().match(re)
+  return m ? parseFloat(m[1]) : (1 / price).valueOf()
+}
+
 export function convertPriceIntoBuyAndSellAmount(
   auctioningToken: Token | undefined,
   biddingToken: Token | undefined,

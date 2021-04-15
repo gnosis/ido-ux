@@ -1,6 +1,7 @@
 import { Token } from 'uniswap-xdai-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
+import { MAX_DECIMALS_PRICE_FORMAT } from '../../../constants/config'
 import { getLogger } from '../../../utils/logger'
 import { Offer, Props as OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
 
@@ -140,8 +141,8 @@ const processData = (
         // Data for representation
         priceNumber: price,
         totalVolumeNumber: totalVolume,
-        priceFormatted: price.toFixed(2),
-        totalVolumeFormatted: totalVolume.toFixed(2),
+        priceFormatted: price.toFixed(MAX_DECIMALS_PRICE_FORMAT),
+        totalVolumeFormatted: totalVolume.toFixed(MAX_DECIMALS_PRICE_FORMAT),
         askValueY,
         bidValueY,
         newOrderValueY: null,
@@ -162,8 +163,8 @@ const processData = (
           // Data for representation
           priceNumber: price,
           totalVolumeNumber: acc.totalVolume + volume,
-          priceFormatted: price.toFixed(2),
-          totalVolumeFormatted: (acc.totalVolume + volume).toFixed(2),
+          priceFormatted: price.toFixed(MAX_DECIMALS_PRICE_FORMAT),
+          totalVolumeFormatted: (acc.totalVolume + volume).toFixed(MAX_DECIMALS_PRICE_FORMAT),
           askValueY: (acc.totalVolume + volume) * price,
           bidValueY,
           newOrderValueY: null,

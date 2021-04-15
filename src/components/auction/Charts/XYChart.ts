@@ -4,8 +4,6 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
-import { PricePointDetails } from '../OrderbookChart'
-
 export interface XYChartProps {
   chartElement: HTMLElement
 }
@@ -50,7 +48,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
   const numberFormatter = new am4core.NumberFormatter()
-  numberFormatter.numberFormat = '#.00a'
+  numberFormatter.numberFormat = '#.00000a'
   numberFormatter.smallNumberThreshold = 0
   numberFormatter.bigNumberPrefixes = [
     { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
@@ -155,7 +153,6 @@ interface DrawInformation {
   chart: am4charts.XYChart
   baseToken: Token
   quoteToken: Token
-  data: PricePointDetails[]
 }
 
 export const drawInformation = (props: DrawInformation) => {
