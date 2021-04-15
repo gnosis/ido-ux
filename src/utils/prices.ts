@@ -2,15 +2,11 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { STABLE_TOKEN_ADDRESSES } from '../constants/config'
 import { tryParseAmount } from '../state/orderPlacement/hooks'
 
-export function shouldPricesBeInverted(auctioningTokenAddress: string): boolean {
-  return STABLE_TOKEN_ADDRESSES.includes(auctioningTokenAddress)
-}
-
-export function getInverse(price: number, digits: number): number {
-  const re = new RegExp('(\\d+\\.\\d{' + digits + '})(\\d)'),
+export function getInverse(price: number, nrDigits: number): number {
+  // if 1/price has more than `nrDigits`, we make a cut off and only take the first `nrDigits`
+  const re = new RegExp('(\\d+\\.\\d{' + nrDigits + '})(\\d)'),
     m = (1 / price).toString().match(re)
   return m ? parseFloat(m[1]) : (1 / price).valueOf()
 }

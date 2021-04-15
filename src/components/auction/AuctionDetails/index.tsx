@@ -212,29 +212,22 @@ const AuctionDetails = (props: Props) => {
         derivedAuctionInfo?.biddingToken,
         derivedAuctionInfo?.auctioningToken,
       )
-    const clearingPriceNumber =
-      showPriceInverted && orderToPrice(clearingPriceInfoAsSellOrder)
-        ? orderToPrice(clearingPriceInfoAsSellOrder).invert().toSignificant(5)
-        : orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
+    const clearingPriceNumber = showPriceInverted
+      ? orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
+      : orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
+
+    const priceSymbolStrings = showPriceInverted
+      ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per
+    ${getTokenDisplay(derivedAuctionInfo?.biddingToken)}`
+      : `${getTokenDisplay(derivedAuctionInfo?.biddingToken)} per
+    ${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
+`
 
     return clearingPriceNumber ? (
-      showPriceInverted ? (
-        <>
-          <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
-          <TokenSymbol>
-            {getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per{' '}
-            {getTokenDisplay(derivedAuctionInfo?.biddingToken)}
-          </TokenSymbol>
-        </>
-      ) : (
-        <>
-          <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
-          <TokenSymbol>
-            {getTokenDisplay(derivedAuctionInfo?.biddingToken)} per{' '}
-            {getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
-          </TokenSymbol>
-        </>
-      )
+      <>
+        <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
+        <TokenSymbol>{priceSymbolStrings}</TokenSymbol>
+      </>
     ) : (
       '-'
     )
