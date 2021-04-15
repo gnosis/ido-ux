@@ -149,7 +149,11 @@ export function useSwapActionHandlers(): {
     (price: string, isInvertedPrice: boolean) => {
       if (isNumeric(price)) {
         dispatch(
-          resetUserPrice({ price: isInvertedPrice ? 1 / parseFloat(price) : parseFloat(price) }),
+          resetUserPrice({
+            price: isInvertedPrice
+              ? parseFloat(getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString())
+              : parseFloat(price),
+          }),
         )
       }
       dispatch(priceInput({ price }))
