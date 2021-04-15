@@ -1,7 +1,7 @@
+import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import {

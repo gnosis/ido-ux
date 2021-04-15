@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { URI_AVAILABLE } from '@anxolin/walletconnect-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 import ReactGA from 'react-ga'
 
 import MetamaskIcon from '../../../assets/images/metamask.png'
