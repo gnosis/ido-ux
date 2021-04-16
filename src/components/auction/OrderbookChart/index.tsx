@@ -99,6 +99,11 @@ const Wrapper = styled.div`
 const OrderBookChart: React.FC<Props> = (props) => {
   const { baseToken, data, quoteToken } = props
 
+  for (const p of data) {
+    p.priceNumber = 1 / p.price
+    p.priceFormatted = (1 / p.price).toString()
+  }
+
   const { loading, mountPoint } = useChart({
     createChart: XYChart,
     data,

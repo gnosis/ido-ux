@@ -22,7 +22,7 @@ const initialState: SwapState = {
   chainId: undefined,
   price: '-',
   sellAmount: '',
-  showPriceInverted: false,
+  showPriceInverted: true,
 }
 
 function parseAuctionIdParameter(urlParam: any): number {
