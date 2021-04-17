@@ -19,7 +19,7 @@ export const abbreviation = (_value: string | number, mantissa = 6) => {
     // if the value is small like 0.00000000000001 (1e-14), it will be excluded
     if (leftSide && leftSide.length > 4 && !leftSide.includes('e-')) {
       format.average = true
-      format.mantissa = 2
+      format.mantissa = 3
     }
 
     if (parseValue && parseValue.value() !== undefined) {
