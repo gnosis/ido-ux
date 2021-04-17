@@ -536,7 +536,7 @@ export function useDerivedClaimInfo(
     !auctioningToken ||
     !biddingToken ||
     !clearingPriceSellOrder ||
-    !claimableOrders ||
+    claimableOrders == undefined ||
     !claimed
 
   return {
