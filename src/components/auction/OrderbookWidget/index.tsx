@@ -3,6 +3,7 @@ import { Token } from 'uniswap-xdai-sdk'
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
 import { MAX_DECIMALS_PRICE_FORMAT } from '../../../constants/config'
 import { getLogger } from '../../../utils/logger'
+import { showChartsInverted } from '../../../utils/prices'
 import { Offer, Props as OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
 
 const logger = getLogger('OrderbookWidget')
@@ -63,6 +64,7 @@ const processData = (
   highestValue: number,
   lowestValue: number,
   type: Offer,
+  showChartsInverted: boolean,
 ): PricePointDetails[] => {
   const isBid = type == Offer.Bid
 
@@ -94,10 +96,21 @@ const processData = (
       volume: 0,
     })
   } else {
-    pricePoints.push({
-      price: (highestValue * 104) / 100,
-      volume: 0,
-    })
+    if (showChartsInverted) {
+      const interpolationSteps = 100
+      for (let i = 0; i < interpolationSteps; i++) {
+        pricePoints.push({
+          price:
+            (highestValue * 104) / 100 - (i * (highestValue - lowestValue)) / interpolationSteps,
+          volume: 0,
+        })
+      }
+    } else {
+      pricePoints.push({
+        price: (highestValue * 104) / 100,
+        volume: 0,
+      })
+    }
     pricePoints.push({
       price: (pricePoints[0].price * 96) / 100,
       volume: 0,
@@ -269,8 +282,8 @@ function _printOrderBook(
 interface ProcessRawDataParams {
   data: OrderBookData
   userOrder: PricePoint
-  baseToken: Pick<Token, 'decimals' | 'symbol'>
-  quoteToken: Pick<Token, 'decimals' | 'symbol'>
+  baseToken: Token
+  quoteToken: Token
 }
 export function findClearingPrice(
   sellOrders: PricePoint[],
@@ -318,11 +331,26 @@ export const processOrderbookData = ({
   try {
     const clearingPrice = findClearingPrice(data.bids, userOrder, data.asks[0])
     const min_value = Math.min(clearingPrice * 2, data.asks[0]?.price ?? 0)
-    const bids = processData(data.bids, userOrder, min_value, min_value, Offer.Bid)
-    bids.sort((lhs, rhs) => -(lhs.price - rhs.price))
+    let max_value = Math.max(clearingPrice * 2, Math.max(...data.asks.map((i) => i.price)) ?? 0)
 
-    const max_value = Math.min(clearingPrice * 2, bids[0].price ?? 0)
-    const asks = processData(data.asks, null, max_value, min_value, Offer.Ask)
+    const bids = processData(
+      data.bids,
+      userOrder,
+      max_value,
+      min_value,
+      Offer.Bid,
+      showChartsInverted(baseToken),
+    )
+    bids.sort((lhs, rhs) => -(lhs.price - rhs.price))
+    max_value = Math.min(clearingPrice * 2, bids[0].price ?? 0)
+    const asks = processData(
+      data.asks,
+      null,
+      max_value,
+      min_value,
+      Offer.Ask,
+      showChartsInverted(baseToken),
+    )
     // Filter for price-points close to clearing price
     const asksFiltered = asks.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
     let bidsFiltered = bids.filter((pp) => Math.abs(pp.price - clearingPrice) / clearingPrice < 2)
@@ -345,8 +373,14 @@ export const processOrderbookData = ({
       pricePoints = pricePoints.concat(priceInfo)
     }
 
-    // Sort points by price
-    pricePoints.sort((lhs, rhs) => lhs.price - rhs.price)
+    // Sort points by price, unless the price is equal. Then we sort by totalVolume
+    pricePoints.sort((lhs, rhs) =>
+      lhs.price != rhs.price
+        ? lhs.price - rhs.price
+        : lhs.type == 1
+        ? lhs.totalVolume - rhs.totalVolume
+        : -(lhs.totalVolume - rhs.totalVolume),
+    )
 
     const debug = false
     if (debug) _printOrderBook(pricePoints, baseToken.symbol, quoteToken.symbol)

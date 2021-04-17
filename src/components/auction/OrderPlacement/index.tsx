@@ -187,17 +187,17 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
   useEffect(() => {
-    if (price == '-' && derivedAuctionInfo?.initialPrice) {
+    if (price == '-' && derivedAuctionInfo?.clearingPrice) {
       showPriceInverted
         ? onUserPriceInput(
-            derivedAuctionInfo?.initialPrice
+            derivedAuctionInfo?.clearingPrice
               .invert()
               .multiply(new Fraction('999', '1000'))
               .toSignificant(4),
             true,
           )
         : onUserPriceInput(
-            derivedAuctionInfo?.initialPrice
+            derivedAuctionInfo?.clearingPrice
               .multiply(new Fraction('1001', '1000'))
               .toSignificant(4),
             false,

@@ -2,6 +2,7 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { STABLE_TOKENS_FOR_INVERTED_CHARTS } from '../constants/config'
 import { tryParseAmount } from '../state/orderPlacement/hooks'
 
 export function getInverse(price: number, nrDigits: number): number {
@@ -41,4 +42,8 @@ export function convertPriceIntoBuyAndSellAmount(
     sellAmountScaled: BigNumber.from(sellAmountScaled.raw.toString()),
     buyAmountScaled,
   }
+}
+
+export function showChartsInverted(token: Token): boolean {
+  return STABLE_TOKENS_FOR_INVERTED_CHARTS.includes(token.address)
 }
