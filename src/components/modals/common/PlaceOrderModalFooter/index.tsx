@@ -126,7 +126,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         {isPriceInverted ? (
           <Text>
-            Max {auctioningTokenDisplay} paid per {biddingTokenDisplay}
+            Min {auctioningTokenDisplay} received per {biddingTokenDisplay}
           </Text>
         ) : (
           <Text>
