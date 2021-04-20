@@ -7,9 +7,9 @@ import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 const logger = getLogger('useGasPrice')
 
-export const useGasPrice = (): BigNumber => {
+export const useGasPrice = (chainId?: ChainId): BigNumber => {
   const [gasPrice, setGasPrice] = useState<BigNumber>(BigNumber.from(20000000000)) // 20 gwei
-  const { chainId, library } = useActiveWeb3React()
+  const { library } = useActiveWeb3React()
 
   useEffect(() => {
     let cancelled = false
