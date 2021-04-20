@@ -17,7 +17,7 @@ import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDeta
 import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
-import { ChainId } from '../../utils'
+import { ChainId, getTokenDisplay } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
@@ -25,7 +25,7 @@ import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
-import { useTokenBalances } from '../wallet/hooks'
+import { useTokenBalancesTreatWETHAsETHonXDAI } from '../wallet/hooks'
 import {
   priceInput,
   sellAmountInput,
@@ -176,14 +176,16 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 export function useGetOrderPlacementError(
   derivedAuctionInfo: DerivedAuctionInfo,
   auctionState: AuctionState,
+  auctionIdentifier: AuctionIdentifier,
 ): {
   error?: string
 } {
   const { account } = useActiveWeb3React()
+  const { chainId } = auctionIdentifier
 
   const { price, sellAmount } = useSwapState()
 
-  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
   const biddingTokenBalance =
@@ -261,7 +263,7 @@ export function useGetOrderPlacementError(
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    error = 'Insufficient ' + amountIn.token.symbol + ' balance'
+    error = 'Insufficient ' + getTokenDisplay(amountIn.token, chainId) + ' balance'
   }
 
   return {

@@ -195,12 +195,13 @@ const AuctionDetails = (props: Props) => {
   )
 
   const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
-    derivedAuctionInfo?.biddingToken,
-  ])
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo?.biddingToken, chainId],
+  )
   const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
-    [derivedAuctionInfo?.auctioningToken],
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo?.auctioningToken, chainId],
   )
   const clearingPriceDisplay = useMemo(() => {
     const clearingPriceInfoAsSellOrder =
@@ -216,14 +217,19 @@ const AuctionDetails = (props: Props) => {
       <>
         <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
         <TokenSymbol>
-          {getTokenDisplay(derivedAuctionInfo?.biddingToken)} per{' '}
-          {getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
+          {getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)} per{' '}
+          {getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)}
         </TokenSymbol>
       </>
     ) : (
       '-'
     )
-  }, [derivedAuctionInfo?.auctioningToken, derivedAuctionInfo?.biddingToken, clearingPriceInfo])
+  }, [
+    derivedAuctionInfo?.auctioningToken,
+    derivedAuctionInfo?.biddingToken,
+    clearingPriceInfo,
+    chainId,
+  ])
 
   const titlePrice = useMemo(
     () =>

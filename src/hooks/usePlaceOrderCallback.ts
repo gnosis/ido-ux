@@ -1,11 +1,12 @@
 import { useMemo } from 'react'
-import { Token } from 'uniswap-xdai-sdk'
+import { Token, WETH } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
 import { additionalServiceApi } from '../api'
-import { EASY_AUCTION_NETWORKS } from '../constants'
+import { DEPOSIT_AND_PLACE_ORDER, EASY_AUCTION_NETWORKS } from '../constants'
+import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPlaceOrder.json'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
 import { useSwapState } from '../state/orderPlacement/hooks'
@@ -14,7 +15,13 @@ import { useOrderbookActionHandlers } from '../state/orderbook/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { OrderStatus } from '../state/orders/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { ChainId, calculateGasMargin, getEasyAuctionContract, getTokenDisplay } from '../utils'
+import {
+  ChainId,
+  calculateGasMargin,
+  getContract,
+  getEasyAuctionContract,
+  getTokenDisplay,
+} from '../utils'
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount } from '../utils/prices'
@@ -89,69 +96,140 @@ export function usePlaceOrderCallback(
         logger.error(`Error trying to get previous order for auctionId ${auctionId}`)
       }
 
-      let estimate,
-        method: Function,
-        args: Array<string | string[] | number>,
-        value: Maybe<BigNumber>
-      {
-        estimate = easyAuctionContract.estimateGas.placeSellOrders
-        method = easyAuctionContract.placeSellOrders
-        args = [
-          auctionId,
-          [buyAmountScaled.toString()],
-          [sellAmountScaled.toString()],
-          [previousOrder],
-          signature ? signature : '0x',
-        ]
-        value = null
-      }
+      const auctioningTokenDisplay = getTokenDisplay(auctioningToken, chainId)
 
-      const biddingTokenDisplay = getTokenDisplay(biddingToken)
-      const auctioningTokenDisplay = getTokenDisplay(auctioningToken)
-
-      return estimate(...args, value ? { value } : {})
-        .then((estimatedGasLimit) =>
-          method(...args, {
-            ...(value ? { value } : {}),
-            gasLimit: calculateGasMargin(estimatedGasLimit),
-          }),
+      if (biddingToken.address == WETH[chainId as ChainId].address && chainId == Number(100)) {
+        const depositAndPlaceOrderContract = getContract(
+          DEPOSIT_AND_PLACE_ORDER[chainId as ChainId],
+          depositAndPlaceOrderABI,
+          library,
+          account,
         )
-        .then((response) => {
-          addTransaction(response, {
-            summary:
-              'Sell ' +
-              abbreviation(sellAmount) +
-              ' ' +
-              biddingTokenDisplay +
-              ' for ' +
-              abbreviation((parseFloat(sellAmount) / parseFloat(price)).toPrecision(4)) +
-              ' ' +
-              auctioningTokenDisplay,
+        let estimate,
+          method: Function,
+          args: Array<string | string[] | number>,
+          value: Maybe<BigNumber>
+        {
+          estimate = depositAndPlaceOrderContract.estimateGas.depositAndPlaceOrder
+          method = depositAndPlaceOrderContract.depositAndPlaceOrder
+          args = [
+            auctionId,
+            [buyAmountScaled.toString()],
+            [previousOrder],
+            signature ? signature : '0x',
+          ]
+          value = sellAmountScaled
+        }
+
+        const biddingTokenDisplay = 'XDAI'
+
+        return estimate(...args, value ? { value } : {})
+          .then((estimatedGasLimit) =>
+            method(...args, {
+              ...(value ? { value } : {}),
+              gasLimit: calculateGasMargin(estimatedGasLimit),
+            }),
+          )
+          .then((response) => {
+            addTransaction(response, {
+              summary:
+                'Sell ' +
+                abbreviation(sellAmount) +
+                ' ' +
+                biddingTokenDisplay +
+                ' for ' +
+                abbreviation((parseFloat(sellAmount) / parseFloat(price)).toPrecision(4)) +
+                ' ' +
+                auctioningTokenDisplay,
+            })
+            const order = {
+              buyAmount: buyAmountScaled,
+              sellAmount: sellAmountScaled,
+              userId: BigNumber.from(parseInt(userId.toString())), // If many people are placing orders, this might be incorrect
+            }
+            onNewOrder([
+              {
+                id: encodeOrder(order),
+                sellAmount: parseFloat(sellAmount).toString(),
+                price: price.toString(),
+                status: OrderStatus.PENDING,
+                chainId,
+              },
+            ])
+            onNewBid({
+              volume: parseFloat(sellAmount),
+              price: parseFloat(price),
+            })
+            return response.hash
           })
-          const order = {
-            buyAmount: buyAmountScaled,
-            sellAmount: sellAmountScaled,
-            userId: BigNumber.from(parseInt(userId.toString())), // If many people are placing orders, this might be incorrect
-          }
-          onNewOrder([
-            {
-              id: encodeOrder(order),
-              sellAmount: parseFloat(sellAmount).toString(),
-              price: price.toString(),
-              status: OrderStatus.PENDING,
-              chainId,
-            },
-          ])
-          onNewBid({
-            volume: parseFloat(sellAmount),
-            price: parseFloat(price),
+          .catch((error) => {
+            logger.error(`Swap or gas estimate failed`, error)
+            throw error
           })
-          return response.hash
-        })
-        .catch((error) => {
-          logger.error(`Swap or gas estimate failed`, error)
-          throw error
-        })
+      } else {
+        let estimate,
+          method: Function,
+          args: Array<string | string[] | number>,
+          value: Maybe<BigNumber>
+        {
+          estimate = easyAuctionContract.estimateGas.placeSellOrders
+          method = easyAuctionContract.placeSellOrders
+          args = [
+            auctionId,
+            [buyAmountScaled.toString()],
+            [sellAmountScaled.toString()],
+            [previousOrder],
+            signature ? signature : '0x',
+          ]
+          value = null
+        }
+
+        const biddingTokenDisplay = getTokenDisplay(biddingToken, chainId)
+
+        return estimate(...args, value ? { value } : {})
+          .then((estimatedGasLimit) =>
+            method(...args, {
+              ...(value ? { value } : {}),
+              gasLimit: calculateGasMargin(estimatedGasLimit),
+            }),
+          )
+          .then((response) => {
+            addTransaction(response, {
+              summary:
+                'Sell ' +
+                abbreviation(sellAmount) +
+                ' ' +
+                biddingTokenDisplay +
+                ' for ' +
+                abbreviation((parseFloat(sellAmount) / parseFloat(price)).toPrecision(4)) +
+                ' ' +
+                auctioningTokenDisplay,
+            })
+            const order = {
+              buyAmount: buyAmountScaled,
+              sellAmount: sellAmountScaled,
+              userId: BigNumber.from(parseInt(userId.toString())), // If many people are placing orders, this might be incorrect
+            }
+            onNewOrder([
+              {
+                id: encodeOrder(order),
+                sellAmount: parseFloat(sellAmount).toString(),
+                price: price.toString(),
+                status: OrderStatus.PENDING,
+                chainId,
+              },
+            ])
+            onNewBid({
+              volume: parseFloat(sellAmount),
+              price: parseFloat(price),
+            })
+            return response.hash
+          })
+          .catch((error) => {
+            logger.error(`Swap or gas estimate failed`, error)
+            throw error
+          })
+      }
     }
   }, [
     account,

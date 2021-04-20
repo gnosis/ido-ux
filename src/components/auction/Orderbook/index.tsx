@@ -56,7 +56,12 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
         ) : error || !asks || asks.length === 0 ? (
           <OrderBookError error={error} />
         ) : (
-          <OrderBookChart baseToken={baseToken} data={processedOrderbook} quoteToken={quoteToken} />
+          <OrderBookChart
+            baseToken={baseToken}
+            chainId={chainId}
+            data={processedOrderbook}
+            quoteToken={quoteToken}
+          />
         )}
       </Wrapper>
     </>

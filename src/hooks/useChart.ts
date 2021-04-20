@@ -5,16 +5,18 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 
 import { XYChartProps, drawInformation } from '../components/auction/Charts/XYChart'
 import { PricePointDetails } from '../components/auction/OrderbookChart'
+import { ChainId } from '../utils'
 
 interface Props {
   createChart: (props: XYChartProps) => am4charts.XYChart
   data: Maybe<PricePointDetails[]>
   baseToken: Token
   quoteToken: Token
+  chainId: ChainId
 }
 
 const useChart = (props: Props) => {
-  const { baseToken, createChart, data, quoteToken } = props
+  const { baseToken, chainId, createChart, data, quoteToken } = props
 
   const [loading, setLoading] = useState(false)
 
@@ -52,10 +54,11 @@ const useChart = (props: Props) => {
       baseToken,
       quoteToken,
       data,
+      chainId,
     })
 
     chartRef.current.data = data
-  }, [baseToken, quoteToken, data])
+  }, [baseToken, quoteToken, data, chainId])
 
   return { chartRef, mountPoint, loading }
 }

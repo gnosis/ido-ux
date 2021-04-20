@@ -1,4 +1,4 @@
-import { JSBI, Percent, Token, TokenAmount } from 'uniswap-xdai-sdk'
+import { JSBI, Percent, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
 
 import { getAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -174,6 +174,7 @@ export function escapeRegExp(string: string): string {
 }
 
 // Always return a non-undefined token display
-export function getTokenDisplay(token: Token): string {
+export function getTokenDisplay(token: Token, chainId: ChainId): string {
+  if (token.address == WETH[chainId].address && chainId == 100) return `XDAI`
   return token?.symbol || token?.name || token?.address || '🤔'
 }
