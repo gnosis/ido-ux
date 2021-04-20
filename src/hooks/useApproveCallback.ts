@@ -10,6 +10,7 @@ import { ChainId, calculateGasMargin, isTokenXDAI } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
+import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('useApproveCallback')
 
@@ -27,6 +28,7 @@ export function useApproveCallback(
   chainId?: ChainId,
 ): [ApprovalState, () => Promise<void>] {
   const { account } = useActiveWeb3React()
+  const gasPrice = useGasPrice()
 
   const currentAllowance = useTokenAllowance(
     amountToApprove?.token,
@@ -80,6 +82,7 @@ export function useApproveCallback(
 
     return tokenContract
       .approve(addressToApprove, useExact ? amountToApprove.raw.toString() : MaxUint256, {
+        gasPrice,
         gasLimit: calculateGasMargin(estimatedGas),
       })
       .then((response: TransactionResponse) => {
@@ -92,7 +95,7 @@ export function useApproveCallback(
         logger.debug('Failed to approve token', error)
         throw error
       })
-  }, [approval, tokenContract, addressToApprove, amountToApprove, addTransaction])
+  }, [approval, gasPrice, tokenContract, addressToApprove, amountToApprove, addTransaction])
 
   return [approval, approve]
 }

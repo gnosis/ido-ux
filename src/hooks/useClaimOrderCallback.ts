@@ -12,6 +12,7 @@ import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('useClaimOrderCallback')
 
@@ -149,6 +150,7 @@ export function useClaimOrderCallback(
 
   const { auctionId, chainId } = auctionIdentifier
   const claimInfo = useGetClaimInfo(auctionIdentifier)
+  const gasPrice = useGasPrice()
 
   return useMemo(() => {
     return async function onClaimOrder() {
@@ -177,6 +179,7 @@ export function useClaimOrderCallback(
         .then((estimatedGasLimit) =>
           method(...args, {
             ...(value ? { value } : {}),
+            gasPrice,
             gasLimit: calculateGasMargin(estimatedGasLimit),
           }),
         )
@@ -191,5 +194,5 @@ export function useClaimOrderCallback(
           throw error
         })
     }
-  }, [account, addTransaction, chainId, library, auctionId, claimInfo])
+  }, [account, addTransaction, gasPrice, chainId, library, auctionId, claimInfo])
 }

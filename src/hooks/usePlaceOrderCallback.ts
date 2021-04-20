@@ -30,6 +30,7 @@ import { convertPriceIntoBuyAndSellAmount, getInverse } from '../utils/prices'
 import { encodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useContract } from './useContract'
+import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('usePlaceOrderCallback')
 
@@ -56,6 +57,7 @@ export function usePlaceOrderCallback(
     : priceFromSwapState
   ).toString()
   const { onNewBid } = useOrderbookActionHandlers()
+  const gasPrice = useGasPrice()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],
@@ -134,6 +136,7 @@ export function usePlaceOrderCallback(
           .then((estimatedGasLimit) =>
             method(...args, {
               ...(value ? { value } : {}),
+              gasPrice,
               gasLimit: calculateGasMargin(estimatedGasLimit),
             }),
           )
@@ -197,6 +200,7 @@ export function usePlaceOrderCallback(
           .then((estimatedGasLimit) =>
             method(...args, {
               ...(value ? { value } : {}),
+              gasPrice,
               gasLimit: calculateGasMargin(estimatedGasLimit),
             }),
           )
@@ -249,6 +253,7 @@ export function usePlaceOrderCallback(
     onNewBid,
     onNewOrder,
     price,
+    gasPrice,
     sellAmount,
     signature,
     userId,
