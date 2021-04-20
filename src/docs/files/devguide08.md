@@ -74,11 +74,11 @@ As you can see in the image below, if you try to input a value of more tokens th
 <img src="/assets/GA_SafeApp_23.png" alt="drawing" width="500"/>
 <img src="/assets/GA_SafeApp_24.png" alt="drawing" width="500"/>
 
-16. **Optional Step:** In the event that you would like the auction to have the possibility of the auction being atomically closed, you will need to check on the Atomic Closure Allowance box. Allowing the auction to be closed atomically will allow the last bid to be submitted along with the price, which can lead to atomic arbitrage. 
+16. **Optional Step:** In the event that you would like the auction to have the possibility of the auction being atomically closed, you will need to check on the Atomic Closure Allowance box.  Allowing the auction to be closed atomically will allow the last bid to be submitted along with the settlement transaction, which can enable atomic arbitrage.
 
 <img src="/assets/GA_SafeApp_25.png" alt="drawing" width="500"/>
 
-17. **Optional Step:** In case you would like to create a whitelist for the auction, you have to check in the box. The interface will prompt you to include the ninth parameter, which is the signing address (Public Key) that has been used to sign the Gnosis Auction Allow List contract that holds the addresses of the auction’s valid participants. When using the Allow List contract, auctioneers can restrict the auction participants to anyone who is included in such list. 
+17. **Optional Step:** In case you have curated a restricted participation list for the auction, check this box: The interface will prompt you to include the ninth parameter, which is the signing address (Public Key) that has been used to sign the contract approval message for each user to be whitelisted. When using the Allow List contract, auctioneers can restrict the auction participants to anyone who is included in such a list.
 
 <img src="/assets/GA_SafeApp_26.png" alt="drawing" width="500"/>
 <img src="/assets/GA_SafeApp_27.png" alt="drawing" width="500"/>
