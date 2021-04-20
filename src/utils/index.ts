@@ -175,6 +175,10 @@ export function escapeRegExp(string: string): string {
 
 // Always return a non-undefined token display
 export function getTokenDisplay(token: Token, chainId: ChainId): string {
-  if (token.address == WETH[chainId].address && chainId == 100) return `XDAI`
+  if (isTokenXDAI(token.address, chainId)) return `XDAI`
   return token?.symbol || token?.name || token?.address || '🤔'
+}
+
+export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
+  return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId == 100
 }

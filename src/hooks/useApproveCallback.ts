@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react'
-import { ChainId, TokenAmount, WETH } from 'uniswap-xdai-sdk'
+import { TokenAmount } from 'uniswap-xdai-sdk'
 
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
 
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin } from '../utils'
+import { ChainId, calculateGasMargin, isTokenXDAI } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
@@ -41,8 +41,7 @@ export function useApproveCallback(
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
     // amountToApprove will be defined if currentAllowance is
-    if (chainId && chainId == 100 && addressToApprove == WETH[chainId as ChainId].address)
-      return ApprovalState.APPROVED
+    if (isTokenXDAI(addressToApprove, chainId)) return ApprovalState.APPROVED
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove)
       ? pendingApproval
