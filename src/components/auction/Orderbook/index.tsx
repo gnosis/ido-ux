@@ -2,9 +2,11 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier, parseURL } from '../../../state/orderPlacement/reducer'
 import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
+import { getInverse, showChartsInverted } from '../../../utils/prices'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
@@ -43,11 +45,20 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
 
   const processedOrderbook = processOrderbookData({
     data,
-    userOrder: { price: userOrderPrice, volume: userOrderVolume },
+    userOrder: {
+      price: userOrderPrice,
+      volume: userOrderVolume,
+    },
     baseToken,
     quoteToken,
   })
 
+  if (showChartsInverted(baseToken)) {
+    for (const p of processedOrderbook) {
+      p.priceNumber = getInverse(p.price, NUMBER_OF_DIGITS_FOR_INVERSION)
+      p.priceFormatted = getInverse(p.price, NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+    }
+  }
   return (
     <>
       <Wrapper>
