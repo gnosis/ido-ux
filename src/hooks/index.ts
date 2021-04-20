@@ -6,6 +6,7 @@ import { isMobile } from 'react-device-detect'
 
 import { injected, walletconnect } from '../connectors'
 import { NetworkContextName } from '../constants'
+import { useSwapState } from '../state/orderPlacement/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { getLogger } from '../utils/logger'
 
@@ -20,12 +21,12 @@ export function useActiveWeb3React() {
 export function useEagerConnect() {
   const { activate, active } = useWeb3ReactCore() // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false)
-
+  const { chainId } = useSwapState()
   useEffect(() => {
     const previouslyUsedWalletConnect = localStorage.getItem('walletconnect')
 
-    if (previouslyUsedWalletConnect) {
-      activate(walletconnect, undefined, true).catch(() => {
+    if (previouslyUsedWalletConnect && chainId) {
+      activate(walletconnect[chainId], undefined, true).catch(() => {
         setTried(true)
       })
     } else {
@@ -45,7 +46,7 @@ export function useEagerConnect() {
         }
       })
     }
-  }, [activate]) // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, chainId]) // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
