@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Token, WETH } from 'uniswap-xdai-sdk'
+import { Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
@@ -106,7 +106,6 @@ export function usePlaceOrderCallback(
       }
 
       const auctioningTokenDisplay = getTokenDisplay(auctioningToken, chainId)
-
 
       if (isTokenXDAI(biddingToken.address, chainId)) {
         const depositAndPlaceOrderContract = getContract(

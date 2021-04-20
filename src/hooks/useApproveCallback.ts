@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { ChainId, TokenAmount, WETH } from 'uniswap-xdai-sdk'
+import { TokenAmount } from 'uniswap-xdai-sdk'
 
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
