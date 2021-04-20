@@ -10,6 +10,7 @@ import { calculateGasMargin } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
+import { useGasPrice } from './useGetGasPrice'
 
 const logger = getLogger('useApproveCallback')
 
@@ -34,6 +35,7 @@ export function useApproveCallback(
     addressToApprove,
   )
   const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address, addressToApprove)
+  const gasPrice = useGasPrice()
 
   // check the current approval status
   const approval = useMemo(() => {
@@ -81,6 +83,7 @@ export function useApproveCallback(
 
     return tokenContract
       .approve(addressToApprove, useExact ? amountToApprove.raw.toString() : MaxUint256, {
+        gasPrice,
         gasLimit: calculateGasMargin(estimatedGas),
       })
       .then((response: TransactionResponse) => {
@@ -93,7 +96,7 @@ export function useApproveCallback(
         logger.debug('Failed to approve token', error)
         throw error
       })
-  }, [approval, tokenContract, addressToApprove, amountToApprove, addTransaction])
+  }, [approval, tokenContract, addressToApprove, amountToApprove, addTransaction, gasPrice])
 
   return [approval, approve]
 }
