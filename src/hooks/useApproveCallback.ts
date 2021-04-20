@@ -6,7 +6,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
-import { calculateGasMargin } from '../utils'
+import { ChainId, calculateGasMargin, isTokenXDAI } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
@@ -24,6 +24,7 @@ export enum ApprovalState {
 export function useApproveCallback(
   amountToApprove?: TokenAmount,
   addressToApprove?: string,
+  chainId?: ChainId,
 ): [ApprovalState, () => Promise<void>] {
   const { account } = useActiveWeb3React()
 
@@ -40,12 +41,14 @@ export function useApproveCallback(
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
     // amountToApprove will be defined if currentAllowance is
+    if (isTokenXDAI(addressToApprove, chainId)) return ApprovalState.APPROVED
+    // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove)
       ? pendingApproval
         ? ApprovalState.PENDING
         : ApprovalState.NOT_APPROVED
       : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, pendingApproval])
+  }, [amountToApprove, currentAllowance, pendingApproval, chainId, addressToApprove])
 
   const tokenContract = useTokenContract(amountToApprove?.token?.address)
   const addTransaction = useTransactionAdder()

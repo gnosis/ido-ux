@@ -18,7 +18,7 @@ import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDeta
 import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
-import { ChainId } from '../../utils'
+import { ChainId, getTokenDisplay } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
@@ -26,7 +26,7 @@ import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
-import { useTokenBalances } from '../wallet/hooks'
+import { useTokenBalancesTreatWETHAsETHonXDAI } from '../wallet/hooks'
 import {
   invertPrice,
   priceInput,
@@ -189,18 +189,20 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 export function useGetOrderPlacementError(
   derivedAuctionInfo: DerivedAuctionInfo,
   auctionState: AuctionState,
+  auctionIdentifier: AuctionIdentifier,
   showPricesInverted: boolean,
 ): {
   error?: string
 } {
   const { account } = useActiveWeb3React()
+  const { chainId } = auctionIdentifier
 
   const { price: priceFromState, sellAmount } = useSwapState()
   const price = showPricesInverted
     ? getInverse(Number(priceFromState), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
     : priceFromState
 
-  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
   const biddingTokenBalance =
@@ -282,7 +284,7 @@ export function useGetOrderPlacementError(
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    error = 'Insufficient ' + amountIn.token.symbol + ' balance'
+    error = 'Insufficient ' + getTokenDisplay(amountIn.token, chainId) + ' balance'
   }
 
   return {

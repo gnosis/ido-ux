@@ -5,7 +5,7 @@ import { Fraction, Percent, Token, TokenAmount, Trade } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../../constants/config'
-import { getTokenDisplay } from '../../../../utils'
+import { ChainId, getTokenDisplay } from '../../../../utils'
 import { abbreviation } from '../../../../utils/numeral'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../../utils/prices'
 import { Button } from '../../../buttons/Button'
@@ -61,6 +61,7 @@ interface Props {
   realizedLPFee?: TokenAmount
   sellAmount: string
   trade?: Trade
+  chainId: ChainId
   isPriceInverted?: boolean
 }
 
@@ -69,6 +70,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
     auctioningToken,
     biddingToken,
     cancelDate,
+    chainId,
     confirmText,
     isPriceInverted,
     onPlaceOrder,
@@ -94,8 +96,14 @@ const SwapModalFooter: React.FC<Props> = (props) => {
     )
   }
 
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
 
   return (
     <>
