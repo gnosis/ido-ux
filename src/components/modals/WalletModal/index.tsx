@@ -12,6 +12,7 @@ import { OVERLAY_READY } from '../../../connectors/Fortmatic'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
+import { useSwapState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
@@ -87,6 +88,7 @@ const WalletModal: React.FC = () => {
   const previousAccount = usePrevious(account)
   const { errorWrongNetwork } = useNetworkCheck()
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const { chainId } = useSwapState()
 
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
@@ -106,11 +108,11 @@ const WalletModal: React.FC = () => {
     const activateWC = (uri) => {
       setUri(uri)
     }
-    walletconnect.on(URI_AVAILABLE, activateWC)
+    walletconnect[chainId].on(URI_AVAILABLE, activateWC)
     return () => {
-      walletconnect.off(URI_AVAILABLE, activateWC)
+      walletconnect[chainId].off(URI_AVAILABLE, activateWC)
     }
-  }, [])
+  }, [chainId])
 
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
@@ -159,9 +161,17 @@ const WalletModal: React.FC = () => {
       //   )
       // }
 
-      setPendingWallet(connector) // set wallet for pending view
-      setWalletView(WALLET_VIEWS.PENDING)
-      await activate(connector, undefined, true)
+      // if connector is an object with the set variable of [chainId], we know that its walletconnect object
+      // otherwise, we will just use Metamask connector object
+      if (connector[chainId]) {
+        setPendingWallet(connector[chainId]) // set wallet for pending view
+        setWalletView(WALLET_VIEWS.PENDING)
+        await activate(connector[chainId], undefined, true)
+      } else {
+        setPendingWallet(connector) // set wallet for pending view
+        setWalletView(WALLET_VIEWS.PENDING)
+        await activate(connector, undefined, true)
+      }
     } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
         activate(connector) // a little janky...can't use setError because the connector isn't set
