@@ -28,7 +28,7 @@ export function useApproveCallback(
   chainId?: ChainId,
 ): [ApprovalState, () => Promise<void>] {
   const { account } = useActiveWeb3React()
-  const gasPrice = useGasPrice()
+  const gasPrice = useGasPrice(chainId)
 
   const currentAllowance = useTokenAllowance(
     amountToApprove?.token,
@@ -43,14 +43,16 @@ export function useApproveCallback(
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN
     // amountToApprove will be defined if currentAllowance is
-    if (isTokenXDAI(addressToApprove, chainId)) return ApprovalState.APPROVED
+    if (isTokenXDAI(amountToApprove?.token?.address, chainId)) {
+      return ApprovalState.APPROVED
+    }
     // amountToApprove will be defined if currentAllowance is
     return currentAllowance.lessThan(amountToApprove)
       ? pendingApproval
         ? ApprovalState.PENDING
         : ApprovalState.NOT_APPROVED
       : ApprovalState.APPROVED
-  }, [amountToApprove, currentAllowance, pendingApproval, chainId, addressToApprove])
+  }, [amountToApprove, currentAllowance, pendingApproval, chainId])
 
   const tokenContract = useTokenContract(amountToApprove?.token?.address)
   const addTransaction = useTransactionAdder()

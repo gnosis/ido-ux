@@ -23,7 +23,7 @@ export function useCancelOrderCallback(
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const { auctionId, chainId: orderChainId } = auctionIdentifier
-  const gasPrice = useGasPrice()
+  const gasPrice = useGasPrice(chainId)
 
   return useMemo(() => {
     return async function onCancelOrder(orderId: string) {

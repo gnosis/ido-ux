@@ -57,7 +57,7 @@ export function usePlaceOrderCallback(
     : priceFromSwapState
   ).toString()
   const { onNewBid } = useOrderbookActionHandlers()
-  const gasPrice = useGasPrice()
+  const gasPrice = useGasPrice(chainId)
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
     EASY_AUCTION_NETWORKS[chainId as ChainId],

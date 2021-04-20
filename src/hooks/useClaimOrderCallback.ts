@@ -45,9 +45,7 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
 
     const fetchApiData = async (): Promise<void> => {
       try {
-        if (!chainId || !library || !account || !additionalServiceApi) {
-          throw new Error('missing dependencies in useGetClaimInfo callback')
-        }
+        if (!chainId || !library || !account || !auctionId || !additionalServiceApi) return
         const sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
           networkId: chainId,
           auctionId,
@@ -150,7 +148,7 @@ export function useClaimOrderCallback(
 
   const { auctionId, chainId } = auctionIdentifier
   const claimInfo = useGetClaimInfo(auctionIdentifier)
-  const gasPrice = useGasPrice()
+  const gasPrice = useGasPrice(chainId)
 
   return useMemo(() => {
     return async function onClaimOrder() {
