@@ -488,7 +488,6 @@ export function useDerivedClaimInfo(
   auctioningToken?: Maybe<Token>
   biddingToken?: Maybe<Token>
   error?: string | undefined
-  isLoadingClaimInfo?: boolean
 } {
   const { auctionId, chainId } = auctionIdentifier
 
@@ -510,7 +509,7 @@ export function useDerivedClaimInfo(
     auctioningToken,
   )
 
-  const claimableOrders = useGetClaimInfo(auctionIdentifier)?.sellOrdersFormUser
+  const claimableOrders = useGetClaimInfo(auctionIdentifier)?.claimInfo?.sellOrdersFormUser
   const claimed = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
     auctionId,
     claimableOrders == undefined || claimableOrders[0] == undefined
@@ -531,19 +530,10 @@ export function useDerivedClaimInfo(
       ? 'You had no participation on this auction.'
       : ''
 
-  const isLoadingClaimInfo =
-    !auctionInfo ||
-    !auctioningToken ||
-    !biddingToken ||
-    !clearingPriceSellOrder ||
-    !claimableOrders ||
-    !claimed
-
   return {
     auctioningToken,
     biddingToken,
     error,
-    isLoadingClaimInfo,
   }
 }
 
