@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -8,12 +8,9 @@ import { DerivedAuctionInfo } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
-import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
-
-const logger = getLogger('useClaimOrderCallback')
 
 export const queueStartElement =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -28,17 +25,26 @@ export interface ClaimInformation {
   sellOrdersFormUser: string[]
 }
 
-export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<ClaimInformation> {
+export interface UseGetClaimInfoReturn {
+  claimInfo: Maybe<ClaimInformation>
+  loading: boolean
+  error: Maybe<Error>
+}
+
+export const useGetClaimInfo = (auctionIdentifier: AuctionIdentifier): UseGetClaimInfoReturn => {
   const { account, library } = useActiveWeb3React()
-  const [claimInfo, setClaimInfo] = useState<Maybe<ClaimInformation>>(null)
+  const [claimInfo, setClaimInfo] = useState<ClaimInformation>({ sellOrdersFormUser: [] })
   const [error, setError] = useState<Maybe<Error>>(null)
+  const [loading, setLoading] = useState<boolean>(false)
   const { auctionId, chainId } = auctionIdentifier
 
-  useMemo(() => {
-    setClaimInfo(null)
+  useEffect(() => {
+    setClaimInfo({ sellOrdersFormUser: [] })
     setError(null)
+    setLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auctionId, chainId])
+
   useEffect(() => {
     let cancelled = false
 
@@ -47,16 +53,23 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
         if (!chainId || !library || !account || !additionalServiceApi) {
           throw new Error('missing dependencies in useGetClaimInfo callback')
         }
+
+        if (!cancelled) {
+          setLoading(true)
+        }
+
         const sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
           networkId: chainId,
           auctionId,
           user: account,
         })
-        if (cancelled) return
-        setClaimInfo({ sellOrdersFormUser })
+
+        if (!cancelled) {
+          setClaimInfo({ sellOrdersFormUser })
+          setLoading(false)
+        }
       } catch (error) {
         if (cancelled) return
-        logger.error('Error getting withdraw info', error)
         setError(error)
       }
     }
@@ -67,18 +80,17 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
     }
   }, [account, chainId, library, auctionId, setClaimInfo])
 
-  if (error) {
-    logger.error('error while fetching claimInfo', error)
-    return null
+  return {
+    claimInfo,
+    loading,
+    error,
   }
-
-  return claimInfo
 }
 export function useGetAuctionProceeds(
   auctionIdentifier: AuctionIdentifier,
   derivedAuctionInfo: DerivedAuctionInfo,
 ): AuctionProceedings {
-  const claimInfo = useGetClaimInfo(auctionIdentifier)
+  const { claimInfo } = useGetClaimInfo(auctionIdentifier)
 
   if (
     !claimInfo ||
@@ -141,55 +153,47 @@ export function useGetAuctionProceeds(
   }
 }
 
-export function useClaimOrderCallback(
+export const useClaimOrderCallback = (
   auctionIdentifier: AuctionIdentifier,
-): null | (() => Promise<string>) {
+): (() => Promise<Maybe<string>>) => {
   const { account, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
   const { auctionId, chainId } = auctionIdentifier
-  const claimInfo = useGetClaimInfo(auctionIdentifier)
+  const { claimInfo, error } = useGetClaimInfo(auctionIdentifier)
 
-  return useMemo(() => {
-    return async function onClaimOrder() {
-      if (!chainId || !library || !account || !claimInfo) {
-        throw new Error('missing dependencies in onPlaceOrder callback')
-      }
-
-      const easyAuctionContract: Contract = getEasyAuctionContract(
-        chainId as ChainId,
-        library,
-        account,
-      )
-
-      let estimate,
-        method: Function,
-        args: Array<string | string[] | number>,
-        value: Maybe<BigNumber>
-      {
-        estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
-        method = easyAuctionContract.claimFromParticipantOrder
-        args = [auctionId, claimInfo?.sellOrdersFormUser]
-        value = null
-      }
-
-      return estimate(...args, value ? { value } : {})
-        .then((estimatedGasLimit) =>
-          method(...args, {
-            ...(value ? { value } : {}),
-            gasLimit: calculateGasMargin(estimatedGasLimit),
-          }),
-        )
-        .then((response) => {
-          addTransaction(response, {
-            summary: 'Claiming tokens',
-          })
-          return response.hash
-        })
-        .catch((error) => {
-          logger.error(`Claiming or gas estimate failed`, error)
-          throw error
-        })
+  const claimCallback = useCallback(async (): Promise<Maybe<string>> => {
+    if (!chainId || !library || !account || error || !claimInfo) {
+      // throw new Error('missing dependencies in onPlaceOrder callback')
+      return null
     }
-  }, [account, addTransaction, chainId, library, auctionId, claimInfo])
+
+    const easyAuctionContract: Contract = getEasyAuctionContract(
+      chainId as ChainId,
+      library,
+      account,
+    )
+
+    try {
+      const estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
+      const method: Function = easyAuctionContract.claimFromParticipantOrder
+      const args: Array<string | string[] | number> = [auctionId, claimInfo?.sellOrdersFormUser]
+      const value: Maybe<BigNumber> = null
+
+      const estimatedGasLimit = await estimate(...args, value ? { value } : {})
+      const response = await method(...args, {
+        ...(value ? { value } : {}),
+        gasLimit: calculateGasMargin(estimatedGasLimit),
+      })
+
+      addTransaction(response, {
+        summary: 'Claiming tokens',
+      })
+      return response.hash
+    } catch (err) {
+      return null
+    }
+  }, [account, addTransaction, chainId, error, library, auctionId, claimInfo])
+
+  return claimCallback
 }
