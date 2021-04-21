@@ -125,7 +125,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     },
   },
   header: {
-    height: '60px',
+    height: '65px',
   },
   layout: {
     horizontalPadding: '10px',

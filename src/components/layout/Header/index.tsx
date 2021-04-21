@@ -22,7 +22,7 @@ import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 
 const Wrapper = styled.header`
-  background-color: ${({ theme }) => theme.mainBackground};
+  border-bottom: 1px solid ${({ theme }) => theme.border};
   display: flex;
   flex-shrink: 0;
   position: relative;
