@@ -74,7 +74,7 @@ const Claimer: React.FC<Props> = (props) => {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
   const pendingText = `Claiming Funds`
-  const { error, isLoadingClaimInfo } = useDerivedClaimInfo(auctionIdentifier)
+  const { error } = useDerivedClaimInfo(auctionIdentifier)
   const isValid = !error
   const toggleWalletModal = useWalletModalToggle()
 
@@ -108,7 +108,7 @@ const Claimer: React.FC<Props> = (props) => {
     [derivedAuctionInfo],
   )
 
-  const isLoading = isLoadingClaimInfo || !claimableBiddingToken || !claimableAuctioningToken
+  const isLoading = !claimableBiddingToken || !claimableAuctioningToken
   const isClaimButtonDisabled = !isValid || showConfirm || isLoading || userConfirmedTx
 
   return (

@@ -153,7 +153,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { error } = useGetOrderPlacementError(derivedAuctionInfo, auctionState, showPriceInverted)
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
-  const auctionInfo = useAuctionDetails(auctionIdentifier)
+  const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const isValid = !error
   const { signature } = useSignature(auctionIdentifier, account)
 
@@ -271,14 +271,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
 
-  const isLoading = React.useMemo(
-    () => !auctionInfo || (auctionInfo && auctionInfo.auctionInfoLoading),
-    [auctionInfo],
-  )
-  const isPrivate = React.useMemo(
-    () => auctionInfo && auctionInfo.auctionDetails && auctionInfo.auctionDetails.isPrivateAuction,
-    [auctionInfo],
-  )
+  const isPrivate = React.useMemo(() => auctionDetails && auctionDetails.isPrivateAuction, [
+    auctionDetails,
+  ])
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
   const isPlaceOrderDisabled =
     !isValid || notApproved || showWarning || showWarningWrongChainId || showConfirm
@@ -286,8 +281,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   return (
     <>
       <Wrapper>
-        {isLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!isLoading && isPrivate && !signatureAvailable && (
+        {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
+        {!auctionInfoLoading && isPrivate && !signatureAvailable && (
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
@@ -295,7 +290,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
         )}
-        {!isLoading && (!isPrivate || signatureAvailable) && (
+        {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
           <>
             <BalanceWrapper>
               <Balance>
