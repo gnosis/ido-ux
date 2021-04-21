@@ -36,7 +36,7 @@
 
   (h) The eighth parameter you need to enter is the minimum bidding amount per order. This parameter will establish the minimum price the auctioneers are willing to accept for their auctioned tokens.
   
- <img src="/assets/GA_SafeApp_4.png" alt="drawing" width="500"/>
+<img src="/assets/GA_SafeApp_4.png" alt="drawing" width="500"/>
 
   (i) **Optional Step:** In the event that you would like the auction to have the possibility of the auction being atomically closed, you will need to check on the Atomic Closure Allowance box.  Allowing the auction to be closed atomically will allow the last bid to be submitted along with the settlement transaction, which can enable atomic arbitrage.
 
