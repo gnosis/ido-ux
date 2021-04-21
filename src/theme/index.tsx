@@ -129,7 +129,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
   },
   layout: {
     horizontalPadding: '10px',
-    maxWidth: '1080px',
+    maxWidth: '1122px',
   },
   paddings: {
     mainPadding: '15px',
