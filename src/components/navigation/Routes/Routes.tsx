@@ -6,7 +6,6 @@ import Auction from '../../../pages/Auction'
 import { Documentation } from '../../../pages/Documentation'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
-import { NotAllowed } from '../../../pages/NotAllowed'
 import Overview from '../../../pages/Overview'
 import { Terms } from '../../../pages/Terms'
 import { CookiesBanner } from '../../common/CookiesBanner'
@@ -70,7 +69,6 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
                 strict
               />
               <Route component={Documentation} exact path="/docs/faq" strict />
-              <Route component={NotAllowed} exact path="/not-allowed" strict />
               <Route exact path="/">
                 <Redirect to="/start" />
               </Route>
