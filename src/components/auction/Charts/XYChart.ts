@@ -4,6 +4,8 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
+import { ChainId, getTokenDisplay } from '../../../utils'
+
 export interface XYChartProps {
   chartElement: HTMLElement
 }
@@ -153,12 +155,13 @@ interface DrawInformation {
   chart: am4charts.XYChart
   baseToken: Token
   quoteToken: Token
+  chainId: ChainId
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chart, quoteToken } = props
+  const { baseToken, chainId, chart, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = quoteToken.symbol
+  const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
   const priceTitle = ` Price`

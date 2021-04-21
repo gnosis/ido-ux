@@ -11,6 +11,7 @@ import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+import { useGasPrice } from './useGasPrice'
 
 export const queueStartElement =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -50,9 +51,7 @@ export const useGetClaimInfo = (auctionIdentifier: AuctionIdentifier): UseGetCla
 
     const fetchApiData = async (): Promise<void> => {
       try {
-        if (!chainId || !library || !account || !additionalServiceApi) {
-          throw new Error('missing dependencies in useGetClaimInfo callback')
-        }
+        if (!chainId || !library || !account || !auctionId || !additionalServiceApi) return
 
         if (!cancelled) {
           setLoading(true)
@@ -161,6 +160,7 @@ export const useClaimOrderCallback = (
 
   const { auctionId, chainId } = auctionIdentifier
   const { claimInfo, error } = useGetClaimInfo(auctionIdentifier)
+  const gasPrice = useGasPrice(chainId)
 
   const claimCallback = useCallback(async (): Promise<Maybe<string>> => {
     if (!chainId || !library || !account || error || !claimInfo) {
@@ -183,6 +183,7 @@ export const useClaimOrderCallback = (
       const estimatedGasLimit = await estimate(...args, value ? { value } : {})
       const response = await method(...args, {
         ...(value ? { value } : {}),
+        gasPrice,
         gasLimit: calculateGasMargin(estimatedGasLimit),
       })
 
@@ -193,7 +194,7 @@ export const useClaimOrderCallback = (
     } catch (err) {
       return null
     }
-  }, [account, addTransaction, chainId, error, library, auctionId, claimInfo])
+  }, [account, addTransaction, chainId, error, gasPrice, library, auctionId, claimInfo])
 
   return claimCallback
 }

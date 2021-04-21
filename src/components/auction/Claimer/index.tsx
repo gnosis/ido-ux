@@ -68,6 +68,7 @@ interface Props {
 
 const Claimer: React.FC<Props> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
+  const { chainId } = auctionIdentifier
   const { account } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [userConfirmedTx, setUserConfirmedTx] = useState<boolean>(false)
@@ -99,13 +100,14 @@ const Claimer: React.FC<Props> = (props) => {
         setUserConfirmedTx(false)
       })
 
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
-    derivedAuctionInfo,
-  ])
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo, chainId],
+  )
 
   const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
-    [derivedAuctionInfo],
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo, chainId],
   )
 
   const isLoading = !claimableBiddingToken || !claimableAuctioningToken

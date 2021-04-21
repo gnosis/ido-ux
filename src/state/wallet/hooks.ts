@@ -87,31 +87,31 @@ export function useTokenBalances(
 
 // contains the hacky logic to treat the WETH token input as if it's ETH to
 // maintain compatibility until we handle them separately.
-export function useTokenBalancesTreatWETHAsETH(
+export function useTokenBalancesTreatWETHAsETHonXDAI(
   address?: string,
   tokens?: (Token | undefined)[],
 ): { [tokenAddress: string]: TokenAmount | undefined } {
   const { chainId } = useActiveWeb3React()
-  const { includesWETH, tokensWithoutWETH } = useMemo(() => {
+  const { includesWETHonXDAI, tokensWithoutWETH } = useMemo(() => {
     if (!tokens || tokens.length === 0) {
       return { includesWETH: false, tokensWithoutWETH: [] }
     }
-    let includesWETH = false
+    let includesWETHonXDAI = false
     const tokensWithoutWETH = tokens.filter((t) => {
       if (!chainId) return true
-      const isWETH = t?.equals(WETH[chainId as ChainId]) ?? false
-      if (isWETH) includesWETH = true
-      return !isWETH
+      const isWETHonXDAI = (t?.equals(WETH[chainId as ChainId]) && chainId == 100) ?? false
+      if (isWETHonXDAI) includesWETHonXDAI = true
+      return !isWETHonXDAI
     })
-    return { includesWETH, tokensWithoutWETH }
+    return { includesWETHonXDAI, tokensWithoutWETH }
   }, [tokens, chainId])
 
   const balancesWithoutWETH = useTokenBalances(address, tokensWithoutWETH)
-  const ETHBalance = useETHBalances(includesWETH ? [address] : [])
+  const ETHBalance = useETHBalances(includesWETHonXDAI ? [address] : [])
 
   return useMemo(() => {
     if (!chainId || !address) return {}
-    if (includesWETH) {
+    if (includesWETHonXDAI) {
       const weth = WETH[chainId as ChainId]
       const ethBalance = ETHBalance[address]
       return {
@@ -121,7 +121,7 @@ export function useTokenBalancesTreatWETHAsETH(
     } else {
       return balancesWithoutWETH
     }
-  }, [balancesWithoutWETH, ETHBalance, includesWETH, address, chainId])
+  }, [balancesWithoutWETH, ETHBalance, includesWETHonXDAI, address, chainId])
 }
 
 // get the balance for a single token/account combo
@@ -132,22 +132,22 @@ export function useTokenBalance(account?: string, token?: Token): TokenAmount | 
 }
 
 // mimics the behavior of useAddressBalance
-export function useTokenBalanceTreatingWETHasETH(
+export function useTokenBalanceTreatingWETHasETHonXDAI(
   account?: string,
   token?: Token,
 ): TokenAmount | undefined {
-  const balances = useTokenBalancesTreatWETHAsETH(account, [token])
+  const balances = useTokenBalancesTreatWETHAsETHonXDAI(account, [token])
   if (!token) return
   return balances?.[token.address]
 }
 
 // mimics useAllBalances
-export function useAllTokenBalancesTreatingWETHasETH(): {
+export function useAllTokenBalancesTreatingWETHasETHonXDAI(): {
   [tokenAddress: string]: TokenAmount | undefined
 } {
   const { account } = useActiveWeb3React()
   const allTokens = useAllTokens()
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
-  const balances = useTokenBalancesTreatWETHAsETH(account ?? undefined, allTokensArray)
+  const balances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, allTokensArray)
   return balances ?? {}
 }

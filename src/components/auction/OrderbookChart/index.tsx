@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import useChart from '../../../hooks/useChart'
+import { ChainId } from '../../../utils'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { XYChart } from '../Charts/XYChart'
@@ -38,6 +39,7 @@ export interface Props {
   baseToken: Token
   data: Maybe<PricePointDetails[]>
   quoteToken: Token
+  chainId: ChainId
 }
 
 const Wrapper = styled.div`
@@ -97,13 +99,14 @@ const Wrapper = styled.div`
 `
 
 const OrderBookChart: React.FC<Props> = (props) => {
-  const { baseToken, data, quoteToken } = props
+  const { baseToken, chainId, data, quoteToken } = props
 
   const { loading, mountPoint } = useChart({
     createChart: XYChart,
     data,
     baseToken,
     quoteToken,
+    chainId,
   })
 
   return (

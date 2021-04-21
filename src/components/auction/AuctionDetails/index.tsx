@@ -197,12 +197,13 @@ const AuctionDetails = (props: Props) => {
 
   const { showPriceInverted } = useSwapState()
   const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
-    derivedAuctionInfo?.biddingToken,
-  ])
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo?.biddingToken, chainId],
+  )
   const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
-    [derivedAuctionInfo?.auctioningToken],
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo?.auctioningToken, chainId],
   )
   const clearingPriceDisplay = useMemo(() => {
     const clearingPriceInfoAsSellOrder =
@@ -217,10 +218,10 @@ const AuctionDetails = (props: Props) => {
       : orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
 
     const priceSymbolStrings = showPriceInverted
-      ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken)} per
-    ${getTokenDisplay(derivedAuctionInfo?.biddingToken)}`
-      : `${getTokenDisplay(derivedAuctionInfo?.biddingToken)} per
-    ${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}
+      ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)} per
+    ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
+      : `${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)} per
+    ${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)}
 `
 
     return clearingPriceNumber ? (
@@ -236,6 +237,7 @@ const AuctionDetails = (props: Props) => {
     showPriceInverted,
     derivedAuctionInfo?.biddingToken,
     clearingPriceInfo,
+    chainId,
   ])
 
   const titlePrice = useMemo(

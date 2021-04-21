@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
 
 import { useTransactionAdder } from '../state/transactions/hooks'
-import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
+import { useTokenBalanceTreatingWETHasETHonXDAI } from '../state/wallet/hooks'
 import { ChainId, calculateGasMargin, getSigner, isAddress } from '../utils'
 import { getLogger } from '../utils/logger'
 import { abbreviation } from '../utils/numeral'
@@ -25,7 +25,7 @@ export function useSendCallback(
   const addTransaction = useTransactionAdder()
   const ensName = useENSName(recipient)
   const tokenContract = useTokenContract(amount?.token?.address)
-  const balance = useTokenBalanceTreatingWETHasETH(account ?? undefined, amount?.token)
+  const balance = useTokenBalanceTreatingWETHasETHonXDAI(account ?? undefined, amount?.token)
 
   return useMemo(() => {
     if (!amount) return null
