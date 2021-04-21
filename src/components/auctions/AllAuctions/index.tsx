@@ -17,9 +17,7 @@ import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponent
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { TexfieldPartsCSS, TextfieldCSS } from '../../pureStyledComponents/Textfield'
 
-const Wrapper = styled.div`
-  padding-bottom: 60px;
-`
+const Wrapper = styled.div``
 
 const Table = styled(BaseCard)`
   padding: 0;

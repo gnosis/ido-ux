@@ -24,18 +24,6 @@ const Chevron = styled(ChevronRightBig)`
   min-width: 11px;
 `
 
-const Featured = styled(FeaturedAuctions)`
-  margin-top: 20px;
-
-  .featuredAuctionsTitle {
-    margin-bottom: 25px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: 40px;
-  }
-`
-
 const Overview = () => {
   const { account } = useActiveWeb3React()
   return account ? <OverviewWithAccount account={account} /> : <OverviewWithoutAccount />
@@ -132,7 +120,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       {isLoading && <InlineLoading />}
       {!isLoading && (
         <>
-          <Featured featuredAuctions={featuredAuctions} />
+          <FeaturedAuctions featuredAuctions={featuredAuctions} />
           <AllAuctions tableData={tableData} />
         </>
       )}
