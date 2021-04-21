@@ -28,14 +28,6 @@ const Row = styled.div`
   }
 `
 
-const SectionTitle = styled(PageTitle)`
-  margin: 0 0 25px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin: 0 0 40px;
-  }
-`
-
 interface Props extends HTMLAttributes<HTMLDivElement> {
   featuredAuctions: Maybe<AuctionInfo[]>
 }
@@ -49,9 +41,9 @@ export const FeaturedAuctions: React.FC<Props> = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <SectionTitle as="h2" className="featuredAuctionsTitle">
+      <PageTitle as="h2" className="featuredAuctionsTitle">
         Featured Auctions
-      </SectionTitle>
+      </PageTitle>
       {featuredAuctions && featuredAuctions.length === 0 && (
         <EmptyContentWrapper>
           <InfoIcon />
