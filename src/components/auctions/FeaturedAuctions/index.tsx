@@ -20,10 +20,14 @@ const Wrapper = styled.div`
 const Row = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: 20px;
+  row-gap: 18px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     column-gap: 18px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 `

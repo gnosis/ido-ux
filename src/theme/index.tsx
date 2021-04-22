@@ -159,8 +159,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
   },
   themeBreakPoints: {
     lg: '992px',
-    md: '769px',
-    mdPre: '768px',
+    md: '768px',
     sm: '480px',
     xl: '1024px',
     xs: '320px',
