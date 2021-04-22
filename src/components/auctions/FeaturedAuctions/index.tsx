@@ -8,7 +8,7 @@ import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import AuctionInfoCard from '../AuctionInfoCard'
 
 const Wrapper = styled.div`
-  margin: 0 auto 40px;
+  margin: 0 auto 32px;
   max-width: 100%;
   width: 400px;
 
