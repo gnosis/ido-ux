@@ -91,7 +91,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
             address: item.addressBiddingToken,
             symbol: item.symbolBiddingToken,
           }}
-          size="32px"
+          size="26px"
         />
       ),
       type: item.isPrivateAuction ? (

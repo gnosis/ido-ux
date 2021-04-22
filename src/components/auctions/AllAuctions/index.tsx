@@ -34,17 +34,8 @@ const RowLink = styled(NavLink)<CellRowProps>`
   cursor: pointer;
   grid-template-columns: 1fr 1fr;
   padding-left: 10px;
-  padding-right: 20px;
+  padding-right: 10px;
   row-gap: 15px;
-
-  &:first-child {
-    padding-top: 17px;
-  }
-
-  &:last-child,
-  &:last-of-type {
-    padding-bottom: 17px;
-  }
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -158,7 +149,7 @@ const Pagination = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 56px;
+  min-height: 50px;
   padding: 0 15px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
