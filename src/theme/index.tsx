@@ -145,7 +145,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     color: '#fff',
     colorPlaceholder: '#bfdeff',
     errorColor: '#e73c3c',
-    fontSize: '18px',
+    fontSize: '16px',
     fontWeight: '400',
     height: '38px',
     paddingHorizontal: '14px',

@@ -24,8 +24,8 @@ const Table = styled(BaseCard)`
 `
 
 const SectionTitle = styled(PageTitle)`
-  margin-bottom: 16px;
-  margin-top: 0;
+  font-size: 22px;
+  margin-bottom: 14px;
 `
 
 const RowLink = styled(NavLink)<CellRowProps>`
@@ -100,6 +100,7 @@ const SearchWrapper = styled.div`
   display: flex;
   margin-bottom: 12px;
   max-width: 100%;
+  padding-left: 9px;
   padding-right: 0;
   width: 565px;
 
