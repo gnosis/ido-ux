@@ -23,8 +23,8 @@ const Row = styled.div`
   row-gap: 20px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    column-gap: 30px;
-    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 18px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 `
 
@@ -35,7 +35,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 export const FeaturedAuctions: React.FC<Props> = (props) => {
   const { featuredAuctions, ...restProps } = props
 
-  const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 3), [
+  const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 4), [
     featuredAuctions,
   ])
 

@@ -5,6 +5,7 @@ const Wrapper = styled.svg`
   display: block;
   max-height: 100%;
   max-width: 100%;
+  zoom: 1.2;
 
   .fill {
     fill-rule: evenodd;
