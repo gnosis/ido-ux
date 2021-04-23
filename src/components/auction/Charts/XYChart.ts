@@ -175,6 +175,19 @@ export const drawInformation = (props: DrawInformation) => {
 
   const series = chart.series
 
-  series.values[0].tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
-  series.values[1].tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumePerPriceFormatted}[/] ${quoteTokenLabel}`
+  series.values[0].adapter.add('tooltipText', (text, target) => {
+    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+    return `[bold]${market}[/]\nAsk Price: [bold] ${valueX.toFixed(
+      2,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toFixed(2)} [/] ${quoteTokenLabel}`
+  })
+
+  series.values[1].adapter.add('tooltipText', (text, target) => {
+    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+    return `[bold]${market}[/]\nBid Price: [bold] ${valueX.toFixed(
+      2,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toFixed(2)} [/] ${quoteTokenLabel}`
+  })
 }
