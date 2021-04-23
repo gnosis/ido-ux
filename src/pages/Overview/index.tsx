@@ -21,7 +21,16 @@ import { getChainName } from '../../utils/tools'
 
 const Chevron = styled(ChevronRightBig)`
   flex-shrink: 0;
-  min-width: 11px;
+  width: 11px;
+`
+
+const CheckIcon = styled(YesIcon)`
+  height: 14px;
+  width: 14px;
+`
+
+const PrivateIcon = styled(Private)`
+  zoom: unset;
 `
 
 const Overview = () => {
@@ -74,7 +83,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       participation: item.hasParticipation ? (
         <>
           <span>Yes</span>
-          <YesIcon />
+          <CheckIcon />
         </>
       ) : (
         'No'
@@ -97,7 +106,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       type: item.isPrivateAuction ? (
         <>
           <span>Private</span>
-          <Private />
+          <PrivateIcon />
         </>
       ) : (
         'Public'

@@ -24,7 +24,7 @@ const Value = styled.div<{ align?: string; noWrap?: boolean }>`
   }
 
   > * {
-    margin-right: 8px;
+    margin-right: 6px;
 
     &:last-child {
       margin-right: 0;
@@ -45,7 +45,7 @@ const Key = styled.div<{ align?: string }>`
   white-space: nowrap;
 
   > * {
-    margin-right: 8px;
+    margin-right: 6px;
 
     &:last-child {
       margin-right: 0;
