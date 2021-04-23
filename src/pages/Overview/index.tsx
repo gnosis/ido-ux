@@ -91,7 +91,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       ) : (
         'No'
       ),
-      selling: item.symbolAuctioningToken,
+      selling: item.symbolAuctioningToken == 'WXDAI' ? 'XDAI' : item.symbolAuctioningToken,
       status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       symbol: (
         <DoubleLogo

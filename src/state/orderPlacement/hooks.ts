@@ -10,6 +10,7 @@ import { additionalServiceApi } from '../../api'
 import { ClearingPriceAndVolumeData } from '../../api/AdditionalServicesApi'
 import { EASY_AUCTION_NETWORKS } from '../../constants'
 import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
 import { Order, decodeOrder, encodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
@@ -17,16 +18,17 @@ import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDeta
 import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
-import { ChainId } from '../../utils'
+import { ChainId, getTokenDisplay } from '../../utils'
 import { getLogger } from '../../utils/logger'
-import { convertPriceIntoBuyAndSellAmount } from '../../utils/prices'
+import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
-import { useTokenBalances } from '../wallet/hooks'
+import { useTokenBalancesTreatWETHAsETHonXDAI } from '../wallet/hooks'
 import {
+  invertPrice,
   priceInput,
   sellAmountInput,
   setDefaultsFromURLSearch,
@@ -127,7 +129,8 @@ export function useSwapState(): AppState['swap'] {
 
 export function useSwapActionHandlers(): {
   onUserSellAmountInput: (sellAmount: string) => void
-  onUserPriceInput: (price: string) => void
+  onUserPriceInput: (price: string, isInvertedPrice: boolean) => void
+  onInvertPrices: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -138,17 +141,27 @@ export function useSwapActionHandlers(): {
     },
     [dispatch],
   )
+  const onInvertPrices = useCallback(() => {
+    dispatch(invertPrice())
+  }, [dispatch])
+
   const onUserPriceInput = useCallback(
-    (price: string) => {
+    (price: string, isInvertedPrice: boolean) => {
       if (isNumeric(price)) {
-        dispatch(resetUserPrice({ price: parseFloat(price) }))
+        dispatch(
+          resetUserPrice({
+            price: isInvertedPrice
+              ? parseFloat(getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString())
+              : parseFloat(price),
+          }),
+        )
       }
       dispatch(priceInput({ price }))
     },
     [dispatch],
   )
 
-  return { onUserPriceInput, onUserSellAmountInput }
+  return { onUserPriceInput, onUserSellAmountInput, onInvertPrices }
 }
 
 function isNumeric(str: string) {
@@ -175,14 +188,21 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
 
 export function useGetOrderPlacementError(
   derivedAuctionInfo: DerivedAuctionInfo,
+  auctionState: AuctionState,
+  auctionIdentifier: AuctionIdentifier,
+  showPricesInverted: boolean,
 ): {
   error?: string
 } {
   const { account } = useActiveWeb3React()
+  const { chainId } = auctionIdentifier
 
-  const { price, sellAmount } = useSwapState()
+  const { price: priceFromState, sellAmount } = useSwapState()
+  const price = showPricesInverted
+    ? getInverse(Number(priceFromState), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+    : priceFromState
 
-  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
   const biddingTokenBalance =
@@ -227,6 +247,26 @@ export function useGetOrderPlacementError(
   ) {
     error = 'Please wait a sec'
   }
+
+  if (
+    derivedAuctionInfo?.clearingPriceSellOrder != null &&
+    derivedAuctionInfo?.clearingPrice != null &&
+    derivedAuctionInfo?.auctioningToken != undefined &&
+    derivedAuctionInfo?.biddingToken != undefined &&
+    auctionState == AuctionState.ORDER_PLACING &&
+    buyAmountScaled &&
+    sellAmountScaled
+      ?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.buyAmount.raw.toString())
+      .lte(
+        buyAmountScaled.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
+      )
+  ) {
+    error =
+      error ?? showPricesInverted
+        ? 'Price must be lower than ' + derivedAuctionInfo?.clearingPrice?.invert().toSignificant(5)
+        : 'Price must be higher than ' + derivedAuctionInfo?.clearingPrice?.toSignificant(5)
+  }
+
   if (
     derivedAuctionInfo?.initialAuctionOrder != null &&
     derivedAuctionInfo?.auctioningToken != undefined &&
@@ -237,12 +277,14 @@ export function useGetOrderPlacementError(
       .lte(buyAmountScaled.mul(derivedAuctionInfo?.initialAuctionOrder?.buyAmount.raw.toString()))
   ) {
     error =
-      error ?? 'Price must be higher than ' + derivedAuctionInfo?.initialPrice?.toSignificant(5)
+      error ?? showPricesInverted
+        ? 'Price must be lower than ' + derivedAuctionInfo?.initialPrice?.invert().toSignificant(5)
+        : 'Price must be higher than ' + derivedAuctionInfo?.initialPrice?.toSignificant(5)
   }
 
   const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    error = 'Insufficient ' + amountIn.token.symbol + ' balance'
+    error = 'Insufficient ' + getTokenDisplay(amountIn.token, chainId) + ' balance'
   }
 
   return {
@@ -445,11 +487,10 @@ export function deriveAuctionState(
 export function useDerivedClaimInfo(
   auctionIdentifier: AuctionIdentifier,
 ): {
-  error?: string
   auctioningToken?: Maybe<Token>
   biddingToken?: Maybe<Token>
-  claimauctioningToken?: Maybe<TokenAmount>
-  claimbiddingToken?: Maybe<TokenAmount>
+  error?: string | undefined
+  isLoadingClaimInfo?: boolean
 } {
   const { auctionId, chainId } = auctionIdentifier
 
@@ -461,8 +502,6 @@ export function useDerivedClaimInfo(
   const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId]).result
   const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
 
-  const auctionEndDate = auctionInfo?.auctionEndDate
-
   const biddingTokenAddress: string | undefined = auctionInfo?.biddingToken.toString()
 
   const auctioningToken = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
@@ -472,8 +511,6 @@ export function useDerivedClaimInfo(
     biddingToken,
     auctioningToken,
   )
-
-  let error: string | undefined = ''
 
   const claimableOrders = useGetClaimInfo(auctionIdentifier)?.sellOrdersFormUser
   const claimed = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
@@ -487,22 +524,28 @@ export function useDerivedClaimInfo(
       : claimableOrders[0],
   ]).result
 
-  if (clearingPriceSellOrder?.buyAmount.raw.toString() === '0') {
-    error = 'Price not yet supplied to auction.'
-  } else if (auctionEndDate >= new Date().getTime() / 1000) {
-    error = 'Auction has not yet ended.'
-  } else if (claimableOrders === undefined || claimableOrders?.length > 0) {
-    if (!claimed || !claimed[0]) {
-      error = 'You already claimed your funds.'
-    }
-  } else if (claimableOrders?.length === 0) {
-    error = 'You had no participation on this auction.'
-  }
+  const error =
+    clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
+      ? 'Price not yet supplied to auction.'
+      : claimableOrders && claimableOrders.length > 0 && claimed && !claimed[0]
+      ? 'You already claimed your funds.'
+      : claimableOrders && claimableOrders.length === 0
+      ? 'You had no participation on this auction.'
+      : ''
+
+  const isLoadingClaimInfo =
+    !auctionInfo ||
+    !auctioningToken ||
+    !biddingToken ||
+    !clearingPriceSellOrder ||
+    !claimableOrders ||
+    !claimed
 
   return {
-    error,
     auctioningToken,
     biddingToken,
+    error,
+    isLoadingClaimInfo,
   }
 }
 

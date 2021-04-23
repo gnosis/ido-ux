@@ -33,7 +33,7 @@ const Item = styled(NavLink)`
     }
   }
 
-  &.active:hover {
+  &.active {
     cursor: default;
     pointer-events: none;
   }

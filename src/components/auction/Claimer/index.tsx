@@ -23,6 +23,7 @@ const Wrapper = styled(BaseCard)`
 `
 
 const ActionButton = styled(Button)`
+  flex-shrink: 0;
   height: 52px;
   margin-top: auto;
 `
@@ -59,54 +60,58 @@ const Text = styled.div`
   line-height: 1.2;
   margin-left: 10px;
 `
-interface ClaimerProps {
+
+interface Props {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
-const Claimer: React.FC<ClaimerProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
-  const { account } = useActiveWeb3React()
-  const toggleWalletModal = useWalletModalToggle()
-  const { error } = useDerivedClaimInfo(auctionIdentifier)
 
-  const isValid = !error
+const Claimer: React.FC<Props> = (props) => {
+  const { auctionIdentifier, derivedAuctionInfo } = props
+  const { chainId } = auctionIdentifier
+  const { account } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
+  const [userConfirmedTx, setUserConfirmedTx] = useState<boolean>(false)
+  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
+  const [txHash, setTxHash] = useState<string>('')
+  const pendingText = `Claiming Funds`
+  const { error, isLoadingClaimInfo } = useDerivedClaimInfo(auctionIdentifier)
+  const isValid = !error
+  const toggleWalletModal = useWalletModalToggle()
 
   const { claimableAuctioningToken, claimableBiddingToken } = useGetAuctionProceeds(
     auctionIdentifier,
     derivedAuctionInfo,
   )
-  const [txHash, setTxHash] = useState<string>('')
 
-  function resetModal() {
-    setPendingConfirmation(true)
-  }
-
+  const resetModal = () => setPendingConfirmation(true)
   const claimOrderCallback = useClaimOrderCallback(auctionIdentifier)
 
-  function onClaimOrder() {
+  const onClaimOrder = () =>
     claimOrderCallback()
       .then((hash) => {
         setTxHash(hash)
         setPendingConfirmation(false)
+        setUserConfirmedTx(true)
       })
       .catch(() => {
         resetModal()
         setShowConfirm(false)
+        setUserConfirmedTx(false)
       })
-  }
 
-  const pendingText = `Claiming Funds`
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
-    derivedAuctionInfo,
-  ])
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
-    [derivedAuctionInfo],
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo, chainId],
   )
 
-  const isLoading = !claimableBiddingToken || !claimableAuctioningToken
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo, chainId],
+  )
+
+  const isLoading = isLoadingClaimInfo || !claimableBiddingToken || !claimableAuctioningToken
+  const isClaimButtonDisabled = !isValid || showConfirm || isLoading || userConfirmedTx
 
   return (
     <Wrapper>
@@ -169,7 +174,7 @@ const Claimer: React.FC<ClaimerProps> = (props) => {
             <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
           ) : (
             <ActionButton
-              disabled={!isValid}
+              disabled={isClaimButtonDisabled}
               onClick={() => {
                 setShowConfirm(true)
                 onClaimOrder()

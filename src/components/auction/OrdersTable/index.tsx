@@ -1,16 +1,19 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import {
   AuctionState,
   DerivedAuctionInfo,
   useAllUserOrders,
+  useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import { abbreviation } from '../../../utils/numeral'
+import { getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
@@ -108,6 +111,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   const [orderError, setOrderError] = useState<string>()
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
+  const { showPriceInverted } = useSwapState()
 
   const resetModal = useCallback(() => {
     setPendingConfirmation(true)
@@ -218,12 +222,18 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                       <Tooltip
                         id={`limitPrice_${index}`}
                         text={
-                          'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.'
+                          showPriceInverted
+                            ? 'The minimum price you are willing to participate at. You might receive a better price, but if the clearing price is lower, you will not participate and can claim your funds back when the auction ends.'
+                            : 'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.'
                         }
                       />
                     </>
                   }
-                  itemValue={abbreviation(order.price)}
+                  itemValue={abbreviation(
+                    showPriceInverted
+                      ? getInverse(Number(order.price), NUMBER_OF_DIGITS_FOR_INVERSION)
+                      : order.price,
+                  )}
                 />
               </Cell>
               <Cell>

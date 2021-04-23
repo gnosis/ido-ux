@@ -3,13 +3,11 @@ import { Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-
 
 import { About } from '../../../pages/About'
 import Auction from '../../../pages/Auction'
-import { Cookies } from '../../../pages/Cookies'
 import { Documentation } from '../../../pages/Documentation'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
 import { NotAllowed } from '../../../pages/NotAllowed'
 import Overview from '../../../pages/Overview'
-import { Privacy } from '../../../pages/Privacy'
 import { Terms } from '../../../pages/Terms'
 import { CookiesBanner } from '../../common/CookiesBanner'
 import { TopDisclaimer } from '../../common/TopDisclaimer'
@@ -58,8 +56,6 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
               <Route component={Overview} exact path="/overview" strict />
               <Route component={Landing} exact path="/start" strict />
               <Route component={Terms} exact path="/terms-and-conditions" strict />
-              <Route component={Privacy} exact path="/privacy-policy" strict />
-              <Route component={Cookies} exact path="/cookie-policy" strict />
               <Route component={Licenses} exact path="/licenses" strict />
               <Route component={About} exact path="/about" strict />
               <Route component={Documentation} exact path="/docs" strict />
@@ -84,11 +80,7 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
             </Switch>
           </Web3ReactManager>
         </InnerContainer>
-        <Footer
-          onCookiesBannerShow={() => {
-            setShowCookiesBanner(true)
-          }}
-        />
+        <Footer />
       </MainScroll>
       <CookiesBanner
         isBannerVisible={showCookiesBanner}

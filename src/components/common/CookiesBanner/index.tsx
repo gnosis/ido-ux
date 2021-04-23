@@ -232,6 +232,8 @@ export const CookiesBanner: React.FC<Props> = (props) => {
     }
   }, [googleAnalyticsAccepted, isBannerVisible, loadGoogleAnalytics, showCookiesWarning])
 
+  //Removing cookies banner for now
+  return null
   return cookiesWarningVisible ? (
     <Wrapper>
       <Content>

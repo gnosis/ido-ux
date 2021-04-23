@@ -20,7 +20,7 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import { useTokenBalance, useTokenBalances } from '../../../state/wallet/hooks'
+import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
 import { ChainId, getTokenDisplay } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
@@ -47,13 +47,14 @@ const Wrapper = styled(BaseCard)`
 `
 
 const ActionButton = styled(Button)`
+  flex-shrink: 0;
   height: 52px;
   margin-top: auto;
 `
 
 const BalanceWrapper = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   margin-bottom: 20px;
 `
 
@@ -143,11 +144,18 @@ interface OrderPlacementProps {
 
 const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
-  const { account, chainId } = useActiveWeb3React()
+  const { chainId } = auctionIdentifier
+  const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { chainId: auctionChainId, price, sellAmount } = useSwapState()
-  const { error } = useGetOrderPlacementError(derivedAuctionInfo)
+  const { price, sellAmount, showPriceInverted } = useSwapState()
+  const { error } = useGetOrderPlacementError(
+    derivedAuctionInfo,
+    auctionState,
+    auctionIdentifier,
+    showPriceInverted,
+  )
+  const { onInvertPrices } = useSwapActionHandlers()
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
   const auctionInfo = useAuctionDetails(auctionIdentifier)
@@ -162,15 +170,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [txHash, setTxHash] = useState<string>('')
   const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
-
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
     EASY_AUCTION_NETWORKS[chainId as ChainId],
+    chainIdFromWeb3 as ChainId,
   )
 
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
-  const relevantTokenBalances = useTokenBalances(account ?? undefined, [
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
   const biddingTokenBalance =
@@ -185,12 +193,23 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
   useEffect(() => {
-    if (price == '-' && derivedAuctionInfo?.initialPrice) {
-      onUserPriceInput(
-        derivedAuctionInfo?.initialPrice.multiply(new Fraction('1001', '1000')).toSignificant(4),
-      )
+    if (price == '-' && derivedAuctionInfo?.clearingPrice) {
+      showPriceInverted
+        ? onUserPriceInput(
+            derivedAuctionInfo?.clearingPrice
+              .invert()
+              .multiply(new Fraction('999', '1000'))
+              .toSignificant(4),
+            true,
+          )
+        : onUserPriceInput(
+            derivedAuctionInfo?.clearingPrice
+              .multiply(new Fraction('1001', '1000'))
+              .toSignificant(4),
+            false,
+          )
     }
-  }, [onUserPriceInput, price, derivedAuctionInfo])
+  }, [onUserPriceInput, price, derivedAuctionInfo, showPriceInverted])
 
   const resetModal = () => {
     if (!pendingConfirmation) {
@@ -203,6 +222,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const placeOrderCallback = usePlaceOrderCallback(
     auctionIdentifier,
     signature,
+    showPriceInverted,
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
   )
@@ -222,19 +242,19 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   const pendingText = `Placing order`
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
-    derivedAuctionInfo,
-  ])
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
-    [derivedAuctionInfo],
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo, chainId],
   )
-  const userTokenBalance = useTokenBalance(account, derivedAuctionInfo?.biddingToken)
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo, chainId],
+  )
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
 
   const handleShowConfirm = () => {
-    if (chainId !== auctionChainId) {
+    if (chainId !== chainIdFromWeb3) {
       setShowWarningWrongChainId(true)
       return
     }
@@ -266,6 +286,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [auctionInfo],
   )
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
+  const isPlaceOrderDisabled =
+    !isValid || notApproved || showWarning || showWarningWrongChainId || showConfirm
 
   return (
     <>
@@ -286,9 +308,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 Your Balance:{' '}
                 <Total>{`${
                   account
-                    ? `${userTokenBalance?.toSignificant(6) || '0'} ${
-                        derivedAuctionInfo?.biddingToken?.symbol
-                      }`
+                    ? `${biddingTokenBalance?.toSignificant(6) || '0'} ${getTokenDisplay(
+                        derivedAuctionInfo?.biddingToken,
+                        chainId,
+                      )}`
                     : 'Connect your wallet'
                 } `}</Total>
               </Balance>
@@ -299,12 +322,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     size={'22px'}
                     token={{
                       address: derivedAuctionInfo?.biddingToken.address,
-                      symbol: derivedAuctionInfo?.biddingToken.symbol,
+                      symbol: getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
                     }}
                   />
                 )}
             </BalanceWrapper>
             <CurrencyInputPanel
+              chainId={chainId}
               onMax={() => {
                 maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
               }}
@@ -315,7 +339,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <PriceInputPanel
               auctioningToken={derivedAuctionInfo?.auctioningToken}
               biddingToken={derivedAuctionInfo?.biddingToken}
-              label={`${biddingTokenDisplay} per ${auctioningTokenDisplay} price`}
+              invertPrices={showPriceInverted}
+              label={
+                showPriceInverted
+                  ? `Min ${auctioningTokenDisplay} per ${biddingTokenDisplay} price`
+                  : `Max ${biddingTokenDisplay} per ${auctioningTokenDisplay} price`
+              }
+              onInvertPrices={onInvertPrices}
               onUserPriceInput={onUserPriceInput}
               value={price}
             />
@@ -365,7 +395,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             {!account ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
             ) : (
-              <ActionButton disabled={!isValid || notApproved} onClick={handleShowConfirm}>
+              <ActionButton disabled={isPlaceOrderDisabled} onClick={handleShowConfirm}>
                 Place Order
               </ActionButton>
             )}
@@ -382,7 +412,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       />
       <WarningModal
         content={`In order to place this order, please connect to the ${getChainName(
-          auctionChainId,
+          chainId,
         )} network`}
         isOpen={showWarningWrongChainId}
         onDismiss={() => {
@@ -397,7 +427,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             auctioningToken={derivedAuctionInfo?.auctioningToken}
             biddingToken={derivedAuctionInfo?.biddingToken}
             cancelDate={cancelDate}
+            chainId={chainId}
             confirmText={'Confirm'}
+            isPriceInverted={showPriceInverted}
             onPlaceOrder={onPlaceOrder}
             orderPlacingOnly={orderPlacingOnly}
             price={price}

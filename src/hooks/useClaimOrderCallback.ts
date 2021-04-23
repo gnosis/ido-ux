@@ -12,6 +12,7 @@ import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('useClaimOrderCallback')
 
@@ -29,10 +30,10 @@ export interface ClaimInformation {
 }
 
 export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<ClaimInformation> {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const [claimInfo, setClaimInfo] = useState<Maybe<ClaimInformation>>(null)
   const [error, setError] = useState<Maybe<Error>>(null)
-  const { auctionId } = auctionIdentifier
+  const { auctionId, chainId } = auctionIdentifier
 
   useMemo(() => {
     setClaimInfo(null)
@@ -44,9 +45,7 @@ export function useGetClaimInfo(auctionIdentifier: AuctionIdentifier): Maybe<Cla
 
     const fetchApiData = async (): Promise<void> => {
       try {
-        if (!chainId || !library || !account || !additionalServiceApi) {
-          throw new Error('missing dependencies in useGetClaimInfo callback')
-        }
+        if (!chainId || !library || !account || !auctionId || !additionalServiceApi) return
         const sellOrdersFormUser = await additionalServiceApi.getAllUserOrders({
           networkId: chainId,
           auctionId,
@@ -144,22 +143,25 @@ export function useGetAuctionProceeds(
 export function useClaimOrderCallback(
   auctionIdentifier: AuctionIdentifier,
 ): null | (() => Promise<string>) {
-  const { account, chainId, library } = useActiveWeb3React()
+  const { account, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const { auctionId } = auctionIdentifier
+  const { auctionId, chainId } = auctionIdentifier
   const claimInfo = useGetClaimInfo(auctionIdentifier)
+  const gasPrice = useGasPrice(chainId)
 
   return useMemo(() => {
     return async function onClaimOrder() {
       if (!chainId || !library || !account || !claimInfo) {
         throw new Error('missing dependencies in onPlaceOrder callback')
       }
+
       const easyAuctionContract: Contract = getEasyAuctionContract(
         chainId as ChainId,
         library,
         account,
       )
+
       let estimate,
         method: Function,
         args: Array<string | string[] | number>,
@@ -175,6 +177,7 @@ export function useClaimOrderCallback(
         .then((estimatedGasLimit) =>
           method(...args, {
             ...(value ? { value } : {}),
+            gasPrice,
             gasLimit: calculateGasMargin(estimatedGasLimit),
           }),
         )
@@ -182,7 +185,6 @@ export function useClaimOrderCallback(
           addTransaction(response, {
             summary: 'Claiming tokens',
           })
-
           return response.hash
         })
         .catch((error) => {
@@ -190,5 +192,5 @@ export function useClaimOrderCallback(
           throw error
         })
     }
-  }, [account, addTransaction, chainId, library, auctionId, claimInfo])
+  }, [account, addTransaction, gasPrice, chainId, library, auctionId, claimInfo])
 }

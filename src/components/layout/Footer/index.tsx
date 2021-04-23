@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components'
 
 import { HashLink } from 'react-router-hash-link'
 
-import { SettingsIcon } from '../../icons/SettingsIcon'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 
 const Wrapper = styled.footer`
@@ -36,13 +35,12 @@ const Inner = styled(InnerContainer)`
     flex-grow: 1;
     flex-shrink: 0;
     justify-content: center;
-    justify-content: center;
   }
 `
 
 const Item = styled.li`
   color: ${({ theme }) => theme.text1};
-  margin-right: 30px;
+  margin: 0;
   opacity: 0.8;
 
   &:hover {
@@ -51,6 +49,10 @@ const Item = styled.li`
 
   &:last-child {
     margin-right: 0;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin-right: 30px;
   }
 `
 
@@ -71,55 +73,25 @@ const Link = styled(HashLink)`
   ${LinkCSS}
 `
 
-const IconWrapper = styled.span`
-  cursor: pointer;
-  display: inline-block;
-  height: 14px;
-  margin-left: 6px;
-  position: relative;
-  width: 14px;
-`
-
-const SettingsIconStyled = styled(SettingsIcon)`
-  fill: ${({ theme }) => theme.text1};
-  height: 11px;
-  width: 11px;
-
-  &:hover {
-    .fill {
-      fill: ${({ theme }) => theme.primary2};
-    }
-  }
-`
-
-interface Props {
-  onCookiesBannerShow: () => void
-}
-
-export const Footer: React.FC<Props> = (props) => {
-  const { onCookiesBannerShow, ...restProps } = props
+export const Footer: React.FC = (props) => {
+  const { ...restProps } = props
   const date = new Date()
   const year = date.getFullYear()
 
   return (
-    <Wrapper className="siteFooter" {...restProps}>
+    <Wrapper {...restProps}>
       <Inner as="ul">
         <Item>
-          <ExternalLink href="https://gnosis.io/" rel="noopener noreferrer" target="_blank">
-            {`©${year} Gnosis`}
+          <ExternalLink
+            href="https://forum.gnosis.io/c/dao/20"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {`©${year} GnosisDAO Forum`}
           </ExternalLink>
         </Item>
         <Item>
           <Link to="/terms-and-conditions#topAnchor">Terms</Link>
-        </Item>
-        <Item>
-          <Link to="/privacy-policy#topAnchor">Privacy</Link>
-        </Item>
-        <Item>
-          <Link to="/cookie-policy#topAnchor">Cookies</Link>
-          <IconWrapper onClick={onCookiesBannerShow}>
-            <SettingsIconStyled />
-          </IconWrapper>
         </Item>
         <Item>
           <Link to="/licenses#topAnchor">Licenses</Link>
