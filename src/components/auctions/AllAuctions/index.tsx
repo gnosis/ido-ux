@@ -43,9 +43,13 @@ const RowLink = styled(NavLink)<CellRowProps>`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     column-gap: 10px;
-    grid-template-columns: ${(props) => getColumns(props.columns)};
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     padding-left: 15px;
     padding-right: 15px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    grid-template-columns: ${(props) => getColumns(props.columns)};
   }
 `
 
@@ -57,7 +61,7 @@ const TableCell = styled(Cell)`
     transform: translateY(-50%);
   }
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
     &:last-child {
       position: unset;
       right: auto;
