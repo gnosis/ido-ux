@@ -164,8 +164,7 @@ export const useClaimOrderCallback = (
 
   const claimCallback = useCallback(async (): Promise<Maybe<string>> => {
     if (!chainId || !library || !account || error || !claimInfo) {
-      // throw new Error('missing dependencies in onPlaceOrder callback')
-      return null
+      throw new Error('missing dependencies in onPlaceOrder callback')
     }
 
     const easyAuctionContract: Contract = getEasyAuctionContract(
@@ -174,26 +173,22 @@ export const useClaimOrderCallback = (
       account,
     )
 
-    try {
-      const estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
-      const method: Function = easyAuctionContract.claimFromParticipantOrder
-      const args: Array<string | string[] | number> = [auctionId, claimInfo?.sellOrdersFormUser]
-      const value: Maybe<BigNumber> = null
+    const estimate = easyAuctionContract.estimateGas.claimFromParticipantOrder
+    const method: Function = easyAuctionContract.claimFromParticipantOrder
+    const args: Array<string | string[] | number> = [auctionId, claimInfo?.sellOrdersFormUser]
+    const value: Maybe<BigNumber> = null
 
-      const estimatedGasLimit = await estimate(...args, value ? { value } : {})
-      const response = await method(...args, {
-        ...(value ? { value } : {}),
-        gasPrice,
-        gasLimit: calculateGasMargin(estimatedGasLimit),
-      })
+    const estimatedGasLimit = await estimate(...args, value ? { value } : {})
+    const response = await method(...args, {
+      ...(value ? { value } : {}),
+      gasPrice,
+      gasLimit: calculateGasMargin(estimatedGasLimit),
+    })
 
-      addTransaction(response, {
-        summary: 'Claiming tokens',
-      })
-      return response.hash
-    } catch (err) {
-      return null
-    }
+    addTransaction(response, {
+      summary: 'Claiming tokens',
+    })
+    return response.hash
   }, [account, addTransaction, chainId, error, gasPrice, library, auctionId, claimInfo])
 
   return claimCallback
