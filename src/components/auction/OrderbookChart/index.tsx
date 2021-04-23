@@ -28,7 +28,6 @@ export interface PricePointDetails {
   priceFormatted: string
   totalVolumeNumber: number
   totalVolumeFormatted: string
-  totalVolumePerPriceFormatted: string
   askValueY: Maybe<number>
   bidValueY: Maybe<number>
   newOrderValueY: Maybe<number>
