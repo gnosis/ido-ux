@@ -487,9 +487,10 @@ export function deriveAuctionState(
 export function useDerivedClaimInfo(
   auctionIdentifier: AuctionIdentifier,
 ): {
-  auctioningToken?: Maybe<Token>
-  biddingToken?: Maybe<Token>
+  auctioningToken?: Token | undefined
+  biddingToken?: Token | undefined
   error?: string | undefined
+  isLoading: boolean
 } {
   const { auctionId, chainId } = auctionIdentifier
 
@@ -498,30 +499,45 @@ export function useDerivedClaimInfo(
     easyAuctionABI,
   )
 
-  const auctionInfo = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId]).result
+  const {
+    loading: isLoadingAuctionInfo,
+    result: auctionInfo,
+  } = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId])
   const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
 
   const biddingTokenAddress: string | undefined = auctionInfo?.biddingToken.toString()
 
-  const auctioningToken = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
-  const biddingToken = useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
+  const {
+    isLoading: isAuctioningTokenLoading,
+    token: auctioningToken,
+  } = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
+  const {
+    isLoading: isBiddingTokenLoading,
+    token: biddingToken,
+  } = useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
+
   const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrder(
     auctionInfo?.clearingPriceOrder,
     biddingToken,
     auctioningToken,
   )
 
-  const claimableOrders = useGetClaimInfo(auctionIdentifier)?.claimInfo?.sellOrdersFormUser
-  const claimed = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
-    auctionId,
-    claimableOrders == undefined || claimableOrders[0] == undefined
-      ? encodeOrder({
-          sellAmount: BigNumber.from(0),
-          buyAmount: BigNumber.from(0),
-          userId: BigNumber.from(0),
-        })
-      : claimableOrders[0],
-  ]).result
+  const { claimInfo, loading: isLoadingClaimInfo } = useGetClaimInfo(auctionIdentifier)
+  const claimableOrders = claimInfo?.sellOrdersFormUser
+  const { loading: isLoadingClaimed, result: claimed } = useSingleCallResult(
+    easyAuctionInstance,
+    'containsOrder',
+    [
+      auctionId,
+      claimableOrders == undefined || claimableOrders[0] == undefined
+        ? encodeOrder({
+            sellAmount: BigNumber.from(0),
+            buyAmount: BigNumber.from(0),
+            userId: BigNumber.from(0),
+          })
+        : claimableOrders[0],
+    ],
+  )
 
   const error =
     clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
@@ -532,10 +548,18 @@ export function useDerivedClaimInfo(
       ? 'You had no participation on this auction.'
       : ''
 
+  const isLoading =
+    isLoadingAuctionInfo ||
+    isAuctioningTokenLoading ||
+    isBiddingTokenLoading ||
+    isLoadingClaimInfo ||
+    isLoadingClaimed
+
   return {
     auctioningToken,
     biddingToken,
     error,
+    isLoading,
   }
 }
 
