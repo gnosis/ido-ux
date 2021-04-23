@@ -10,6 +10,8 @@ export interface XYChartProps {
   chartElement: HTMLElement
 }
 
+const PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART = 5
+
 export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const { chartElement } = props
 
@@ -178,16 +180,20 @@ export const drawInformation = (props: DrawInformation) => {
   series.values[0].adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
-    return `[bold]${market}[/]\nAsk Price: [bold] ${valueX.toFixed(
-      2,
-    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toFixed(2)} [/] ${quoteTokenLabel}`
+    return `[bold]${market}[/]\nAsk Price: [bold] ${valueX.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}`
   })
 
   series.values[1].adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
-    return `[bold]${market}[/]\nBid Price: [bold] ${valueX.toFixed(
-      2,
-    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toFixed(2)} [/] ${quoteTokenLabel}`
+    return `[bold]${market}[/]\nBid Price: [bold] ${valueX.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}`
   })
 }
