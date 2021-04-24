@@ -10,6 +10,8 @@ export interface XYChartProps {
   chartElement: HTMLElement
 }
 
+const PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART = 5
+
 export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const { chartElement } = props
 
@@ -175,6 +177,23 @@ export const drawInformation = (props: DrawInformation) => {
 
   const series = chart.series
 
-  series.values[0].tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
-  series.values[1].tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
+  series.values[0].adapter.add('tooltipText', (text, target) => {
+    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+    return `[bold]${market}[/]\nAsk Price: [bold] ${valueX.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}`
+  })
+
+  series.values[1].adapter.add('tooltipText', (text, target) => {
+    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+    return `[bold]${market}[/]\nBid Price: [bold] ${valueX.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}`
+  })
 }
