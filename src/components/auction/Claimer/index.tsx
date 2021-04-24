@@ -75,7 +75,7 @@ const Claimer: React.FC<Props> = (props) => {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
   const pendingText = `Claiming Funds`
-  const { error, isLoadingClaimInfo } = useDerivedClaimInfo(auctionIdentifier)
+  const { error, isLoading: isDerivedClaimInfoLoading } = useDerivedClaimInfo(auctionIdentifier)
   const isValid = !error
   const toggleWalletModal = useWalletModalToggle()
 
@@ -110,8 +110,16 @@ const Claimer: React.FC<Props> = (props) => {
     [derivedAuctionInfo, chainId],
   )
 
-  const isLoading = isLoadingClaimInfo || !claimableBiddingToken || !claimableAuctioningToken
-  const isClaimButtonDisabled = !isValid || showConfirm || isLoading || userConfirmedTx
+  const isLoading = useMemo(
+    () =>
+      (account && isDerivedClaimInfoLoading) || !claimableBiddingToken || !claimableAuctioningToken,
+    [account, isDerivedClaimInfoLoading, claimableBiddingToken, claimableAuctioningToken],
+  )
+
+  const isClaimButtonDisabled = useMemo(
+    () => !isValid || showConfirm || isLoading || userConfirmedTx,
+    [isValid, showConfirm, isLoading, userConfirmedTx],
+  )
 
   return (
     <Wrapper>
