@@ -125,11 +125,11 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     },
   },
   header: {
-    height: '60px',
+    height: '65px',
   },
   layout: {
     horizontalPadding: '10px',
-    maxWidth: '1080px',
+    maxWidth: '1122px',
   },
   paddings: {
     mainPadding: '15px',
@@ -145,7 +145,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     color: '#fff',
     colorPlaceholder: '#bfdeff',
     errorColor: '#e73c3c',
-    fontSize: '18px',
+    fontSize: '16px',
     fontWeight: '400',
     height: '38px',
     paddingHorizontal: '14px',
@@ -159,8 +159,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
   },
   themeBreakPoints: {
     lg: '992px',
-    md: '769px',
-    mdPre: '768px',
+    md: '768px',
     sm: '480px',
     xl: '1024px',
     xs: '320px',

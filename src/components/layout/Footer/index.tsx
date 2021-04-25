@@ -6,13 +6,12 @@ import { HashLink } from 'react-router-hash-link'
 import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 
 const Wrapper = styled.footer`
-  border-top: solid 1px #002249;
   display: flex;
   height: auto;
   justify-content: center;
   margin-top: auto;
   overflow: visible;
-  padding: 25px 0;
+  padding: 65px 0 25px 0;
   width: 100%;
 `
 
@@ -30,16 +29,22 @@ const Inner = styled(InnerContainer)`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     align-items: center;
+    column-gap: unset;
     display: flex;
     flex-direction: row;
     flex-grow: 1;
     flex-shrink: 0;
+    grid-template-columns: unset;
     justify-content: center;
+    row-gap: unset;
   }
 `
 
-const Item = styled.li`
+const Item = styled.span`
   color: ${({ theme }) => theme.text1};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
   margin: 0;
   opacity: 0.8;
 
@@ -47,12 +52,12 @@ const Item = styled.li`
     opacity: 1;
   }
 
-  &:last-child {
-    margin-right: 0;
-  }
-
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     margin-right: 30px;
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
 `
 
@@ -80,7 +85,7 @@ export const Footer: React.FC = (props) => {
 
   return (
     <Wrapper {...restProps}>
-      <Inner as="ul">
+      <Inner>
         <Item>
           <ExternalLink
             href="https://forum.gnosis.io/c/dao/20"

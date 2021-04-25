@@ -17,7 +17,7 @@ const Wrapper = styled.button`
   height: ${({ theme }) => theme.textField.height};
   justify-content: space-between;
   outline: none;
-  padding: 0 18px;
+  padding: 0 14px;
   transition: border-color 0.15s linear;
   width: 100%;
 

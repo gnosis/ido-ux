@@ -21,19 +21,16 @@ import { getChainName } from '../../utils/tools'
 
 const Chevron = styled(ChevronRightBig)`
   flex-shrink: 0;
-  min-width: 11px;
+  width: 11px;
 `
 
-const Featured = styled(FeaturedAuctions)`
-  margin-top: 20px;
+const CheckIcon = styled(YesIcon)`
+  height: 14px;
+  width: 14px;
+`
 
-  .featuredAuctionsTitle {
-    margin-bottom: 25px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: 40px;
-  }
+const PrivateIcon = styled(Private)`
+  zoom: unset;
 `
 
 const Overview = () => {
@@ -86,7 +83,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       participation: item.hasParticipation ? (
         <>
           <span>Yes</span>
-          <YesIcon />
+          <CheckIcon />
         </>
       ) : (
         'No'
@@ -103,13 +100,13 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
             address: item.addressBiddingToken,
             symbol: item.symbolBiddingToken,
           }}
-          size="32px"
+          size="26px"
         />
       ),
       type: item.isPrivateAuction ? (
         <>
           <span>Private</span>
-          <Private />
+          <PrivateIcon />
         </>
       ) : (
         'Public'
@@ -132,7 +129,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       {isLoading && <InlineLoading />}
       {!isLoading && (
         <>
-          <Featured featuredAuctions={featuredAuctions} />
+          <FeaturedAuctions featuredAuctions={featuredAuctions} />
           <AllAuctions tableData={tableData} />
         </>
       )}

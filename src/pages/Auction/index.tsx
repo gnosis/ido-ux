@@ -23,11 +23,6 @@ import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
   margin-bottom: 2px;
-  margin-top: 10px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-top: 40px;
-  }
 `
 
 const SubTitleWrapperStyled = styled(SubTitleWrapper)`

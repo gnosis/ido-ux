@@ -31,9 +31,7 @@ import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponent
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { SubTitle, SubTitleWrapper } from '../../pureStyledComponents/SubTitle'
 
-const Wrapper = styled.div`
-  padding-bottom: 50px;
-`
+const Wrapper = styled.div``
 
 const TableWrapper = styled(BaseCard)`
   padding: 4px 0;

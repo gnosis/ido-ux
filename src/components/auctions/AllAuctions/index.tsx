@@ -17,17 +17,15 @@ import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponent
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { TexfieldPartsCSS, TextfieldCSS } from '../../pureStyledComponents/Textfield'
 
-const Wrapper = styled.div`
-  padding-bottom: 60px;
-`
+const Wrapper = styled.div``
 
 const Table = styled(BaseCard)`
   padding: 0;
 `
 
 const SectionTitle = styled(PageTitle)`
-  margin-bottom: 16px;
-  margin-top: 0;
+  font-size: 22px;
+  margin-bottom: 14px;
 `
 
 const RowLink = styled(NavLink)<CellRowProps>`
@@ -36,17 +34,8 @@ const RowLink = styled(NavLink)<CellRowProps>`
   cursor: pointer;
   grid-template-columns: 1fr 1fr;
   padding-left: 10px;
-  padding-right: 20px;
+  padding-right: 10px;
   row-gap: 15px;
-
-  &:first-child {
-    padding-top: 17px;
-  }
-
-  &:last-child,
-  &:last-of-type {
-    padding-bottom: 17px;
-  }
 
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -54,9 +43,13 @@ const RowLink = styled(NavLink)<CellRowProps>`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     column-gap: 10px;
-    grid-template-columns: ${(props) => getColumns(props.columns)};
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     padding-left: 15px;
     padding-right: 15px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    grid-template-columns: ${(props) => getColumns(props.columns)};
   }
 `
 
@@ -68,7 +61,7 @@ const TableCell = styled(Cell)`
     transform: translateY(-50%);
   }
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
     &:last-child {
       position: unset;
       right: auto;
@@ -102,6 +95,7 @@ const SearchWrapper = styled.div`
   display: flex;
   margin-bottom: 12px;
   max-width: 100%;
+  padding-left: 9px;
   padding-right: 0;
   width: 565px;
 
@@ -159,7 +153,7 @@ const Pagination = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 56px;
+  min-height: 50px;
   padding: 0 15px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {

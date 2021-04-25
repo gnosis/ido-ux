@@ -24,7 +24,7 @@ change `REACT_APP_NETWORK_ID` to `{yourNetworkId}`, and change `REACT_APP_NETWOR
 
 ## Connect to additional - local services api
 
-Checkout the repo gnosis/ido-services and run the orderbook service with
+Checkout the repo gnosis/ido-services - note that this is private repo - and run the orderbook service with
 
 ```rust
 cargo run --bin orderbook.

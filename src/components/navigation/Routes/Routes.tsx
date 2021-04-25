@@ -1,12 +1,11 @@
 import React from 'react'
 import { Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { About } from '../../../pages/About'
 import Auction from '../../../pages/Auction'
 import { Documentation } from '../../../pages/Documentation'
 import { Landing } from '../../../pages/Landing'
 import { Licenses } from '../../../pages/Licenses'
-import { NotAllowed } from '../../../pages/NotAllowed'
 import Overview from '../../../pages/Overview'
 import { Terms } from '../../../pages/Terms'
 import { CookiesBanner } from '../../common/CookiesBanner'
@@ -19,6 +18,10 @@ import { InnerContainer } from '../../pureStyledComponents/InnerContainer'
 import { MainScroll } from '../../pureStyledComponents/MainScroll'
 import { MainWrapper } from '../../pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../../web3/Web3ReactManager'
+
+const Inner = styled(InnerContainer)`
+  padding-top: 28px;
+`
 
 const Routes: React.FC<RouteComponentProps> = (props) => {
   const { history } = props
@@ -40,11 +43,11 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
   return (
     <MainWrapper>
       <Header />
+      <Popups />
       {showTopWarning && <TopDisclaimer />}
       <MainScroll>
         <span id="topAnchor" />
-        <InnerContainer>
-          <Popups />
+        <Inner>
           <Web3ReactManager>
             <Switch>
               <Route
@@ -57,7 +60,6 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
               <Route component={Landing} exact path="/start" strict />
               <Route component={Terms} exact path="/terms-and-conditions" strict />
               <Route component={Licenses} exact path="/licenses" strict />
-              <Route component={About} exact path="/about" strict />
               <Route component={Documentation} exact path="/docs" strict />
               <Route component={Documentation} exact path="/docs/batch-auctions" strict />
               <Route component={Documentation} exact path="/docs/use-cases" strict />
@@ -70,7 +72,6 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
                 strict
               />
               <Route component={Documentation} exact path="/docs/faq" strict />
-              <Route component={NotAllowed} exact path="/not-allowed" strict />
               <Route exact path="/">
                 <Redirect to="/start" />
               </Route>
@@ -79,7 +80,7 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
               </Route>
             </Switch>
           </Web3ReactManager>
-        </InnerContainer>
+        </Inner>
         <Footer />
       </MainScroll>
       <CookiesBanner
