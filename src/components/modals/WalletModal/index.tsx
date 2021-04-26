@@ -6,7 +6,6 @@ import { URI_AVAILABLE } from '@anxolin/walletconnect-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import ReactGA from 'react-ga'
 
-import MetamaskIcon from '../../../assets/images/metamask.png'
 import { fortmatic, injected, walletconnect } from '../../../connectors'
 import { OVERLAY_READY } from '../../../connectors/Fortmatic'
 import { SUPPORTED_WALLETS } from '../../../constants'
