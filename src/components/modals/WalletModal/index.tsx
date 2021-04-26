@@ -195,18 +195,7 @@ const WalletModal: React.FC = () => {
 
       if (option.connector === injected) {
         if (!(window.web3 || window.ethereum)) {
-          if (option.name === 'MetaMask') {
-            return (
-              <Option
-                icon={MetamaskIcon}
-                key={key}
-                onClick={() => window.open('https://metamask.io/')}
-                text={'Install Metamask'}
-              />
-            )
-          } else {
-            return null //dont want to return install twice
-          }
+          return null //dont want to return install twice
         } else if (option.name === 'MetaMask' && !isMetamask) {
           return null
         } else if (option.name === 'Injected' && isMetamask) {
