@@ -6,7 +6,6 @@ import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import {
   CHAIN_ID,
-  FORTMATIC_KEY,
   NETWORK_URL_MAINNET,
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,

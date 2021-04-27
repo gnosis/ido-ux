@@ -7,8 +7,7 @@ import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import ReactGA from 'react-ga'
 
 import MetamaskIcon from '../../../assets/images/metamask.png'
-import { fortmatic, injected, walletconnect } from '../../../connectors'
-import { OVERLAY_READY } from '../../../connectors/Fortmatic'
+import { injected, walletconnect } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
@@ -180,12 +179,6 @@ const WalletModal: React.FC = () => {
       }
     }
   }
-
-  useEffect(() => {
-    fortmatic.on(OVERLAY_READY, () => {
-      toggleWalletModal()
-    })
-  }, [toggleWalletModal])
 
   const getOptions = () => {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask

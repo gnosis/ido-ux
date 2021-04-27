@@ -2,12 +2,11 @@ import { JSBI, Percent } from 'uniswap-xdai-sdk'
 
 import ArrowRightIcon from '../assets/images/arrow-right.svg'
 import CoinbaseWalletIcon from '../assets/images/coinbaseWalletIcon.svg'
-import FortmaticIcon from '../assets/images/fortmaticIcon.png'
 import MetamaskIcon from '../assets/images/metamask.svg'
 import PortisIcon from '../assets/images/portisIcon.png'
 import TrustWalletIcon from '../assets/images/trustWallet.png'
 import WalletConnectIcon from '../assets/images/wallet-connect.svg'
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
+import { injected, portis, walletconnect, walletlink } from '../connectors'
 import { ChainId } from '../utils'
 
 export const chainNames = {
@@ -86,15 +85,6 @@ const EXTRA_WALLETS = {
     color: '#1C74CC',
     mobile: true,
     mobileOnly: true,
-  },
-  FORTMATIC: {
-    connector: fortmatic,
-    name: 'Fortmatic',
-    icon: FortmaticIcon,
-    description: 'Login using Fortmatic hosted wallet',
-    href: null,
-    color: '#6748FF',
-    mobile: true,
   },
   Portis: {
     connector: portis,
