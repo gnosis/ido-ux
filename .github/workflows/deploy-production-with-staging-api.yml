@@ -1,7 +1,7 @@
 name: deploy-production
 on:
   push:
-    tags: [v*]
+    tags: [d*]
 jobs:
   deploy-production:
     runs-on: ubuntu-latest
@@ -46,10 +46,12 @@ jobs:
         env:
           REACT_APP_CHAIN_ID: 1
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-api-xdai.gnosis.io/
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY }}
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-api-mainnet.gnosis.io/
-
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-v1-api-mainnet.dev.gnosisdev.com/
+          REACT_APP_NETWORK_URL_RINKEBYs: https://rinkeby.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY }}
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-v1-api-rinkeby.dev.gnosisdev.com/
+          
       - name: "Deploy to IPFS with infura"
         run: yarn ipfs-publish
     

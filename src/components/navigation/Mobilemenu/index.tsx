@@ -32,9 +32,9 @@ const Item = styled(NavLink)`
   border-bottom: 1px solid ${({ theme }) => theme.border};
   color: ${({ theme }) => theme.text1};
   display: flex;
-  font-size: 13px;
+  font-size: 17px;
   font-weight: 400;
-  height: 42px;
+  height: 44px;
   justify-content: space-between;
   line-height: 1.2;
   padding: 0 14px;

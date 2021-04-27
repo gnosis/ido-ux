@@ -23,7 +23,7 @@ export const CellRowCSS = css<CellRowProps>`
   column-gap: 10px;
   display: grid;
   grid-template-columns: ${(props) => getColumns(props.columns)};
-  padding: 13px 15px;
+  padding: 10px 15px;
   position: relative;
   text-decoration: none;
   z-index: 1;

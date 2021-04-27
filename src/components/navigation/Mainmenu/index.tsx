@@ -33,14 +33,10 @@ const Item = styled(NavLink)`
     }
   }
 
-  &.active:hover {
+  &.active {
     cursor: default;
     pointer-events: none;
   }
-`
-
-const IconWrapper = styled.span`
-  margin-right: 8px;
 `
 
 export const Mainmenu: React.FC = (props) => {
@@ -49,7 +45,6 @@ export const Mainmenu: React.FC = (props) => {
       {navItems.map((item, index) => {
         return (
           <Item activeClassName="active" key={index} to={item.url}>
-            {item.icon && <IconWrapper>{item.icon}</IconWrapper>}
             {item.title}
           </Item>
         )

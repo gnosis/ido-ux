@@ -4,11 +4,13 @@ import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
-import { PricePointDetails } from '../OrderbookChart'
+import { ChainId, getTokenDisplay } from '../../../utils'
 
 export interface XYChartProps {
   chartElement: HTMLElement
 }
+
+const PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART = 5
 
 export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const { chartElement } = props
@@ -50,9 +52,10 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
   const numberFormatter = new am4core.NumberFormatter()
-  numberFormatter.numberFormat = '#.00a'
+  // numberFormatter.numberFormat = '#.00000a'
+  numberFormatter.smallNumberThreshold = 0
   numberFormatter.bigNumberPrefixes = [
-    { number: 1e4, suffix: 'K' }, // Use K only with value greater than 9999.00
+    { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
     { number: 1e6, suffix: 'M' }, // Million
     { number: 1e9, suffix: 'B' }, // Billion
     { number: 1e12, suffix: 'T' }, // Trillion
@@ -154,13 +157,13 @@ interface DrawInformation {
   chart: am4charts.XYChart
   baseToken: Token
   quoteToken: Token
-  data: PricePointDetails[]
+  chainId: ChainId
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chart, quoteToken } = props
+  const { baseToken, chainId, chart, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
-  const quoteTokenLabel = quoteToken.symbol
+  const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
   const market = quoteTokenLabel + '-' + baseTokenLabel
 
   const priceTitle = ` Price`
@@ -174,6 +177,23 @@ export const drawInformation = (props: DrawInformation) => {
 
   const series = chart.series
 
-  series.values[0].tooltipText = `[bold]${market}[/]\nAsk Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
-  series.values[1].tooltipText = `[bold]${market}[/]\nBid Price: [bold]{priceFormatted}[/] ${quoteTokenLabel}\nVolume: [bold]{totalVolumeFormatted}[/] ${quoteTokenLabel}`
+  series.values[0].adapter.add('tooltipText', (text, target) => {
+    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+    return `[bold]${market}[/]\nAsk Price: [bold] ${valueX.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}`
+  })
+
+  series.values[1].adapter.add('tooltipText', (text, target) => {
+    const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
+    const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
+    return `[bold]${market}[/]\nBid Price: [bold] ${valueX.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
+      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
+    )} [/] ${quoteTokenLabel}`
+  })
 }

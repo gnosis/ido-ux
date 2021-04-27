@@ -26,40 +26,58 @@ interface CurrencyInputPanelProps {
   auctioningToken: Maybe<Token>
   biddingToken: Maybe<Token>
   label: string
-  onUserPriceInput: (val: string) => void
+  onUserPriceInput: (val: string, isInvertedPrice: boolean) => void
+  onInvertPrices: () => void
   value: string
+  invertPrices: boolean
 }
 
 export default function PriceInputPanel({
   auctioningToken = null,
   biddingToken = null,
+  invertPrices,
   label,
+  onInvertPrices,
   onUserPriceInput,
   value,
 }: CurrencyInputPanelProps) {
   return (
     <FormRow>
-      <FormLabel text={label} />
+      <FormLabel onInvertPrices={onInvertPrices} text={label} />
       <TextfieldWrapper>
         <NumericalInput
           onUserSellAmountInput={(val) => {
-            onUserPriceInput(val)
+            onUserPriceInput(val, invertPrices)
           }}
           value={value}
         />
         <TokenInfo>
           {auctioningToken && biddingToken ? (
-            <DoubleLogo
-              auctioningToken={{
-                address: auctioningToken.address,
-                symbol: auctioningToken.symbol,
-              }}
-              biddingToken={{
-                address: biddingToken.address,
-                symbol: biddingToken.symbol,
-              }}
-              size="24px"
-            />
+            invertPrices ? (
+              <DoubleLogo
+                auctioningToken={{
+                  address: biddingToken.address,
+                  symbol: biddingToken.symbol,
+                }}
+                biddingToken={{
+                  address: auctioningToken.address,
+                  symbol: auctioningToken.symbol,
+                }}
+                size="24px"
+              />
+            ) : (
+              <DoubleLogo
+                auctioningToken={{
+                  address: auctioningToken.address,
+                  symbol: auctioningToken.symbol,
+                }}
+                biddingToken={{
+                  address: biddingToken.address,
+                  symbol: biddingToken.symbol,
+                }}
+                size="24px"
+              />
+            )
           ) : (
             '-'
           )}

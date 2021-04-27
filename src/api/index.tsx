@@ -16,11 +16,6 @@ import { TokenLogosServiceApi, TokenLogosServiceApiInterface } from './TokenLogo
 function createAdditionalServiceApi(): AdditionalServicesApi {
   const config: AdditionalServicesEndpoint[] = [
     {
-      networkId: 4,
-      url_production: API_URL_PRODUCTION_RINKEBY,
-      url_develop: API_URL_DEVELOP_RINKEBY,
-    },
-    {
       networkId: 100,
       url_production: API_URL_PRODUCTION_XDAI,
       url_develop: API_URL_DEVELOP_XDAI,
@@ -31,6 +26,12 @@ function createAdditionalServiceApi(): AdditionalServicesApi {
       url_develop: API_URL_DEVELOP_MAINNET,
     },
   ]
+  if (API_URL_DEVELOP_RINKEBY)
+    config.push({
+      networkId: 4,
+      url_production: API_URL_PRODUCTION_RINKEBY,
+      url_develop: API_URL_DEVELOP_RINKEBY,
+    })
   const dexPriceEstimatorApi = new AdditionalServicesApiImpl(config)
 
   window['dexPriceEstimatorApi'] = dexPriceEstimatorApi

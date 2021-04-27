@@ -4,9 +4,10 @@ import { Fraction, Percent, Token, TokenAmount, Trade } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { getTokenDisplay } from '../../../../utils'
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../../constants/config'
+import { ChainId, getTokenDisplay } from '../../../../utils'
 import { abbreviation } from '../../../../utils/numeral'
-import { convertPriceIntoBuyAndSellAmount } from '../../../../utils/prices'
+import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../../utils/prices'
 import { Button } from '../../../buttons/Button'
 import { ErrorLock } from '../../../icons/ErrorLock'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../../pureStyledComponents/Error'
@@ -60,6 +61,8 @@ interface Props {
   realizedLPFee?: TokenAmount
   sellAmount: string
   trade?: Trade
+  chainId: ChainId
+  isPriceInverted?: boolean
 }
 
 const SwapModalFooter: React.FC<Props> = (props) => {
@@ -67,7 +70,9 @@ const SwapModalFooter: React.FC<Props> = (props) => {
     auctioningToken,
     biddingToken,
     cancelDate,
+    chainId,
     confirmText,
+    isPriceInverted,
     onPlaceOrder,
     orderPlacingOnly,
     price,
@@ -76,7 +81,10 @@ const SwapModalFooter: React.FC<Props> = (props) => {
   const { buyAmountScaled } = convertPriceIntoBuyAndSellAmount(
     auctioningToken,
     biddingToken,
-    price,
+    (isPriceInverted
+      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION)
+      : price
+    ).toString(),
     sellAmount,
   )
 
@@ -88,8 +96,14 @@ const SwapModalFooter: React.FC<Props> = (props) => {
     )
   }
 
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken), [biddingToken])
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken), [auctioningToken])
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
 
   return (
     <>
@@ -108,7 +122,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
       <Row>
         <Text>Minimum {auctioningTokenDisplay} received</Text>
         <Value>
-          <TextNoWrap>{abbreviation(minimumReceived?.toSignificant(2), 10)}</TextNoWrap>
+          <TextNoWrap>{abbreviation(minimumReceived?.toSignificant(4), 10)}</TextNoWrap>
           <div>
             <TokenLogo
               size="24px"
@@ -118,9 +132,15 @@ const SwapModalFooter: React.FC<Props> = (props) => {
         </Value>
       </Row>
       <Row>
-        <Text>
-          Max {biddingTokenDisplay} paid per {auctioningTokenDisplay}
-        </Text>
+        {isPriceInverted ? (
+          <Text>
+            Min {auctioningTokenDisplay} received per {biddingTokenDisplay}
+          </Text>
+        ) : (
+          <Text>
+            Max {biddingTokenDisplay} paid per {auctioningTokenDisplay}
+          </Text>
+        )}
         <Value>
           <TextNoWrap>{abbreviation(price, 10)}</TextNoWrap>
           <div>

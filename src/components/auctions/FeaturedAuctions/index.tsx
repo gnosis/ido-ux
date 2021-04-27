@@ -8,7 +8,7 @@ import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import AuctionInfoCard from '../AuctionInfoCard'
 
 const Wrapper = styled.div`
-  margin: 0 auto 40px;
+  margin: 0 auto 32px;
   max-width: 100%;
   width: 400px;
 
@@ -20,19 +20,15 @@ const Wrapper = styled.div`
 const Row = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: 20px;
+  row-gap: 18px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    column-gap: 40px;
-    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 18px;
+    grid-template-columns: 1fr 1fr;
   }
-`
 
-const SectionTitle = styled(PageTitle)`
-  margin: 0 0 25px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin: 0 0 40px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 `
 
@@ -43,15 +39,15 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 export const FeaturedAuctions: React.FC<Props> = (props) => {
   const { featuredAuctions, ...restProps } = props
 
-  const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 3), [
+  const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 4), [
     featuredAuctions,
   ])
 
   return (
     <Wrapper {...restProps}>
-      <SectionTitle as="h2" className="featuredAuctionsTitle">
+      <PageTitle as="h2" className="featuredAuctionsTitle">
         Featured Auctions
-      </SectionTitle>
+      </PageTitle>
       {featuredAuctions && featuredAuctions.length === 0 && (
         <EmptyContentWrapper>
           <InfoIcon />

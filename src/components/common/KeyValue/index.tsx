@@ -12,11 +12,11 @@ const Value = styled.div<{ align?: string; noWrap?: boolean }>`
   display: flex;
   flex-grow: 1;
   flex-shrink: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   justify-content: ${(props) => props.align};
   line-height: 1;
-  margin: 0 0 2px;
+  margin: 0;
   white-space: ${(props) => (props.noWrap ? 'nowrap' : 'normal')};
 
   &:last-child {
@@ -24,7 +24,7 @@ const Value = styled.div<{ align?: string; noWrap?: boolean }>`
   }
 
   > * {
-    margin-right: 8px;
+    margin-right: 6px;
 
     &:last-child {
       margin-right: 0;
@@ -34,18 +34,18 @@ const Value = styled.div<{ align?: string; noWrap?: boolean }>`
 
 const Key = styled.div<{ align?: string }>`
   align-items: center;
-  color: ${({ theme }) => theme.text1};
+  color: rgba(255, 255, 255, 0.9);
   display: flex;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   justify-content: ${(props) => props.align};
-  line-height: 1.3;
+  line-height: 1.2;
   margin: 0;
   text-transform: capitalize;
   white-space: nowrap;
 
   > * {
-    margin-right: 8px;
+    margin-right: 6px;
 
     &:last-child {
       margin-right: 0;

@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 import { HashLink } from 'react-router-hash-link'
 
@@ -7,7 +7,6 @@ import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import { abbreviation } from '../../../utils/numeral'
 import {
   calculateTimeLeft,
-  calculateTimeProgress,
   getChainName,
   getDays,
   getHours,
@@ -15,6 +14,7 @@ import {
   getSeconds,
 } from '../../../utils/tools'
 import { NetworkIcon } from '../../icons/NetworkIcon'
+import { Private } from '../../icons/Private'
 import DoubleLogo from '../../token/DoubleLogo'
 
 const Wrapper = styled(HashLink)`
@@ -24,10 +24,10 @@ const Wrapper = styled(HashLink)`
   display: flex;
   flex-flow: column;
   justify-content: space-between;
-  min-height: 290px;
-  padding: 12px 18px;
+  min-height: 260px;
+  padding: 12px 15px;
   text-decoration: none;
-  transition: all 0.15s linear;
+  transition: box-shadow 0.15s linear;
 
   &:hover {
     box-shadow: 10px -10px 24px 0 rgba(0, 34, 73, 0.7);
@@ -43,21 +43,29 @@ const Top = styled.span`
 
 const Tokens = styled.span`
   color: ${({ theme }) => theme.text1};
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -1px;
   line-height: 1.2;
   margin: 0;
   text-transform: uppercase;
+  white-space: nowrap;
 `
 
 const Badge = styled.span`
   align-items: center;
   background-color: rgba(232, 102, 61, 0.3);
-  border-radius: 17px;
+  border-radius: 10px;
   color: ${({ theme }) => theme.primary1};
   display: flex;
-  height: 34px;
-  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  height: 23px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0 10px;
+  white-space: nowrap;
+  width: 78px;
 `
 
 const Blinker = keyframes`
@@ -98,85 +106,69 @@ const Details = styled.span`
   padding: 10px 0;
 `
 
-const TokenIcons = styled(DoubleLogo)``
+const TokenIcons = styled(DoubleLogo)`
+  margin-bottom: 10px;
+`
 
-const SellingText = styled.span`
-  color: ${({ theme }) => theme.text1};
+const Selling = styled.h3`
+  color: #fff;
   font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
-  margin: 15px 0 0 0;
+  margin: 0 0 2px;
   text-align: center;
 `
 
-const PriceAndDuration = styled.span`
+const CurrentPrice = styled.p`
+  color: ${({ theme }) => theme.primary1};
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  text-align: center;
+`
+
+const Bottom = styled.span`
+  align-items: center;
   display: flex;
   justify-content: space-between;
-  margin: auto 0 0 0;
   width: 100%;
 `
 
-const Cell = styled.span`
-  display: flex;
-  flex-direction: column;
-`
-
-const Subtitle = styled.span<{ textAlign?: string }>`
-  color: ${({ theme }) => theme.text1};
-  display: block;
-  font-size: 13px;
-  font-weight: normal;
-  line-height: 1.2;
-  margin: 0;
-  opacity: 0.7;
-  padding: 0 0 5px;
-  text-align: ${(props) => props.textAlign};
-`
-
-Subtitle.defaultProps = {
-  textAlign: 'left',
-}
-
-const Text = styled.span`
-  color: ${({ theme }) => theme.primary1};
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-top: auto;
-`
-
-const ProgressBar = styled.span`
-  background-color: rgba(232, 102, 61, 0.15);
-  border-radius: 5px;
-  display: block;
-  height: 5px;
-  margin-bottom: 3px;
-  margin-top: auto;
-  width: 120px;
-`
-
-const Progress = styled.span<{ width: string }>`
-  background-color: ${({ theme }) => theme.primary1};
-  border-radius: 5px;
-  display: block;
-  height: 100%;
-  max-width: 100%;
-  width: ${(props) => props.width};
-`
-
-const Network = styled.div`
+const BottomCell = styled.span`
   align-items: center;
   display: flex;
-  justify-content: center;
-  opacity: 0.7;
-  padding-top: 4px;
+  white-space: nowrap;
+
+  &:first-child {
+    margin-right: auto;
+  }
 `
 
-const NetworkName = styled.div`
-  color: ${({ theme }) => theme.text1};
+const BottomCellText = styled.span`
+  color: rgba(255, 255, 255, 0.9);
   font-size: 11px;
   font-weight: 600;
-  margin-left: 5px;
+  line-height: 1.2;
+  text-align: left;
+`
+
+const IconCSS = css`
+  height: 12px;
+  width: 12px;
+  margin-right: 5px;
+
+  .fill {
+    fill: rgba(255, 255, 255, 0.9);
+  }
+`
+
+const BottomIconNetwork = styled(NetworkIcon)`
+  ${IconCSS}
+`
+
+const BottomIconPrivate = styled(Private)`
+  ${IconCSS}
 `
 
 const formatSeconds = (seconds: number): React.ReactNode => {
@@ -187,21 +179,21 @@ const formatSeconds = (seconds: number): React.ReactNode => {
 
   return (
     <>
-      {days > 0 && <>{`${days}d `}</>}
-      <>
-        {hours >= 0 && hours < 10 && `0`}
-        {hours}
-      </>
+      {days > 0 && `${days}d `}
+      {hours >= 0 && hours < 10 && `0`}
+      {hours}
       <>
         <Blink />
         {minutes >= 0 && minutes < 10 && `0`}
         {minutes}
       </>
-      <>
-        <Blink />
-        {remainderSeconds >= 0 && remainderSeconds < 10 && `0`}
-        {remainderSeconds}
-      </>
+      {days === 0 && (
+        <>
+          <Blink />
+          {remainderSeconds >= 0 && remainderSeconds < 10 && `0`}
+          {remainderSeconds}
+        </>
+      )}
     </>
   )
 }
@@ -212,7 +204,7 @@ interface Props {
 
 const AuctionInfoCard: React.FC<Props> = (props) => {
   const { auctionInfo, ...restProps } = props
-  const { chainId, endTimeTimestamp, startingTimestamp } = auctionInfo
+  const { chainId, endTimeTimestamp } = auctionInfo
   const [timeLeft, setTimeLeft] = React.useState(calculateTimeLeft(endTimeTimestamp))
 
   React.useEffect(() => {
@@ -221,11 +213,6 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     }, 1000)
     return () => clearInterval(interval)
   }, [endTimeTimestamp])
-
-  const progressWidth = React.useMemo(() => {
-    const progress = calculateTimeProgress(startingTimestamp, endTimeTimestamp)
-    return `${100 - progress}%`
-  }, [startingTimestamp, endTimeTimestamp])
 
   return (
     <Wrapper
@@ -236,7 +223,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     >
       <Top>
         <Tokens>
-          {auctionInfo.symbolAuctioningToken}/{auctionInfo.symbolBiddingToken}
+          {auctionInfo.symbolAuctioningToken} / {auctionInfo.symbolBiddingToken}
         </Tokens>
         <Badge>{timeLeft && timeLeft > -1 ? formatSeconds(timeLeft) : '-'}</Badge>
       </Top>
@@ -250,35 +237,36 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
             address: auctionInfo.addressBiddingToken,
             symbol: auctionInfo.symbolBiddingToken,
           }}
-          size="68px"
+          size="62px"
         />
-        <SellingText>
+        <Selling>
           Selling{' '}
           <span title={auctionInfo.order.volume + ' ' + auctionInfo.symbolAuctioningToken}>
             {abbreviation(auctionInfo.order.volume.toFixed(2)) + ` `}
           </span>
           {auctionInfo.symbolAuctioningToken}
-        </SellingText>
-        <Network>
-          <NetworkIcon />
-          <NetworkName>Selling on {getChainName(parseInt(chainId.toString()))}</NetworkName>
-        </Network>
+        </Selling>
+        <CurrentPrice>
+          Current price:{' '}
+          {`${abbreviation(auctionInfo.currentClearingPrice.toFixed(2))} ${
+            auctionInfo.symbolBiddingToken
+          } per ${auctionInfo.symbolAuctioningToken}`}
+        </CurrentPrice>
       </Details>
-      <PriceAndDuration>
-        <Cell>
-          <Subtitle>Current price</Subtitle>
-          <Text>
-            {abbreviation(auctionInfo.currentClearingPrice.toFixed(2))}{' '}
-            {` ` + auctionInfo.symbolBiddingToken} per {auctionInfo.symbolAuctioningToken}
-          </Text>
-        </Cell>
-        <Cell>
-          <Subtitle textAlign="right">Duration</Subtitle>
-          <ProgressBar>
-            <Progress width={progressWidth} />
-          </ProgressBar>
-        </Cell>
-      </PriceAndDuration>
+      <Bottom>
+        <BottomCell>
+          <BottomIconNetwork />
+          <BottomCellText>{`Selling on ${getChainName(
+            parseInt(chainId.toString()),
+          )}`}</BottomCellText>
+        </BottomCell>
+        {auctionInfo.isPrivateAuction && (
+          <BottomCell>
+            <BottomIconPrivate />
+            <BottomCellText>Private auction</BottomCellText>
+          </BottomCell>
+        )}
+      </Bottom>
     </Wrapper>
   )
 }

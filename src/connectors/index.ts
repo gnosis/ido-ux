@@ -1,7 +1,7 @@
+import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import {
@@ -36,26 +36,35 @@ export const injected = new InjectedConnector({
   supportedChainIds: [1, 4, 100],
 })
 
-const rpcForWalletConnect: {
-  [chainId: number]: string
-} =
-  CHAIN_ID === 4
-    ? { 4: NETWORK_URL_RINKEBY }
-    : CHAIN_ID === 100
-    ? { 100: NETWORK_URL_XDAI }
-    : { 1: NETWORK_URL_MAINNET }
-
-// The WalletConnectConnector only supports a single RPC when configured,
-// so we are going to use the RPC associated with the Chain_Id environment variable configuration
-// Doing this, we will support every network, including xDai
-export const walletconnect = new WalletConnectConnector({
-  rpc: {
-    ...rpcForWalletConnect,
-  },
-  bridge: 'https://safe-walletconnect.gnosis.io',
-  qrcode: false,
-  pollingInterval: POLLING_INTERVAL,
-})
+export const walletconnect = {
+  1: new WalletConnectConnector({
+    rpc: { 1: NETWORK_URL_MAINNET },
+    bridge: 'https://safe-walletconnect.gnosis.io',
+    qrcode: false,
+    pollingInterval: POLLING_INTERVAL,
+  }),
+  100: new WalletConnectConnector({
+    rpc: { 100: NETWORK_URL_XDAI },
+    bridge: 'https://safe-walletconnect.gnosis.io',
+    qrcode: false,
+    pollingInterval: POLLING_INTERVAL,
+  }),
+  4: new WalletConnectConnector({
+    rpc: { 4: NETWORK_URL_RINKEBY },
+    bridge: 'https://safe-walletconnect.gnosis.io',
+    qrcode: false,
+    pollingInterval: POLLING_INTERVAL,
+  }),
+  // if no network is defined, we look whether wallet connect supports all possible chains
+  // this might cause issues on the auction overview page.
+  // A solution for this usecase should be a network selector
+  undefined: new WalletConnectConnector({
+    rpc: { 4: NETWORK_URL_RINKEBY, 100: NETWORK_URL_XDAI, 1: NETWORK_URL_MAINNET },
+    bridge: 'https://safe-walletconnect.gnosis.io',
+    qrcode: false,
+    pollingInterval: POLLING_INTERVAL,
+  }),
+}
 
 // mainnet only
 export const fortmatic = new FortmaticConnector({

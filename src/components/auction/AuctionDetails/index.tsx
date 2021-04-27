@@ -7,6 +7,7 @@ import {
   DerivedAuctionInfo,
   orderToPrice,
   orderToSellOrder,
+  useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -24,25 +25,31 @@ const Wrapper = styled(BaseCard)`
   margin: 0 0 28px;
   max-width: 100%;
   min-height: 130px;
-  grid-template-columns: 1fr 3px 1fr;
   grid-template-areas:
     'top top top'
     'col1 sep1 col2'
     'col3 sep2 col4';
+  grid-template-columns: 1fr 3px 1fr;
+  grid-template-rows: 1fr;
   padding-bottom: 20px;
+  padding-top: 75px;
   row-gap: 15px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-template-areas: none;
     grid-template-columns: 1fr 3px 1fr 154px 1fr 3px 1fr;
-    padding-bottom: 0;
     margin: 0 0 50px;
+    padding: 0;
   }
 `
 
 const Cell = styled(KeyValue)`
+  min-height: 90px;
+  justify-content: center;
+  padding: 5px 0;
+
   &.col1 {
-    grid-area: col1;
+    grid-area: col3;
   }
 
   &.col2 {
@@ -50,14 +57,23 @@ const Cell = styled(KeyValue)`
   }
 
   &.col3 {
-    grid-area: col3;
+    grid-area: col1;
   }
 
   &.col4 {
     grid-area: col4;
   }
 
+  .itemValue {
+    flex-direction: column;
+    flex-grow: 0;
+    margin-bottom: 0;
+  }
+
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    flex-grow: 1;
+    justify-content: center;
+    min-height: 0;
     padding: 0 10px;
 
     &.col1,
@@ -74,13 +90,19 @@ const Cell = styled(KeyValue)`
     &:last-child {
       padding-right: 0;
     }
+
+    .itemValue {
+      flex-direction: row;
+      margin-bottom: 2px;
+    }
   }
 `
 
 const Break = styled.div`
   background-color: ${({ theme }) => theme.primary1};
   border-radius: 3px;
-  min-height: 50px;
+  min-height: 90px;
+
   width: 3px;
 
   &.sep1 {
@@ -91,6 +113,8 @@ const Break = styled.div`
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    min-height: 50px;
+
     &.sep1,
     &.sep2 {
       grid-area: unset;
@@ -100,23 +124,64 @@ const Break = styled.div`
 
 const TimerWrapper = styled.div`
   grid-area: top;
-  margin: -65px auto 15px;
+  left: 50%;
+  margin: 0 auto 15px;
   max-height: 130px;
-  position: relative;
+  position: absolute;
+  top: -145px;
+  transform: translateX(-50%);
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-area: unset;
+    left: unset;
     margin: 0;
+    position: unset;
+    top: unset;
+    transform: none;
   }
 `
 
-interface AuctionDetailsProps {
+const TokenSymbol = styled.span`
+  align-items: center;
+  display: flex;
+  font-size: 15px;
+  justify-content: center;
+
+  & > * {
+    margin-right: 8px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    font-size: 18px;
+  }
+`
+
+const TokenValue = styled.span`
+  align-items: center;
+  display: flex;
+  font-size: 25px;
+  justify-content: center;
+  margin-bottom: 5px;
+  margin-right: 0;
+
+  & > * {
+    margin-right: 8px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    font-size: 18px;
+    margin-bottom: 0;
+    margin-right: 8px;
+  }
+`
+
+interface Props {
   auctionIdentifier: AuctionIdentifier
   auctionState: AuctionState
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-const AuctionDetails = (props: AuctionDetailsProps) => {
+const AuctionDetails = (props: Props) => {
   const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
   const { chainId } = auctionIdentifier
 
@@ -130,13 +195,15 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
     [chainId, derivedAuctionInfo?.biddingToken],
   )
 
+  const { showPriceInverted } = useSwapState()
   const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
-    derivedAuctionInfo?.biddingToken,
-  ])
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo?.biddingToken, chainId],
+  )
   const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
-    [derivedAuctionInfo?.auctioningToken],
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo?.auctioningToken, chainId],
   )
   const clearingPriceDisplay = useMemo(() => {
     const clearingPriceInfoAsSellOrder =
@@ -146,14 +213,32 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         derivedAuctionInfo?.biddingToken,
         derivedAuctionInfo?.auctioningToken,
       )
-    const clearingPriceNumber = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(4)
+    const clearingPriceNumber = showPriceInverted
+      ? orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
+      : orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
 
-    return clearingPriceNumber
-      ? `${abbreviation(clearingPriceNumber)} ${getTokenDisplay(
-          derivedAuctionInfo?.biddingToken,
-        )}/${getTokenDisplay(derivedAuctionInfo?.auctioningToken)}`
-      : '-'
-  }, [derivedAuctionInfo?.auctioningToken, derivedAuctionInfo?.biddingToken, clearingPriceInfo])
+    const priceSymbolStrings = showPriceInverted
+      ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)} per
+    ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
+      : `${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)} per
+    ${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)}
+`
+
+    return clearingPriceNumber ? (
+      <>
+        <TokenValue>{abbreviation(clearingPriceNumber)}</TokenValue>{' '}
+        <TokenSymbol>{priceSymbolStrings}</TokenSymbol>
+      </>
+    ) : (
+      '-'
+    )
+  }, [
+    derivedAuctionInfo?.auctioningToken,
+    showPriceInverted,
+    derivedAuctionInfo?.biddingToken,
+    clearingPriceInfo,
+    chainId,
+  ])
 
   const titlePrice = useMemo(
     () =>
@@ -201,15 +286,18 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         itemValue={
           derivedAuctionInfo?.biddingToken ? (
             <>
-              <TokenLogo
-                size={'20px'}
-                token={{
-                  address: derivedAuctionInfo?.biddingToken.address,
-                  symbol: derivedAuctionInfo?.biddingToken.symbol,
-                }}
-              />
-              <span>{biddingTokenDisplay}</span>
-              <ExternalLink href={biddingTokenAddress} />
+              <TokenValue>&nbsp;</TokenValue>
+              <TokenSymbol>
+                <span>{biddingTokenDisplay}</span>
+                <TokenLogo
+                  size={'20px'}
+                  token={{
+                    address: derivedAuctionInfo?.biddingToken.address,
+                    symbol: derivedAuctionInfo?.biddingToken.symbol,
+                  }}
+                />
+                <ExternalLink href={biddingTokenAddress} />
+              </TokenSymbol>
             </>
           ) : (
             '-'
@@ -233,17 +321,20 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         itemValue={
           derivedAuctionInfo?.auctioningToken && derivedAuctionInfo?.initialAuctionOrder ? (
             <>
-              <TokenLogo
-                size={'20px'}
-                token={{
-                  address: derivedAuctionInfo?.auctioningToken.address,
-                  symbol: derivedAuctionInfo?.auctioningToken.symbol,
-                }}
-              />
-              <span>{`${abbreviation(
-                derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(2),
-              )} ${auctioningTokenDisplay}`}</span>
-              <ExternalLink href={auctionTokenAddress} />
+              <TokenValue>
+                {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4))}
+              </TokenValue>
+              <TokenSymbol>
+                <span>{auctioningTokenDisplay}</span>
+                <TokenLogo
+                  size={'20px'}
+                  token={{
+                    address: derivedAuctionInfo?.auctioningToken.address,
+                    symbol: derivedAuctionInfo?.auctioningToken.symbol,
+                  }}
+                />
+                <ExternalLink href={auctionTokenAddress} />
+              </TokenSymbol>
             </>
           ) : (
             '-'
@@ -255,7 +346,7 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         className="col4"
         itemKey={
           <>
-            <span>Min Sell Price</span>
+            <span>{showPriceInverted ? `Max Sell Price` : `Min Sell Price`}</span>
             <Tooltip
               id="minSellPrice"
               text={'Minimum bidding price the auctioneer defined for participation.'}
@@ -264,10 +355,20 @@ const AuctionDetails = (props: AuctionDetailsProps) => {
         }
         itemValue={
           <>
-            {initialPriceToDisplay ? abbreviation(initialPriceToDisplay?.toSignificant(2)) : ' - '}
-            {initialPriceToDisplay && auctioningTokenDisplay
-              ? ` ${biddingTokenDisplay}/${auctioningTokenDisplay}`
-              : '-'}
+            <TokenValue>
+              {initialPriceToDisplay
+                ? showPriceInverted
+                  ? initialPriceToDisplay?.invert().toSignificant(5)
+                  : abbreviation(initialPriceToDisplay?.toSignificant(2))
+                : ' - '}
+            </TokenValue>
+            <TokenSymbol>
+              {initialPriceToDisplay && auctioningTokenDisplay
+                ? showPriceInverted
+                  ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                  : ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
+                : '-'}
+            </TokenSymbol>
           </>
         }
       />

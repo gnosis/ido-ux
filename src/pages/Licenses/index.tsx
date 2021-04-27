@@ -646,7 +646,7 @@ export const Licenses: React.FC = () => {
         starts in an interactive mode:
       </Paragraph>
       <Paragraph>
-        &gt;program&lt; Copyright (C) &gt;year&lt; &gt;name of author&lt; This program comes with
+        &lt;program&gt; Copyright (C) &lt;year&gt; &lt;name of author&gt; This program comes with
         ABSOLUTELY NO WARRANTY; for details type &apos;show w&apos;. This is free software, and you
         are welcome to redistribute it under certain conditions; type &apos;show c&apos; for
         details.
@@ -654,7 +654,7 @@ export const Licenses: React.FC = () => {
       <Paragraph>
         The hypothetical commands &apos;show w&apos; and &apos;show c&apos; should show the
         appropriate parts of the General Public License. Of course, your program&apos;s commands
-        might be different; for a GUI interface, you would use an `&quot;about box`&quot;.
+        might be different; for a GUI interface, you would use an &quot;about box&quot;.
       </Paragraph>
       <Paragraph>
         You should also get your employer (if you work as a programmer) or school, if any, to sign a

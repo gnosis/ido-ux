@@ -17,12 +17,11 @@ import Shape3 from './img/shape-3.svg'
 const Welcome = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 0 60px;
-  padding-top: 20px;
+  margin: 0 0 50px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     flex-direction: row;
-    padding-top: 50px;
+    padding-top: 25px;
   }
 `
 
@@ -71,8 +70,8 @@ const AuctionsBlock = styled.div`
   margin: 0 auto;
   max-width: 100%;
   min-height: 340px;
-  padding: 25px;
-  width: 400px;
+  padding: 20px;
+  width: 340px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     margin: 0 0 0 auto;
@@ -95,7 +94,7 @@ const AuctionsText = styled.p`
 
 const Featured = styled(FeaturedAuctions)`
   &.featuredAuctions {
-    margin-bottom: 60px;
+    margin-bottom: 50px;
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
       margin-bottom: 120px;
@@ -106,7 +105,7 @@ const Featured = styled(FeaturedAuctions)`
 const BlockGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-template-columns: 1fr 1fr;
@@ -171,7 +170,7 @@ const AuctionsButton = styled(HashLink)`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  padding: 0 0 100px;
+  padding: 0 0 30px;
 `
 
 const SendIcon = styled(Send)`
@@ -201,8 +200,8 @@ export const Landing: React.FC = () => {
             <TextGradient>to launch assets on Ethereum</TextGradient>
           </WelcomeTitle>
           <WelcomeText>
-            Gnosis Auction is a protocol that enables
-            <br /> anyone to auction-off assets with fair pricing.
+            Gnosis Auction is a platform for conducting
+            <br /> fair, transparent, and decentralized token price discovery.
           </WelcomeText>
         </WelcomeTextBlock>
         <AuctionsBlock>

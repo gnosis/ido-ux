@@ -8,6 +8,8 @@ import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPla
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getTokenDisplay } from '../../../utils'
 import { Button } from '../../buttons/Button'
+import { InlineLoading } from '../../common/InlineLoading'
+import { SpinnerSize } from '../../common/Spinner'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
@@ -21,6 +23,7 @@ const Wrapper = styled(BaseCard)`
 `
 
 const ActionButton = styled(Button)`
+  flex-shrink: 0;
   height: 52px;
   margin-top: auto;
 `
@@ -57,130 +60,149 @@ const Text = styled.div`
   line-height: 1.2;
   margin-left: 10px;
 `
-interface ClaimerProps {
+
+interface Props {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
-const Claimer: React.FC<ClaimerProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
-  const { account } = useActiveWeb3React()
-  const toggleWalletModal = useWalletModalToggle()
-  const { error } = useDerivedClaimInfo(auctionIdentifier)
 
-  const isValid = !error
+const Claimer: React.FC<Props> = (props) => {
+  const { auctionIdentifier, derivedAuctionInfo } = props
+  const { chainId } = auctionIdentifier
+  const { account } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
-  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
+  const [userConfirmedTx, setUserConfirmedTx] = useState<boolean>(false)
+  const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
+  const [txHash, setTxHash] = useState<string>('')
+  const pendingText = `Claiming Funds`
+  const { error, isLoading: isDerivedClaimInfoLoading } = useDerivedClaimInfo(auctionIdentifier)
+  const isValid = !error
+  const toggleWalletModal = useWalletModalToggle()
 
   const { claimableAuctioningToken, claimableBiddingToken } = useGetAuctionProceeds(
     auctionIdentifier,
     derivedAuctionInfo,
   )
-  const [txHash, setTxHash] = useState<string>('')
 
-  function resetModal() {
-    setPendingConfirmation(true)
-  }
-
+  const resetModal = () => setPendingConfirmation(true)
   const claimOrderCallback = useClaimOrderCallback(auctionIdentifier)
 
-  function onClaimOrder() {
+  const onClaimOrder = () =>
     claimOrderCallback()
       .then((hash) => {
         setTxHash(hash)
         setPendingConfirmation(false)
+        setUserConfirmedTx(true)
       })
       .catch(() => {
         resetModal()
         setShowConfirm(false)
+        setUserConfirmedTx(false)
       })
-  }
 
-  const pendingText = `Claiming Funds`
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(derivedAuctionInfo?.biddingToken), [
-    derivedAuctionInfo,
-  ])
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo, chainId],
+  )
+
   const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken),
-    [derivedAuctionInfo],
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo, chainId],
+  )
+
+  const isLoading = useMemo(
+    () =>
+      (account && isDerivedClaimInfoLoading) || !claimableBiddingToken || !claimableAuctioningToken,
+    [account, isDerivedClaimInfoLoading, claimableBiddingToken, claimableAuctioningToken],
+  )
+
+  const isClaimButtonDisabled = useMemo(
+    () => !isValid || showConfirm || isLoading || userConfirmedTx,
+    [isValid, showConfirm, isLoading, userConfirmedTx],
   )
 
   return (
     <Wrapper>
-      <TokensWrapper>
-        <TokenItem>
-          <Token>
-            {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
-              <>
-                <TokenLogo
-                  size={'34px'}
-                  token={{
-                    address: derivedAuctionInfo?.biddingToken.address,
-                    symbol: biddingTokenDisplay,
-                  }}
-                />
-                <Text>{biddingTokenDisplay}</Text>
-              </>
-            ) : (
-              '-'
-            )}
-          </Token>
-          <Text>
-            {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
-          </Text>
-        </TokenItem>
-        <TokenItem>
-          <Token>
-            {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
-              <>
-                <TokenLogo
-                  size={'34px'}
-                  token={{
-                    address: derivedAuctionInfo?.auctioningToken.address,
-                    symbol: auctioningTokenDisplay,
-                  }}
-                />
-                <Text>{auctioningTokenDisplay}</Text>
-              </>
-            ) : (
-              '-'
-            )}
-          </Token>
-          <Text>
-            {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
-          </Text>
-        </TokenItem>
-      </TokensWrapper>
-      {!isValid && account && (
-        <ErrorWrapper>
-          <ErrorRow>
-            <ErrorInfo />
-            <ErrorText>{error}</ErrorText>
-          </ErrorRow>
-        </ErrorWrapper>
+      {isLoading && <InlineLoading size={SpinnerSize.small} />}
+      {!isLoading && (
+        <>
+          <TokensWrapper>
+            <TokenItem>
+              <Token>
+                {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
+                  <>
+                    <TokenLogo
+                      size={'34px'}
+                      token={{
+                        address: derivedAuctionInfo?.biddingToken.address,
+                        symbol: biddingTokenDisplay,
+                      }}
+                    />
+                    <Text>{biddingTokenDisplay}</Text>
+                  </>
+                ) : (
+                  '-'
+                )}
+              </Token>
+              <Text>
+                {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
+              </Text>
+            </TokenItem>
+            <TokenItem>
+              <Token>
+                {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
+                  <>
+                    <TokenLogo
+                      size={'34px'}
+                      token={{
+                        address: derivedAuctionInfo?.auctioningToken.address,
+                        symbol: auctioningTokenDisplay,
+                      }}
+                    />
+                    <Text>{auctioningTokenDisplay}</Text>
+                  </>
+                ) : (
+                  '-'
+                )}
+              </Token>
+              <Text>
+                {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
+              </Text>
+            </TokenItem>
+          </TokensWrapper>
+          {!isValid && account && (
+            <ErrorWrapper>
+              <ErrorRow>
+                <ErrorInfo />
+                <ErrorText>{error}</ErrorText>
+              </ErrorRow>
+            </ErrorWrapper>
+          )}
+          {!account ? (
+            <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+          ) : (
+            <ActionButton
+              disabled={isClaimButtonDisabled}
+              onClick={() => {
+                setShowConfirm(true)
+                onClaimOrder()
+              }}
+            >
+              Claim
+            </ActionButton>
+          )}
+          <ClaimConfirmationModal
+            hash={txHash}
+            isOpen={showConfirm}
+            onDismiss={() => {
+              resetModal()
+              setShowConfirm(false)
+            }}
+            pendingConfirmation={pendingConfirmation}
+            pendingText={pendingText}
+          />
+        </>
       )}
-      {!account ? (
-        <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-      ) : (
-        <ActionButton
-          disabled={!isValid}
-          onClick={() => {
-            setShowConfirm(true)
-            onClaimOrder()
-          }}
-        >
-          Claim
-        </ActionButton>
-      )}
-      <ClaimConfirmationModal
-        hash={txHash}
-        isOpen={showConfirm}
-        onDismiss={() => {
-          resetModal()
-          setShowConfirm(false)
-        }}
-        pendingConfirmation={pendingConfirmation}
-        pendingText={pendingText}
-      />
     </Wrapper>
   )
 }

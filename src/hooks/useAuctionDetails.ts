@@ -37,11 +37,13 @@ export const useAuctionDetails = (
 
   useEffect(() => {
     let cancelled = false
-    setLoading(true)
     const fetchApiData = async () => {
       try {
         if (!chainId || !auctionId) {
           return
+        }
+        if (!cancelled) {
+          setLoading(true)
         }
 
         const params = {
@@ -52,14 +54,14 @@ export const useAuctionDetails = (
         const auctionInfo = await additionalServiceApi.getAuctionDetails(params)
         if (!cancelled) {
           setLoading(false)
-
           setAuctionInfo(auctionInfo)
         }
       } catch (error) {
-        if (cancelled) return
-        setLoading(false)
-        setAuctionInfo(null)
-        logger.error('Error getting auction details', error)
+        if (!cancelled) {
+          setLoading(false)
+          setAuctionInfo(null)
+          logger.error('Error getting auction details', error)
+        }
       }
     }
     fetchApiData()

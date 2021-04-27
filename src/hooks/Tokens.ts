@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Token, WETH } from 'uniswap-xdai-sdk'
 
 import { ALL_TOKENS } from '../constants/tokens'
@@ -46,11 +46,16 @@ export function useToken(tokenAddress?: string): Token | undefined {
 
 // gets token information by address (typically user input) and
 // automatically adds it for the user if the token address is valid
-export function useTokenByAddressAndAutomaticallyAdd(tokenAddress?: string): Token | undefined {
+export function useTokenByAddressAndAutomaticallyAdd(
+  tokenAddress?: string,
+): { token: Token | undefined; error: Maybe<Error>; isLoading: boolean } {
   const fetchTokenByAddress = useFetchTokenByAddress()
   const addToken = useAddUserToken()
   const token = useToken(tokenAddress)
   const { chainId } = useActiveWeb3React()
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<Maybe<Error>>(null)
 
   useEffect(() => {
     if (!chainId || !tokenAddress || !isAddress(tokenAddress)) return
@@ -58,13 +63,24 @@ export function useTokenByAddressAndAutomaticallyAdd(tokenAddress?: string): Tok
     if (weth && weth.address === isAddress(tokenAddress)) return
 
     if (tokenAddress && tokenAddress != '0x0000000000000000000000000000000000000000' && !token) {
-      fetchTokenByAddress(tokenAddress).then((token) => {
-        if (token !== null) {
-          addToken(token)
-        }
-      })
+      setIsLoading(true)
+      fetchTokenByAddress(tokenAddress)
+        .then((token) => {
+          if (token !== null) {
+            addToken(token)
+          }
+          setIsLoading(false)
+        })
+        .catch((error) => {
+          setError(error)
+          setIsLoading(false)
+        })
     }
   }, [tokenAddress, token, fetchTokenByAddress, addToken, chainId])
 
-  return token
+  return {
+    token,
+    isLoading,
+    error,
+  }
 }

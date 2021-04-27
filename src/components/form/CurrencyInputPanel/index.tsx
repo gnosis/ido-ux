@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import { useActiveWeb3React } from '../../../hooks'
+import { ChainId, getTokenDisplay } from '../../../utils'
 import { ControlButton, FormLabel } from '../../form/FormLabel'
 import { Input as NumericalInput } from '../../form/NumericalInput'
 import { FormRow } from '../../pureStyledComponents/FormRow'
@@ -38,9 +39,11 @@ interface CurrencyInputPanelProps {
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
   value: string
+  chainId: ChainId
 }
 
 export default function CurrencyInputPanel({
+  chainId,
   onMax,
   onUserSellAmountInput,
   token = null,
@@ -62,7 +65,7 @@ export default function CurrencyInputPanel({
           value={value}
         />
         <TokenInfo>
-          {token && token.symbol && <TokenSymbol>{token.symbol}</TokenSymbol>}{' '}
+          {token && token.symbol && <TokenSymbol>{getTokenDisplay(token, chainId)}</TokenSymbol>}{' '}
           {token && token.address && (
             <TokenLogo size={'24px'} token={{ address: token.address, symbol: token.symbol }} />
           )}
