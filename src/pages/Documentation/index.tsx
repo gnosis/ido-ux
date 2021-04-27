@@ -201,7 +201,7 @@ export const Documentation: React.FC = (props) => {
             Participate as a bidder
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/participate-as-auctioneer#topAnchor">
-            Start an auction via cmd
+            Start an auction via scripts
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/starting-an-auction-with-safe#topAnchor">
             Start an auction via UI
