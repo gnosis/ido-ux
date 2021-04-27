@@ -262,15 +262,13 @@ const WalletModal: React.FC = () => {
                 I have read, understood and agree to the{' '}
                 <NavLink target="_blank" to="/terms-and-conditions">
                   Terms &amp; Conditions
-                </NavLink>{' '}
+                </NavLink>
                 .
               </CheckboxText>
             </CheckboxWrapper>
             <Footer>
-              <span>New to Ethereum?</span>{' '}
-              <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
-                Learn more about wallets.
-              </ExternalLink>
+              <span>Don&apos;t have wallet?</span>{' '}
+              <ExternalLink href="https://metamask.io/download.html">Download here</ExternalLink>.
             </Footer>
           </>
         )}
