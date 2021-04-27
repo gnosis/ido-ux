@@ -62,6 +62,6 @@
 
 PS: We strongly recommend auctioneers to use the method described above instead of using the script, since we believe that the Gnosis Safe is better suited for handling large amounts of digital assets
 
-
+ 
 ```
 
