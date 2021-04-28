@@ -96,7 +96,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.fillOpacity = 0.1
   askSeries.dummyData = {
     description:
-      'Shows sell demand of the auction based on the price and nominated in the bidding token',
+      'Shows sell supply of the auction based on the price and nominated in the bidding token',
   }
 
   // New order to be placed
