@@ -168,7 +168,16 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
-  const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
+
+  const auctioningToken = React.useMemo(() => derivedAuctionInfo.auctioningToken, [
+    derivedAuctionInfo.auctioningToken,
+  ])
+
+  const biddingToken = React.useMemo(() => derivedAuctionInfo.biddingToken, [
+    derivedAuctionInfo.biddingToken,
+  ])
+
+  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -179,10 +188,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
-    derivedAuctionInfo?.biddingToken,
+    biddingToken,
   ])
-  const biddingTokenBalance =
-    relevantTokenBalances?.[derivedAuctionInfo?.biddingToken?.address ?? '']
+  const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
 
   useEffect(() => {
     if (approval === ApprovalState.PENDING) {
@@ -218,12 +226,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     setPendingConfirmation(true)
     setAttemptingTxn(false)
   }
-
-  const auctioningToken = React.useMemo(() => derivedAuctionInfo?.auctioningToken, [
-    derivedAuctionInfo?.auctioningToken,
-  ])
-
-  const biddingToken = React.useMemo(() => auctioningToken, [auctioningToken])
 
   const placeOrderCallback = usePlaceOrderCallback(
     auctionIdentifier,
@@ -386,7 +388,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             {notApproved && (
               <ApprovalWrapper>
                 <ApprovalText>
-                  You need to unlock {biddingToken.symbol} to allow the smart contract to interact
+                  You need to unlock {biddingTokenDisplay} to allow the smart contract to interact
                   with it. This has to be done for each new token.
                 </ApprovalText>
                 <ApprovalButton
