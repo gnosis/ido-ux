@@ -14,6 +14,7 @@ import {
   useDefaultsFromURLSearch,
   useDerivedAuctionInfo,
   useSwapActionHandlers,
+  useSwapState,
 } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
@@ -78,16 +79,16 @@ const Auction: React.FC<Props> = (props) => {
   const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
   const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
   const { onInvertPrices } = useSwapActionHandlers()
-
+  const { showPriceInverted } = useSwapState()
   // Start with inverted prices, if orderbook is also show inverted,
-  // i.e. if the baseToken is a stable token
+  // i.e. if the baseToken/auctioningToken is a stable token
   useEffect(() => {
-    if (derivedAuctionInfo?.biddingToken != null) {
-      if (!showChartsInverted(derivedAuctionInfo?.biddingToken)) {
+    if (derivedAuctionInfo?.auctioningToken != null && !showPriceInverted) {
+      if (showChartsInverted(derivedAuctionInfo?.auctioningToken)) {
         onInvertPrices()
       }
     }
-  }, [derivedAuctionInfo?.biddingToken, onInvertPrices])
+  }, [derivedAuctionInfo?.auctioningToken, onInvertPrices, showPriceInverted])
   const validBiddingTokenAddress =
     biddingTokenAddress !== undefined &&
     isAddress(biddingTokenAddress) &&
