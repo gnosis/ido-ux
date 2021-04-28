@@ -5,7 +5,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
 import { additionalServiceApi } from '../api'
-import { DEPOSIT_AND_PLACE_ORDER, EASY_AUCTION_NETWORKS } from '../constants'
 import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPlaceOrder.json'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../constants/config'
@@ -18,6 +17,8 @@ import { OrderStatus } from '../state/orders/reducer'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import {
   ChainId,
+  DEPOSIT_AND_PLACE_ORDER,
+  EASY_AUCTION_NETWORKS,
   calculateGasMargin,
   getContract,
   getEasyAuctionContract,

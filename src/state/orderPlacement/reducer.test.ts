@@ -9,8 +9,9 @@ describe('orderplacement reducer', () => {
   beforeEach(() => {
     store = createStore(reducer, {
       price: '1',
-      auctionId: 1,
       sellAmount: '',
+      chainId: 1,
+      showPriceInverted: false,
     })
   })
 
@@ -18,15 +19,15 @@ describe('orderplacement reducer', () => {
     test('get auctionId', () => {
       store.dispatch(
         setDefaultsFromURLSearch({
-          chainId: 1,
-          queryString: '?auctionId=2',
+          queryString: '?chainId=1&auctionId=2',
         }),
       )
 
       expect(store.getState()).toEqual({
-        price: '1',
-        auctionId: 2,
+        price: '-',
+        chainId: 1,
         sellAmount: '',
+        showPriceInverted: false,
       })
     })
   })
@@ -41,8 +42,9 @@ describe('orderplacement reducer', () => {
 
       expect(store.getState()).toEqual({
         price: '1',
-        auctionId: 1,
+        chainId: 1,
         sellAmount: '2',
+        showPriceInverted: false,
       })
     })
   })
@@ -57,8 +59,9 @@ describe('orderplacement reducer', () => {
 
       expect(store.getState()).toEqual({
         price: '2',
-        auctionId: 1,
+        chainId: 1,
         sellAmount: '',
+        showPriceInverted: false,
       })
     })
   })

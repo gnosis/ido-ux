@@ -2,30 +2,16 @@ import { JSBI, Percent } from 'uniswap-xdai-sdk'
 
 import ArrowRightIcon from '../assets/images/arrow-right.svg'
 import CoinbaseWalletIcon from '../assets/images/coinbaseWalletIcon.svg'
-import FortmaticIcon from '../assets/images/fortmaticIcon.png'
 import MetamaskIcon from '../assets/images/metamask.svg'
 import PortisIcon from '../assets/images/portisIcon.png'
 import TrustWalletIcon from '../assets/images/trustWallet.png'
 import WalletConnectIcon from '../assets/images/wallet-connect.svg'
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
-import { ChainId } from '../utils'
+import { injected, portis, walletconnect, walletlink } from '../connectors'
 
 export const chainNames = {
   1: 'mainnet',
   4: 'rinkeby',
   100: 'xdai',
-}
-
-export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
-  [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
-  [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
-  [ChainId.XDAI]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
-}
-
-export const DEPOSIT_AND_PLACE_ORDER: { [chainId in ChainId]: string } = {
-  [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
-  [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
-  [ChainId.XDAI]: '0x845AbED0734e39614FEC4245F3F3C88E2da98157',
 }
 
 const MAINNET_WALLETS = {
@@ -86,15 +72,6 @@ const EXTRA_WALLETS = {
     color: '#1C74CC',
     mobile: true,
     mobileOnly: true,
-  },
-  FORTMATIC: {
-    connector: fortmatic,
-    name: 'Fortmatic',
-    icon: FortmaticIcon,
-    description: 'Login using Fortmatic hosted wallet',
-    href: null,
-    color: '#6748FF',
-    mobile: true,
   },
   Portis: {
     connector: portis,
