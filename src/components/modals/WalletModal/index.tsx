@@ -6,7 +6,6 @@ import { URI_AVAILABLE } from '@anxolin/walletconnect-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import ReactGA from 'react-ga'
 
-import MetamaskIcon from '../../../assets/images/metamask.png'
 import { injected, walletconnect } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
@@ -188,18 +187,7 @@ const WalletModal: React.FC = () => {
 
       if (option.connector === injected) {
         if (!(window.web3 || window.ethereum)) {
-          if (option.name === 'MetaMask') {
-            return (
-              <Option
-                icon={MetamaskIcon}
-                key={key}
-                onClick={() => window.open('https://metamask.io/')}
-                text={'Install Metamask'}
-              />
-            )
-          } else {
-            return null //dont want to return install twice
-          }
+          return null //dont want to return install twice
         } else if (option.name === 'MetaMask' && !isMetamask) {
           return null
         } else if (option.name === 'Injected' && isMetamask) {
@@ -267,15 +255,13 @@ const WalletModal: React.FC = () => {
                 I have read, understood and agree to the{' '}
                 <NavLink target="_blank" to="/terms-and-conditions">
                   Terms &amp; Conditions
-                </NavLink>{' '}
+                </NavLink>
                 .
               </CheckboxText>
             </CheckboxWrapper>
             <Footer>
-              <span>New to Ethereum?</span>{' '}
-              <ExternalLink href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
-                Learn more about wallets.
-              </ExternalLink>
+              <span>Don&apos;t have wallet?</span>{' '}
+              <ExternalLink href="https://metamask.io/download.html">Download here</ExternalLink>.
             </Footer>
           </>
         )}
