@@ -8,7 +8,6 @@ import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
-import { EASY_AUCTION_NETWORKS } from '../constants'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
@@ -29,6 +28,18 @@ export enum ChainId {
   MAINNET = 1,
   RINKEBY = 4,
   XDAI = 100,
+}
+
+export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
+  [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
+  [ChainId.XDAI]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
+}
+
+export const DEPOSIT_AND_PLACE_ORDER: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
+  [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
+  [ChainId.XDAI]: '0x845AbED0734e39614FEC4245F3F3C88E2da98157',
 }
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
