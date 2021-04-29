@@ -39,19 +39,20 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
   const location = useLocation()
   const { auctionId, chainId } = parseURL(location.search)
 
-  const data = { bids, asks }
-
   const { auctioningToken: baseToken, biddingToken: quoteToken } = derivedAuctionInfo
 
-  const processedOrderbook = processOrderbookData({
-    data,
-    userOrder: {
-      price: userOrderPrice,
-      volume: userOrderVolume,
-    },
-    baseToken,
-    quoteToken,
-  })
+  const processedOrderbook = React.useMemo(() => {
+    const data = { bids, asks }
+    return processOrderbookData({
+      data,
+      userOrder: {
+        price: userOrderPrice,
+        volume: userOrderVolume,
+      },
+      baseToken,
+      quoteToken,
+    })
+  }, [asks, baseToken, bids, quoteToken, userOrderPrice, userOrderVolume])
 
   if (showChartsInverted(baseToken)) {
     for (const p of processedOrderbook) {
@@ -59,6 +60,7 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
       p.priceFormatted = getInverse(p.price, NUMBER_OF_DIGITS_FOR_INVERSION).toString()
     }
   }
+
   return (
     <>
       <Wrapper>

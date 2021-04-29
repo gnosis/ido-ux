@@ -167,7 +167,16 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
-  const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
+
+  const auctioningToken = React.useMemo(() => derivedAuctionInfo.auctioningToken, [
+    derivedAuctionInfo.auctioningToken,
+  ])
+
+  const biddingToken = React.useMemo(() => derivedAuctionInfo.biddingToken, [
+    derivedAuctionInfo.biddingToken,
+  ])
+
+  const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
   const [approval, approveCallback] = useApproveCallback(
     approvalTokenAmount,
@@ -178,10 +187,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
 
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
-    derivedAuctionInfo?.biddingToken,
+    biddingToken,
   ])
-  const biddingTokenBalance =
-    relevantTokenBalances?.[derivedAuctionInfo?.biddingToken?.address ?? '']
+  const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
 
   useEffect(() => {
     if (approval === ApprovalState.PENDING) {
@@ -222,8 +230,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     auctionIdentifier,
     signature,
     showPriceInverted,
-    derivedAuctionInfo?.auctioningToken,
-    derivedAuctionInfo?.biddingToken,
+    auctioningToken,
+    biddingToken,
   )
 
   const onPlaceOrder = () => {
@@ -241,14 +249,14 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   const pendingText = `Placing order`
-  const biddingTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
-    [derivedAuctionInfo, chainId],
-  )
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
-    [derivedAuctionInfo, chainId],
-  )
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
 
@@ -283,6 +291,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const isPlaceOrderDisabled =
     !isValid || notApproved || showWarning || showWarningWrongChainId || showConfirm
 
+  const onMaxInput = React.useCallback(() => {
+    maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
+  }, [maxAmountInput, onUserSellAmountInput])
+
   return (
     <>
       <Wrapper>
@@ -303,36 +315,32 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 <Total>{`${
                   account
                     ? `${biddingTokenBalance?.toSignificant(6) || '0'} ${getTokenDisplay(
-                        derivedAuctionInfo?.biddingToken,
+                        biddingToken,
                         chainId,
                       )}`
                     : 'Connect your wallet'
                 } `}</Total>
               </Balance>
-              {account &&
-                derivedAuctionInfo?.biddingToken &&
-                derivedAuctionInfo?.biddingToken.address && (
-                  <TokenLogo
-                    size={'22px'}
-                    token={{
-                      address: derivedAuctionInfo?.biddingToken.address,
-                      symbol: getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
-                    }}
-                  />
-                )}
+              {account && biddingToken && biddingToken.address && (
+                <TokenLogo
+                  size={'22px'}
+                  token={{
+                    address: biddingToken.address,
+                    symbol: getTokenDisplay(biddingToken, chainId),
+                  }}
+                />
+              )}
             </BalanceWrapper>
             <CurrencyInputPanel
               chainId={chainId}
-              onMax={() => {
-                maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
-              }}
+              onMax={onMaxInput}
               onUserSellAmountInput={onUserSellAmountInput}
-              token={derivedAuctionInfo?.biddingToken}
+              token={biddingToken}
               value={sellAmount}
             />
             <PriceInputPanel
-              auctioningToken={derivedAuctionInfo?.auctioningToken}
-              biddingToken={derivedAuctionInfo?.biddingToken}
+              auctioningToken={auctioningToken}
+              biddingToken={biddingToken}
               invertPrices={showPriceInverted}
               label={
                 showPriceInverted
@@ -374,8 +382,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             {notApproved && (
               <ApprovalWrapper>
                 <ApprovalText>
-                  You need to unlock {derivedAuctionInfo?.biddingToken.symbol} to allow the smart
-                  contract to interact with it. This has to be done for each new token.
+                  You need to unlock {biddingTokenDisplay} to allow the smart contract to interact
+                  with it. This has to be done for each new token.
                 </ApprovalText>
                 <ApprovalButton
                   buttonType={ButtonType.primaryInverted}
@@ -418,8 +426,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         attemptingTxn={attemptingTxn}
         content={
           <SwapModalFooter
-            auctioningToken={derivedAuctionInfo?.auctioningToken}
-            biddingToken={derivedAuctionInfo?.biddingToken}
+            auctioningToken={auctioningToken}
+            biddingToken={biddingToken}
             cancelDate={cancelDate}
             chainId={chainId}
             confirmText={'Confirm'}
