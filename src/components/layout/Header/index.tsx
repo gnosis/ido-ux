@@ -6,7 +6,6 @@ import { useWeb3React } from '@web3-react/core'
 import { HashLink } from 'react-router-hash-link'
 
 import { chainNames } from '../../../constants'
-import { CHAIN_ID } from '../../../constants/config'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { useSwapState } from '../../../state/orderPlacement/hooks'
 import { getChainName } from '../../../utils/tools'
@@ -117,7 +116,7 @@ const ErrorText = styled.span`
 export const Component: React.FC<RouteComponentProps> = (props) => {
   const { location, ...restProps } = props
   const { account } = useWeb3React()
-  const { chainId = CHAIN_ID } = useSwapState()
+  const { chainId } = useSwapState()
   const { errorWrongNetwork } = useNetworkCheck()
   const isConnected = !!account
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false)

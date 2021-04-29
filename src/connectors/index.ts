@@ -5,7 +5,6 @@ import { PortisConnector } from '@web3-react/portis-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import {
-  CHAIN_ID,
   NETWORK_URL_MAINNET,
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,
@@ -18,10 +17,11 @@ interface NetworkConnectorArguments {
 }
 
 const POLLING_INTERVAL = 10000
+const DEFAULT_CHAIN_ID = 1
 
 const networkConnectorArguments: NetworkConnectorArguments = {
   urls: [],
-  defaultChainId: CHAIN_ID,
+  defaultChainId: DEFAULT_CHAIN_ID,
 }
 
 if (NETWORK_URL_MAINNET) networkConnectorArguments.urls[1] = NETWORK_URL_MAINNET

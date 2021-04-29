@@ -6,7 +6,7 @@ jobs:
   deploy-production:
     runs-on: ubuntu-latest
     env:
-        REPO_NAME_SLUG: idoux
+      REPO_NAME_SLUG: idoux
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-              
+
       - name: Cache node_modules
         id: cache-node-modules
         uses: actions/cache@v2
@@ -44,12 +44,10 @@ jobs:
       - name: Build Web Apps
         run: yarn ipfs-build
         env:
-          REACT_APP_CHAIN_ID: 1
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-api-xdai.gnosis.io/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-api-mainnet.gnosis.io/
 
-      - name: "Deploy to IPFS with infura"
+      - name: 'Deploy to IPFS with infura'
         run: yarn ipfs-publish
-    

@@ -11,9 +11,6 @@ export const API_URL_PRODUCTION_MAINNET =
 export const API_URL_DEVELOP_XDAI = process.env.REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI
 export const API_URL_PRODUCTION_XDAI = process.env.REACT_APP_ADDITIONAL_SERVICES_API_URL_PROD_XDAI
 
-// Network default
-export const CHAIN_ID = Number(process.env.REACT_APP_CHAIN_ID || 1)
-
 // Infura bridges like 'https://mainnet.infura.io/v3/...'
 export const NETWORK_URL_RINKEBY = process.env.REACT_APP_NETWORK_URL_RINKEBY || ''
 export const NETWORK_URL_MAINNET = process.env.REACT_APP_NETWORK_URL_MAINNET || ''

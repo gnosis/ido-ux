@@ -295,6 +295,17 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
   }, [maxAmountInput, onUserSellAmountInput])
 
+  const balanceString = React.useMemo(() => {
+    return account
+      ? chainId !== chainIdFromWeb3
+        ? 'Switch network'
+        : `${biddingTokenBalance?.toSignificant(6) || '0'} ${getTokenDisplay(
+            biddingToken,
+            chainId,
+          )}`
+      : 'Connect your wallet'
+  }, [account, biddingToken, biddingTokenBalance, chainId, chainIdFromWeb3])
+
   return (
     <>
       <Wrapper>
@@ -311,17 +322,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           <>
             <BalanceWrapper>
               <Balance>
-                Your Balance:{' '}
-                <Total>{`${
-                  account
-                    ? `${biddingTokenBalance?.toSignificant(6) || '0'} ${getTokenDisplay(
-                        biddingToken,
-                        chainId,
-                      )}`
-                    : 'Connect your wallet'
-                } `}</Total>
+                Your Balance: <Total>{`${balanceString} `}</Total>
               </Balance>
-              {account && biddingToken && biddingToken.address && (
+              {chainId === chainIdFromWeb3 && account && biddingToken && biddingToken.address && (
                 <TokenLogo
                   size={'22px'}
                   token={{
