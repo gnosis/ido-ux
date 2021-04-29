@@ -30,7 +30,7 @@ Additionally, Auctioneers can further customize the auction by using the followi
 
 **&quot;--is-atomic-closure-allowed&quot;** This parameter enables users to close the auction atomically and submit a final bid by calling the `settleAuctionAtomically` function in the smart contract once the `auction-end-date` has been reached. The auctioneer determines whether this parameter is on or off by specifying True or False.
 
-**&quot;--allow-list-manager&quot;** If whitelisting of addresses is required, the auctioneer can provide his/her own allowlistManager contract, or use the AllowListOffChainManaged.json file provided in [this repo](https://github.com/gnosis/ido-contracts/tree/main/deployments). The command needs to be followed by the contract address of the allowlistManager being used.
+**&quot;--allow-list-manager&quot;** If an Allow-Listing should be applied for the auction -- only approved addresses are allowed to participate, the auctioneer can provide their own allowlistManager contract, or use the AllowListOffChainManaged.json file provided in [this repo](https://github.com/gnosis/ido-contracts/tree/main/deployments) to enable this funcitonality. The command needs to be followed by the contract address of the allowlistManager contract being used.
 
 **&quot;--allow-list-data&quot;** If the auctioneer needs further data in his/her allowList, the data needs to be provided in this field. Our implementation needs the public address of the key (abi encode - e.g. 0x000…00useraddress) used for allowing addresses to place orders.
 
