@@ -11,37 +11,58 @@ import {
   getSeconds,
 } from '../../../utils/tools'
 
-const TIMER_SIZE = '154px'
+export const TIMER_SIZE = '162px'
+const INNER_CIRCLE_SIZE = '138px'
 
-const Wrapper = styled.div<{ progress?: string }>`
+const Wrapper = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.primary1};
-  background: conic-gradient(
-    ${({ theme }) => theme.primary1} calc(${(props) => props.progress}),
-    ${({ theme }) => theme.primary3} 0%
-  );
+  background: ${({ theme }) => theme.primary3};
   border-radius: 50%;
+  box-shadow: inset 0 0 3px 0 ${({ theme }) => theme.mainBackground};
   display: flex;
   height: ${TIMER_SIZE};
   justify-content: center;
-  margin-top: -13px;
+  position: relative;
   width: ${TIMER_SIZE};
 `
 
-Wrapper.defaultProps = {
+const ProgressChart = styled.div<{ progress?: string }>`
+  align-items: center;
+  background: conic-gradient(
+    ${({ theme }) => theme.primary1} calc(${(props) => props.progress}),
+    rgba(255, 255, 255, 0) 0%
+  );
+  border-radius: 50%;
+  display: flex;
+  height: calc(${TIMER_SIZE} - 5px);
+  justify-content: center;
+  width: calc(${TIMER_SIZE} - 5px);
+`
+
+ProgressChart.defaultProps = {
   progress: '0%',
 }
 
-const Center = styled.div`
+const InnerCircle = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.primary3};
+  border-radius: 50%;
+  display: flex;
+  height: ${INNER_CIRCLE_SIZE};
+  justify-content: center;
+  width: ${INNER_CIRCLE_SIZE};
+`
+
+const CenterCircle = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.mainBackground};
   border-radius: 50%;
-  box-shadow: 0 0 6px 0 ${({ theme }) => theme.mainBackground};
+  box-shadow: 0 0 10px 0px ${({ theme }) => theme.mainBackground};
   display: flex;
   flex-flow: column;
-  height: 126px;
+  height: calc(${INNER_CIRCLE_SIZE} - 4px);
   justify-content: center;
-  width: 126px;
+  width: calc(${INNER_CIRCLE_SIZE} - 4px);
 `
 
 const Days = styled.div`
@@ -150,7 +171,7 @@ interface AuctionTimerProps {
 }
 
 export const AuctionTimer = (props: AuctionTimerProps) => {
-  const { auctionState, derivedAuctionInfo } = props
+  const { auctionState, derivedAuctionInfo, ...restProps } = props
   const [timeLeft, setTimeLeft] = React.useState(
     calculateTimeLeft(derivedAuctionInfo?.auctionEndDate),
   )
@@ -191,44 +212,48 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
   }, [derivedAuctionInfo])
 
   return (
-    <Wrapper progress={progress}>
-      <Center>
-        {!auctionState && <TextBig>Loading...</TextBig>}
-        {auctionState === AuctionState.NOT_YET_STARTED && (
-          <TextBig>
-            Auction
-            <br /> not
-            <br />
-            started
-          </TextBig>
-        )}
-        {auctionState === AuctionState.CLAIMING && (
-          <TextBig>
-            Auction
-            <br /> claiming
-          </TextBig>
-        )}
-        {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
-          auctionState === AuctionState.ORDER_PLACING) && (
-          <>
-            <Time>
-              {timeLeft && timeLeft > -1 ? (
-                formatSeconds(timeLeft)
-              ) : (
-                <>
-                  --
-                  <Blink />
-                  --
-                  <Blink />
-                  --
-                </>
-              )}
-            </Time>
-            <Text>Ends in</Text>
-          </>
-        )}
-        {auctionStateTitle}
-      </Center>
+    <Wrapper {...restProps}>
+      <ProgressChart progress={progress}>
+        <InnerCircle>
+          <CenterCircle>
+            {!auctionState && <TextBig>Loading...</TextBig>}
+            {auctionState === AuctionState.NOT_YET_STARTED && (
+              <TextBig>
+                Auction
+                <br /> not
+                <br />
+                started
+              </TextBig>
+            )}
+            {auctionState === AuctionState.CLAIMING && (
+              <TextBig>
+                Auction
+                <br /> claiming
+              </TextBig>
+            )}
+            {(auctionState === AuctionState.ORDER_PLACING_AND_CANCELING ||
+              auctionState === AuctionState.ORDER_PLACING) && (
+              <>
+                <Time>
+                  {timeLeft && timeLeft > -1 ? (
+                    formatSeconds(timeLeft)
+                  ) : (
+                    <>
+                      --
+                      <Blink />
+                      --
+                      <Blink />
+                      --
+                    </>
+                  )}
+                </Time>
+                <Text>Ends in</Text>
+              </>
+            )}
+            {auctionStateTitle}
+          </CenterCircle>
+        </InnerCircle>
+      </ProgressChart>
     </Wrapper>
   )
 }
