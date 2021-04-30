@@ -29,7 +29,6 @@ import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRow, getColumns } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
-import { SubTitle, SubTitleWrapper } from '../../pureStyledComponents/SubTitle'
 
 const Wrapper = styled.div``
 
@@ -42,8 +41,19 @@ const Title = styled(PageTitle)`
   margin-top: 0;
 `
 
-const SubTitleWrapperStyled = styled(SubTitleWrapper)`
+const SubTitleWrapperStyled = styled.div`
+  align-items: center;
+  display: flex;
   margin-bottom: 12px;
+`
+
+const SubTitle = styled.h3`
+  align-items: center;
+  color: ${({ theme }) => theme.text1};
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
 `
 
 const ErrorIcon = styled(ErrorInfo)`
@@ -175,11 +185,9 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {!ordersEmpty && !orderSubmissionFinished && (hasLastCancellationDate || orderPlacingOnly) && (
         <SubTitleWrapperStyled>
           <ErrorIcon />
-          {orderPlacingOnly && (
-            <SubTitle as="h3">Orders for this auction can&apos;t be canceled.</SubTitle>
-          )}
+          {orderPlacingOnly && <SubTitle>Orders for this auction can&apos;t be canceled.</SubTitle>}
           {!orderPlacingOnly && !isOrderCancellationExpired && (
-            <SubTitle as="h3">
+            <SubTitle>
               The order cancelation period expires on&nbsp;<strong>{cancelDateFull}</strong>. Orders
               can&apos;t be canceled after this date.
             </SubTitle>
