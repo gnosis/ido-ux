@@ -71,6 +71,12 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
                 path="/docs/participate-as-auctioneer"
                 strict
               />
+              <Route
+                component={Documentation}
+                exact
+                path="/docs/starting-an-auction-with-safe"
+                strict
+              />
               <Route component={Documentation} exact path="/docs/faq" strict />
               <Route exact path="/">
                 <Redirect to="/start" />
