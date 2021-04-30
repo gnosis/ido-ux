@@ -11,24 +11,16 @@ import {
   PORTIS_ID,
 } from '../constants/config'
 
-interface NetworkConnectorArguments {
-  urls: { [chainId: number]: string }
-  defaultChainId?: number
-}
-
 const POLLING_INTERVAL = 10000
-const DEFAULT_CHAIN_ID = 1
 
-const networkConnectorArguments: NetworkConnectorArguments = {
-  urls: [],
-  defaultChainId: DEFAULT_CHAIN_ID,
-}
+const urls = []
+if (NETWORK_URL_MAINNET) urls[1] = NETWORK_URL_MAINNET
+if (NETWORK_URL_RINKEBY) urls[4] = NETWORK_URL_RINKEBY
+if (NETWORK_URL_XDAI) urls[100] = NETWORK_URL_XDAI
 
-if (NETWORK_URL_MAINNET) networkConnectorArguments.urls[1] = NETWORK_URL_MAINNET
-if (NETWORK_URL_RINKEBY) networkConnectorArguments.urls[4] = NETWORK_URL_RINKEBY
-if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI
+const defaultChainId = urls.findIndex((chainId) => !!chainId)
 
-export const network = new NetworkConnector(networkConnectorArguments)
+export const network = new NetworkConnector({ urls, defaultChainId })
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 4, 100],
