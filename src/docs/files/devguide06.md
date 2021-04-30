@@ -86,12 +86,12 @@ yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780
 ### Allow-Listing: Generating signatures
 Signatures for an auction with participation restriction can be created like that:
 1. Create a file: `your_address_inputs.txt` with comma separated addresses that should be allow-listed for the auction
-2. Initiate the auction and remember your auctionId
-3. Run the following script:
+2. Initiate the auction and with the allow-listing option and a `signer address`, remember your auctionId
+4. Run the following script:
 ```
 export NETWORK=<Your Network>
 export INFURA_KEY=<Your infura key>
-export PK=<Your private key _for the signing address_. The address for this key should not hold any ETH>
+export PK=<Your private key _for the signer address_. The address for this key is not required to hold any ETH>
 yarn hardhat generateSignatures --auction-id "Your auctionId" --file-with-address "./your_address_inputs.txt" --network $NETWORK
 ```
 The generated signatures can be directly uploaded to the backend by adding the flag `--post-to-api` to the previous command. Uploading signatures allows all authorized users to create orders from the web interface without the extra friction of managing a signature.
