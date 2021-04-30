@@ -6,6 +6,7 @@ import { Contract } from '@ethersproject/contracts'
 
 import { chainNames } from '../constants'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
+import { useOrderActionHandlers } from '../state/orders/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { getLogger } from '../utils/logger'
@@ -22,6 +23,7 @@ export function useCancelOrderCallback(
 ): null | ((orderId: string) => Promise<string>) {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
+  const { onCancelOrder: actionCancelOrder } = useOrderActionHandlers()
   const { auctionId, chainId: orderChainId } = auctionIdentifier
   const gasPrice = useGasPrice(chainId)
 
@@ -74,6 +76,8 @@ export function useCancelOrderCallback(
               ' ' +
               biddingToken.symbol,
           })
+          actionCancelOrder(orderId)
+
           return response.hash
         })
         .catch((error) => {
@@ -81,5 +85,16 @@ export function useCancelOrderCallback(
           throw error
         })
     }
-  }, [account, orderChainId, gasPrice, addTransaction, chainId, library, auctionId, biddingToken])
+  }, [
+    chainId,
+    library,
+    account,
+    orderChainId,
+    auctionId,
+    gasPrice,
+    addTransaction,
+    biddingToken.decimals,
+    biddingToken.symbol,
+    actionCancelOrder,
+  ])
 }
