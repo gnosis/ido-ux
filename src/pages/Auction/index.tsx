@@ -28,11 +28,7 @@ const Title = styled(PageTitle)`
 const SubTitleWrapperStyled = styled.div`
   align-items: center;
   display: flex;
-  margin-bottom: 110px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-bottom: 40px;
-  }
+  margin-bottom: 20px;
 `
 
 const SubTitle = styled.h2`
