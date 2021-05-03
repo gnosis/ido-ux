@@ -210,7 +210,7 @@ export const Documentation: React.FC = (props) => {
             Start an auction via UI
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/private-auctions-and-KYC-solutions">
-            Private Auctions And KYC solutions
+            Private auctions/KYC solutions
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/faq#topAnchor">
             FAQ
