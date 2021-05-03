@@ -14,6 +14,7 @@ import participateAsABidderDocMarkdown from '../../docs/files/devguide05.md'
 import participateAsAuctioneerDocMarkdown from '../../docs/files/devguide06.md'
 import faqDocMarkdown from '../../docs/files/devguide07.md'
 import startingAnAuctionWithSafe from '../../docs/files/devguide08.md'
+import privateAuctionsAndKYCSolutions from '../../docs/files/devguide09.md'
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -177,6 +178,8 @@ export const Documentation: React.FC = (props) => {
       fetchGuide(participateAsAuctioneerDocMarkdown)
     if (location.pathname === '/docs/starting-an-auction-with-safe')
       fetchGuide(startingAnAuctionWithSafe)
+    if (location.pathname === '/docs/private-auctions-and-KYC-solutions')
+      fetchGuide(privateAuctionsAndKYCSolutions)
     if (location.pathname === '/docs/faq') fetchGuide(faqDocMarkdown)
   }, [location, fetchGuide])
 
@@ -205,6 +208,9 @@ export const Documentation: React.FC = (props) => {
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/starting-an-auction-with-safe#topAnchor">
             Start an auction via UI
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/private-auctions-and-KYC-solutions">
+            Private Auctions And KYC solutions
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/faq#topAnchor">
             FAQ
