@@ -65,21 +65,13 @@ const CenterCircle = styled.div`
   width: calc(${INNER_CIRCLE_SIZE} - 4px);
 `
 
-const Days = styled.div`
-  font-size: 20px;
-  line-height: 1;
-  margin: 0;
-  text-transform: uppercase;
-`
-
 const Time = styled.div`
   color: ${({ theme }) => theme.primary1};
   flex-shrink: 1;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: -1px;
-  line-height: 1.2;
-  margin-bottom: 3px;
+  line-height: 1.1;
+  margin-bottom: 2px;
   min-width: 0;
   text-align: center;
   white-space: nowrap;
@@ -89,7 +81,7 @@ const Text = styled.div`
   color: ${({ theme }) => theme.primary1};
   font-size: 15px;
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.1;
   opacity: 0.8;
   text-align: center;
   text-transform: uppercase;
@@ -97,7 +89,7 @@ const Text = styled.div`
 
 const TextBig = styled.div`
   color: ${({ theme }) => theme.primary1};
-  font-size: 17px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
@@ -139,28 +131,21 @@ const formatSeconds = (seconds: number): React.ReactNode => {
 
   return (
     <>
-      {days > 0 && (
-        <Days>
-          {`${days} `}
-          {days === 1 ? 'Day' : 'Days'}
-        </Days>
-      )}
-      <div>
-        <>
-          {hours >= 0 && hours < 10 && `0`}
-          {hours}
-        </>
-        <>
-          <Blink />
-          {minutes >= 0 && minutes < 10 && `0`}
-          {minutes}
-        </>
+      {days > 0 && `${days}d `}
+      {hours >= 0 && hours < 10 && `0`}
+      {hours}
+      <>
+        <Blink />
+        {minutes >= 0 && minutes < 10 && `0`}
+        {minutes}
+      </>
+      {days === 0 && (
         <>
           <Blink />
           {remainderSeconds >= 0 && remainderSeconds < 10 && `0`}
           {remainderSeconds}
         </>
-      </div>
+      )}
     </>
   )
 }
