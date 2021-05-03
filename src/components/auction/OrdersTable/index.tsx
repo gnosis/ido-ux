@@ -147,7 +147,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   const orderStatusText = {
     [OrderStatus.PLACED]: 'Placed',
     [OrderStatus.PENDING]: 'Pending',
-    [OrderStatus.PENDING_CANCELLATION]: 'Pending-Cancellation',
+    [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
   }
   const now = Math.trunc(Date.now())
   const ordersEmpty = !orders.orders || orders.orders.length == 0
