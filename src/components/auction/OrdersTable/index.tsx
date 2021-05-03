@@ -147,7 +147,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   const orderStatusText = {
     [OrderStatus.PLACED]: 'Placed',
     [OrderStatus.PENDING]: 'Pending',
-    [OrderStatus.PENDING_CANCELLATION]: 'Pending-Cancelation',
+    [OrderStatus.PENDING_CANCELLATION]: 'Pending-Cancellation',
   }
   const now = Math.trunc(Date.now())
   const ordersEmpty = !orders.orders || orders.orders.length == 0
@@ -235,17 +235,10 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   align="flex-start"
                   itemKey={<span>Status</span>}
                   itemValue={
-                    order.status === OrderStatus.PLACED ? (
-                      <>
-                        <span>{orderStatusText[order.status]}</span>
-                        <OrderPlaced />
-                      </>
-                    ) : (
-                      <>
-                        <span>{orderStatusText[order.status]}</span>
-                        <OrderPending />
-                      </>
-                    )
+                    <>
+                      <span>{orderStatusText[order.status]}</span>
+                      {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
+                    </>
                   }
                 />
               </Cell>
