@@ -128,6 +128,7 @@ const TokenValue = styled.span`
   margin-bottom: 1px;
   margin-right: 0;
   text-align: center;
+  white-space: nowrap;
 `
 
 const TokenSymbol = styled.span`
@@ -137,6 +138,7 @@ const TokenSymbol = styled.span`
   line-height: 1.2;
   margin-bottom: 0;
   justify-content: center;
+  white-space: nowrap;
 
   & > * {
     margin-right: 0;
@@ -145,6 +147,7 @@ const TokenSymbol = styled.span`
 
 const TokenText = styled.span`
   margin: 0 10px 0 5px;
+  white-space: nowrap;
 `
 
 interface Props {
