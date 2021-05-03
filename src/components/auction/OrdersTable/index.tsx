@@ -10,7 +10,7 @@ import {
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
+import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import { abbreviation } from '../../../utils/numeral'
 import { getInverse } from '../../../utils/prices'
@@ -144,6 +144,11 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   )
 
   const pendingText = `Cancelling Order`
+  const orderStatusText = {
+    [OrderStatus.PLACED]: 'Placed',
+    [OrderStatus.PENDING]: 'Pending',
+    [OrderStatus.PENDING_CANCELLATION]: 'Pending-Cancelation',
+  }
   const now = Math.trunc(Date.now())
   const ordersEmpty = !orders.orders || orders.orders.length == 0
 
@@ -232,12 +237,12 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   itemValue={
                     order.status === OrderStatus.PLACED ? (
                       <>
-                        <span>Placed</span>
+                        <span>{orderStatusText[order.status]}</span>
                         <OrderPlaced />
                       </>
                     ) : (
                       <>
-                        <span>Pending</span>
+                        <span>{orderStatusText[order.status]}</span>
                         <OrderPending />
                       </>
                     )
