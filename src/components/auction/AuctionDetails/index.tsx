@@ -8,11 +8,13 @@ import {
   DerivedAuctionInfo,
   orderToPrice,
   orderToSellOrder,
+  useSwapActionHandlers,
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
+import { showChartsInverted } from '../../../utils/prices'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
@@ -164,13 +166,24 @@ const AuctionDetails = (props: Props) => {
     () => getExplorerLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
     [chainId, derivedAuctionInfo?.auctioningToken],
   )
+  const { showPriceInverted } = useSwapState()
+  const { onInvertPrices } = useSwapActionHandlers()
+
+  // Start with inverted prices, if orderbook is also show inverted,
+  // i.e. if the baseToken/auctioningToken is a stable token
+  React.useEffect(() => {
+    if (derivedAuctionInfo?.auctioningToken != null && !showPriceInverted) {
+      if (showChartsInverted(derivedAuctionInfo?.auctioningToken)) {
+        onInvertPrices()
+      }
+    }
+  }, [derivedAuctionInfo?.auctioningToken, onInvertPrices, showPriceInverted])
 
   const biddingTokenAddress = useMemo(
     () => getExplorerLink(chainId, derivedAuctionInfo?.biddingToken?.address, 'address'),
     [chainId, derivedAuctionInfo?.biddingToken],
   )
 
-  const { showPriceInverted } = useSwapState()
   const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
   const biddingTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),

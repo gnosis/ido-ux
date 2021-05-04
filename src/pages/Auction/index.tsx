@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
@@ -9,16 +9,10 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import {
-  useDefaultsFromURLSearch,
-  useDerivedAuctionInfo,
-  useSwapActionHandlers,
-  useSwapState,
-} from '../../state/orderPlacement/hooks'
+import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
 import { isAddress } from '../../utils'
-import { showChartsInverted } from '../../utils/prices'
 import { getChainName } from '../../utils/tools'
 
 const Title = styled(PageTitle)`
@@ -88,17 +82,6 @@ const Auction: React.FC<Props> = (props) => {
 
   const biddingTokenAddress = derivedAuctionInfo?.biddingToken?.address
   const auctioningTokenAddress = derivedAuctionInfo?.auctioningToken?.address
-  const { onInvertPrices } = useSwapActionHandlers()
-  const { showPriceInverted } = useSwapState()
-  // Start with inverted prices, if orderbook is also show inverted,
-  // i.e. if the baseToken/auctioningToken is a stable token
-  useEffect(() => {
-    if (derivedAuctionInfo?.auctioningToken != null && !showPriceInverted) {
-      if (showChartsInverted(derivedAuctionInfo?.auctioningToken)) {
-        onInvertPrices()
-      }
-    }
-  }, [derivedAuctionInfo?.auctioningToken, onInvertPrices, showPriceInverted])
   const validBiddingTokenAddress =
     biddingTokenAddress !== undefined &&
     isAddress(biddingTokenAddress) &&
