@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import AuctionBody from '../../components/auction/AuctionBody'
 import AuctionDetails from '../../components/auction/AuctionDetails'
@@ -9,7 +9,6 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { SubTitle, SubTitleWrapper } from '../../components/pureStyledComponents/SubTitle'
 import {
   useDefaultsFromURLSearch,
   useDerivedAuctionInfo,
@@ -26,12 +25,20 @@ const Title = styled(PageTitle)`
   margin-bottom: 2px;
 `
 
-const SubTitleWrapperStyled = styled(SubTitleWrapper)`
-  margin-bottom: 110px;
+const SubTitleWrapperStyled = styled.div`
+  align-items: center;
+  display: flex;
+  margin-bottom: 20px;
+`
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin-bottom: 40px;
-  }
+const SubTitle = styled.h2`
+  align-items: center;
+  color: ${({ theme }) => theme.text1};
+  display: flex;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 8px 0 0;
 `
 
 const AuctionId = styled.span`
@@ -39,9 +46,13 @@ const AuctionId = styled.span`
   display: flex;
 `
 
-const CopyButton = styled(ButtonCopy)`
+const IconCSS = css`
   height: 14px;
   width: 14px;
+`
+
+const CopyButton = styled(ButtonCopy)`
+  ${IconCSS}
 `
 
 const Network = styled.span`
@@ -51,8 +62,7 @@ const Network = styled.span`
 `
 
 const NetworkIconStyled = styled(NetworkIcon)`
-  height: 14px;
-  width: 14px;
+  ${IconCSS}
 `
 
 const NetworkName = styled.span`

@@ -20,7 +20,7 @@ import { MainWrapper } from '../../pureStyledComponents/MainWrapper'
 import Web3ReactManager from '../../web3/Web3ReactManager'
 
 const Inner = styled(InnerContainer)`
-  padding-top: 28px;
+  padding-top: 22px;
 `
 
 const Routes: React.FC<RouteComponentProps> = (props) => {

@@ -1,5 +1,6 @@
+import { rgba } from 'polished'
 import React, { useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import {
@@ -17,162 +18,136 @@ import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import TokenLogo from '../../token/TokenLogo'
-import { AuctionTimer } from '../AuctionTimer'
+import { AuctionTimer, TIMER_SIZE } from '../AuctionTimer'
 
-const Wrapper = styled(BaseCard)`
+const DETAILS_HEIGHT = '120px'
+
+const Wrapper = styled.div`
+  margin: 0 0 30px;
+  position: relative;
+`
+
+const MainDetails = styled(BaseCard)`
   align-items: center;
   display: grid;
-  margin: 0 0 28px;
+  justify-content: center;
   max-width: 100%;
-  min-height: 130px;
-  grid-template-areas:
-    'top top top'
-    'col1 sep1 col2'
-    'col3 sep2 col4';
-  grid-template-columns: 1fr 3px 1fr;
-  grid-template-rows: 1fr;
-  padding-bottom: 20px;
-  padding-top: 75px;
-  row-gap: 15px;
+  padding: 20px 15px;
+  row-gap: 20px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    grid-template-areas: none;
-    grid-template-columns: 1fr 3px 1fr 154px 1fr 3px 1fr;
-    margin: 0 0 50px;
+    grid-template-columns: 1fr ${TIMER_SIZE} 1fr;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    height: ${DETAILS_HEIGHT};
+    margin-bottom: calc(calc(${TIMER_SIZE} - ${DETAILS_HEIGHT}) / 2);
+    margin-top: calc(calc(${TIMER_SIZE} - ${DETAILS_HEIGHT}) / 2);
     padding: 0;
   }
 `
 
+const CellPair = styled.div`
+  align-items: center;
+  column-gap: 15px;
+  display: grid;
+  grid-template-columns: 1fr 3px 1fr;
+  row-gap: 15px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 3px 1fr;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    grid-template-columns: 1fr 3px 1fr;
+    grid-template-rows: none;
+  }
+`
+
 const Cell = styled(KeyValue)`
-  min-height: 90px;
-  justify-content: center;
-  padding: 5px 0;
+  .itemKey {
+    color: ${({ theme }) => rgba(theme.text1, 0.9)};
+    font-size: 15px;
+    line-height: 1.2;
 
-  &.col1 {
-    grid-area: col3;
-  }
+    & > * {
+      margin-right: 6px;
 
-  &.col2 {
-    grid-area: col2;
-  }
-
-  &.col3 {
-    grid-area: col1;
-  }
-
-  &.col4 {
-    grid-area: col4;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
   }
 
   .itemValue {
+    color: ${({ theme }) => theme.text1};
     flex-direction: column;
     flex-grow: 0;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.2;
     margin-bottom: 0;
   }
+`
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    flex-grow: 1;
-    justify-content: center;
-    min-height: 0;
-    padding: 0 10px;
-
-    &.col1,
-    &.col2,
-    &.col3,
-    &.col4 {
-      grid-area: unset;
-    }
-
-    &:first-child {
-      padding-left: 0;
-    }
-
-    &:last-child {
-      padding-right: 0;
-    }
-
-    .itemValue {
-      flex-direction: row;
-      margin-bottom: 2px;
-    }
-  }
+const BreakCSS = css`
+  height: 74px;
+  width: 3px;
 `
 
 const Break = styled.div`
   background-color: ${({ theme }) => theme.primary1};
   border-radius: 3px;
-  min-height: 90px;
-
-  width: 3px;
-
-  &.sep1 {
-    grid-area: sep1;
-  }
-  &.sep2 {
-    grid-area: sep2;
-  }
+  margin: auto;
+  ${BreakCSS}
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    min-height: 50px;
+    height: 3px;
+    width: 74px;
+  }
 
-    &.sep1,
-    &.sep2 {
-      grid-area: unset;
-    }
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    ${BreakCSS}
   }
 `
 
-const TimerWrapper = styled.div`
-  grid-area: top;
-  left: 50%;
-  margin: 0 auto 15px;
-  max-height: 130px;
-  position: absolute;
-  top: -145px;
-  transform: translateX(-50%);
+const Timer = styled(AuctionTimer)`
+  margin: auto;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    grid-area: unset;
-    left: unset;
-    margin: 0;
-    position: unset;
-    top: unset;
-    transform: none;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    margin-bottom: calc(calc(${TIMER_SIZE} - ${DETAILS_HEIGHT}) / -2);
+    margin-top: calc(calc(${TIMER_SIZE} - ${DETAILS_HEIGHT}) / -2);
   }
+`
+
+const TokenValue = styled.span`
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 1px;
+  margin-right: 0;
+  text-align: center;
+  white-space: nowrap;
 `
 
 const TokenSymbol = styled.span`
   align-items: center;
   display: flex;
-  font-size: 15px;
+  font-size: 18px;
+  line-height: 1.2;
+  margin-bottom: 0;
   justify-content: center;
+  white-space: nowrap;
 
   & > * {
-    margin-right: 8px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    font-size: 18px;
+    margin-right: 0;
   }
 `
 
-const TokenValue = styled.span`
-  align-items: center;
-  display: flex;
-  font-size: 25px;
-  justify-content: center;
-  margin-bottom: 5px;
-  margin-right: 0;
-
-  & > * {
-    margin-right: 8px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    font-size: 18px;
-    margin-bottom: 0;
-    margin-right: 8px;
-  }
+const TokenText = styled.span`
+  margin: 0 10px 0 5px;
+  white-space: nowrap;
 `
 
 interface Props {
@@ -255,123 +230,124 @@ const AuctionDetails = (props: Props) => {
 
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
   return (
-    <Wrapper noPadding>
-      <Cell
-        className="col1"
-        itemKey={
-          <>
-            <span>{titlePrice}</span>
-            <Tooltip
-              id="auctionPrice"
-              text={
-                "This will be the auction's Closing Price if no more bids are submitted or canceled, OR it will be the auction's Clearing Price if the auction concludes without additional bids."
-              }
-            />
-          </>
-        }
-        itemValue={clearingPriceDisplay ? clearingPriceDisplay : '-'}
-      />
-      <Break className="sep1" />
-      <Cell
-        className="col2"
-        itemKey={
-          <>
-            <span>Bidding with</span>
-            <Tooltip
-              id="biddingWith"
-              text={'This is the token that is accepted for bidding in the auction.'}
-            />
-          </>
-        }
-        itemValue={
-          derivedAuctionInfo?.biddingToken ? (
-            <>
-              <TokenValue>&nbsp;</TokenValue>
-              <TokenSymbol>
-                <span>{biddingTokenDisplay}</span>
-                <TokenLogo
-                  size={'20px'}
-                  token={{
-                    address: derivedAuctionInfo?.biddingToken.address,
-                    symbol: derivedAuctionInfo?.biddingToken.symbol,
-                  }}
+    <Wrapper>
+      <MainDetails>
+        <CellPair>
+          <Cell
+            itemKey={
+              <>
+                <span>Total auctioned</span>
+                <Tooltip
+                  id="totalAuctioned"
+                  text={'Total amount of tokens available to be bought in the auction.'}
                 />
-                <ExternalLink href={biddingTokenAddress} />
-              </TokenSymbol>
-            </>
-          ) : (
-            '-'
-          )
-        }
-      />
-      <TimerWrapper className="top">
-        <AuctionTimer auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
-      </TimerWrapper>
-      <Cell
-        className="col3"
-        itemKey={
-          <>
-            <span>Total auctioned</span>
-            <Tooltip
-              id="totalAuctioned"
-              text={'Total amount of tokens available to be bought in the auction.'}
-            />
-          </>
-        }
-        itemValue={
-          derivedAuctionInfo?.auctioningToken && derivedAuctionInfo?.initialAuctionOrder ? (
-            <>
-              <TokenValue>
-                {abbreviation(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4))}
-              </TokenValue>
-              <TokenSymbol>
-                <span>{auctioningTokenDisplay}</span>
-                <TokenLogo
-                  size={'20px'}
-                  token={{
-                    address: derivedAuctionInfo?.auctioningToken.address,
-                    symbol: derivedAuctionInfo?.auctioningToken.symbol,
-                  }}
+              </>
+            }
+            itemValue={
+              derivedAuctionInfo?.auctioningToken && derivedAuctionInfo?.initialAuctionOrder ? (
+                <>
+                  <TokenValue>
+                    {abbreviation(
+                      derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4),
+                    )}
+                  </TokenValue>
+                  <TokenSymbol>
+                    <TokenLogo
+                      size={'18px'}
+                      token={{
+                        address: derivedAuctionInfo?.auctioningToken.address,
+                        symbol: derivedAuctionInfo?.auctioningToken.symbol,
+                      }}
+                    />
+                    <TokenText>{auctioningTokenDisplay}</TokenText>
+                    <ExternalLink href={auctionTokenAddress} />
+                  </TokenSymbol>
+                </>
+              ) : (
+                '-'
+              )
+            }
+          />
+          <Break />
+          <Cell
+            itemKey={
+              <>
+                <span>Bidding with</span>
+                <Tooltip
+                  id="biddingWith"
+                  text={'This is the token that is accepted for bidding in the auction.'}
                 />
-                <ExternalLink href={auctionTokenAddress} />
-              </TokenSymbol>
-            </>
-          ) : (
-            '-'
-          )
-        }
-      />
-      <Break className="sep2" />
-      <Cell
-        className="col4"
-        itemKey={
-          <>
-            <span>{showPriceInverted ? `Max Sell Price` : `Min Sell Price`}</span>
-            <Tooltip
-              id="minSellPrice"
-              text={'Minimum bidding price the auctioneer defined for participation.'}
-            />
-          </>
-        }
-        itemValue={
-          <>
-            <TokenValue>
-              {initialPriceToDisplay
-                ? showPriceInverted
-                  ? initialPriceToDisplay?.invert().toSignificant(5)
-                  : abbreviation(initialPriceToDisplay?.toSignificant(2))
-                : ' - '}
-            </TokenValue>
-            <TokenSymbol>
-              {initialPriceToDisplay && auctioningTokenDisplay
-                ? showPriceInverted
-                  ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
-                  : ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
-                : '-'}
-            </TokenSymbol>
-          </>
-        }
-      />
+              </>
+            }
+            itemValue={
+              derivedAuctionInfo?.biddingToken ? (
+                <>
+                  <TokenSymbol>
+                    <TokenLogo
+                      size={'18px'}
+                      token={{
+                        address: derivedAuctionInfo?.biddingToken.address,
+                        symbol: derivedAuctionInfo?.biddingToken.symbol,
+                      }}
+                    />
+                    <TokenText>{biddingTokenDisplay}</TokenText>
+                    <ExternalLink href={biddingTokenAddress} />
+                  </TokenSymbol>
+                </>
+              ) : (
+                '-'
+              )
+            }
+          />
+        </CellPair>
+        <Timer auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
+        <CellPair>
+          <Cell
+            itemKey={
+              <>
+                <span>{titlePrice}</span>
+                <Tooltip
+                  id="auctionPrice"
+                  text={
+                    "This will be the auction's Closing Price if no more bids are submitted or canceled, OR it will be the auction's Clearing Price if the auction concludes without additional bids."
+                  }
+                />
+              </>
+            }
+            itemValue={clearingPriceDisplay ? clearingPriceDisplay : '-'}
+          />
+          <Break />
+          <Cell
+            itemKey={
+              <>
+                <span>{showPriceInverted ? `Max Sell Price` : `Min Sell Price`}</span>
+                <Tooltip
+                  id="minSellPrice"
+                  text={'Minimum bidding price the auctioneer defined for participation.'}
+                />
+              </>
+            }
+            itemValue={
+              <>
+                <TokenValue>
+                  {initialPriceToDisplay
+                    ? showPriceInverted
+                      ? initialPriceToDisplay?.invert().toSignificant(5)
+                      : abbreviation(initialPriceToDisplay?.toSignificant(2))
+                    : ' - '}
+                </TokenValue>
+                <TokenSymbol>
+                  {initialPriceToDisplay && auctioningTokenDisplay
+                    ? showPriceInverted
+                      ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                      : ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
+                    : '-'}
+                </TokenSymbol>
+              </>
+            }
+          />
+        </CellPair>
+      </MainDetails>
     </Wrapper>
   )
 }
