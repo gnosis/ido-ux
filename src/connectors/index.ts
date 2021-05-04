@@ -5,30 +5,22 @@ import { PortisConnector } from '@web3-react/portis-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import {
-  CHAIN_ID,
   NETWORK_URL_MAINNET,
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,
   PORTIS_ID,
 } from '../constants/config'
 
-interface NetworkConnectorArguments {
-  urls: { [chainId: number]: string }
-  defaultChainId?: number
-}
-
 const POLLING_INTERVAL = 10000
 
-const networkConnectorArguments: NetworkConnectorArguments = {
-  urls: [],
-  defaultChainId: CHAIN_ID,
-}
+const urls = []
+if (NETWORK_URL_MAINNET) urls[1] = NETWORK_URL_MAINNET
+if (NETWORK_URL_RINKEBY) urls[4] = NETWORK_URL_RINKEBY
+if (NETWORK_URL_XDAI) urls[100] = NETWORK_URL_XDAI
 
-if (NETWORK_URL_MAINNET) networkConnectorArguments.urls[1] = NETWORK_URL_MAINNET
-if (NETWORK_URL_RINKEBY) networkConnectorArguments.urls[4] = NETWORK_URL_RINKEBY
-if (NETWORK_URL_XDAI) networkConnectorArguments.urls[100] = NETWORK_URL_XDAI
+const defaultChainId = urls.findIndex((chainId) => !!chainId)
 
-export const network = new NetworkConnector(networkConnectorArguments)
+export const network = new NetworkConnector({ urls, defaultChainId })
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 4, 100],

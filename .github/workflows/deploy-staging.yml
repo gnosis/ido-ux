@@ -11,7 +11,7 @@ jobs:
     name: Continuous Integration
     runs-on: ubuntu-latest
     env:
-        REPO_NAME_SLUG: idoux
+      REPO_NAME_SLUG: idoux
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-              
+
       - name: Cache node_modules
         id: cache-node-modules
         uses: actions/cache@v2
@@ -49,7 +49,6 @@ jobs:
       - name: Build Web Apps
         run: yarn build
         env:
-          REACT_APP_CHAIN_ID: 1
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-api-xdai.gnosis.io/
           REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
@@ -69,12 +68,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: "Deploy to S3: PRaul"
+      - name: 'Deploy to S3: PRaul'
         if: success() && steps.findPr.outputs.number
         run: aws s3 sync build s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/${{ env.REPO_NAME_SLUG }}/pr${{ steps.findPr.outputs.number }} --delete
 
-      - name: "Deploy to S3: Staging"
+      - name: 'Deploy to S3: Staging'
         if: github.ref == 'refs/heads/main'
         run: aws s3 sync build s3://${{ secrets.AWS_STAGING_BUCKET_NAME }}/current --delete
-
-      
