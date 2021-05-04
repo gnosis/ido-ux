@@ -10,7 +10,7 @@ export enum NetworkError {
 }
 
 export const useNetworkCheck = (): { errorWrongNetwork: NetworkError | undefined } => {
-  const { chainId: injectedChainId } = useActiveWeb3React()
+  const { account, chainId: injectedChainId } = useActiveWeb3React()
   const { chainId = CHAIN_ID } = useSwapState()
 
   const errorWrongNetwork =
@@ -18,7 +18,7 @@ export const useNetworkCheck = (): { errorWrongNetwork: NetworkError | undefined
       ? NetworkError.undefinedInjectedChainId
       : chainId === undefined
       ? NetworkError.undefinedChainId
-      : chainId !== injectedChainId
+      : chainId !== injectedChainId && !!account
       ? NetworkError.noChainMatch
       : NetworkError.noError
 
