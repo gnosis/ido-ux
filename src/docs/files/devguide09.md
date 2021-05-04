@@ -30,7 +30,7 @@ Once the auction was successfully initiated, all participants will see only the 
 <img src="/assets/PrivateAuction.png" alt="drawing" width="250"/>
 
 2. The signed messages for the users can be created by running this [generateSignatures](https://github.com/gnosis/ido-contracts#allow-listing-generating-signatures) hardhat-script by referencing the list of allow-listed addresses. It should be run with the additional argument `post-to-api`, such that the signatures are uploaded to the GnosisDAO backend. From there, Gnosis Auction will serve the signatures automatically to users once they connect to the UI.
-3. Visit your auction on gnosis-auction.eth.link and connect to the site with one allow-listed address. Now, this account should no longer see the private auction warning but will be able to place an order.
+3. Visit your auction on [gnosis-auction.eth.link](https://gnosis-auction.eth.link) and connect to the site with one allow-listed address. Now, this account should no longer see the private auction warning but will be able to place an order.
 
 #### Static on-chain whitelist
 
