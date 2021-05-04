@@ -8,7 +8,7 @@ Let's look into a few possible implementations for this `allow-list-manger` cont
 
 The default behavior is not to set an allow-list-manger contract at all. This means the auction will be completely open for participation and the contract `allow-list-manger` will not be called.
 
-#### Offchain allow-list manager
+#### Offchain allow-list manager and KYC
 
 This option is useful to implement KYC requirements. This option allows the auctioneer to specify an [EOA](<https://ethdocs.org/en/latest/contracts-and-transactions/account-types-gas-and-transactions.html#:~:text=Externally%20owned%20account%20(EOAs)%3A,and%20is%20controlled%20by%20code.>) account to manage the participation. This EOA account will be able to allow particular addresses to place an order by creating a signed message for these addresses. Upon order-placement, the user needs to provide this signed message as a parameter to the order placement transaction and the `allow-list-contract` will check this signature for validity.
 This mechanism carries few key advantages:
