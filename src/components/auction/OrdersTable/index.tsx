@@ -10,7 +10,7 @@ import {
   useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
+import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import { abbreviation } from '../../../utils/numeral'
 import { getInverse } from '../../../utils/prices'
@@ -29,7 +29,6 @@ import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell, CellRow, getColumns } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
-import { SubTitle, SubTitleWrapper } from '../../pureStyledComponents/SubTitle'
 
 const Wrapper = styled.div``
 
@@ -42,8 +41,19 @@ const Title = styled(PageTitle)`
   margin-top: 0;
 `
 
-const SubTitleWrapperStyled = styled(SubTitleWrapper)`
+const SubTitleWrapperStyled = styled.div`
+  align-items: center;
+  display: flex;
   margin-bottom: 12px;
+`
+
+const SubTitle = styled.h3`
+  align-items: center;
+  color: ${({ theme }) => theme.text1};
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
 `
 
 const ErrorIcon = styled(ErrorInfo)`
@@ -101,7 +111,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
   )
-  const { onDeleteOrder } = useOrderActionHandlers()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
@@ -121,7 +130,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
 
     cancelOrderCallback(orderId)
       .then((hash) => {
-        onDeleteOrder(orderId)
         setTxHash(hash)
         setPendingConfirmation(false)
       })
@@ -131,14 +139,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
         setPendingConfirmation(false)
         setShowWarning(true)
       })
-  }, [
-    setAttemptingTxn,
-    setTxHash,
-    setPendingConfirmation,
-    onDeleteOrder,
-    orderId,
-    cancelOrderCallback,
-  ])
+  }, [setAttemptingTxn, setTxHash, setPendingConfirmation, orderId, cancelOrderCallback])
 
   const hasLastCancellationDate =
     derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
@@ -153,6 +154,11 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   )
 
   const pendingText = `Cancelling Order`
+  const orderStatusText = {
+    [OrderStatus.PLACED]: 'Placed',
+    [OrderStatus.PENDING]: 'Pending',
+    [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
+  }
   const now = Math.trunc(Date.now())
   const ordersEmpty = !orders.orders || orders.orders.length == 0
 
@@ -175,11 +181,9 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {!ordersEmpty && !orderSubmissionFinished && (hasLastCancellationDate || orderPlacingOnly) && (
         <SubTitleWrapperStyled>
           <ErrorIcon />
-          {orderPlacingOnly && (
-            <SubTitle as="h3">Orders for this auction can&apos;t be canceled.</SubTitle>
-          )}
+          {orderPlacingOnly && <SubTitle>Orders for this auction can&apos;t be canceled.</SubTitle>}
           {!orderPlacingOnly && !isOrderCancellationExpired && (
-            <SubTitle as="h3">
+            <SubTitle>
               The order cancelation period expires on&nbsp;<strong>{cancelDateFull}</strong>. Orders
               can&apos;t be canceled after this date.
             </SubTitle>
@@ -195,7 +199,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {!ordersEmpty && (
         <TableWrapper>
           {ordersSortered.map((order, index) => (
-            <Row columns={hideCancelButton ? 4 : 5} key={index}>
+            <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -239,17 +243,10 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   align="flex-start"
                   itemKey={<span>Status</span>}
                   itemValue={
-                    order.status === OrderStatus.PLACED ? (
-                      <>
-                        <span>Placed</span>
-                        <OrderPlaced />
-                      </>
-                    ) : (
-                      <>
-                        <span>Pending</span>
-                        <OrderPending />
-                      </>
-                    )
+                    <>
+                      <span>{orderStatusText[order.status]}</span>
+                      {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
+                    </>
                   }
                 />
               </Cell>
@@ -268,7 +265,10 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                 <ButtonCell>
                   <ButtonWrapper>
                     <ActionButton
-                      disabled={isOrderCancellationExpired}
+                      disabled={
+                        isOrderCancellationExpired ||
+                        order.status === OrderStatus.PENDING_CANCELLATION
+                      }
                       onClick={() => {
                         setOrderId(order.id)
                         setShowConfirm(true)

@@ -2,6 +2,8 @@ import { createReducer } from '@reduxjs/toolkit'
 
 import {
   appendOrders,
+  cancelOrders,
+  finalizeOrderCancellation,
   finalizeOrderPlacement,
   loadOrderFromAPI,
   removeOrders,
@@ -11,6 +13,7 @@ import {
 export enum OrderStatus {
   PENDING,
   PLACED,
+  PENDING_CANCELLATION,
 }
 
 export interface OrderDisplay {
@@ -45,6 +48,15 @@ export default createReducer<OrderState>(initialState, (builder) =>
         orders,
       }
     })
+    .addCase(cancelOrders, (state: OrderState, { payload: { orderId } }) => {
+      const newOrders = [...new Set(state.orders)].map((order) =>
+        orderId === order.id ? { ...order, status: OrderStatus.PENDING_CANCELLATION } : order,
+      )
+      return {
+        ...state,
+        orders: newOrders,
+      }
+    })
     .addCase(removeOrders, (state: OrderState, { payload: { orderId } }) => {
       const newOrders = [...new Set(state.orders)].filter((order) => !(orderId === order.id))
       return {
@@ -52,20 +64,22 @@ export default createReducer<OrderState>(initialState, (builder) =>
         orders: newOrders,
       }
     })
-    .addCase(finalizeOrderPlacement, (state: OrderState) => {
-      const orders = []
-      for (const order of state.orders) {
-        orders.push({
-          id: order.id,
-          sellAmount: order.sellAmount,
-          price: order.price,
-          status: OrderStatus.PLACED,
-          chainId: order.chainId,
-        })
-      }
+    .addCase(finalizeOrderCancellation, (state: OrderState) => {
+      const newOrders = [...new Set(state.orders)].filter(
+        (order) => order.status !== OrderStatus.PENDING_CANCELLATION,
+      )
       return {
         ...state,
-        orders,
+        orders: newOrders,
+      }
+    })
+    .addCase(finalizeOrderPlacement, (state: OrderState) => {
+      const newOrders = [...new Set(state.orders)].map((order) =>
+        order.status === OrderStatus.PENDING ? { ...order, status: OrderStatus.PLACED } : order,
+      )
+      return {
+        ...state,
+        orders: newOrders,
       }
     })
     .addCase(loadOrderFromAPI, (state: OrderState) => {

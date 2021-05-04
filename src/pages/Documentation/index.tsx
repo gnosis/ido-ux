@@ -13,6 +13,8 @@ import userFlowDocMarkdown from '../../docs/files/devguide04.md'
 import participateAsABidderDocMarkdown from '../../docs/files/devguide05.md'
 import participateAsAuctioneerDocMarkdown from '../../docs/files/devguide06.md'
 import faqDocMarkdown from '../../docs/files/devguide07.md'
+import startingAnAuctionWithSafe from '../../docs/files/devguide08.md'
+import privateAuctionsAndKYCSolutions from '../../docs/files/devguide09.md'
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -54,7 +56,7 @@ const Content = styled.div`
 
   a {
     color: ${({ theme }) => theme.primary1};
-    font-size: 14px;
+    font-size: 16px;
     text-decoration: none;
 
     &:hover {
@@ -174,6 +176,10 @@ export const Documentation: React.FC = (props) => {
       fetchGuide(participateAsABidderDocMarkdown)
     if (location.pathname === '/docs/participate-as-auctioneer')
       fetchGuide(participateAsAuctioneerDocMarkdown)
+    if (location.pathname === '/docs/starting-an-auction-with-safe')
+      fetchGuide(startingAnAuctionWithSafe)
+    if (location.pathname === '/docs/private-auctions-and-KYC-solutions')
+      fetchGuide(privateAuctionsAndKYCSolutions)
     if (location.pathname === '/docs/faq') fetchGuide(faqDocMarkdown)
   }, [location, fetchGuide])
 
@@ -198,10 +204,16 @@ export const Documentation: React.FC = (props) => {
             Participate as a bidder
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/participate-as-auctioneer#topAnchor">
-            Participate as auctioneer
+            Start an auction via scripts
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/starting-an-auction-with-safe#topAnchor">
+            Start an auction via UI
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/private-auctions-and-KYC-solutions">
+            Private auctions/KYC solutions
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/faq#topAnchor">
-            Faq
+            FAQ
           </IndexLink>
         </Sidebar>
         <Content>

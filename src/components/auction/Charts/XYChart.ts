@@ -95,7 +95,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.fill = askSeries.stroke
   askSeries.fillOpacity = 0.1
   askSeries.dummyData = {
-    description: 'Shows the minimum sell price (x axis) the auctioneer is willing to accept',
+    description:
+      'Shows sell supply of the auction based on the price and nominated in the bidding token',
   }
 
   // New order to be placed
@@ -107,7 +108,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   inputSeries.fill = inputSeries.stroke
   inputSeries.fillOpacity = 0.1
   inputSeries.dummyData = {
-    description: 'New orders to be placed',
+    description:
+      'Shows the new order that would be placed based on the current amount and price input',
   }
 
   // Dotted white line -> shows the Current price, which is the closing price of the auction if
@@ -122,7 +124,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.fillOpacity = 0.1
   priceSeries.dummyData = {
     description:
-      'Shows the Current price, which is the closing price of the auction if no more bids are submitted or cancelled and the auction ends',
+      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
   }
 
   // Add cursor
