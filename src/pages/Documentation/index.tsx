@@ -56,7 +56,7 @@ const Content = styled.div`
 
   a {
     color: ${({ theme }) => theme.primary1};
-    font-size: 14px;
+    font-size: 16px;
     text-decoration: none;
 
     &:hover {

@@ -23,7 +23,7 @@ The github repository for this audited contract can be found [here](https://gith
 
 If KYC is required for your sale, then you have to work with different KYC providers like [Fractal](https://www.trustfractal.com/) or [Fireblocks](https://www.fireblocks.com/). Once they provided you with a list of addresses with a successful KYC process, you can start the allow-listing steps.
 
-1. Upon auction initiation, the auctioneer must specify the designated EOA in the Gnosis Auction Starter safe app. You can do this in the following field:
+1. Upon auction initiation, the auctioneer must specify the designated EOA in the [Gnosis Auction Starter safe app](starting-an-auction-with-safe#topAnchor). You can do this in the following field:
    <img src="/assets/SignerAddress.png" alt="drawing" width="500"/>
 
 Once the auction was successfully initiated, all participants will see only the following screen in the interface:
