@@ -104,8 +104,12 @@ interface OrderTableProps {
 }
 
 const OrderTable: React.FC<OrderTableProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo, ...restProps } = props
-  const auctionState = derivedAuctionInfo.auctionState
+  const {
+    auctionIdentifier,
+    derivedAuctionInfo,
+    derivedAuctionInfo: { auctionState },
+    ...restProps
+  } = props
   const orders: OrderState | undefined = useOrderState()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,

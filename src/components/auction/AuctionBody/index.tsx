@@ -34,8 +34,11 @@ interface AuctionBodyProps {
 }
 
 const AuctionBody = (props: AuctionBodyProps) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
-  const auctionState = derivedAuctionInfo.auctionState
+  const {
+    auctionIdentifier,
+    derivedAuctionInfo: { auctionState },
+    derivedAuctionInfo,
+  } = props
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],

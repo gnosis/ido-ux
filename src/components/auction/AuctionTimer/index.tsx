@@ -151,12 +151,15 @@ const formatSeconds = (seconds: number): React.ReactNode => {
 }
 interface AuctionTimerProps {
   derivedAuctionInfo: DerivedAuctionInfo
-  auctionState: AuctionState
   loading?: boolean
 }
 
 export const AuctionTimer = (props: AuctionTimerProps) => {
-  const { auctionState, derivedAuctionInfo, ...restProps } = props
+  const {
+    derivedAuctionInfo: { auctionState },
+    derivedAuctionInfo,
+    ...restProps
+  } = props
   const [timeLeft, setTimeLeft] = React.useState(
     calculateTimeLeft(derivedAuctionInfo?.auctionEndDate),
   )

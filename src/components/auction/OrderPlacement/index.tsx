@@ -141,8 +141,11 @@ interface OrderPlacementProps {
 }
 
 const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
-  const auctionState = derivedAuctionInfo.auctionState
+  const {
+    auctionIdentifier,
+    derivedAuctionInfo: { auctionState },
+    derivedAuctionInfo,
+  } = props
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
