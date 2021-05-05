@@ -100,12 +100,12 @@ const ActionButton = styled(Button)`
 
 interface OrderTableProps {
   auctionIdentifier: AuctionIdentifier
-  auctionState: AuctionState
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
 const OrderTable: React.FC<OrderTableProps> = (props) => {
-  const { auctionIdentifier, auctionState, derivedAuctionInfo, ...restProps } = props
+  const { auctionIdentifier, derivedAuctionInfo, ...restProps } = props
+  const auctionState = derivedAuctionInfo.auctionState
   const orders: OrderState | undefined = useOrderState()
   const cancelOrderCallback = useCancelOrderCallback(
     auctionIdentifier,

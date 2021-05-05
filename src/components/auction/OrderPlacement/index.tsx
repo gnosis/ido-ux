@@ -137,12 +137,12 @@ const EmptyContentTextSmall = styled(EmptyContentText)`
 
 interface OrderPlacementProps {
   auctionIdentifier: AuctionIdentifier
-  auctionState: AuctionState
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
 const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
-  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
+  const { auctionIdentifier, derivedAuctionInfo } = props
+  const auctionState = derivedAuctionInfo.auctionState
   const { chainId } = auctionIdentifier
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()

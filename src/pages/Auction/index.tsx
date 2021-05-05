@@ -139,12 +139,10 @@ const Auction: React.FC<Props> = (props) => {
           </SubTitleWrapperStyled>
           <AuctionDetails
             auctionIdentifier={auctionIdentifier}
-            auctionState={derivedAuctionInfo?.auctionState}
             derivedAuctionInfo={derivedAuctionInfo}
           />
           <AuctionBody
             auctionIdentifier={auctionIdentifier}
-            auctionState={derivedAuctionInfo?.auctionState}
             derivedAuctionInfo={derivedAuctionInfo}
           />
         </>

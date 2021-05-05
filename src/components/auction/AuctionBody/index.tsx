@@ -31,11 +31,11 @@ const Grid = styled.div`
 interface AuctionBodyProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
-  auctionState: Maybe<AuctionState>
 }
 
 const AuctionBody = (props: AuctionBodyProps) => {
-  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
+  const { auctionIdentifier, derivedAuctionInfo } = props
+  const auctionState = derivedAuctionInfo.auctionState
   const auctionStarted = React.useMemo(
     () => auctionState !== undefined && auctionState !== AuctionState.NOT_YET_STARTED,
     [auctionState],
@@ -57,7 +57,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
             <OrderPlacement
               auctionIdentifier={auctionIdentifier}
-              auctionState={auctionState}
               derivedAuctionInfo={derivedAuctionInfo}
             />
           )}
@@ -80,7 +79,6 @@ const AuctionBody = (props: AuctionBodyProps) => {
       {auctionStarted && (
         <OrdersTable
           auctionIdentifier={auctionIdentifier}
-          auctionState={auctionState}
           derivedAuctionInfo={derivedAuctionInfo}
         />
       )}
