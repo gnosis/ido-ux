@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { walletconnect } from '../../../../connectors'
-import { useSwapState } from '../../../../state/orderPlacement/hooks'
+import { useOrderPlacementState } from '../../../../state/orderPlacement/hooks'
 import { Button } from '../../../buttons/Button'
 import { InlineLoading } from '../../../common/InlineLoading'
 import { AlertIcon } from '../../../icons/AlertIcon'
@@ -34,7 +34,7 @@ interface Props {
 
 const PendingView: React.FC<Props> = (props) => {
   const { connector, error = false, setPendingError, tryActivation, uri = '', ...restProps } = props
-  const { chainId } = useSwapState()
+  const { chainId } = useOrderPlacementState()
 
   const isWalletConnect = connector === walletconnect[chainId]
   return (

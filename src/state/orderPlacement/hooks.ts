@@ -122,8 +122,8 @@ const decodeSellOrderFromAPI = (
   }
 }
 
-export function useSwapState(): AppState['swap'] {
-  return useSelector<AppState, AppState['swap']>((state) => state.swap)
+export function useOrderPlacementState(): AppState['orderPlacement'] {
+  return useSelector<AppState, AppState['orderPlacement']>((state) => state.orderPlacement)
 }
 
 export function useSwapActionHandlers(): {
@@ -196,7 +196,7 @@ export function useGetOrderPlacementError(
   const { account } = useActiveWeb3React()
   const { chainId } = auctionIdentifier
 
-  const { price: priceFromState, sellAmount } = useSwapState()
+  const { price: priceFromState, sellAmount } = useOrderPlacementState()
   const price = showPricesInverted
     ? getInverse(Number(priceFromState), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
     : priceFromState

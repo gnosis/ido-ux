@@ -10,7 +10,7 @@ import { injected, walletconnect } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
-import { useSwapState } from '../../../state/orderPlacement/hooks'
+import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
@@ -86,7 +86,7 @@ const WalletModal: React.FC = () => {
   const previousAccount = usePrevious(account)
   const { errorWrongNetwork } = useNetworkCheck()
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const { chainId } = useSwapState()
+  const { chainId } = useOrderPlacementState()
 
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {

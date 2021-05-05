@@ -13,8 +13,8 @@ import {
   DerivedAuctionInfo,
   tryParseAmount,
   useGetOrderPlacementError,
+  useOrderPlacementState,
   useSwapActionHandlers,
-  useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
@@ -147,7 +147,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { account, chainId: chainIdFromWeb3 } = useActiveWeb3React()
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
-  const { price, sellAmount, showPriceInverted } = useSwapState()
+  const { price, sellAmount, showPriceInverted } = useOrderPlacementState()
   const { error } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,

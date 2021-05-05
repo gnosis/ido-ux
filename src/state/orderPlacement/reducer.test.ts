@@ -1,10 +1,10 @@
 import { Store, createStore } from 'redux'
 
 import { priceInput, sellAmountInput, setDefaultsFromURLSearch } from './actions'
-import reducer, { SwapState } from './reducer'
+import reducer, { OrderPlacementState } from './reducer'
 
-describe('orderplacement reducer', () => {
-  let store: Store<SwapState>
+describe('orderPlacement reducer', () => {
+  let store: Store<OrderPlacementState>
 
   beforeEach(() => {
     store = createStore(reducer, {
