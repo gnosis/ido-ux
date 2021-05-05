@@ -49,7 +49,7 @@ export function colors(darkMode: boolean): Colors {
     mainBackground: darkMode ? '#001429' : '#F7F8FA',
     modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
     primary1: darkMode ? '#e8663d' : '#e8663d',
-    primary2: darkMode ? '#0052af' : '#0052af',
+    primary2: darkMode ? '#174172' : '#174172',
     primary3: darkMode ? '#9f482d' : '#9f482d',
     primary4: darkMode ? '#001E3C' : '#001E3C',
     primary5: darkMode ? 'rgba(69,104,255,0.25)' : 'rgba(69,104,255,0.25)',

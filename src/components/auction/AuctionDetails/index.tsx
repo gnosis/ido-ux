@@ -1,5 +1,5 @@
 import { rgba } from 'polished'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
@@ -15,10 +15,12 @@ import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
+import { DoubleChevronDown } from '../../icons/DoubleChevronDown'
 import { ExternalLink } from '../../navigation/ExternalLink'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import TokenLogo from '../../token/TokenLogo'
 import { AuctionTimer, TIMER_SIZE } from '../AuctionTimer'
+import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetailsItem'
 
 const DETAILS_HEIGHT = '120px'
 
@@ -34,6 +36,8 @@ const MainDetails = styled(BaseCard)`
   max-width: 100%;
   padding: 20px 15px;
   row-gap: 20px;
+  position: relative;
+  z-index: 5;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-template-columns: 1fr ${TIMER_SIZE} 1fr;
@@ -150,6 +154,58 @@ const TokenText = styled.span`
   white-space: nowrap;
 `
 
+const ExtraDetailsWrapper = styled.div`
+  margin: calc(calc(${TIMER_SIZE} - ${DETAILS_HEIGHT}) / -2) auto 0;
+  position: relative;
+  width: calc(100% - 20px);
+  z-index: 10;
+`
+
+const ExtraDetails = styled.div`
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-bottom: solid 1px ${({ theme }) => theme.primary2};
+  border-left: solid 1px ${({ theme }) => theme.primary2};
+  border-right: solid 1px ${({ theme }) => theme.primary2};
+  column-gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 35px 20px 15px;
+  row-gap: 25px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    grid-auto-flow: column;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    row-gap: 15px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+`
+
+const ToggleExtraDetails = styled.span`
+  align-items: center;
+  color: ${({ theme }) => theme.primary1};
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 1.2;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  user-select: none;
+`
+
+const DoubleChevron = styled(DoubleChevronDown)<{ isOpen: boolean }>`
+  margin-left: 5px;
+  transform: rotate(${(props) => (props.isOpen ? '180deg' : '0deg')});
+`
+
 interface Props {
   auctionIdentifier: AuctionIdentifier
   auctionState: AuctionState
@@ -229,6 +285,58 @@ const AuctionDetails = (props: Props) => {
   )
 
   const initialPriceToDisplay = derivedAuctionInfo?.initialPrice
+  const [showMoreDetails, setShowMoreDetails] = useState(false)
+
+  const toggleExtraDetails = () => {
+    setShowMoreDetails(!showMoreDetails)
+  }
+
+  const extraDetails: Array<ExtraDetailsItemProps> = [
+    {
+      title: 'Atomic closure possible',
+      tooltip: 'Atomic closure possible tooltip',
+      value: 'Yes',
+    },
+    {
+      title: 'Min bidding amount per order',
+      tooltip: 'Min bidding amount per order tooltip',
+      value: '100K DAI',
+    },
+    {
+      progress: '30%',
+      title: 'Minimun funding',
+      tooltip: 'Minimun funding tooltip',
+      value: '3500 DAI',
+    },
+    {
+      progress: '50%',
+      title: 'Estimated tokens sold',
+      tooltip: 'Estimated tokens sold tooltip',
+      value: '10K GNO',
+    },
+    {
+      title: 'Last order cancelation date',
+      tooltip: 'Last order cancelation date tooltip',
+      value: '05/04/2021 - 14:00:00',
+    },
+    {
+      title: 'Auction End Date',
+      value: '12/04/2021 - 14:00:00',
+    },
+    {
+      title: 'Allow List Contract',
+      tooltip: 'Allow List Contract tooltip',
+      url: 'https://etherscan.io/',
+      value: '0x3261A5...B94016',
+    },
+    {
+      title: 'Signer Address',
+      tooltip: 'Signer Address tooltip',
+      url: 'https://etherscan.io/',
+      value: '0x43dea4...A6a29F',
+    },
+  ]
+
   return (
     <Wrapper>
       <MainDetails>
@@ -348,6 +456,24 @@ const AuctionDetails = (props: Props) => {
           />
         </CellPair>
       </MainDetails>
+      <ExtraDetailsWrapper>
+        <ToggleExtraDetails onClick={toggleExtraDetails}>
+          {showMoreDetails ? 'Less' : 'More Details'} <DoubleChevron isOpen={showMoreDetails} />
+        </ToggleExtraDetails>
+        <ExtraDetails>
+          {extraDetails.map((item, index) => (
+            <ExtraDetailsItem
+              id={`extraDetailsItem_${index}`}
+              key={index}
+              progress={item.progress}
+              title={item.title}
+              tooltip={item.tooltip}
+              url={item.url}
+              value={item.value}
+            />
+          ))}
+        </ExtraDetails>
+      </ExtraDetailsWrapper>
     </Wrapper>
   )
 }
