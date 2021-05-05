@@ -7,10 +7,10 @@ import {
   AuctionState,
   DerivedAuctionInfo,
   useAllUserOrders,
-  useSwapState,
+  useOrderPlacementState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { useOrderActionHandlers, useOrderState } from '../../../state/orders/hooks'
+import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState, OrderStatus } from '../../../state/orders/reducer'
 import { abbreviation } from '../../../utils/numeral'
 import { getInverse } from '../../../utils/prices'
@@ -111,7 +111,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     auctionIdentifier,
     derivedAuctionInfo?.biddingToken,
   )
-  const { onDeleteOrder } = useOrderActionHandlers()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [showWarning, setShowWarning] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
@@ -119,7 +118,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   const [orderError, setOrderError] = useState<string>()
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
-  const { showPriceInverted } = useSwapState()
+  const { showPriceInverted } = useOrderPlacementState()
 
   const resetModal = useCallback(() => {
     setPendingConfirmation(true)
@@ -131,7 +130,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
 
     cancelOrderCallback(orderId)
       .then((hash) => {
-        onDeleteOrder(orderId)
         setTxHash(hash)
         setPendingConfirmation(false)
       })
@@ -141,14 +139,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
         setPendingConfirmation(false)
         setShowWarning(true)
       })
-  }, [
-    setAttemptingTxn,
-    setTxHash,
-    setPendingConfirmation,
-    onDeleteOrder,
-    orderId,
-    cancelOrderCallback,
-  ])
+  }, [setAttemptingTxn, setTxHash, setPendingConfirmation, orderId, cancelOrderCallback])
 
   const hasLastCancellationDate =
     derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
@@ -163,6 +154,11 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   )
 
   const pendingText = `Cancelling Order`
+  const orderStatusText = {
+    [OrderStatus.PLACED]: 'Placed',
+    [OrderStatus.PENDING]: 'Pending',
+    [OrderStatus.PENDING_CANCELLATION]: 'Cancelling',
+  }
   const now = Math.trunc(Date.now())
   const ordersEmpty = !orders.orders || orders.orders.length == 0
 
@@ -178,6 +174,14 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   const hideCancelButton = orderPlacingOnly || orderSubmissionFinished
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
+
+  const priceExplainer = React.useMemo(
+    () =>
+      showPriceInverted
+        ? 'The minimum price you are willing to participate at. You might receive a better price, but if the clearing price is lower, you will not participate and can claim your funds back when the auction ends.'
+        : 'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.',
+    [showPriceInverted],
+  )
 
   return (
     <Wrapper {...restProps}>
@@ -203,7 +207,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       {!ordersEmpty && (
         <TableWrapper>
           {ordersSortered.map((order, index) => (
-            <Row columns={hideCancelButton ? 4 : 5} key={index}>
+            <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
               <Cell>
                 <KeyValue
                   align="flex-start"
@@ -225,14 +229,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   itemKey={
                     <>
                       <span>Limit Price</span>
-                      <Tooltip
-                        id={`limitPrice_${index}`}
-                        text={
-                          showPriceInverted
-                            ? 'The minimum price you are willing to participate at. You might receive a better price, but if the clearing price is lower, you will not participate and can claim your funds back when the auction ends.'
-                            : 'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.'
-                        }
-                      />
+                      <Tooltip id={`limitPrice_${index}`} text={priceExplainer} />
                     </>
                   }
                   itemValue={abbreviation(
@@ -247,17 +244,10 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   align="flex-start"
                   itemKey={<span>Status</span>}
                   itemValue={
-                    order.status === OrderStatus.PLACED ? (
-                      <>
-                        <span>Placed</span>
-                        <OrderPlaced />
-                      </>
-                    ) : (
-                      <>
-                        <span>Pending</span>
-                        <OrderPending />
-                      </>
-                    )
+                    <>
+                      <span>{orderStatusText[order.status]}</span>
+                      {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
+                    </>
                   }
                 />
               </Cell>
@@ -276,7 +266,10 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                 <ButtonCell>
                   <ButtonWrapper>
                     <ActionButton
-                      disabled={isOrderCancellationExpired}
+                      disabled={
+                        isOrderCancellationExpired ||
+                        order.status === OrderStatus.PENDING_CANCELLATION
+                      }
                       onClick={() => {
                         setOrderId(order.id)
                         setShowConfirm(true)

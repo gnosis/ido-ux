@@ -138,7 +138,7 @@ const Claimer: React.FC<Props> = (props) => {
                         symbol: biddingTokenDisplay,
                       }}
                     />
-                    <Text>{biddingTokenDisplay}</Text>
+                    <Text>{biddingTokenDisplay != 'XDAI' ? biddingTokenDisplay : `WXDAI`}</Text>
                   </>
                 ) : (
                   '-'

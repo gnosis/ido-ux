@@ -55,7 +55,10 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
     <Wrapper showProgressColumn={progress !== ''} {...restProps}>
       {progress && <Chart>{progress}</Chart>}
       <TextContents>
-        <Value>{value}</Value>
+        <Value>
+          {value}
+          {url}
+        </Value>
         <Title>
           <span className="text">{title}</span>
           {tooltip && <Tooltip id={id} text={tooltip} />}

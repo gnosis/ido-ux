@@ -3,7 +3,7 @@ import { load, save } from 'redux-localstorage-simple'
 
 import application from './application/reducer'
 import multicall from './multicall/reducer'
-import swap from './orderPlacement/reducer'
+import orderPlacement from './orderPlacement/reducer'
 import orderbook from './orderbook/reducer'
 import orders from './orders/reducer'
 import tokenList from './tokenList/reducer'
@@ -18,7 +18,7 @@ const store = configureStore({
     application,
     user,
     transactions,
-    swap,
+    orderPlacement,
     orders,
     orderbook,
     multicall,

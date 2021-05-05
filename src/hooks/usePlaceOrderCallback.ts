@@ -9,7 +9,7 @@ import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPla
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../constants/config'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
-import { useSwapState } from '../state/orderPlacement/hooks'
+import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useOrderbookActionHandlers } from '../state/orderbook/hooks'
 import { useOrderActionHandlers } from '../state/orders/hooks'
@@ -52,7 +52,7 @@ export function usePlaceOrderCallback(
   const addTransaction = useTransactionAdder()
   const { onNewOrder } = useOrderActionHandlers()
   const { auctionId } = auctionIdentifer
-  const { price: priceFromSwapState, sellAmount } = useSwapState()
+  const { price: priceFromSwapState, sellAmount } = useOrderPlacementState()
   const price = (isPriceInverted
     ? getInverse(Number(priceFromSwapState), NUMBER_OF_DIGITS_FOR_INVERSION)
     : priceFromSwapState
