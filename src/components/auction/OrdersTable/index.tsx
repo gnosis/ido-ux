@@ -175,6 +175,14 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
 
   useAllUserOrders(auctionIdentifier, derivedAuctionInfo)
 
+  const priceExplainer = React.useMemo(
+    () =>
+      showPriceInverted
+        ? 'The minimum price you are willing to participate at. You might receive a better price, but if the clearing price is lower, you will not participate and can claim your funds back when the auction ends.'
+        : 'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.',
+    [showPriceInverted],
+  )
+
   return (
     <Wrapper {...restProps}>
       <Title as="h2">Your Orders</Title>
@@ -221,14 +229,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   itemKey={
                     <>
                       <span>Limit Price</span>
-                      <Tooltip
-                        id={`limitPrice_${index}`}
-                        text={
-                          showPriceInverted
-                            ? 'The minimum price you are willing to participate at. You might receive a better price, but if the clearing price is lower, you will not participate and can claim your funds back when the auction ends.'
-                            : 'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.'
-                        }
-                      />
+                      <Tooltip id={`limitPrice_${index}`} text={priceExplainer} />
                     </>
                   }
                   itemValue={abbreviation(
