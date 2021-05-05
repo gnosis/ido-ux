@@ -1,5 +1,5 @@
 import { useActiveWeb3React } from '../../../hooks'
-import { useSwapState } from '../../../state/orderPlacement/hooks'
+import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 
 export enum NetworkError {
   undefinedInjectedChainId = 1,
@@ -10,7 +10,7 @@ export enum NetworkError {
 
 export const useNetworkCheck = (): { errorWrongNetwork: NetworkError | undefined } => {
   const { account, chainId: injectedChainId } = useActiveWeb3React()
-  const { chainId } = useSwapState()
+  const { chainId } = useOrderPlacementState()
 
   const errorWrongNetwork =
     injectedChainId === undefined

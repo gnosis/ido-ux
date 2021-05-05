@@ -11,14 +11,14 @@ import {
   setNoDefaultNetworkId,
 } from './actions'
 
-export interface SwapState {
+export interface OrderPlacementState {
   readonly chainId: number | undefined
   readonly price: string
   readonly sellAmount: string
   readonly showPriceInverted: boolean
 }
 
-const initialState: SwapState = {
+const initialState: OrderPlacementState = {
   chainId: undefined,
   price: '-',
   sellAmount: '',
@@ -29,7 +29,7 @@ function parseAuctionIdParameter(urlParam: any): number {
   return typeof urlParam === 'string' && !isNaN(parseInt(urlParam)) ? parseInt(urlParam) : 1
 }
 
-export default createReducer<SwapState>(initialState, (builder) =>
+export default createReducer<OrderPlacementState>(initialState, (builder) =>
   builder
     .addCase(setDefaultsFromURLSearch, (_, { payload: { queryString } }) => {
       const { chainId } = parseURL(queryString)

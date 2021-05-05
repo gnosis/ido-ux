@@ -8,8 +8,8 @@ import {
   DerivedAuctionInfo,
   orderToPrice,
   orderToSellOrder,
+  useOrderPlacementState,
   useSwapActionHandlers,
-  useSwapState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
@@ -166,7 +166,7 @@ const AuctionDetails = (props: Props) => {
     () => getExplorerLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
     [chainId, derivedAuctionInfo?.auctioningToken],
   )
-  const { showPriceInverted } = useSwapState()
+  const { showPriceInverted } = useOrderPlacementState()
   const { onInvertPrices } = useSwapActionHandlers()
 
   // Start with inverted prices, if orderbook is also show inverted,

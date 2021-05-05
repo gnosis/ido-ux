@@ -7,7 +7,7 @@ import {
   AuctionState,
   DerivedAuctionInfo,
   useAllUserOrders,
-  useSwapState,
+  useOrderPlacementState,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
@@ -118,7 +118,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   const [orderError, setOrderError] = useState<string>()
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
-  const { showPriceInverted } = useSwapState()
+  const { showPriceInverted } = useOrderPlacementState()
 
   const resetModal = useCallback(() => {
     setPendingConfirmation(true)
