@@ -157,10 +157,15 @@ const TokenText = styled.span`
 `
 
 const ExtraDetailsWrapper = styled.div`
-  margin: calc(calc(${TIMER_SIZE} - ${DETAILS_HEIGHT}) / -2) auto 0;
+  margin-left: auto;
+  margin-right: auto;
   position: relative;
   width: calc(100% - 20px);
   z-index: 10;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    margin-top: calc(calc(${TIMER_SIZE} - ${DETAILS_HEIGHT}) / -2);
+  }
 `
 
 const ToggleExtraDetails = styled.span`
