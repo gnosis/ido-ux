@@ -71,7 +71,11 @@ const CenterChartCircle = styled.div`
   width: calc(${INNER_CIRCLE_SIZE} - 3px);
 `
 
-const TextContents = styled.div``
+const TextContents = styled.div<{ showEmptyProgressColumn?: boolean }>`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    margin-left: ${(props) => (props.showEmptyProgressColumn ? '46px' : '0')};
+  }
+`
 
 const Value = styled.p`
   align-items: center;
@@ -94,6 +98,7 @@ const Title = styled.h4`
   display: flex;
   font-size: 14px;
   font-weight: 400;
+  letter-spacing: -0.5px;
   line-height: 1.2;
   margin: 0;
   text-transform: capitalize;
@@ -112,6 +117,7 @@ const Link = styled(ExternalLink)`
 export interface Props {
   id?: string
   progress?: string
+  showEmptyProgressColumn?: boolean
   title: string
   tooltip?: string
   url?: string
@@ -119,10 +125,10 @@ export interface Props {
 }
 
 export const ExtraDetailsItem: React.FC<Props> = (props) => {
-  const { id, progress, title, tooltip, url, value, ...restProps } = props
+  const { id, progress, showEmptyProgressColumn, title, tooltip, url, value, ...restProps } = props
 
   return (
-    <Wrapper showProgressColumn={progress !== undefined} {...restProps}>
+    <Wrapper showProgressColumn={progress !== undefined || showEmptyProgressColumn} {...restProps}>
       {progress && (
         <Chart>
           <ChartProgress progress={progress}>
@@ -132,7 +138,7 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
           </ChartProgress>
         </Chart>
       )}
-      <TextContents>
+      <TextContents showEmptyProgressColumn={showEmptyProgressColumn}>
         <Value>
           <ValueText>{value}</ValueText>
           {url && <Link href={url} />}

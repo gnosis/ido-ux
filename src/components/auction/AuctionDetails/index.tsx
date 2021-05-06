@@ -203,7 +203,7 @@ const ExtraDetails = styled.div`
   border-bottom: solid 1px ${({ theme }) => theme.primary2};
   border-left: solid 1px ${({ theme }) => theme.primary2};
   border-right: solid 1px ${({ theme }) => theme.primary2};
-  column-gap: 10px;
+  column-gap: 15px;
   display: grid;
   grid-template-columns: 1fr;
   overflow: hidden;
@@ -226,6 +226,10 @@ const ExtraDetails = styled.div`
 interface Props {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
+}
+
+const isOdd = (value: number) => {
+  return value % 2 == 0 ? false : true
 }
 
 const AuctionDetails = (props: Props) => {
@@ -336,7 +340,7 @@ const AuctionDetails = (props: Props) => {
     {
       progress: '30%',
       title: 'Minimun funding',
-      tooltip: 'Minimun funding tooltip',
+      tooltip: 'Minimum funding tooltip',
       value: '3500 DAI',
     },
     {
@@ -374,6 +378,19 @@ const AuctionDetails = (props: Props) => {
   React.useEffect(() => {
     setExtraDetailsHeight(componentRef?.current?.offsetHeight)
   }, [])
+
+  const showEmptyProgressColumn = (index: number): boolean => {
+    if (!extraDetails[index + 1]) return false
+
+    return (
+      (isOdd(index) &&
+        extraDetails[index - 1].progress !== undefined &&
+        extraDetails[index].progress === undefined) ||
+      (!isOdd(index) &&
+        extraDetails[index + 1].progress !== undefined &&
+        extraDetails[index].progress === undefined)
+    )
+  }
 
   return (
     <Wrapper>
@@ -505,6 +522,7 @@ const AuctionDetails = (props: Props) => {
                 id={`extraDetailsItem_${index}`}
                 key={index}
                 progress={item.progress}
+                showEmptyProgressColumn={showEmptyProgressColumn(index)}
                 title={item.title}
                 tooltip={item.tooltip}
                 url={item.url}
