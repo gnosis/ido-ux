@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
+import ReactTooltip from 'react-tooltip'
+
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -23,6 +25,7 @@ import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hook
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
+import { ButtonAnchor } from '../../buttons/ButtonAnchor'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
@@ -37,7 +40,6 @@ import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
-import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -133,6 +135,14 @@ const EmptyContentTextSmall = styled(EmptyContentText)`
   font-size: 16px;
   font-weight: 400;
   margin-top: 0;
+`
+
+const ButtonWrap = styled(ButtonAnchor)`
+  border-radius: 4px;
+  font-size: 12px;
+  height: 20px;
+  margin: -2px 6px 0 0;
+  padding: 0 5px;
 `
 
 interface OrderPlacementProps {
@@ -328,13 +338,33 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 Your Balance: <Total>{`${balanceString} `}</Total>
               </Balance>
               {chainId === chainIdFromWeb3 && account && biddingToken && biddingToken.address && (
-                <TokenLogo
-                  size={'22px'}
-                  token={{
-                    address: biddingToken.address,
-                    symbol: getTokenDisplay(biddingToken, chainId),
-                  }}
-                />
+                <span
+                  className={`tooltipComponent`}
+                  data-for={'wrap_button'}
+                  data-html={true}
+                  data-multiline={true}
+                  data-tip={`Wrap ${biddingToken.symbol} on Honeyswap`}
+                >
+                  <ReactTooltip
+                    arrowColor={'#001429'}
+                    backgroundColor={'#001429'}
+                    border
+                    borderColor={'#174172'}
+                    className="customTooltip"
+                    delayHide={50}
+                    delayShow={250}
+                    effect="solid"
+                    id={'wrap_button'}
+                    textColor="#fff"
+                  />
+                  <ButtonWrap
+                    buttonType={ButtonType.primaryInverted}
+                    href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
+                    target="_blank"
+                  >
+                    Wrap
+                  </ButtonWrap>
+                </span>
               )}
             </BalanceWrapper>
             <CurrencyInputPanel
