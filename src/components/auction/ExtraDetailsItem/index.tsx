@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '../../common/Tooltip'
+import { ExternalLink } from '../../navigation/ExternalLink'
 
 const Wrapper = styled.div<{ showProgressColumn?: boolean }>`
   column-gap: 7px;
@@ -15,12 +16,18 @@ const Chart = styled.div``
 const TextContents = styled.div``
 
 const Value = styled.p`
+  align-items: center;
   color: ${({ theme }) => theme.text1};
+  display: flex;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
   margin: 0 0 2px;
   white-space: nowrap;
+`
+
+const ValueText = styled.span`
+  margin-right: 8px;
 `
 
 const Title = styled.h4`
@@ -33,10 +40,15 @@ const Title = styled.h4`
   margin: 0;
   text-transform: capitalize;
   white-space: nowrap;
+`
 
-  > .text {
-    margin-right: 6px;
-  }
+const TitleText = styled.span`
+  margin-right: 6px;
+`
+
+const Link = styled(ExternalLink)`
+  height: 14px;
+  margin-top: -2px;
 `
 
 export interface Props {
@@ -56,11 +68,11 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
       {progress && <Chart>{progress}</Chart>}
       <TextContents>
         <Value>
-          {value}
-          {url}
+          <ValueText>{value}</ValueText>
+          {url && <Link href={url} />}
         </Value>
         <Title>
-          <span className="text">{title}</span>
+          <TitleText className="text">{title}</TitleText>
           {tooltip && <Tooltip id={id} text={tooltip} />}
         </Title>
       </TextContents>
