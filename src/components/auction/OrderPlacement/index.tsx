@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
+import { BigNumber } from '@ethersproject/bignumber'
+
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -170,9 +172,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicked confirmed
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
-  const [hasRiskNotCoveringClearingPrice, setHasRiskNotCoveringClearingPrice] = useState<boolean>(
-    false,
-  )
 
   const auctioningToken = React.useMemo(() => derivedAuctionInfo.auctioningToken, [
     derivedAuctionInfo.auctioningToken,
@@ -224,44 +223,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     }
   }, [onUserPriceInput, price, derivedAuctionInfo, showPriceInverted])
 
-  useEffect(() => {
-    const coversClearingPrice = (price: string | undefined, lessThan: boolean): boolean => {
-      if (!price || price === '-') {
-        return false
-      }
-      const [intPart, decimalsPart = ''] = price.split('.')
-      const decimals = decimalsPart.length
-
-      const divisor = 10n ** BigInt(decimals)
-      const priceSanitized = BigInt(Number(intPart))
-      const fractionPrice = new Fraction(priceSanitized * divisor, divisor)
-      // eslint-disable-next-line no-console
-      console.log(
-        'decimals',
-        divisor.toString(),
-        'priceSanitized',
-        priceSanitized,
-        'clearingPrice',
-        derivedAuctionInfo.clearingPrice.toSignificant(2),
-        'invert',
-        derivedAuctionInfo.clearingPrice.invert().toSignificant(6),
-        'franctionPrice',
-        fractionPrice.toSignificant(2),
-        'less:',
-        lessThan,
-      )
-
-      return lessThan
-        ? derivedAuctionInfo.clearingPrice.invert().lessThan(fractionPrice.invert())
-        : derivedAuctionInfo.clearingPrice.greaterThan(fractionPrice)
-    }
-
-    setHasRiskNotCoveringClearingPrice(
-      auctionState === AuctionState.ORDER_PLACING_AND_CANCELING &&
-        coversClearingPrice(price, showPriceInverted),
-    )
-  }, [price, derivedAuctionInfo, showPriceInverted, auctionState])
-
   const resetModal = () => {
     if (!pendingConfirmation) {
       onUserSellAmountInput('')
@@ -303,6 +264,28 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   ])
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
+  const coversClearingPrice = (price: string | undefined, invertedPrice: boolean): boolean => {
+    if (!price || price === '-') {
+      return false
+    }
+    const [intPart, decimalsPart = ''] = price.split('.')
+    const decimals = decimalsPart.length
+
+    const divisor =
+      decimals > 0 ? BigNumber.from(10).pow(BigNumber.from(decimals)) : BigNumber.from(1)
+    const priceBN = BigNumber.from(intPart)
+      .mul(divisor)
+      .add(BigNumber.from(decimalsPart || '0'))
+    const fractionPrice = new Fraction(priceBN.toString(), divisor.toString())
+
+    return invertedPrice
+      ? derivedAuctionInfo.clearingPrice.invert().lessThan(fractionPrice)
+      : derivedAuctionInfo.clearingPrice.greaterThan(fractionPrice)
+  }
+  const hasRiskNotCoveringClearingPrice =
+    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING &&
+    coversClearingPrice(price, showPriceInverted)
+
   const handleShowConfirm = () => {
     if (chainId !== chainIdFromWeb3) {
       setShowWarningWrongChainId(true)
