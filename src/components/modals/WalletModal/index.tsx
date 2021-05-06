@@ -12,6 +12,7 @@ import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
 import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { ExternalLink } from '../../../theme'
+import { setupNetwork } from '../../../utils/setupNetwork'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import { useNetworkCheck } from '../../web3/Web3Status'
@@ -164,11 +165,15 @@ const WalletModal: React.FC = () => {
       if (connector[chainId]) {
         setPendingWallet(connector[chainId]) // set wallet for pending view
         setWalletView(WALLET_VIEWS.PENDING)
+
         await activate(connector[chainId], undefined, true)
       } else {
         setPendingWallet(connector) // set wallet for pending view
         setWalletView(WALLET_VIEWS.PENDING)
-        await activate(connector, undefined, true)
+        const hasSetup = await setupNetwork(chainId)
+        if (hasSetup) {
+          await activate(connector, undefined, true)
+        }
       }
     } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
