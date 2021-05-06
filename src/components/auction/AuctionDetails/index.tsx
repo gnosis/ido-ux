@@ -154,12 +154,15 @@ const TokenText = styled.span`
 
 interface Props {
   auctionIdentifier: AuctionIdentifier
-  auctionState: AuctionState
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
 const AuctionDetails = (props: Props) => {
-  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
+  const {
+    auctionIdentifier,
+    derivedAuctionInfo: { auctionState },
+    derivedAuctionInfo,
+  } = props
   const { chainId } = auctionIdentifier
 
   const auctionTokenAddress = useMemo(
@@ -313,7 +316,7 @@ const AuctionDetails = (props: Props) => {
             }
           />
         </CellPair>
-        <Timer auctionState={auctionState} derivedAuctionInfo={derivedAuctionInfo} />
+        <Timer derivedAuctionInfo={derivedAuctionInfo} />
         <CellPair>
           <Cell
             itemKey={
