@@ -6,7 +6,8 @@ import { Tooltip } from '../../common/Tooltip'
 import { ExternalLink } from '../../navigation/ExternalLink'
 
 const Wrapper = styled.div<{ showProgressColumn?: boolean }>`
-  column-gap: 7px;
+  align-items: center;
+  column-gap: 8px;
   display: grid;
   grid-template-columns: ${(props) => (props.showProgressColumn ? '36px 1fr' : '1fr')};
 `
@@ -20,6 +21,8 @@ const Chart = styled.div`
   border-radius: 50%;
   box-shadow: inset 0 0 2px 0 ${({ theme }) => theme.mainBackground};
   display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
   height: ${PROGRESS_SIZE};
   justify-content: center;
   position: relative;
@@ -119,7 +122,7 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
   const { id, progress, title, tooltip, url, value, ...restProps } = props
 
   return (
-    <Wrapper showProgressColumn={progress !== ''} {...restProps}>
+    <Wrapper showProgressColumn={progress !== undefined} {...restProps}>
       {progress && (
         <Chart>
           <ChartProgress progress={progress}>

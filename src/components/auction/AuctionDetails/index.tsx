@@ -163,6 +163,35 @@ const ExtraDetailsWrapper = styled.div`
   z-index: 10;
 `
 
+const ToggleExtraDetails = styled.span`
+  align-items: center;
+  color: ${({ theme }) => theme.primary1};
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  font-weight: 400;
+  justify-content: center;
+  line-height: 1.2;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  user-select: none;
+  z-index: 10;
+`
+
+const DoubleChevron = styled(DoubleChevronDown)<{ isOpen: boolean }>`
+  margin-left: 5px;
+  transform: rotate(${(props) => (props.isOpen ? '180deg' : '0deg')});
+`
+
+const ExtraDetailsAnimWrapper = styled.div<{ height?: number }>`
+  height: ${(props) => (props.height ? `${props.height}px` : 0)};
+  overflow: hidden;
+  position: relative;
+  transition: height 0.15s ease-out;
+  z-index: 5;
+`
+
 const ExtraDetails = styled.div`
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
@@ -172,6 +201,7 @@ const ExtraDetails = styled.div`
   column-gap: 10px;
   display: grid;
   grid-template-columns: 1fr;
+  overflow: hidden;
   padding: 35px 20px 15px;
   row-gap: 25px;
 
@@ -186,26 +216,6 @@ const ExtraDetails = styled.div`
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(2, 1fr);
   }
-`
-
-const ToggleExtraDetails = styled.span`
-  align-items: center;
-  color: ${({ theme }) => theme.primary1};
-  cursor: pointer;
-  display: flex;
-  font-size: 13px;
-  font-weight: 400;
-  justify-content: center;
-  line-height: 1.2;
-  position: absolute;
-  right: 10px;
-  top: 8px;
-  user-select: none;
-`
-
-const DoubleChevron = styled(DoubleChevronDown)<{ isOpen: boolean }>`
-  margin-left: 5px;
-  transform: rotate(${(props) => (props.isOpen ? '180deg' : '0deg')});
 `
 
 interface Props {
@@ -353,6 +363,13 @@ const AuctionDetails = (props: Props) => {
     },
   ]
 
+  const [extraDetailsHeight, setExtraDetailsHeight] = useState(0)
+  const componentRef = React.useRef(null)
+
+  React.useEffect(() => {
+    setExtraDetailsHeight(componentRef?.current?.offsetHeight)
+  }, [])
+
   return (
     <Wrapper>
       <MainDetails>
@@ -476,19 +493,21 @@ const AuctionDetails = (props: Props) => {
         <ToggleExtraDetails onClick={toggleExtraDetails}>
           {showMoreDetails ? 'Less' : 'More Details'} <DoubleChevron isOpen={showMoreDetails} />
         </ToggleExtraDetails>
-        <ExtraDetails>
-          {extraDetails.map((item, index) => (
-            <ExtraDetailsItem
-              id={`extraDetailsItem_${index}`}
-              key={index}
-              progress={item.progress}
-              title={item.title}
-              tooltip={item.tooltip}
-              url={item.url}
-              value={item.value}
-            />
-          ))}
-        </ExtraDetails>
+        <ExtraDetailsAnimWrapper height={showMoreDetails ? extraDetailsHeight : 0}>
+          <ExtraDetails ref={componentRef}>
+            {extraDetails.map((item, index) => (
+              <ExtraDetailsItem
+                id={`extraDetailsItem_${index}`}
+                key={index}
+                progress={item.progress}
+                title={item.title}
+                tooltip={item.tooltip}
+                url={item.url}
+                value={item.value}
+              />
+            ))}
+          </ExtraDetails>
+        </ExtraDetailsAnimWrapper>
       </ExtraDetailsWrapper>
     </Wrapper>
   )
