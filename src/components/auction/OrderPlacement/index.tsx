@@ -22,7 +22,7 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
-import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
+import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTokenXDAI } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonAnchor } from '../../buttons/ButtonAnchor'
@@ -337,35 +337,38 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               <Balance>
                 Your Balance: <Total>{`${balanceString} `}</Total>
               </Balance>
-              {chainId === chainIdFromWeb3 && account && biddingToken && biddingToken.address && (
-                <span
-                  className={`tooltipComponent`}
-                  data-for={'wrap_button'}
-                  data-html={true}
-                  data-multiline={true}
-                  data-tip={`Wrap ${biddingToken.symbol} on Honeyswap`}
-                >
-                  <ReactTooltip
-                    arrowColor={'#001429'}
-                    backgroundColor={'#001429'}
-                    border
-                    borderColor={'#174172'}
-                    className="customTooltip"
-                    delayHide={50}
-                    delayShow={250}
-                    effect="solid"
-                    id={'wrap_button'}
-                    textColor="#fff"
-                  />
-                  <ButtonWrap
-                    buttonType={ButtonType.primaryInverted}
-                    href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
-                    target="_blank"
+              {isTokenXDAI(biddingToken.address, chainId) &&
+                account &&
+                biddingToken &&
+                biddingToken.address && (
+                  <span
+                    className={`tooltipComponent`}
+                    data-for={'wrap_button'}
+                    data-html={true}
+                    data-multiline={true}
+                    data-tip={`Unwrap WXDAI on Honeyswap`}
                   >
-                    Wrap
-                  </ButtonWrap>
-                </span>
-              )}
+                    <ReactTooltip
+                      arrowColor={'#001429'}
+                      backgroundColor={'#001429'}
+                      border
+                      borderColor={'#174172'}
+                      className="customTooltip"
+                      delayHide={50}
+                      delayShow={250}
+                      effect="solid"
+                      id={'wrap_button'}
+                      textColor="#fff"
+                    />
+                    <ButtonWrap
+                      buttonType={ButtonType.primaryInverted}
+                      href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
+                      target="_blank"
+                    >
+                      Wrap
+                    </ButtonWrap>
+                  </span>
+                )}
             </BalanceWrapper>
             <CurrencyInputPanel
               chainId={chainId}

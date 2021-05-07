@@ -8,7 +8,7 @@ import { useClaimOrderCallback, useGetAuctionProceeds } from '../../../hooks/use
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getTokenDisplay } from '../../../utils'
+import { getTokenDisplay, isTokenXDAI } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import { ButtonAnchor } from '../../buttons/ButtonAnchor'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
@@ -151,33 +151,35 @@ const Claimer: React.FC<Props> = (props) => {
                       }}
                     />
                     <Text>{biddingTokenDisplay != 'XDAI' ? biddingTokenDisplay : `WXDAI`}</Text>
-                    <span
-                      className={`tooltipComponent`}
-                      data-for={'wrap_button'}
-                      data-html={true}
-                      data-multiline={true}
-                      data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap`}
-                    >
-                      <ReactTooltip
-                        arrowColor={'#001429'}
-                        backgroundColor={'#001429'}
-                        border
-                        borderColor={'#174172'}
-                        className="customTooltip"
-                        delayHide={50}
-                        delayShow={250}
-                        effect="solid"
-                        id={'wrap_button'}
-                        textColor="#fff"
-                      />
-                      <ButtonWrap
-                        buttonType={ButtonType.primaryInverted}
-                        href={`https://app.honeyswap.org/#/swap?outputCurrency=${derivedAuctionInfo?.biddingToken.address}`}
-                        target="_blank"
+                    {isTokenXDAI(derivedAuctionInfo?.biddingToken.address, chainId) ? (
+                      <span
+                        className={`tooltipComponent`}
+                        data-for={'wrap_button'}
+                        data-html={true}
+                        data-multiline={true}
+                        data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap. Do it after you claimed your WXDAI`}
                       >
-                        Unwrap
-                      </ButtonWrap>
-                    </span>
+                        <ReactTooltip
+                          arrowColor={'#001429'}
+                          backgroundColor={'#001429'}
+                          border
+                          borderColor={'#174172'}
+                          className="customTooltip"
+                          delayHide={50}
+                          delayShow={250}
+                          effect="solid"
+                          id={'wrap_button'}
+                          textColor="#fff"
+                        />
+                        <ButtonWrap
+                          buttonType={ButtonType.primaryInverted}
+                          href={`https://app.honeyswap.org/#/swap?inputCurrency=${derivedAuctionInfo?.biddingToken.address}`}
+                          target="_blank"
+                        >
+                          Unwrap
+                        </ButtonWrap>
+                      </span>
+                    ) : null}
                   </>
                 ) : (
                   '-'
