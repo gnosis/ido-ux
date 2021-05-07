@@ -14,6 +14,9 @@ import OrderBookChart, { OrderBookError } from '../OrderbookChart'
 import { processOrderbookData } from '../OrderbookWidget'
 
 const Wrapper = styled(BaseCard)`
+  align-items: center;
+  display: flex;
+  justify-content: center;
   max-width: 100%;
   min-height: 352px;
   min-width: 100%;
