@@ -365,7 +365,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                       href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
                       target="_blank"
                     >
-                      Unwrap
+                      Unwrap WXDAI
                     </ButtonWrap>
                   </span>
                 )}

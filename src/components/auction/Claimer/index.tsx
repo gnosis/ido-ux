@@ -151,7 +151,7 @@ const Claimer: React.FC<Props> = (props) => {
                       }}
                     />
                     <Text>{biddingTokenDisplay != 'XDAI' ? biddingTokenDisplay : `WXDAI`}</Text>
-                    {isTokenXDAI(derivedAuctionInfo?.biddingToken.address, chainId) ? (
+                    {isTokenXDAI(derivedAuctionInfo?.biddingToken.address, chainId) && (
                       <span
                         className={`tooltipComponent`}
                         data-for={'wrap_button'}
@@ -179,7 +179,7 @@ const Claimer: React.FC<Props> = (props) => {
                           Unwrap
                         </ButtonWrap>
                       </span>
-                    ) : null}
+                    )}
                   </>
                 ) : (
                   '-'
