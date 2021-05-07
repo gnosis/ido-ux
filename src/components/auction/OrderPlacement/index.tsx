@@ -2,8 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
-import { BigNumber } from '@ethersproject/bignumber'
-
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -23,6 +22,7 @@ import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../../utils'
+import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
@@ -264,23 +264,23 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   ])
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
-  const coversClearingPrice = (price: string | undefined, invertedPrice: boolean): boolean => {
-    if (!price || price === '-') {
-      return false
-    }
-    const [intPart, decimalsPart = ''] = price.split('.')
-    const decimals = decimalsPart.length
+  const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
+    const standardizedPrice = showPriceInverted
+      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      : price
 
-    const divisor =
-      decimals > 0 ? BigNumber.from(10).pow(BigNumber.from(decimals)) : BigNumber.from(1)
-    const priceBN = BigNumber.from(intPart)
-      .mul(divisor)
-      .add(BigNumber.from(decimalsPart || '0'))
-    const fractionPrice = new Fraction(priceBN.toString(), divisor.toString())
+    const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
+      derivedAuctionInfo?.auctioningToken,
+      derivedAuctionInfo?.biddingToken,
+      standardizedPrice == '-' ? '1' : standardizedPrice,
+      sellAmount,
+    )
 
-    return invertedPrice
-      ? derivedAuctionInfo.clearingPrice.invert().lessThan(fractionPrice)
-      : derivedAuctionInfo.clearingPrice.greaterThan(fractionPrice)
+    return sellAmountScaled
+      ?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.buyAmount.raw.toString())
+      .lte(
+        buyAmountScaled?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
+      )
   }
   const hasRiskNotCoveringClearingPrice =
     auctionState === AuctionState.ORDER_PLACING_AND_CANCELING &&
