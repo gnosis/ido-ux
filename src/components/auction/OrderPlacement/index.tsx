@@ -346,7 +346,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     data-for={'wrap_button'}
                     data-html={true}
                     data-multiline={true}
-                    data-tip={`Unwrap WXDAI on Honeyswap`}
+                    data-tip={`Unwrap WXDAI to XDAI on Honeyswap`}
                   >
                     <ReactTooltip
                       arrowColor={'#001429'}
@@ -365,7 +365,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                       href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
                       target="_blank"
                     >
-                      Wrap
+                      Unwrap
                     </ButtonWrap>
                   </span>
                 )}
