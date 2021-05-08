@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import ReactTooltip from 'react-tooltip'
-
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
@@ -22,6 +22,7 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
+import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTokenXDAI } from '../../../utils'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
@@ -272,6 +273,27 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   ])
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
+  const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
+    const standardizedPrice = showPriceInverted
+      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      : price
+
+    const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
+      derivedAuctionInfo?.auctioningToken,
+      derivedAuctionInfo?.biddingToken,
+      standardizedPrice == '-' ? '1' : standardizedPrice,
+      sellAmount,
+    )
+
+    return sellAmountScaled
+      ?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.buyAmount.raw.toString())
+      .lte(
+        buyAmountScaled?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
+      )
+  }
+  const hasRiskNotCoveringClearingPrice =
+    auctionState === AuctionState.ORDER_PLACING_AND_CANCELING &&
+    coversClearingPrice(price, showPriceInverted)
 
   const handleShowConfirm = () => {
     if (chainId !== chainIdFromWeb3) {
@@ -470,6 +492,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             cancelDate={cancelDate}
             chainId={chainId}
             confirmText={'Confirm'}
+            hasRiskNotCoveringClearingPrice={hasRiskNotCoveringClearingPrice}
             isPriceInverted={showPriceInverted}
             onPlaceOrder={onPlaceOrder}
             orderPlacingOnly={orderPlacingOnly}
