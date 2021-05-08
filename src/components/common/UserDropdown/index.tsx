@@ -174,7 +174,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
   const [transactionsModalVisible, setTransactionsModalVisible] = React.useState(false)
   const [darkMode, toggleDarkMode] = useDarkModeManager()
 
-  const { deactivate, library } = useActiveWeb3React()
+  const { connector, deactivate, library } = useActiveWeb3React()
 
   const getWalletName = React.useCallback((): string => {
     const provider = library?.provider
@@ -236,7 +236,9 @@ export const UserDropdown: React.FC<Props> = (props) => {
           <DisconnectButton
             buttonType={ButtonType.danger}
             onClick={() => {
-              disconnect()
+              const c: any = connector
+              if (typeof c.close === 'function') c.close()
+              else disconnect()
             }}
           >
             Disconnect
