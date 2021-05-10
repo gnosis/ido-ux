@@ -389,7 +389,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 </WarningText>
               </Warning>
             )}
-            {isTokenXDAI(biddingToken.address, chainId) &&
+
+            {/* {isTokenXDAI(biddingToken.address, chainId) &&
               account &&
               biddingToken &&
               biddingToken.address && (
@@ -420,7 +421,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                     Unwrap WXDAI
                   </ButtonWrap>
                 </span>
-              )}
+              )} */}
             <CurrencyInputPanel
               chainId={chainId}
               onMax={onMaxInput}
@@ -441,7 +442,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               onUserPriceInput={onUserPriceInput}
               value={price}
             />
-            {(error || orderPlacingOnly || cancelDate) && (
+            {/* {(error || orderPlacingOnly || cancelDate) && (
               <ErrorWrapper>
                 {error && sellAmount !== '' && price !== '' && (
                   <ErrorRow>
@@ -465,7 +466,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
                 </ApprovalButton>
               </ApprovalWrapper>
-            )}
+            )} */}
             {!account ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
             ) : (

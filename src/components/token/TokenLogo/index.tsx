@@ -37,7 +37,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const imageURL = validToken && tokens[address.toLowerCase()]
 
   return imageURL ? (
-    <Wrapper size={size} {...restProps}>
+    <Wrapper className="tokenLogo" size={size} {...restProps}>
       <Image src={imageURL} />
     </Wrapper>
   ) : (
