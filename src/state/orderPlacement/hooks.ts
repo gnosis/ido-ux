@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -357,6 +357,28 @@ export function useDerivedAuctionInfo(
 
   const isLoading = auctionInfoLoading || loadingClearingPrice
   const noAuctionData = !auctionDetails || !clearingPriceInfo
+  const [auctionState, setAuctionState] = useState(null)
+
+  useEffect(() => {
+    const currentTimestamp: number = new Date().getTime() / 1000
+    if (
+      !clearingPriceInfo ||
+      !auctionDetails ||
+      currentTimestamp > auctionDetails.endTimeTimestamp
+    ) {
+      return
+    }
+
+    setAuctionState(deriveAuctionState(auctionDetails, clearingPriceInfo))
+    const milliseconds = auctionDetails.endTimeTimestamp - currentTimestamp
+    const timerId = setTimeout(() => {
+      setAuctionState(deriveAuctionState(auctionDetails, clearingPriceInfo))
+    }, milliseconds)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [auctionDetails, clearingPriceInfo, noAuctionData])
 
   if (isLoading) {
     return null
@@ -382,7 +404,7 @@ export function useDerivedAuctionInfo(
         auctionDetails.symbolBiddingToken,
       )
 
-  const { auctionState } = deriveAuctionState(auctionDetails, clearingPriceInfo)
+  // const { auctionState } = deriveAuctionState(auctionDetails, clearingPriceInfo)
   const clearingPriceVolume = clearingPriceInfo?.volume
 
   const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
