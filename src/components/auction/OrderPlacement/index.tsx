@@ -45,8 +45,9 @@ import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Er
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
-  min-height: 352px;
+  /* min-height: 352px; */
   min-width: 100%;
+  padding: 20px;
 `
 
 const ActionButton = styled(Button)`
@@ -145,6 +146,21 @@ const ButtonWrap = styled(ButtonAnchor)`
   height: 20px;
   margin: -2px 6px 0 0;
   padding: 0 5px;
+`
+
+const Warning = styled.div`
+  align-items: center;
+  display: flex;
+  margin-bottom: 16px;
+`
+
+const WarningText = styled.div`
+  color: ${({ theme }) => theme.error};
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-left: 8px;
+  text-align: left;
 `
 
 interface OrderPlacementProps {
@@ -342,6 +358,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       : 'Connect your wallet'
   }, [account, biddingToken, biddingTokenBalance, chainId, chainIdFromWeb3])
 
+  const showTopWarning = orderPlacingOnly || cancelDate
+
   return (
     <>
       <Wrapper>
@@ -356,43 +374,53 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         )}
         {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
           <>
-            <BalanceWrapper>
+            {/* <BalanceWrapper>
               <Balance>
                 Your Balance: <Total>{`${balanceString} `}</Total>
               </Balance>
-              {isTokenXDAI(biddingToken.address, chainId) &&
-                account &&
-                biddingToken &&
-                biddingToken.address && (
-                  <span
-                    className={`tooltipComponent`}
-                    data-for={'wrap_button'}
-                    data-html={true}
-                    data-multiline={true}
-                    data-tip={`Unwrap WXDAI to XDAI on Honeyswap`}
+            </BalanceWrapper> */}
+            {showTopWarning && (
+              <Warning>
+                <ErrorInfo />
+                <WarningText>
+                  {orderPlacingOnly &&
+                    `Orders cannot be canceled once you confirm the transaction.`}
+                  {cancelDate && `Orders cannot be canceled after ${cancelDate}`}
+                </WarningText>
+              </Warning>
+            )}
+            {isTokenXDAI(biddingToken.address, chainId) &&
+              account &&
+              biddingToken &&
+              biddingToken.address && (
+                <span
+                  className={`tooltipComponent`}
+                  data-for={'wrap_button'}
+                  data-html={true}
+                  data-multiline={true}
+                  data-tip={`Unwrap WXDAI to XDAI on Honeyswap`}
+                >
+                  <ReactTooltip
+                    arrowColor={'#001429'}
+                    backgroundColor={'#001429'}
+                    border
+                    borderColor={'#174172'}
+                    className="customTooltip"
+                    delayHide={50}
+                    delayShow={250}
+                    effect="solid"
+                    id={'wrap_button'}
+                    textColor="#fff"
+                  />
+                  <ButtonWrap
+                    buttonType={ButtonType.primaryInverted}
+                    href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
+                    target="_blank"
                   >
-                    <ReactTooltip
-                      arrowColor={'#001429'}
-                      backgroundColor={'#001429'}
-                      border
-                      borderColor={'#174172'}
-                      className="customTooltip"
-                      delayHide={50}
-                      delayShow={250}
-                      effect="solid"
-                      id={'wrap_button'}
-                      textColor="#fff"
-                    />
-                    <ButtonWrap
-                      buttonType={ButtonType.primaryInverted}
-                      href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
-                      target="_blank"
-                    >
-                      Unwrap WXDAI
-                    </ButtonWrap>
-                  </span>
-                )}
-            </BalanceWrapper>
+                    Unwrap WXDAI
+                  </ButtonWrap>
+                </span>
+              )}
             <CurrencyInputPanel
               chainId={chainId}
               onMax={onMaxInput}
@@ -419,24 +447,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   <ErrorRow>
                     <ErrorInfo />
                     <ErrorText>{error}</ErrorText>
-                  </ErrorRow>
-                )}
-                {orderPlacingOnly && !cancelDate && (
-                  <ErrorRow>
-                    <ErrorLock />
-                    <ErrorText>
-                      New orders can&apos;t be canceled once you confirm the transaction in the next
-                      step.
-                    </ErrorText>
-                  </ErrorRow>
-                )}
-                {cancelDate && (
-                  <ErrorRow>
-                    <ErrorInfo />
-                    <ErrorText>
-                      Beware: after <strong>{cancelDate}</strong> and until the end of the auction,
-                      orders cannot be canceled.
-                    </ErrorText>
                   </ErrorRow>
                 )}
               </ErrorWrapper>
