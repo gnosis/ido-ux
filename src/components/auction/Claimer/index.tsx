@@ -1,13 +1,17 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
+import ReactTooltip from 'react-tooltip'
+
 import { useActiveWeb3React } from '../../../hooks'
 import { useClaimOrderCallback, useGetAuctionProceeds } from '../../../hooks/useClaimOrderCallback'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getTokenDisplay } from '../../../utils'
+import { getTokenDisplay, isTokenXDAI } from '../../../utils'
 import { Button } from '../../buttons/Button'
+import { ButtonAnchor } from '../../buttons/ButtonAnchor'
+import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { ErrorInfo } from '../../icons/ErrorInfo'
@@ -59,6 +63,14 @@ const Text = styled.div`
   font-weight: 600;
   line-height: 1.2;
   margin-left: 10px;
+`
+
+const ButtonWrap = styled(ButtonAnchor)`
+  border-radius: 4px;
+  font-size: 12px;
+  height: 20px;
+  margin: -2px 0 0 15px;
+  padding: 0 5px;
 `
 
 interface Props {
@@ -139,6 +151,35 @@ const Claimer: React.FC<Props> = (props) => {
                       }}
                     />
                     <Text>{biddingTokenDisplay != 'XDAI' ? biddingTokenDisplay : `WXDAI`}</Text>
+                    {isTokenXDAI(derivedAuctionInfo?.biddingToken.address, chainId) && (
+                      <span
+                        className={`tooltipComponent`}
+                        data-for={'wrap_button'}
+                        data-html={true}
+                        data-multiline={true}
+                        data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap. Do it after you claimed your WXDAI`}
+                      >
+                        <ReactTooltip
+                          arrowColor={'#001429'}
+                          backgroundColor={'#001429'}
+                          border
+                          borderColor={'#174172'}
+                          className="customTooltip"
+                          delayHide={50}
+                          delayShow={250}
+                          effect="solid"
+                          id={'wrap_button'}
+                          textColor="#fff"
+                        />
+                        <ButtonWrap
+                          buttonType={ButtonType.primaryInverted}
+                          href={`https://app.honeyswap.org/#/swap?inputCurrency=${derivedAuctionInfo?.biddingToken.address}`}
+                          target="_blank"
+                        >
+                          Unwrap
+                        </ButtonWrap>
+                      </span>
+                    )}
                   </>
                 ) : (
                   '-'

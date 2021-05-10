@@ -55,6 +55,7 @@ interface Props {
   cancelDate?: string
   confirmText: string
   onPlaceOrder: () => any
+  hasRiskNotCoveringClearingPrice: boolean
   orderPlacingOnly?: boolean
   price: string
   priceImpactWithoutFee?: Percent
@@ -65,6 +66,17 @@ interface Props {
   isPriceInverted?: boolean
 }
 
+const WarnMessageStyled: React.FC = ({ children }) => (
+  <>
+    <ErrorWrapper>
+      <ErrorRowStyled>
+        <ErrorLock />
+        <ErrorText>{children}</ErrorText>
+      </ErrorRowStyled>
+    </ErrorWrapper>
+  </>
+)
+
 const SwapModalFooter: React.FC<Props> = (props) => {
   const {
     auctioningToken,
@@ -72,6 +84,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
     cancelDate,
     chainId,
     confirmText,
+    hasRiskNotCoveringClearingPrice,
     isPriceInverted,
     onPlaceOrder,
     orderPlacingOnly,
@@ -153,26 +166,23 @@ const SwapModalFooter: React.FC<Props> = (props) => {
         </Value>
       </Row>
       {orderPlacingOnly && !cancelDate && (
-        <ErrorWrapper>
-          <ErrorRowStyled>
-            <ErrorLock />
-            <ErrorText>
-              Remember: You won&apos;t be able to cancel this order after you click the{' '}
-              <strong>&quot;Confirm&quot;</strong>
-              button.
-            </ErrorText>
-          </ErrorRowStyled>
-        </ErrorWrapper>
+        <WarnMessageStyled>
+          Remember: You won&apos;t be able to cancel this order after you click the{' '}
+          <strong>&quot;Confirm&quot;</strong>
+          button.
+        </WarnMessageStyled>
       )}
       {cancelDate && (
-        <ErrorWrapper>
-          <ErrorRowStyled>
-            <ErrorLock />
-            <ErrorText>
-              Remember: After <strong>{cancelDate}</strong> orders cannot be canceled.
-            </ErrorText>
-          </ErrorRowStyled>
-        </ErrorWrapper>
+        <WarnMessageStyled>
+          Remember: After <strong>{cancelDate}</strong> orders cannot be canceled.
+        </WarnMessageStyled>
+      )}
+      {hasRiskNotCoveringClearingPrice && (
+        <WarnMessageStyled>
+          You are placing an order <strong>{isPriceInverted ? 'above' : 'below'}</strong> the
+          current clearing price. Most likely your order will not succeed in buying{' '}
+          <strong>{auctioningToken.symbol}</strong>.
+        </WarnMessageStyled>
       )}
       <ActionButton onClick={onPlaceOrder}>{confirmText}</ActionButton>
     </>
