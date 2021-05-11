@@ -20,6 +20,7 @@ import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolu
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
+import { calculateTimeLeft } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
@@ -357,23 +358,23 @@ export function useDerivedAuctionInfo(
 
   const isLoading = auctionInfoLoading || loadingClearingPrice
   const noAuctionData = !auctionDetails || !clearingPriceInfo
-  const [auctionState, setAuctionState] = useState(null)
+  const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>()
 
   useEffect(() => {
-    const currentTimestamp: number = new Date().getTime() / 1000
-    if (
-      !clearingPriceInfo ||
-      !auctionDetails ||
-      currentTimestamp > auctionDetails.endTimeTimestamp
-    ) {
+    if (!auctionDetails || !clearingPriceInfo) {
       return
     }
 
-    setAuctionState(deriveAuctionState(auctionDetails, clearingPriceInfo))
-    const milliseconds = auctionDetails.endTimeTimestamp - currentTimestamp
+    const getCurrentState = () => deriveAuctionState(auctionDetails, clearingPriceInfo).auctionState
+    setAuctionState(getCurrentState())
+    const timeLeft = calculateTimeLeft(auctionDetails.endTimeTimestamp)
+
+    if (timeLeft < 0) {
+      return
+    }
     const timerId = setTimeout(() => {
-      setAuctionState(deriveAuctionState(auctionDetails, clearingPriceInfo))
-    }, milliseconds)
+      setAuctionState(getCurrentState())
+    }, timeLeft * 1000)
 
     return () => {
       clearTimeout(timerId)
@@ -404,7 +405,6 @@ export function useDerivedAuctionInfo(
         auctionDetails.symbolBiddingToken,
       )
 
-  // const { auctionState } = deriveAuctionState(auctionDetails, clearingPriceInfo)
   const clearingPriceVolume = clearingPriceInfo?.volume
 
   const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
