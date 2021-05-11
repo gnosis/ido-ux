@@ -22,7 +22,7 @@ Gnosis Auction is a platform enabling fair price discovery for token distributio
 
 #### Selecting Auctions
 
-5. After all these steps, you have now successfully connected to the Gnosis Auction dapp. From the UI you will be able to differentiate between two sections. The top section of the UI shows the highlighted Auctions that are taking place, while the bottom section of the UI will show us the full list of Auctions that are taking place or have taken place on the platform.
+5. After all these steps, you have now successfully connected to the Gnosis Auction dapp. From the UI you will be able to differentiate between two sections. The top section of the UI shows the highlighted auctions that are taking place, while the bottom section of the UI will show you the full list of Auctions that are taking place or have taken place on the platform.
 
 - If you want to participate in one auction that is in the highlighted section, you just have to click anywhere in the box and you will be redirected to the auction.
 - If you want to participate in one auction, that is the all auction section, you have to click on the “side-arrow” button and you will be redirected to the auction.
@@ -51,9 +51,9 @@ But, let's go into details about what each section of the UI means.
 
 4) This parameter shows the closing price of the auction if no more bids are submitted or canceled. As a bidder, you simply need to bid above this price for higher possibility to place a successful bid. 
 
-5) This parameter is the Starting price of token auctioned. The auctioneer has decided its value and it establishes the fact that bidders can’t bid under this price.
+5) This parameter is the starting price of token auctioned. The auctioneer has decided its value and it establishes the fact that bidders can’t bid under this price.
 
-6) The amount parameter, is the total amount of bidding tokens you are willing to pay for the auctioneer tokens.
+6) The amount parameter, is the total amount of bidding tokens you are willing to pay for the total auctioned tokens.
 
 ​	(a) you would need to input the amount of bidding tokens you are willing to bid in the auction. You can either select 		the amount you want to bid or directly use the max button to bid all the tokens you have.
 
@@ -61,7 +61,7 @@ But, let's go into details about what each section of the UI means.
 
 ​	(a) The dapp sets by default the price that the auctioneers have set to be the minimum price. From that starting price, 		you can decide what is the price per bid-token/auction token you are willing to offer.
 
-8) The white line shows the current price, which will be the closing price if no more bids are submitted or canceled. And will dynamically move with new bids.
+8) The white line indicates the current price, which will be the auction's closing price if no more bids are submitted or canceled. The dotted line will dynamically move with new bids.
 
 9) The green line shows the price and size of the bids that have been placed, only the part of the right side of the white line marks the bids that will be successful at the end of the sale. 
 
