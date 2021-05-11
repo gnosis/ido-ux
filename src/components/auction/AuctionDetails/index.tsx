@@ -1,7 +1,11 @@
 import { rgba } from 'polished'
 import React, { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { TokenAmount } from 'uniswap-xdai-sdk'
 
+import { BigNumber } from '@ethersproject/bignumber'
+
+import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import {
   AuctionState,
@@ -244,6 +248,8 @@ const AuctionDetails = (props: Props) => {
     () => getExplorerLink(chainId, derivedAuctionInfo?.auctioningToken?.address, 'address'),
     [chainId, derivedAuctionInfo?.auctioningToken],
   )
+  const { auctionDetails } = useAuctionDetails(auctionIdentifier)
+
   const { showPriceInverted } = useOrderPlacementState()
   const { onInvertPrices } = useSwapActionHandlers()
 
@@ -326,49 +332,98 @@ const AuctionDetails = (props: Props) => {
     setShowMoreDetails(!showMoreDetails)
   }
 
+  const tokenSold = useMemo(
+    () =>
+      derivedAuctionInfo &&
+      auctionDetails &&
+      Number(auctionDetails.currentBiddingAmount) /
+        Number(derivedAuctionInfo.clearingPrice.toSignificant(4)),
+    [auctionDetails, derivedAuctionInfo],
+  )
   const extraDetails: Array<ExtraDetailsItemProps> = [
     {
       title: 'Atomic closure possible',
-      tooltip: 'Atomic closure possible tooltip',
-      value: 'Yes',
+      tooltip:
+        'If this is allowed, then one arbitrageur is allowed to place one further order at the time of auction settlement. This allows bringing in new on-chain liquidity',
+      value: auctionDetails ? auctionDetails.isAtomicClosureAllowed.toString() : '-',
     },
     {
       title: 'Min bidding amount per order',
-      tooltip: 'Min bidding amount per order tooltip',
-      value: '100K DAI',
+      tooltip: 'Each order must at least bid this amount',
+      value: auctionDetails
+        ? `${new TokenAmount(
+            derivedAuctionInfo?.biddingToken,
+            auctionDetails.minimumBiddingAmountPerOrder,
+          ).toSignificant(4)} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
+        : '-',
     },
     {
-      progress: '30%',
+      progress: auctionDetails
+        ? auctionDetails.minFundingThreshold === '0x0'
+          ? '-'
+          : BigNumber.from(auctionDetails.currentBiddingAmount)
+              .mul(BigNumber.from(100))
+              .div(BigNumber.from(auctionDetails.minFundingThreshold))
+              .toString()
+              .concat(' %')
+        : '-',
       title: 'Minimun funding',
-      tooltip: 'Minimum funding tooltip',
-      value: '3500 DAI',
+      tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
+      value:
+        auctionDetails == null || auctionDetails.minFundingThreshold == '0x0'
+          ? '-'
+          : `${auctionDetails.minFundingThreshold} ${getTokenDisplay(
+              derivedAuctionInfo?.biddingToken,
+              chainId,
+            )}`,
     },
     {
-      progress: '50%',
+      progress:
+        tokenSold && derivedAuctionInfo
+          ? (
+              (tokenSold * 100) /
+              Number(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4))
+            )
+              .toString()
+              .concat('%')
+          : '-',
       title: 'Estimated tokens sold',
-      tooltip: 'Estimated tokens sold tooltip',
-      value: '10K GNO',
+      tooltip:
+        'If no further bids were canceled or placed, then this would be amount of tokens sold',
+      value:
+        tokenSold && derivedAuctionInfo
+          ? `${tokenSold}  ${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)}`
+          : '-',
     },
     {
       title: 'Last order cancelation date',
-      tooltip: 'Last order cancelation date tooltip',
-      value: '05/04/2021 - 14:00:00',
+      tooltip: 'Last date at which an order cancelation is allowed',
+      value:
+        auctionDetails && new Date(auctionDetails.orderCancellationEndDate * 1000).toLocaleString(),
     },
     {
       title: 'Auction End Date',
-      value: '12/04/2021 - 14:00:00',
+      value: auctionDetails && new Date(auctionDetails.endTimeTimestamp * 1000).toLocaleString(),
     },
     {
       title: 'Allow List Contract',
-      tooltip: 'Allow List Contract tooltip',
-      url: 'https://etherscan.io/',
-      value: '0x3261A5...B94016',
+      tooltip: 'Address of the contract managing the allow-list for participation',
+      url: `https://etherscan.io/address/${auctionDetails?.allowListManager}`,
+      value: `${
+        auctionDetails && auctionDetails.allowListManager == ''
+          ? auctionDetails.allowListManager.substr(0, 6).concat('...')
+          : 'None'
+      }`,
     },
     {
       title: 'Signer Address',
-      tooltip: 'Signer Address tooltip',
-      url: 'https://etherscan.io/',
-      value: '0x43dea4...A6a29F',
+      tooltip: 'Signer Address',
+      url: `https://etherscan.io/address/${auctionDetails?.allowListSigner}`,
+      value: `${
+        auctionDetails && auctionDetails.allowListSigner == ''
+          ? auctionDetails.allowListSigner.substr(0, 6).concat('...')
+          : 'None'
+      }`,
     },
   ]
 
