@@ -2,21 +2,21 @@
 
 1. In batch auctions, there is one auctioneer and multiple bidders.
 
-2. The auctioneer selects the amount of an asset they want to sell and determine the minimum price they are willing to receive for the asset
+2. The auctioneer sets the amount of an asset they want to sell and the minimum price they are willing to receive for the asset.
 
-3. The auction begins, and it is open for a specified duration. Bidders are free to place their bids, through limit orders, once the auction starts.
+3. Once the auction is started by the auctioneer, bidders can participate by placing their bids, through limit orders, specifying an amount and a price.
 
-4. After the specified duration is over, the auction ends, and no more bids can be placed.
+4. The auction runs until a certain date. After this date the auction is over, and no more bids can be placed.
 
-5. The smart contract sorts bids from highest to lowest price. Bids include a limit order for the token price and the amount of tokens to buy.
+5. The smart contract sorts bids from highest to lowest price. 
 
-6. The smart contract works backward from the highest bid, cumulatively adding each bid’s amount of tokens to sell, until the bid's sum multiplied by the price of the highest bid equals the auctioneer's sell amount of tokens.
+6. The smart contract works backward from the highest bid, cumulatively adding each bid’s amount of tokens to sell, until the bid's sum multiplied by the price of the lowest bid to be included equals the sell amount of tokens (pre-defined by the auctioneer).
 
-7. The price of the bid (added to all previous bids’ amount of tokens) that reaches the amount of tokens to sell is selected as the final clearing price for all participants.
+7. The price of the bid (added to all previous bids’ amount of tokens) that reaches the amount of tokens to sell is selected as the final clearing price for all participants. 
 
-8. Bidders who specified a maximum price in their limit order that is equal to or greater than the final clearing price receive tokens at the clearing price.
+8. Bidders who specified a maximum price in their limit order that is greater than the final clearing price receive tokens **at the clearing price**. 
 
-9. Bidders that specified a maximum price in their limit order that is less than the final clearing price do not receive the tokens being auctioned, but they can still withdraw their bidding tokens from the DEX.
+9. Bidders that specified a maximum price in their limit order that is less than the final clearing price do not receive the tokens being auctioned. Sure they can still withdraw their bidding tokens from the DEX. 
 
 Let's take a deeper look at the example provided in the diagram below.
 
