@@ -3,9 +3,9 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { ChainId, getTokenDisplay } from '../../../utils'
-import { ControlButton } from '../../form/FormLabel'
 import {
   FieldRowBottom,
+  FieldRowButton,
   FieldRowInput,
   FieldRowLabel,
   FieldRowToken,
@@ -16,11 +16,11 @@ import {
 import TokenLogo from '../../token/TokenLogo'
 
 interface CurrencyInputPanelProps {
+  chainId: ChainId
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
   value: string
-  chainId: ChainId
 }
 
 export default function CurrencyInputPanel({
@@ -36,7 +36,7 @@ export default function CurrencyInputPanel({
     <FieldRowWrapper>
       <FieldRowTop>
         <FieldRowLabel>Amount</FieldRowLabel>
-        {onMax && account && <ControlButton onClick={onMax}>Max</ControlButton>}
+        {onMax && account && <FieldRowButton onClick={onMax}>Max</FieldRowButton>}
       </FieldRowTop>
       <FieldRowBottom>
         {token && (

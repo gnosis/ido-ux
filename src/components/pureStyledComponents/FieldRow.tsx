@@ -79,3 +79,31 @@ export const FieldRowInput = styled(Input)<{ error?: boolean }>`
     font-weight: 400;
   }
 `
+
+export const FieldRowButton = styled.button`
+  align-items: center;
+  background-color: transparent;
+  border-radius: 3px;
+  border: 1px solid ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text1};
+  cursor: pointer;
+  display: flex;
+  font-size: 9px;
+  font-weight: 600;
+  height: 17px;
+  justify-content: center;
+  line-height: 1.2;
+  padding: 0 5px;
+  text-transform: uppercase;
+  transition: all 0.15s ease-in;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.text1};
+    color: ${({ theme }) => theme.mainBackground};
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`
