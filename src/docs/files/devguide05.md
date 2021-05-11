@@ -53,7 +53,7 @@ But, let's go into details about what each section of the UI means.
 
 5) This parameter is the starting price of token auctioned. The auctioneer has decided its value and it establishes the fact that bidders can’t bid under this price.
 
-6) The amount parameter, is the total amount of bidding tokens you are willing to pay for the total auctioned tokens.
+6) The amount parameter, is the amount of bidding tokens you are willing to pay for the auctioned tokens.
 
 ​	(a) you would need to input the amount of bidding tokens you are willing to bid in the auction. You can either select 		the amount you want to bid or directly use the max button to bid all the tokens you have.
 
