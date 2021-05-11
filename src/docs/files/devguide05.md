@@ -41,33 +41,30 @@ The UI can be dissected in three parts:
 
 <img src="/assets/GA6.png" alt="drawing" width="500"/>
 
-But, let's go into details about what each section of the UI means. 
+But, let's go into details about what each section of the UI means.
 
-1) This parameter indicates the total amount of tokens the auctioneer is auctioning. This number represents the total amount of tokens available to be bought by bidders.
+> 1. This parameter indicates the total amount of tokens the auctioneer is auctioning. This number represents the total amount of tokens available to be bought by bidders.
 
-2) This parameter represents the token that the auctioneer has selected to be the one accepted for bidding in the auction. This is the asset you need to bid with. 
+> 2. This parameter represents the token that the auctioneer has selected to be the one accepted for bidding in the auction. This is the asset you need to bid with.
 
-3) This parameter shows a countdown of the duration of the auction. This parameter marks when the auction will end.
+> 3. This parameter shows a countdown of the duration of the auction. This parameter marks when the auction will end.
 
-4) This parameter shows the closing price of the auction if no more bids are submitted or canceled. As a bidder, you simply need to bid above this price for higher possibility to place a successful bid. 
+> 4. This parameter shows the closing price of the auction if no more bids are submitted or canceled. As a bidder, you simply need to bid above this price for higher possibility to place a successful bid.
 
-5) This parameter is the starting price of token auctioned. The auctioneer has decided its value and it establishes the fact that bidders can’t bid under this price.
+> 5. This parameter is the starting price of token auctioned. The auctioneer has decided its value and it establishes the fact that bidders can’t bid under this price.
 
-6) The amount parameter, is the amount of bidding tokens you are willing to pay for the auctioned tokens.
+> 6. The amount parameter, is the amount of bidding tokens you are willing to pay for the auctioned tokens.
 
-​	(a) you would need to input the amount of bidding tokens you are willing to bid in the auction. You can either select 		the amount you want to bid or directly use the max button to bid all the tokens you have.
+> 7. The price per bid-token/auction token parameter is the max bid price you are willing to offer per token auctioned.
 
-7) The price per bid-token/auction token parameter is the max bid price you are willing to offer per token auctioned. 
+> 8.  The white line indicates the current price, which will be the auction's closing price if no more bids are submitted or canceled. The dotted line will dynamically move with new bids.
 
-​	(a) The dapp sets by default the price that the auctioneers have set to be the minimum price. From that starting price, 		you can decide what is the price per bid-token/auction token you are willing to offer.
-
-8) The white line indicates the current price, which will be the auction's closing price if no more bids are submitted or canceled. The dotted line will dynamically move with new bids.
-
-9) The green line shows the price and size of the bids that have been placed, only the part of the right side of the white line marks the bids that will be successful at the end of the sale. 
+> 9. The green line shows the price and size of the bids that have been placed, only the part of the right side of the white line marks the bids that will be successful at the end of the sale.
 
 6. If it is the first time that you have used that token to bid, you will have to approve the smart contract to spend that token. First click on the "Approve" button, and then confirm the transaction on Metamask, as shown below.
 
 <img src="/assets/GA7.png" alt="drawing" width="500"/>
+
 <img src="/assets/GA8.png" alt="drawing" width="500"/>
 
 7. After you have set both the amount of tokens to bid, and the price per bid-token/auction token, you no longer see the enter amount section, instead you see a colored bar with the words “Place Order”. Once you are sure about the parameters you have inputted you have to click on “place order” to include your bid in the auction.
