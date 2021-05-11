@@ -1,4 +1,4 @@
-#### Overview
+### Overview
 
 Gnosis Auction is a platform for conducting fair, transparent, and decentralized token price discovery.
 
