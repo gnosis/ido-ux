@@ -424,9 +424,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               )} */}
             <CurrencyInputPanel
               chainId={chainId}
+              isLocked={notApproved}
               onMax={onMaxInput}
+              onUnlock={approveCallback}
               onUserSellAmountInput={onUserSellAmountInput}
               token={biddingToken}
+              unlockState={approval}
               value={sellAmount}
             />
             <PriceInputPanel

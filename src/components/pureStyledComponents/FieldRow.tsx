@@ -20,7 +20,7 @@ export const FieldRowTop = styled.div`
 `
 
 export const FieldRowBottom = styled.div`
-  align-items: top;
+  align-items: flex-end;
   display: flex;
   margin-top: auto;
 `
@@ -38,7 +38,6 @@ export const FieldRowToken = styled.div`
   align-items: center;
   display: flex;
   margin-right: 12px;
-  margin-top: auto;
 
   .tokenLogo {
     border-width: 1px;
@@ -51,7 +50,7 @@ export const FieldRowTokenSymbol = styled.div`
   font-size: 17px;
   font-weight: 400;
   line-height: 1;
-  margin-bottom: -2px;
+  margin-bottom: -3px;
   text-align: left;
   white-space: nowrap;
 `
@@ -80,7 +79,40 @@ export const FieldRowInput = styled(Input)<{ error?: boolean }>`
   }
 `
 
-export const FieldRowButton = styled.button`
+export const FieldRowPrimaryButton = styled.button`
+  align-items: center;
+  background-color: ${({ theme }) => theme.buttonPrimary.backgroundColor};
+  border-radius: 3px;
+  border: none;
+  color: ${({ theme }) => theme.buttonPrimary.color};
+  cursor: pointer;
+  display: flex;
+  font-size: 9px;
+  font-weight: 600;
+  height: 15px;
+  justify-content: center;
+  line-height: 1.2;
+  padding: 0 5px;
+  text-transform: uppercase;
+  transition: all 0.15s ease-in;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonPrimary.backgroundColorHover};
+    color: ${({ theme }) => theme.buttonPrimary.colorHover};
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  > svg {
+    margin-right: 2px;
+    margin-left: -2px;
+  }
+`
+
+export const FieldRowLineButton = styled.button`
   align-items: center;
   background-color: transparent;
   border-radius: 3px;
