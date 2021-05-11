@@ -14,7 +14,7 @@
 
 7. The price of the bid (added to all previous bids’ amount of tokens) that reaches the amount of tokens to sell is selected as the final clearing price for all participants. 
 
-8.Bidders who specified a maximum price in their limit order that is greater than the final clearing price receive tokens **at the clearing price**. 
+8. Bidders who specified a maximum price in their limit order that is greater than the final clearing price receive tokens **at the clearing price**. 
 
 9. Bidders that specified a maximum price in their limit order that is less than the final clearing price do not receive the tokens being auctioned. Sure they can still withdraw their bidding tokens from the DEX. 
 
