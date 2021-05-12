@@ -46,6 +46,7 @@ export function colors(darkMode: boolean): Colors {
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
     error: '#e73c3c',
     green1: ' #008c73',
+    green2: ' #00cba7',
     mainBackground: darkMode ? '#001429' : '#F7F8FA',
     modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
     primary1: darkMode ? '#e8663d' : '#e8663d',

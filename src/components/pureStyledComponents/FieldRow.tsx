@@ -1,23 +1,17 @@
 import { rgba } from 'polished'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { Input } from '../form/NumericalInput'
 
-export enum InfoTypes {
+export enum InfoType {
   ok = 'ok',
   error = 'error',
   info = 'info',
 }
 
-export enum InfoCategory {
-  amount = 'amount',
-  price = 'price',
-}
-
 export interface FieldRowInfoProps {
   text: string
-  type: InfoTypes
-  category: InfoCategory
+  type: InfoType
 }
 
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
@@ -162,18 +156,48 @@ export const FieldRowLineButton = styled.button`
   }
 `
 
-export const FieldRowInfo = styled.div`
+const InfoTypeInfoCSS = css`
   color: ${({ theme }) => theme.text1};
+
+  .fill {
+    fill: ${({ theme }) => theme.text1};
+  }
+`
+
+const InfoTypeErrorCSS = css`
+  color: ${({ theme }) => theme.error};
+
+  .fill {
+    fill: ${({ theme }) => theme.error};
+  }
+`
+
+const InfoTypeOKCSS = css`
+  color: ${({ theme }) => theme.green2};
+
+  .fill {
+    fill: ${({ theme }) => theme.green2};
+  }
+`
+
+export const FieldRowInfo = styled.div<{ infoType: InfoType }>`
   display: inline-flex;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.2;
   margin-bottom: 16px;
-  min-height: 15px;
   padding-top: 5px;
   text-align: left;
 
   > svg {
     margin: 1px 4px 0 0;
   }
+
+  ${(props) => props.infoType === InfoType.info && InfoTypeInfoCSS}
+  ${(props) => props.infoType === InfoType.error && InfoTypeErrorCSS}
+  ${(props) => props.infoType === InfoType.ok && InfoTypeOKCSS}
 `
+
+FieldRowInfo.defaultProps = {
+  infoType: InfoType.info,
+}

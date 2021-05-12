@@ -42,6 +42,7 @@ import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
+import { InfoType } from '../../pureStyledComponents/FieldRow'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -54,65 +55,6 @@ const ActionButton = styled(Button)`
   flex-shrink: 0;
   height: 52px;
   margin-top: auto;
-`
-
-const BalanceWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 20px;
-`
-
-const Balance = styled.p`
-  color: ${({ theme }) => theme.text1};
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0 10px 0 0;
-  text-align: left;
-`
-
-const Total = styled.span`
-  font-weight: 400;
-`
-
-const ApprovalWrapper = styled.div`
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.primary1};
-  display: block;
-  margin-bottom: 40px;
-  padding: 7px 12px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    align-items: center;
-    display: flex;
-    margin-bottom: 10px;
-  }
-`
-
-const ApprovalText = styled.p`
-  color: ${({ theme }) => theme.primary1};
-  font-size: 13px;
-  font-weight: normal;
-  line-height: 1.23;
-  margin: 0 0 15px 0;
-  text-align: left;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin: 0 25px 0 0;
-  }
-`
-
-const ApprovalButton = styled(Button)`
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  height: 26px;
-  padding: 0 14px;
-  width: 100%;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    width: auto;
-  }
 `
 
 const PrivateWrapper = styled.div`
@@ -355,6 +297,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const showTopWarning = orderPlacingOnly || cancelDate
 
+  const amountInfo = React.useMemo(() => {
+    return notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
+      ? {
+          text: 'You need to unlock DAI to allow the smart contract to interact with it.',
+          type: InfoType.info,
+        }
+      : null
+  }, [approval, notApproved])
+
   {
     /* {(error || orderPlacingOnly || cancelDate) && (
               <ErrorWrapper>
@@ -448,6 +399,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <CurrencyInputPanel
               balance={balanceString}
               chainId={chainId}
+              info={amountInfo}
               onMax={onMaxInput}
               onUserSellAmountInput={onUserSellAmountInput}
               token={biddingToken}

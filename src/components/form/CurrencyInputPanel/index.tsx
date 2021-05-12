@@ -22,6 +22,7 @@ import {
   FieldRowTokenSymbol,
   FieldRowTop,
   FieldRowWrapper,
+  InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
@@ -82,7 +83,7 @@ export interface unlockProps {
 interface Props {
   balance?: string
   chainId: ChainId
-  info?: FieldRowInfoProps
+  info?: FieldRowInfoProps | null
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
@@ -149,10 +150,14 @@ const CurrencyInputPanel: React.FC<Props> = (props) => {
           />
         </FieldRowBottom>
       </FieldRowWrapper>
-      <FieldRowInfo>
-        <MiniInfoIcon /> ReactTooltip is defined but never used isTokenXDAI is defined but never
-        used Line 31:10: ButtonType is defined but never Line 59:7: BalanceWrapper is assigned a
-        value but never usedused
+      <FieldRowInfo infoType={info && info.type}>
+        {info ? (
+          <>
+            <MiniInfoIcon /> {info.text}
+          </>
+        ) : (
+          <>&nbsp;</>
+        )}
       </FieldRowInfo>
     </>
   )
