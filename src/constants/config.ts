@@ -16,6 +16,8 @@ export const NETWORK_URL_RINKEBY = process.env.REACT_APP_NETWORK_URL_RINKEBY || 
 export const NETWORK_URL_MAINNET = process.env.REACT_APP_NETWORK_URL_MAINNET || ''
 export const NETWORK_URL_XDAI =
   process.env.REACT_APP_NETWORK_URL_XDAI || 'https://rpc.xdaichain.com/'
+export const NETWORK_URL_MATIC =
+  process.env.REACT_APP_NETWORK_URL_MATIC || 'https://rpc-mainnet.maticvigil.com/'
 
 // Wallet connect keys
 export const FORTMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY || ''
