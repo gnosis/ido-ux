@@ -2,91 +2,131 @@ import React from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
-import { FormLabel } from '../../form/FormLabel'
-import { Input as NumericalInput } from '../../form/NumericalInput'
-import { FormRow } from '../../pureStyledComponents/FormRow'
-import { TextfieldCSS } from '../../pureStyledComponents/Textfield'
+import { Tooltip } from '../../common/Tooltip'
+import { InvertIcon } from '../../icons/InvertIcon'
+import {
+  FieldRowBottom,
+  FieldRowInfo,
+  FieldRowInfoProps,
+  FieldRowInput,
+  FieldRowLabel,
+  FieldRowLineButton,
+  FieldRowPrimaryButton,
+  FieldRowPrimaryButtonText,
+  FieldRowToken,
+  FieldRowTokenSymbol,
+  FieldRowTop,
+  FieldRowWrapper,
+} from '../../pureStyledComponents/FieldRow'
 import DoubleLogo from '../../token/DoubleLogo'
 
-const TextfieldWrapper = styled.div`
-  ${TextfieldCSS}
+const FieldRowLabelStyled = styled(FieldRowLabel)`
   align-items: center;
   display: flex;
-  justify-content: space-between;
 `
 
-const TokenInfo = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  margin-left: 15px;
+const FieldRowLabelStyledText = styled.span`
+  margin-right: 5px;
+`
+
+const DoubleLogoStyled = styled(DoubleLogo)`
+  margin-right: 6px;
+`
+
+const InvertButton = styled(FieldRowLineButton)`
+  height: 15px;
 `
 
 interface Props {
-  auctioningToken: Maybe<Token>
-  biddingToken: Maybe<Token>
   invertPrices: boolean
-  label: string
   onInvertPrices: () => void
   onUserPriceInput: (val: string, isInvertedPrice: boolean) => void
+  tokens: { auctioningToken: Maybe<Token>; biddingToken: Maybe<Token> } | null
   value: string
 }
 
 const PriceInputPanel = (props: Props) => {
   const {
-    auctioningToken = null,
-    biddingToken = null,
     invertPrices,
-    label,
     onInvertPrices,
     onUserPriceInput,
+    tokens = null,
     value,
     ...restProps
   } = props
 
   return (
-    <FormRow>
-      <FormLabel onInvertPrices={onInvertPrices} text={label} />
-      <TextfieldWrapper>
-        <NumericalInput
-          onUserSellAmountInput={(val) => {
-            onUserPriceInput(val, invertPrices)
-          }}
-          value={value}
-        />
-        <TokenInfo>
-          {auctioningToken && biddingToken ? (
-            invertPrices ? (
-              <DoubleLogo
-                auctioningToken={{
-                  address: biddingToken.address,
-                  symbol: biddingToken.symbol,
-                }}
-                biddingToken={{
-                  address: auctioningToken.address,
-                  symbol: auctioningToken.symbol,
-                }}
-                size="24px"
-              />
-            ) : (
-              <DoubleLogo
-                auctioningToken={{
-                  address: auctioningToken.address,
-                  symbol: auctioningToken.symbol,
-                }}
-                biddingToken={{
-                  address: biddingToken.address,
-                  symbol: biddingToken.symbol,
-                }}
-                size="24px"
-              />
-            )
-          ) : (
-            '-'
+    <>
+      <FieldRowWrapper {...restProps}>
+        <FieldRowTop>
+          <FieldRowLabelStyled>
+            <FieldRowLabelStyledText>
+              {invertPrices ? 'Min Bidding Price' : 'Max Bidding Price'}
+            </FieldRowLabelStyledText>
+            <Tooltip
+              id="price"
+              text={invertPrices ? 'Min Bidding Price tooltip' : 'Max Bidding Price tooltip'}
+            />
+          </FieldRowLabelStyled>
+        </FieldRowTop>
+        <FieldRowBottom>
+          {tokens && (
+            <>
+              <FieldRowToken>
+                {invertPrices ? (
+                  <DoubleLogoStyled
+                    auctioningToken={{
+                      address: tokens.biddingToken.address,
+                      symbol: tokens.biddingToken.symbol,
+                    }}
+                    biddingToken={{
+                      address: tokens.auctioningToken.address,
+                      symbol: tokens.auctioningToken.symbol,
+                    }}
+                    size="15px"
+                  />
+                ) : (
+                  <DoubleLogoStyled
+                    auctioningToken={{
+                      address: tokens.auctioningToken.address,
+                      symbol: tokens.auctioningToken.symbol,
+                    }}
+                    biddingToken={{
+                      address: tokens.biddingToken.address,
+                      symbol: tokens.biddingToken.symbol,
+                    }}
+                    size="15px"
+                  />
+                )}
+                <FieldRowTokenSymbol>
+                  {invertPrices
+                    ? `${tokens.biddingToken.symbol} per ${tokens.auctioningToken.symbol}`
+                    : `${tokens.auctioningToken.symbol} per ${tokens.biddingToken.symbol}`}
+                </FieldRowTokenSymbol>
+              </FieldRowToken>
+              <InvertButton onClick={onInvertPrices} title="Invert">
+                <InvertIcon />
+              </InvertButton>
+            </>
           )}
-        </TokenInfo>
-      </TextfieldWrapper>
-    </FormRow>
+          <FieldRowInput
+            onUserSellAmountInput={(val) => {
+              onUserPriceInput(val, invertPrices)
+            }}
+            value={value}
+          />
+        </FieldRowBottom>
+      </FieldRowWrapper>
+      {/* <FieldRowInfo infoType={info && info.type}>
+  {info ? (
+    <>
+      <MiniInfoIcon /> {info.text}
+    </>
+  ) : (
+    <>&nbsp;</>
+  )}
+</FieldRowInfo> */}
+    </>
   )
 }
 

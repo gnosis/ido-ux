@@ -388,16 +388,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               value={sellAmount}
             />
             <PriceInputPanel
-              auctioningToken={auctioningToken}
-              biddingToken={biddingToken}
               invertPrices={showPriceInverted}
-              label={
-                showPriceInverted
-                  ? `Min ${auctioningTokenDisplay} per ${biddingTokenDisplay} price`
-                  : `Max ${biddingTokenDisplay} per ${auctioningTokenDisplay} price`
-              }
               onInvertPrices={onInvertPrices}
               onUserPriceInput={onUserPriceInput}
+              tokens={{ auctioningToken: auctioningToken, biddingToken: biddingToken }}
               value={price}
             />
             {!account ? (
