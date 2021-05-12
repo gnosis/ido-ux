@@ -3,9 +3,21 @@ import styled from 'styled-components'
 
 import { Input } from '../form/NumericalInput'
 
+export enum InfoTypes {
+  ok = 'ok',
+  error = 'error',
+  info = 'info',
+}
+
+export enum InfoCategory {
+  amount = 'amount',
+  price = 'price',
+}
+
 export interface FieldRowInfoProps {
   text: string
-  type: 'ok' | 'error' | 'info'
+  type: InfoTypes
+  category: InfoCategory
 }
 
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
@@ -19,7 +31,7 @@ export const FieldRowWrapper = styled.div<{ error?: boolean }>`
 `
 
 export const FieldRowTop = styled.div`
-  align-items: top;
+  align-items: center;
   display: flex;
   margin-bottom: auto;
 `

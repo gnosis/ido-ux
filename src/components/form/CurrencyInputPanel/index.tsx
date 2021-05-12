@@ -65,13 +65,22 @@ const SpinningLaVidaLoca = styled.span`
   margin-right: 2px;
 `
 
+const Balance = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 8px 0 0;
+`
+
 export interface unlockProps {
-  onUnlock: () => void
   isLocked: boolean
+  onUnlock: () => void
   unlockState: ApprovalState
 }
 
 interface Props {
+  balance?: string
   chainId: ChainId
   info?: FieldRowInfoProps
   onMax?: () => void
@@ -83,6 +92,7 @@ interface Props {
 
 const CurrencyInputPanel: React.FC<Props> = (props) => {
   const {
+    balance,
     chainId,
     info,
     onMax,
@@ -100,6 +110,7 @@ const CurrencyInputPanel: React.FC<Props> = (props) => {
       <FieldRowWrapper {...restProps}>
         <FieldRowTop>
           <FieldRowLabel>Amount</FieldRowLabel>
+          {balance && <Balance>Balance: {balance}</Balance>}
           {onMax && account && <FieldRowLineButton onClick={onMax}>Max</FieldRowLineButton>}
         </FieldRowTop>
         <FieldRowBottom>

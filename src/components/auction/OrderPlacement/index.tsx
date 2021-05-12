@@ -348,17 +348,40 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }, [maxAmountInput, onUserSellAmountInput])
 
   const balanceString = React.useMemo(() => {
-    return account
-      ? chainId !== chainIdFromWeb3
-        ? 'Switch network'
-        : `${biddingTokenBalance?.toSignificant(6) || '0'} ${getTokenDisplay(
-            biddingToken,
-            chainId,
-          )}`
-      : 'Connect your wallet'
-  }, [account, biddingToken, biddingTokenBalance, chainId, chainIdFromWeb3])
+    return !account || chainId !== chainIdFromWeb3
+      ? ''
+      : `${biddingTokenBalance?.toSignificant(6) || '0.0'}`
+  }, [account, biddingTokenBalance, chainId, chainIdFromWeb3])
 
   const showTopWarning = orderPlacingOnly || cancelDate
+
+  {
+    /* {(error || orderPlacingOnly || cancelDate) && (
+              <ErrorWrapper>
+                {error && sellAmount !== '' && price !== '' && (
+                  <ErrorRow>
+                    <ErrorInfo />
+                    <ErrorText>{error}</ErrorText>
+                  </ErrorRow>
+                )}
+              </ErrorWrapper>
+            )}
+            {notApproved && (
+              <ApprovalWrapper>
+                <ApprovalText>
+                  You need to unlock {biddingTokenDisplay} to allow the smart contract to interact
+                  with it. This has to be done for each new token.
+                </ApprovalText>
+                <ApprovalButton
+                  buttonType={ButtonType.primaryInverted}
+                  disabled={approval === ApprovalState.PENDING}
+                  onClick={approveCallback}
+                >
+                  {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
+                </ApprovalButton>
+              </ApprovalWrapper>
+            )} */
+  }
 
   return (
     <>
@@ -423,6 +446,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 </span>
               )} */}
             <CurrencyInputPanel
+              balance={balanceString}
               chainId={chainId}
               onMax={onMaxInput}
               onUserSellAmountInput={onUserSellAmountInput}
@@ -443,31 +467,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               onUserPriceInput={onUserPriceInput}
               value={price}
             />
-            {/* {(error || orderPlacingOnly || cancelDate) && (
-              <ErrorWrapper>
-                {error && sellAmount !== '' && price !== '' && (
-                  <ErrorRow>
-                    <ErrorInfo />
-                    <ErrorText>{error}</ErrorText>
-                  </ErrorRow>
-                )}
-              </ErrorWrapper>
-            )}
-            {notApproved && (
-              <ApprovalWrapper>
-                <ApprovalText>
-                  You need to unlock {biddingTokenDisplay} to allow the smart contract to interact
-                  with it. This has to be done for each new token.
-                </ApprovalText>
-                <ApprovalButton
-                  buttonType={ButtonType.primaryInverted}
-                  disabled={approval === ApprovalState.PENDING}
-                  onClick={approveCallback}
-                >
-                  {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
-                </ApprovalButton>
-              </ApprovalWrapper>
-            )} */}
             {!account ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
             ) : (
