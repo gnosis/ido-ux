@@ -4,43 +4,48 @@ import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
-import {
-  NETWORK_URL_MAINNET,
-  NETWORK_URL_RINKEBY,
-  NETWORK_URL_XDAI,
-  PORTIS_ID,
-} from '../constants/config'
+import { NETWORK_URL_MAINNET, PORTIS_ID } from '../constants/config'
+import { ChainId, NETWORK_CONFIGS } from './../utils/index'
 
 const POLLING_INTERVAL = 10000
 
-const urls = []
-if (NETWORK_URL_MAINNET) urls[1] = NETWORK_URL_MAINNET
-if (NETWORK_URL_RINKEBY) urls[4] = NETWORK_URL_RINKEBY
-if (NETWORK_URL_XDAI) urls[100] = NETWORK_URL_XDAI
+const urls: string[] = []
 
+// TOOD Try to use reduce to improve types
+const rpcs: any = {}
+
+const chainIds = Object.keys(NETWORK_CONFIGS).map(Number)
+chainIds.forEach((chainId: ChainId) => {
+  if (NETWORK_CONFIGS[chainId].rpc) {
+    urls[chainId] = NETWORK_CONFIGS[chainId].rpc
+    rpcs[chainId] = NETWORK_CONFIGS[chainId].rpc
+  }
+})
+
+// TODO Throw error if no defaultChainId is found
 const defaultChainId = urls.findIndex((chainId) => !!chainId)
 
 export const network = new NetworkConnector({ urls, defaultChainId })
 
 export const injected = new InjectedConnector({
-  supportedChainIds: [1, 4, 100],
+  supportedChainIds: chainIds,
 })
 
 export const walletconnect = {
   1: new WalletConnectConnector({
-    rpc: { 1: NETWORK_URL_MAINNET },
+    rpc: { 1: NETWORK_CONFIGS[1].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: false,
     pollingInterval: POLLING_INTERVAL,
   }),
   100: new WalletConnectConnector({
-    rpc: { 100: NETWORK_URL_XDAI },
+    rpc: { 100: NETWORK_CONFIGS[100].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: false,
     pollingInterval: POLLING_INTERVAL,
   }),
   4: new WalletConnectConnector({
-    rpc: { 4: NETWORK_URL_RINKEBY },
+    rpc: { 4: NETWORK_CONFIGS[4].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: false,
     pollingInterval: POLLING_INTERVAL,
@@ -49,7 +54,7 @@ export const walletconnect = {
   // this might cause issues on the auction overview page.
   // A solution for this usecase should be a network selector
   undefined: new WalletConnectConnector({
-    rpc: { 4: NETWORK_URL_RINKEBY, 100: NETWORK_URL_XDAI, 1: NETWORK_URL_MAINNET },
+    rpc: rpcs,
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: false,
     pollingInterval: POLLING_INTERVAL,

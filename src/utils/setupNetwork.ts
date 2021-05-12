@@ -1,8 +1,10 @@
-export const setupNetwork = async (chainId: number) => {
+import { ChainId, NETWORK_CONFIGS } from '.'
+
+export const setupNetwork = async (chainId: ChainId) => {
   const provider = (window as Window).ethereum
   if (provider && provider.request) {
     try {
-      if (chainId === 100) {
+      if (chainId === ChainId.XDAI) {
         await provider.request({
           method: 'wallet_addEthereumChain',
           params: [
@@ -20,6 +22,27 @@ export const setupNetwork = async (chainId: number) => {
           ],
         })
       }
+
+      if (chainId === ChainId.POLYGON) {
+        const config = NETWORK_CONFIGS[ChainId.POLYGON]
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: `0x${chainId.toString(16)}`,
+              chainName: config.name,
+              nativeCurrency: {
+                name: config.name,
+                symbol: config.symbol,
+                decimals: 18,
+              },
+              rpcUrls: [config.rpc],
+              blockExplorerUrls: [config.explorer],
+            },
+          ],
+        })
+      }
+
       return true
     } catch (error) {
       console.error(error)
