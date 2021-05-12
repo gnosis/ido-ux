@@ -4,6 +4,7 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import { Tooltip } from '../../common/Tooltip'
 import { InvertIcon } from '../../icons/InvertIcon'
+import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
 import {
   FieldRowBottom,
   FieldRowInfo,
@@ -11,8 +12,6 @@ import {
   FieldRowInput,
   FieldRowLabel,
   FieldRowLineButton,
-  FieldRowPrimaryButton,
-  FieldRowPrimaryButtonText,
   FieldRowToken,
   FieldRowTokenSymbol,
   FieldRowTop,
@@ -38,6 +37,7 @@ const InvertButton = styled(FieldRowLineButton)`
 `
 
 interface Props {
+  info?: FieldRowInfoProps | null
   invertPrices: boolean
   onInvertPrices: () => void
   onUserPriceInput: (val: string, isInvertedPrice: boolean) => void
@@ -47,6 +47,7 @@ interface Props {
 
 const PriceInputPanel = (props: Props) => {
   const {
+    info,
     invertPrices,
     onInvertPrices,
     onUserPriceInput,
@@ -117,15 +118,15 @@ const PriceInputPanel = (props: Props) => {
           />
         </FieldRowBottom>
       </FieldRowWrapper>
-      {/* <FieldRowInfo infoType={info && info.type}>
-  {info ? (
-    <>
-      <MiniInfoIcon /> {info.text}
-    </>
-  ) : (
-    <>&nbsp;</>
-  )}
-</FieldRowInfo> */}
+      <FieldRowInfo infoType={info && info.type}>
+        {info ? (
+          <>
+            <MiniInfoIcon /> {info.text}
+          </>
+        ) : (
+          <>&nbsp;</>
+        )}
+      </FieldRowInfo>
     </>
   )
 }

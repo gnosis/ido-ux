@@ -306,6 +306,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       : null
   }, [approval, notApproved])
 
+  const priceInfo = React.useMemo(() => {
+    return error
+      ? {
+          text: 'Some error',
+          type: InfoType.error,
+        }
+      : null
+  }, [error])
+
   {
     /* {(error || orderPlacingOnly || cancelDate) && (
               <ErrorWrapper>
@@ -388,6 +397,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               value={sellAmount}
             />
             <PriceInputPanel
+              info={priceInfo}
               invertPrices={showPriceInverted}
               onInvertPrices={onInvertPrices}
               onUserPriceInput={onUserPriceInput}
