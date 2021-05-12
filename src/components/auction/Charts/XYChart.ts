@@ -6,12 +6,24 @@ import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
 
+// Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
+const numberFormatter = new am4core.NumberFormatter()
+numberFormatter.numberFormat = '###.00 a'
+numberFormatter.smallNumberThreshold = 0
+numberFormatter.bigNumberPrefixes = [
+  { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
+  { number: 1e6, suffix: 'M' }, // Million
+  { number: 1e9, suffix: 'B' }, // Billion
+  { number: 1e12, suffix: 'T' }, // Trillion
+  { number: 1e15, suffix: 'P' }, // Quadrillion
+  { number: 1e18, suffix: 'E' }, // Quintillion
+  { number: 1e21, suffix: 'Z' }, // Sextillion
+  { number: 1e24, suffix: 'Y' }, // Septillion
+]
+
 export interface XYChartProps {
   chartElement: HTMLElement
 }
-
-const PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART = 5
-
 export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const { chartElement } = props
 
@@ -50,23 +62,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceAxis.title.fill = am4core.color(colors.white)
   priceAxis.renderer.labels.template.fill = am4core.color(colors.white)
 
-  // Recalculates very big and very small numbers by reducing their length according to rules and applying suffix/prefix.
-  const numberFormatter = new am4core.NumberFormatter()
-  // numberFormatter.numberFormat = '#.00000a'
-  numberFormatter.smallNumberThreshold = 0
-  numberFormatter.bigNumberPrefixes = [
-    { number: 1e3, suffix: 'K' }, // Use K only with value greater than 999.00
-    { number: 1e6, suffix: 'M' }, // Million
-    { number: 1e9, suffix: 'B' }, // Billion
-    { number: 1e12, suffix: 'T' }, // Trillion
-    { number: 1e15, suffix: 'P' }, // Quadrillion
-    { number: 1e18, suffix: 'E' }, // Quintillion
-    { number: 1e21, suffix: 'Z' }, // Sextillion
-    { number: 1e24, suffix: 'Y' }, // Septillion
-  ]
-
   volumeAxis.numberFormatter = numberFormatter
-  priceAxis.numberFormatter = numberFormatter
+  //priceAxis.numberFormatter = numberFormatter
 
   priceAxis.strictMinMax = true
   priceAxis.extraMin = 0.02
@@ -162,6 +159,10 @@ interface DrawInformation {
   chainId: ChainId
 }
 
+const formatNumberForChartTooltip = (n: number) => {
+  return numberFormatter.format(n, '###.00 a')
+}
+
 export const drawInformation = (props: DrawInformation) => {
   const { baseToken, chainId, chart, quoteToken } = props
   const baseTokenLabel = baseToken.symbol
@@ -177,25 +178,27 @@ export const drawInformation = (props: DrawInformation) => {
   xAxis.title.text = priceTitle
   yAxis.title.text = volumeTitle
 
-  const series = chart.series
+  const {
+    values: [askPricesSeries, bidPricesSeries],
+  } = chart.series
 
-  series.values[0].adapter.add('tooltipText', (text, target) => {
+  askPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
-    return `[bold]${market}[/]\nAsk Price: [bold] ${valueX.toPrecision(
-      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
-    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
-      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
-    )} [/] ${quoteTokenLabel}`
+
+    const askPrice = formatNumberForChartTooltip(valueX)
+    const volume = formatNumberForChartTooltip(valueY)
+
+    return `[bold]${market}[/]\nAsk Price: [bold] ${askPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
   })
 
-  series.values[1].adapter.add('tooltipText', (text, target) => {
+  bidPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
     const valueY = target?.tooltipDataItem?.values?.valueY?.value ?? 0
-    return `[bold]${market}[/]\nBid Price: [bold] ${valueX.toPrecision(
-      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
-    )} [/] ${quoteTokenLabel}\nVolume: [bold] ${valueY.toPrecision(
-      PRECISION_FOR_DECIMAL_DISPLAY_IN_CHART,
-    )} [/] ${quoteTokenLabel}`
+
+    const bidPrice = formatNumberForChartTooltip(valueX)
+    const volume = formatNumberForChartTooltip(valueY)
+
+    return `[bold]${market}[/]\nBid Price: [bold] ${bidPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
   })
 }
