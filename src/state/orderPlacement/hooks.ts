@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -20,6 +20,7 @@ import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolu
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
+import { calculateTimeLeft } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
@@ -357,6 +358,28 @@ export function useDerivedAuctionInfo(
 
   const isLoading = auctionInfoLoading || loadingClearingPrice
   const noAuctionData = !auctionDetails || !clearingPriceInfo
+  const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>()
+
+  useEffect(() => {
+    if (!auctionDetails || !clearingPriceInfo) {
+      return
+    }
+
+    const getCurrentState = () => deriveAuctionState(auctionDetails, clearingPriceInfo).auctionState
+    setAuctionState(getCurrentState())
+    const timeLeft = calculateTimeLeft(auctionDetails.endTimeTimestamp)
+
+    if (timeLeft < 0) {
+      return
+    }
+    const timerId = setTimeout(() => {
+      setAuctionState(getCurrentState())
+    }, timeLeft * 1000)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [auctionDetails, clearingPriceInfo, noAuctionData])
 
   if (isLoading) {
     return null
@@ -382,7 +405,6 @@ export function useDerivedAuctionInfo(
         auctionDetails.symbolBiddingToken,
       )
 
-  const { auctionState } = deriveAuctionState(auctionDetails, clearingPriceInfo)
   const clearingPriceVolume = clearingPriceInfo?.volume
 
   const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
