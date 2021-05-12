@@ -382,7 +382,7 @@ export function useDerivedAuctionInfo(
             setAuctionState(getCurrentState())
           }, timeLeft * 1000)
         })
-        .filter((timeId) => typeof timeId !== 'undefined')
+        .filter(isTimeout)
       return timersId
     }
     const timerEventsId = updateStatusWhenTimeIsUp([timeLeftCancellationOrder, timeLeftEndAuction])
