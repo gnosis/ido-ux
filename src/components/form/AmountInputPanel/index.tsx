@@ -22,7 +22,6 @@ import {
   FieldRowTokenSymbol,
   FieldRowTop,
   FieldRowWrapper,
-  InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
@@ -91,7 +90,7 @@ interface Props {
   value: string
 }
 
-const CurrencyInputPanel: React.FC<Props> = (props) => {
+const AmountInputPanel: React.FC<Props> = (props) => {
   const {
     balance,
     chainId,
@@ -163,4 +162,4 @@ const CurrencyInputPanel: React.FC<Props> = (props) => {
   )
 }
 
-export default CurrencyInputPanel
+export default AmountInputPanel

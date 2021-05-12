@@ -31,7 +31,7 @@ import { ButtonAnchor } from '../../buttons/ButtonAnchor'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
-import CurrencyInputPanel from '../../form/CurrencyInputPanel'
+import AmountInputPanel from '../../form/AmountInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import { ErrorLock } from '../../icons/ErrorLock'
@@ -317,21 +317,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 )}
               </ErrorWrapper>
             )}
-            {notApproved && (
-              <ApprovalWrapper>
-                <ApprovalText>
-                  You need to unlock {biddingTokenDisplay} to allow the smart contract to interact
-                  with it. This has to be done for each new token.
-                </ApprovalText>
-                <ApprovalButton
-                  buttonType={ButtonType.primaryInverted}
-                  disabled={approval === ApprovalState.PENDING}
-                  onClick={approveCallback}
-                >
-                  {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
-                </ApprovalButton>
-              </ApprovalWrapper>
-            )} */
+ */
   }
 
   return (
@@ -348,11 +334,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
         )}
         {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
           <>
-            {/* <BalanceWrapper>
-              <Balance>
-                Your Balance: <Total>{`${balanceString} `}</Total>
-              </Balance>
-            </BalanceWrapper> */}
             {showTopWarning && (
               <Warning>
                 <ErrorInfo />
@@ -396,7 +377,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   </ButtonWrap>
                 </span>
               )} */}
-            <CurrencyInputPanel
+            <AmountInputPanel
               balance={balanceString}
               chainId={chainId}
               info={amountInfo}

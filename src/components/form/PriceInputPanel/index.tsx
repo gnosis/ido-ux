@@ -22,25 +22,28 @@ const TokenInfo = styled.div`
   margin-left: 15px;
 `
 
-interface CurrencyInputPanelProps {
+interface Props {
   auctioningToken: Maybe<Token>
   biddingToken: Maybe<Token>
-  label: string
-  onUserPriceInput: (val: string, isInvertedPrice: boolean) => void
-  onInvertPrices: () => void
-  value: string
   invertPrices: boolean
+  label: string
+  onInvertPrices: () => void
+  onUserPriceInput: (val: string, isInvertedPrice: boolean) => void
+  value: string
 }
 
-export default function PriceInputPanel({
-  auctioningToken = null,
-  biddingToken = null,
-  invertPrices,
-  label,
-  onInvertPrices,
-  onUserPriceInput,
-  value,
-}: CurrencyInputPanelProps) {
+const PriceInputPanel = (props: Props) => {
+  const {
+    auctioningToken = null,
+    biddingToken = null,
+    invertPrices,
+    label,
+    onInvertPrices,
+    onUserPriceInput,
+    value,
+    ...restProps
+  } = props
+
   return (
     <FormRow>
       <FormLabel onInvertPrices={onInvertPrices} text={label} />
@@ -86,3 +89,5 @@ export default function PriceInputPanel({
     </FormRow>
   )
 }
+
+export default PriceInputPanel
