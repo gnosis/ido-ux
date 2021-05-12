@@ -1,4 +1,4 @@
-### Gnosis Auction User flow
+### Gnosis Auction user flow
 
 In Gnosis Auction, there are two types of participants: one seller and multiple bidders.
 
@@ -6,7 +6,7 @@ In Gnosis Auction, there are two types of participants: one seller and multiple 
 
 Starting an auction is a permissionless process. Each auction can be configured individually.
 There are two options to start an auction on most networks:
-Checkout the [UI guide](/docs/starting-an-auction-with-safe#topAnchor) or the [script guide](/docs/participate-as-auctioneer#topAnchor).
+Checkout the [UI guide](/docs/starting-an-auction-with-safe) or the [script guide](/docs/participate-as-auctioneer).
 
 #### 2. Bidders: Placing orders
 
@@ -31,4 +31,4 @@ Check out the [guide](https://github.com/gnosis/ido-contracts#settle-auctionss) 
 
 #### 4. Bidders: Claiming
 
-After the price has settled, the auctioneer will receive the proceeds of the auction. In contracts the bidder will need to submit an additional transaction to claim their auction proceeds.
+After the price has settled, the auctioneer will receive the proceeds of the auction. In contrast, the bidder will need to submit an additional transaction to claim their auction proceeds.
