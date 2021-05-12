@@ -3,6 +3,11 @@ import styled from 'styled-components'
 
 import { Input } from '../form/NumericalInput'
 
+export interface FieldRowInfoProps {
+  text: string
+  type: 'ok' | 'error' | 'info'
+}
+
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
   border-radius: 6px;
   border: solid 1px ${({ theme }) => theme.border};
@@ -92,7 +97,7 @@ export const FieldRowPrimaryButton = styled.button`
   height: 15px;
   justify-content: center;
   line-height: 1.2;
-  padding: 0 5px;
+  padding: 0 3px;
   text-transform: uppercase;
   transition: all 0.15s ease-in;
 
@@ -105,10 +110,15 @@ export const FieldRowPrimaryButton = styled.button`
     cursor: not-allowed;
     opacity: 0.5;
   }
+`
 
-  > svg {
-    margin-right: 2px;
-    margin-left: -2px;
+export const FieldRowPrimaryButtonText = styled.span`
+  margin-left: 2px;
+  padding-right: 3px;
+
+  &:first-child {
+    margin-left: 0;
+    padding-left: 3px;
   }
 `
 
@@ -137,5 +147,21 @@ export const FieldRowLineButton = styled.button`
   &[disabled] {
     cursor: not-allowed;
     opacity: 0.5;
+  }
+`
+
+export const FieldRowInfo = styled.div`
+  color: ${({ theme }) => theme.text1};
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  min-height: 15px;
+  padding-top: 5px;
+  text-align: left;
+
+  > svg {
+    margin: 1px 4px 0 0;
   }
 `

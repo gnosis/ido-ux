@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 const Wrapper = styled.svg`
   display: block;
+  flex-shrink: 0;
   max-height: 100%;
   max-width: 100%;
 
