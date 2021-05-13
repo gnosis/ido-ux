@@ -3,6 +3,8 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
+import ReactTooltip from 'react-tooltip'
+
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { ChainId, getTokenDisplay } from '../../../utils'
@@ -79,10 +81,15 @@ Balance.defaultProps = {
   disabled: false,
 }
 
-export interface unlockProps {
+interface unlockProps {
   isLocked: boolean
   onUnlock: () => void
   unlockState: ApprovalState
+}
+
+interface wrapProps {
+  isWrappable: boolean
+  onClick: () => void
 }
 
 interface Props {
@@ -93,6 +100,7 @@ interface Props {
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
   unlock: unlockProps
+  wrap: wrapProps
   value: string
 }
 
@@ -106,6 +114,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     token = null,
     unlock,
     value,
+    wrap,
     ...restProps
   } = props
   const { account } = useActiveWeb3React()
@@ -117,7 +126,9 @@ const AmountInputPanel: React.FC<Props> = (props) => {
       <FieldRowWrapper error={error} {...restProps}>
         <FieldRowTop>
           <FieldRowLabel>Amount</FieldRowLabel>
-          <Balance disabled={!balance}>Balance: {balance ? balance : '0.00'}</Balance>
+          <Balance disabled={!account}>
+            Balance: {balance === '0' || !account ? '0.00' : balance}
+          </Balance>
           <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
             Max
           </FieldRowLineButton>
@@ -149,6 +160,30 @@ const AmountInputPanel: React.FC<Props> = (props) => {
                 </>
               )}
             </UnlockButton>
+          )}
+          {wrap.isWrappable && (
+            <FieldRowPrimaryButton
+              className={`tooltipComponent`}
+              data-for={'wrap_button'}
+              data-html={true}
+              data-multiline={true}
+              data-tip={`Unwrap WXDAI to XDAI on Honeyswap`}
+              onClick={wrap.onClick}
+            >
+              <ReactTooltip
+                arrowColor={'#001429'}
+                backgroundColor={'#001429'}
+                border
+                borderColor={'#174172'}
+                className="customTooltip"
+                delayHide={50}
+                delayShow={250}
+                effect="solid"
+                id={'wrap_button'}
+                textColor="#fff"
+              />
+              <FieldRowPrimaryButtonText>Unwrap</FieldRowPrimaryButtonText>
+            </FieldRowPrimaryButton>
           )}
           <FieldRowInput
             disabled={!account}

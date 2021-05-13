@@ -273,16 +273,19 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }, [maxAmountInput, onUserSellAmountInput])
 
   const balanceString = React.useMemo(() => {
-    return !account || chainId !== chainIdFromWeb3
-      ? ''
-      : `${biddingTokenBalance?.toSignificant(6) || '0.0'}`
-  }, [account, biddingTokenBalance, chainId, chainIdFromWeb3])
+    return biddingTokenBalance?.toSignificant(6)
+  }, [biddingTokenBalance])
 
   const showTopWarning = orderPlacingOnly || cancelDate
 
   const amountInfo = React.useMemo(
     () =>
-      notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
+      !account
+        ? {
+            text: 'Please connect your wallet.',
+            type: InfoType.info,
+          }
+        : notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
         ? {
             text: 'You need to unlock DAI to allow the smart contract to interact with it.',
             type: InfoType.info,
@@ -293,7 +296,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             type: InfoType.error,
           }
         : null,
-    [approval, errorAmount, notApproved],
+    [account, approval, errorAmount, notApproved],
   )
 
   const priceInfo = React.useMemo(
@@ -342,39 +345,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                 </WarningText>
               </Warning>
             )}
-
-            {/* {isTokenXDAI(biddingToken.address, chainId) &&
-              account &&
-              biddingToken &&
-              biddingToken.address && (
-                <span
-                  className={`tooltipComponent`}
-                  data-for={'wrap_button'}
-                  data-html={true}
-                  data-multiline={true}
-                  data-tip={`Unwrap WXDAI to XDAI on Honeyswap`}
-                >
-                  <ReactTooltip
-                    arrowColor={'#001429'}
-                    backgroundColor={'#001429'}
-                    border
-                    borderColor={'#174172'}
-                    className="customTooltip"
-                    delayHide={50}
-                    delayShow={250}
-                    effect="solid"
-                    id={'wrap_button'}
-                    textColor="#fff"
-                  />
-                  <ButtonWrap
-                    buttonType={ButtonType.primaryInverted}
-                    href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
-                    target="_blank"
-                  >
-                    Unwrap WXDAI
-                  </ButtonWrap>
-                </span>
-              )} */}
             <AmountInputPanel
               balance={balanceString}
               chainId={chainId}
@@ -384,6 +354,20 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               token={biddingToken}
               unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
               value={sellAmount}
+              wrap={{
+                isWrappable:
+                  balanceString &&
+                  isTokenXDAI(biddingToken.address, chainId) &&
+                  account &&
+                  biddingToken &&
+                  biddingToken.address
+                    ? true
+                    : false,
+                onClick: () =>
+                  window.open(
+                    `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                  ),
+              }}
             />
             <PriceInputPanel
               info={priceInfo}

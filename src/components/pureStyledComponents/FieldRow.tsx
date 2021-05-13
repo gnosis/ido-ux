@@ -76,12 +76,14 @@ export const FieldRowInput = styled(Input)<{ error?: boolean }>`
   border: none;
   color: ${(props) => (props.error ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
   flex-grow: 1;
+  flex-shrink: 1;
   font-size: 23px;
   font-weight: 400;
   height: 22px;
   line-height: 1;
   margin-left: auto;
   margin: 0 0 0 20px;
+  min-width: 0;
   outline: none;
   padding: 0;
   text-align: right;
@@ -97,7 +99,7 @@ export const FieldRowInput = styled(Input)<{ error?: boolean }>`
   }
 
   &[disabled] {
-    color: ${({ theme }) => rgba(theme.text1, 0.7)};
+    opacity: 0.7;
   }
 `
 
@@ -109,6 +111,7 @@ export const FieldRowPrimaryButton = styled.button`
   color: ${({ theme }) => theme.buttonPrimary.color};
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   font-size: 9px;
   font-weight: 600;
   height: 15px;
@@ -131,6 +134,7 @@ export const FieldRowPrimaryButton = styled.button`
 
 export const FieldRowPrimaryButtonText = styled.span`
   margin-left: 2px;
+  margin-top: 1px;
   padding-right: 3px;
 
   &:first-child {
@@ -147,6 +151,7 @@ export const FieldRowLineButton = styled.button`
   color: ${({ theme }) => theme.text1};
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   font-size: 9px;
   font-weight: 600;
   height: 17px;

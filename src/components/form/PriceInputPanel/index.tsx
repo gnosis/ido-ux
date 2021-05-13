@@ -34,6 +34,7 @@ const DoubleLogoStyled = styled(DoubleLogo)`
 `
 
 const InvertButton = styled(FieldRowLineButton)`
+  flex-shrink: 0;
   height: 15px;
 `
 
