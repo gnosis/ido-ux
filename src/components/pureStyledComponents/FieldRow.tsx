@@ -93,6 +93,7 @@ export const FieldRowInput = styled(Input)<{ error?: boolean }>`
     font-size: 23px;
     font-style: italic;
     font-weight: 400;
+    opacity: 1;
   }
 
   &[disabled] {
