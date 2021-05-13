@@ -2,8 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
-import ReactTooltip from 'react-tooltip'
-
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
@@ -27,33 +25,29 @@ import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTokenXDAI } from '..
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { ButtonAnchor } from '../../buttons/ButtonAnchor'
-import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
 import { ErrorInfo } from '../../icons/ErrorInfo'
-import { ErrorLock } from '../../icons/ErrorLock'
 import { LockBig } from '../../icons/LockBig'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
-import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
-  /* min-height: 352px; */
+  min-height: 392px;
   min-width: 100%;
   padding: 20px;
 `
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
-  height: 52px;
+  height: 40px;
   margin-top: auto;
 `
 
@@ -80,14 +74,6 @@ const EmptyContentTextSmall = styled(EmptyContentText)`
   font-size: 16px;
   font-weight: 400;
   margin-top: 0;
-`
-
-const ButtonWrap = styled(ButtonAnchor)`
-  border-radius: 4px;
-  font-size: 12px;
-  height: 20px;
-  margin: -2px 6px 0 0;
-  padding: 0 5px;
 `
 
 const Warning = styled.div`
@@ -121,7 +107,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount, showPriceInverted } = useOrderPlacementState()
-  const { error } = useGetOrderPlacementError(
+  const { errorAmount, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
     auctionIdentifier,
@@ -131,7 +117,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
-  const isValid = !error
   const { signature } = useSignature(auctionIdentifier, account)
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -282,8 +267,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     auctionDetails,
   ])
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
-  const isPlaceOrderDisabled =
-    !isValid || notApproved || showWarning || showWarningWrongChainId || showConfirm
 
   const onMaxInput = React.useCallback(() => {
     maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
@@ -297,37 +280,43 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   const showTopWarning = orderPlacingOnly || cancelDate
 
-  const amountInfo = React.useMemo(() => {
-    return notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
-      ? {
-          text: 'You need to unlock DAI to allow the smart contract to interact with it.',
-          type: InfoType.info,
-        }
-      : null
-  }, [approval, notApproved])
+  const amountInfo = React.useMemo(
+    () =>
+      notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
+        ? {
+            text: 'You need to unlock DAI to allow the smart contract to interact with it.',
+            type: InfoType.info,
+          }
+        : errorAmount
+        ? {
+            text: errorAmount,
+            type: InfoType.error,
+          }
+        : null,
+    [approval, errorAmount, notApproved],
+  )
 
-  const priceInfo = React.useMemo(() => {
-    return error
-      ? {
-          text: 'Some error',
-          type: InfoType.error,
-        }
-      : null
-  }, [error])
+  const priceInfo = React.useMemo(
+    () =>
+      errorPrice
+        ? {
+            text: errorPrice,
+            type: InfoType.error,
+          }
+        : null,
+    [errorPrice],
+  )
 
-  {
-    /* {(error || orderPlacingOnly || cancelDate) && (
-              <ErrorWrapper>
-                {error && sellAmount !== '' && price !== '' && (
-                  <ErrorRow>
-                    <ErrorInfo />
-                    <ErrorText>{error}</ErrorText>
-                  </ErrorRow>
-                )}
-              </ErrorWrapper>
-            )}
- */
-  }
+  const disablePlaceOrder =
+    (errorAmount ||
+      errorPrice ||
+      notApproved ||
+      showWarning ||
+      showWarningWrongChainId ||
+      showConfirm ||
+      sellAmount === '' ||
+      price === '') &&
+    true
 
   return (
     <>
@@ -407,7 +396,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             {!account ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
             ) : (
-              <ActionButton disabled={isPlaceOrderDisabled} onClick={handleShowConfirm}>
+              <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
                 Place Order
               </ActionButton>
             )}

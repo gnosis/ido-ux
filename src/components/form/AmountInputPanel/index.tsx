@@ -22,6 +22,7 @@ import {
   FieldRowTokenSymbol,
   FieldRowTop,
   FieldRowWrapper,
+  InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import TokenLogo from '../../token/TokenLogo'
 
@@ -65,13 +66,18 @@ const SpinningLaVidaLoca = styled.span`
   margin-right: 2px;
 `
 
-const Balance = styled.div`
+const Balance = styled.div<{ disabled?: boolean }>`
   color: ${({ theme }) => theme.text1};
   font-size: 14px;
   font-weight: 400;
   line-height: 1.2;
   margin: 0 8px 0 0;
+  ${(props) => props.disabled && 'opacity: 0.7;'}
 `
+
+Balance.defaultProps = {
+  disabled: false,
+}
 
 export interface unlockProps {
   isLocked: boolean
@@ -82,7 +88,7 @@ export interface unlockProps {
 interface Props {
   balance?: string
   chainId: ChainId
-  info?: FieldRowInfoProps | null
+  info?: FieldRowInfoProps
   onMax?: () => void
   onUserSellAmountInput: (val: string) => void
   token: Maybe<Token>
@@ -104,14 +110,17 @@ const AmountInputPanel: React.FC<Props> = (props) => {
   } = props
   const { account } = useActiveWeb3React()
   const isUnlocking = unlock.unlockState === ApprovalState.PENDING
+  const error = info?.type === InfoType.error
 
   return (
     <>
-      <FieldRowWrapper {...restProps}>
+      <FieldRowWrapper error={error} {...restProps}>
         <FieldRowTop>
           <FieldRowLabel>Amount</FieldRowLabel>
-          {balance && <Balance>Balance: {balance}</Balance>}
-          {onMax && account && <FieldRowLineButton onClick={onMax}>Max</FieldRowLineButton>}
+          <Balance disabled={!balance}>Balance: {balance ? balance : '0.00'}</Balance>
+          <FieldRowLineButton disabled={!onMax || !account} onClick={onMax}>
+            Max
+          </FieldRowLineButton>
         </FieldRowTop>
         <FieldRowBottom>
           {token && (
@@ -142,6 +151,8 @@ const AmountInputPanel: React.FC<Props> = (props) => {
             </UnlockButton>
           )}
           <FieldRowInput
+            disabled={!account}
+            error={error}
             onUserSellAmountInput={(val) => {
               onUserSellAmountInput(val)
             }}
@@ -149,7 +160,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           />
         </FieldRowBottom>
       </FieldRowWrapper>
-      <FieldRowInfo infoType={info && info.type}>
+      <FieldRowInfo infoType={info?.type}>
         {info ? (
           <>
             <MiniInfoIcon /> {info.text}

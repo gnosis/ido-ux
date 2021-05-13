@@ -16,6 +16,7 @@ import {
   FieldRowTokenSymbol,
   FieldRowTop,
   FieldRowWrapper,
+  InfoType,
 } from '../../pureStyledComponents/FieldRow'
 import DoubleLogo from '../../token/DoubleLogo'
 
@@ -37,7 +38,7 @@ const InvertButton = styled(FieldRowLineButton)`
 `
 
 interface Props {
-  info?: FieldRowInfoProps | null
+  info?: FieldRowInfoProps
   invertPrices: boolean
   onInvertPrices: () => void
   onUserPriceInput: (val: string, isInvertedPrice: boolean) => void
@@ -55,10 +56,11 @@ const PriceInputPanel = (props: Props) => {
     value,
     ...restProps
   } = props
+  const error = info?.type === InfoType.error
 
   return (
     <>
-      <FieldRowWrapper {...restProps}>
+      <FieldRowWrapper error={error} {...restProps}>
         <FieldRowTop>
           <FieldRowLabelStyled>
             <FieldRowLabelStyledText>
@@ -111,6 +113,7 @@ const PriceInputPanel = (props: Props) => {
             </>
           )}
           <FieldRowInput
+            error={error}
             onUserSellAmountInput={(val) => {
               onUserPriceInput(val, invertPrices)
             }}
@@ -118,7 +121,7 @@ const PriceInputPanel = (props: Props) => {
           />
         </FieldRowBottom>
       </FieldRowWrapper>
-      <FieldRowInfo infoType={info && info.type}>
+      <FieldRowInfo infoType={info?.type}>
         {info ? (
           <>
             <MiniInfoIcon /> {info.text}

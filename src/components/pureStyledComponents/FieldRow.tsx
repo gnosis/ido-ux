@@ -4,9 +4,9 @@ import styled, { css } from 'styled-components'
 import { Input } from '../form/NumericalInput'
 
 export enum InfoType {
-  ok = 'ok',
   error = 'error',
   info = 'info',
+  ok = 'ok',
 }
 
 export interface FieldRowInfoProps {
@@ -16,18 +16,23 @@ export interface FieldRowInfoProps {
 
 export const FieldRowWrapper = styled.div<{ error?: boolean }>`
   border-radius: 6px;
-  border: solid 1px ${({ theme }) => theme.border};
+  border-style: solid;
+  border-width: 1px;
+  border-color: ${(props) =>
+    props.error ? ({ theme }) => theme.error : ({ theme }) => theme.border};
   display: flex;
   flex-direction: column;
-  height: 62px;
+  min-height: 62px;
   margin: 0 0 6px;
   padding: 6px 10px;
+  transition: border-color 0.15s linear;
 `
 
 export const FieldRowTop = styled.div`
   align-items: center;
   display: flex;
   margin-bottom: auto;
+  padding-bottom: 10px;
 `
 
 export const FieldRowBottom = styled.div`
@@ -77,16 +82,21 @@ export const FieldRowInput = styled(Input)<{ error?: boolean }>`
   line-height: 1;
   margin-left: auto;
   margin: 0 0 0 20px;
+  outline: none;
   padding: 0;
   text-align: right;
+  transition: color 0.15s linear;
   width: auto;
-  outline: none;
 
   &::placeholder {
     color: #bfdeff;
     font-size: 23px;
     font-style: italic;
     font-weight: 400;
+  }
+
+  &[disabled] {
+    color: ${({ theme }) => rgba(theme.text1, 0.7)};
   }
 `
 
@@ -155,6 +165,8 @@ export const FieldRowLineButton = styled.button`
   }
 
   &[disabled] {
+    background-color: transparent;
+    color: ${({ theme }) => theme.text1};
     cursor: not-allowed;
     opacity: 0.5;
   }
