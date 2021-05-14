@@ -187,7 +187,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           )}
           <FieldRowInput
             disabled={!account}
-            error={error}
+            hasError={error}
             onUserSellAmountInput={(val) => {
               onUserSellAmountInput(val)
             }}

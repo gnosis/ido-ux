@@ -114,7 +114,7 @@ const PriceInputPanel = (props: Props) => {
             </>
           )}
           <FieldRowInput
-            error={error}
+            hasError={error}
             onUserSellAmountInput={(val) => {
               onUserPriceInput(val, invertPrices)
             }}

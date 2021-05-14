@@ -1,7 +1,7 @@
 import { rgba } from 'polished'
 import styled, { css } from 'styled-components'
 
-import { Input } from '../form/NumericalInput'
+import { NumericalInput } from '../form/NumericalInput'
 
 export enum InfoType {
   error = 'error',
@@ -71,10 +71,10 @@ export const FieldRowTokenSymbol = styled.div`
   white-space: nowrap;
 `
 
-export const FieldRowInput = styled(Input)<{ error?: boolean }>`
+export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   background: none;
   border: none;
-  color: ${(props) => (props.error ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
+  color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
   flex-grow: 1;
   flex-shrink: 1;
   font-size: 23px;

@@ -5,11 +5,12 @@ import { escapeRegExp } from '../../../utils'
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
 interface Props {
+  hasError?: boolean
   onUserSellAmountInput: (string) => void
   value: string | number
 }
 
-export const Input = React.memo(function InnerInput(
+export const NumericalInput = React.memo(function InnerInput(
   props: Props & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>,
 ) {
   const { onUserSellAmountInput, placeholder, value, ...restProps } = props
@@ -38,5 +39,3 @@ export const Input = React.memo(function InnerInput(
     />
   )
 })
-
-export default Input
