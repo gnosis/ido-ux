@@ -1,35 +1,34 @@
-#### Gnosis Auction User flow
+### Gnosis Auction user flow
 
-In Gnosis Auction, there are two types of participants: one seller (EOA or smart contract), and multiple bidders (also EOAs or SCs).
+In Gnosis Auction, there are two types of participants: one seller and multiple bidders.
 
-#### 1. The seller sets the auction parameters:
+#### 1. Seller: Starting an auction
 
-While there are more, there are 6 important auction parameters that must be set by the auctioneer:
+Starting an auction is a permissionless process. Each auction can be configured individually.
+There are two options to start an auction on most networks:
+Checkout the [UI guide](/#/docs/starting-an-auction-with-safe) or the [script guide](/#/docs/participate-as-auctioneer).
 
-- Auctioning-token: refers to the token you want to sell in the auction, with the token address as a string.
-- Bidding-token: refers to the token the bidders will use to bid on the auctioned token (e.g. USDC, ETH, or DAI), with the token address as a string.
-- Sell-amount: refers to the amount of tokens that you will sell, with the amount as an integer.
-- Min-buy-amount: refers to the minimum amount of buy tokens you are willing to accept. The minimum sell price of the auction is calculated by dividing the sell-amount/min-buy-amount.
-- Duration: refers to how long is the auction going to last for.
-- Network: refers to the network where the auction will take place (e.g. Mainnet or xDai).
+#### 2. Bidders: Placing orders
 
-The seller would then submit a transaction with the previous parameters and start the auction.
-
-#### 2. Once the auctions starts, the bidders get to start placing bids by setting the following parameters and submitting a transaction:
+Once the auctions starts, the bidders get to start placing bids. They need to:
 
 - Approved token (if first time)
 - Select amount of bid tokens willing to commit to the auction
 - Select maximum price willing to pay
+- Send the order placement transaction
 
-After submitting the transaction, the bidder’s bid will be valid, and the amount of bid tokens that he selected would be subtracted from his balance.
+After submitting the transaction, the bidder’s bid will be valid, and the amount of bid tokens that they selected would be subtracted from his balance.
 
-#### 3. Once the auction concludes, the auctioneer submits a transaction which will calculate the closing price. Closing price is calculated using the following method:
-
-1. Bids are gathered by the smart contract and sorted from highest to lowest price
-2. The smart contract works back from the highest bid, adding each bid’s amount of tokens to buy, until the sum multiplied by the bid's price equals the original amount to sell
-3. The price of this particular bid is selected as the final closing for all participants.
-4. Participants that selected a maximum price at the final closing price or higher receive tokens, the ones that had selected a maximum price below the closing price are left out
-
-#### 4. After the price has settled, the auctioneer will receive the proceeds of the auction. In contracts the bidder will need to submit an additional transaction to claim their auction proceeds.
+Check the more [detailed guide](/#/docs/participate-as-a-bidder).
 
 _Important: as a bidder, it is important to note that many participants might submit new bids right before the auction closes, making it difficult to predict the closing price of the auction ahead of time. This, it is important for bidders to submit their bids with the highest price they are comfortable to pay for the asset_
+
+#### 3. Auctioneer: On-chain price calculation
+
+It's the auctioneers duty to finish the auction by sending the transaction that calculates the price of the auction on-chain. Though it's also a permissionless process and everyone can do it.
+
+Check out the [guide](https://github.com/gnosis/ido-contracts#settle-auctionss) for doing the price calculation.
+
+#### 4. Bidders: Claiming
+
+After the price has settled, the auctioneer will receive the proceeds of the auction. In contrast, the bidder will need to submit an additional transaction to claim their auction proceeds.

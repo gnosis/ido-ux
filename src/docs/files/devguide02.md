@@ -1,4 +1,4 @@
-#### How do Batch Auctions work?
+### How do Batch Auctions work?
 
 1. In batch auctions, there is one auctioneer and multiple bidders.
 
@@ -8,15 +8,15 @@
 
 4. The auction runs until a certain date. After this date the auction is over, and no more bids can be placed.
 
-5. The smart contract sorts bids from highest to lowest price. 
+5. The smart contract sorts bids from highest to lowest price.
 
 6. The smart contract works backward from the highest bid, cumulatively adding each bid’s amount of tokens to sell, until the bid's sum multiplied by the price of the lowest bid to be included equals the sell amount of tokens (pre-defined by the auctioneer).
 
-7. The price of the bid (added to all previous bids’ amount of tokens) that reaches the amount of tokens to sell is selected as the final clearing price for all participants. 
+7. The price of the bid (added to all previous bids’ amount of tokens) that reaches the amount of tokens to sell is selected as the final clearing price for all participants.
 
-8. Bidders who specified a maximum price in their limit order that is greater than the final clearing price receive tokens **at the clearing price**. 
+8. Bidders who specified a maximum price in their limit order that is greater than the final clearing price receive tokens **at the clearing price**.
 
-9. Bidders that specified a maximum price in their limit order that is less than the final clearing price do not receive the tokens being auctioned. Sure they can still withdraw their bidding tokens from the DEX. 
+9. Bidders that specified a maximum price in their limit order that is less than the final clearing price do not receive the tokens being auctioned. Sure they can still withdraw their bidding tokens from the DEX.
 
 Let's take a deeper look at the example provided in the diagram below.
 

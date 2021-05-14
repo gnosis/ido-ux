@@ -1,4 +1,4 @@
-#### Overview
+### Overview
 
 Gnosis Auction is a platform for conducting fair, transparent, and decentralized token price discovery.
 
@@ -12,12 +12,11 @@ Gnosis Auction’s mechanism adds few major benefits over existing approaches av
 
 #### Benefits
 
-- **Front running resistant -** Gnosis Auction prevents front running bots from extracting value, by not allowing them to purchase tokens early and sell later at a higher price.
+- **Front running (MEV) resistant -** Gnosis Auction prevents front running bots from extracting value, by not allowing them to purchase tokens early and sell later at a higher price. In contrast to AMM solutions, the auction mechanism does not allow miners to extract value from users by using sandwich attacks.
 - **User friendly bidding experience -** In contrast to other mechanisms, Gnosis Auction enables bidders to participate at their leisure, without needing to time their activity in order to get the desired price.
 - **Full control over participation price -** One of the advantages of Gnosis Auction is the bidder’s ability to limit the price at which they are willing to buy. In contrast, IBCO requires the bidder to commit to participation without knowing the token’s eventual valuation.
 - **Fair pricing -** All bidders will receive the same clearing price, which is determined when that auction concludes.
 - **Order Settlement -** Auctions can settle more than 10,000 bid orders with the same settlement price.
 - **Permisionaless -** Auctions can be deployed without the need to ask for permission.
-- **MEV resistant -** In contrast to AMM solutions, the auction mechanism does not allow miners to extract value from users by using sandwich attacks.
 - **Composable -** Auction setup is modular enough to satisfy many different use cases’ needs.
 - **Gnosis Auction is built on the proven success of past blockchain-based auction developments.**

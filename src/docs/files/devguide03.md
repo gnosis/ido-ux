@@ -1,4 +1,4 @@
-#### Use cases
+### Use cases
 
 Gnosis Auction is a permissionless piece of infrastructure and some of the use cases one can initiate as an auctioneer include:
 
