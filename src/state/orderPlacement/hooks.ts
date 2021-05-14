@@ -211,10 +211,14 @@ export const useGetOrderPlacementError = (
   const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
-    price == '-' ? '1' : price,
+    price === '-' ? '1' : price,
     sellAmount,
   )
+  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
+
   const amountMustBeBigger =
+    amountIn &&
+    price &&
     derivedAuctionInfo?.minBiddingAmountPerOrder &&
     derivedAuctionInfo?.biddingToken &&
     sellAmount &&
@@ -228,15 +232,16 @@ export const useGetOrderPlacementError = (
         BigNumber.from(10).pow(derivedAuctionInfo?.biddingToken.decimals).toString(),
       ).toSignificant(2)}`
 
-  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
   const insufficientBalance =
     balanceIn &&
     amountIn &&
+    price &&
     balanceIn.lessThan(amountIn) &&
     `Insufficient ${getTokenDisplay(amountIn.token, chainId)}` + ' balance.'
 
   const outOfBoundsPricePlacingOrder =
     amountIn &&
+    price &&
     derivedAuctionInfo?.clearingPriceSellOrder !== null &&
     derivedAuctionInfo?.clearingPrice !== null &&
     derivedAuctionInfo?.auctioningToken !== undefined &&
@@ -255,6 +260,7 @@ export const useGetOrderPlacementError = (
 
   const outOfBoundsPrice =
     amountIn &&
+    price &&
     derivedAuctionInfo?.initialAuctionOrder !== null &&
     derivedAuctionInfo?.auctioningToken !== undefined &&
     derivedAuctionInfo?.biddingToken !== undefined &&
