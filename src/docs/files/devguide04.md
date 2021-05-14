@@ -19,7 +19,7 @@ Once the auctions starts, the bidders get to start placing bids. They need to:
 
 After submitting the transaction, the bidder’s bid will be valid, and the amount of bid tokens that they selected would be subtracted from his balance.
 
-Check the more [detailed guide](/docs/participate-as-a-bidder#topAnchor).
+Check the more [detailed guide](/#/docs/participate-as-a-bidder).
 
 _Important: as a bidder, it is important to note that many participants might submit new bids right before the auction closes, making it difficult to predict the closing price of the auction ahead of time. This, it is important for bidders to submit their bids with the highest price they are comfortable to pay for the asset_
 
