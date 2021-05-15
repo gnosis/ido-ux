@@ -235,7 +235,6 @@ export const useGetOrderPlacementError = (
   const insufficientBalance =
     balanceIn &&
     amountIn &&
-    // price &&
     balanceIn.lessThan(amountIn) &&
     `Insufficient ${getTokenDisplay(amountIn.token, chainId)}` + ' balance.'
 
