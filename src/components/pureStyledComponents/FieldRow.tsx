@@ -23,7 +23,6 @@ export const FieldRowWrapper = styled.div<{ error?: boolean }>`
   display: flex;
   flex-direction: column;
   min-height: 62px;
-  margin: 0 0 6px;
   padding: 6px 10px;
   transition: border-color 0.15s linear;
 `
