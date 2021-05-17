@@ -367,17 +367,28 @@ export function useDerivedAuctionInfo(
 
     const getCurrentState = () => deriveAuctionState(auctionDetails, clearingPriceInfo).auctionState
     setAuctionState(getCurrentState())
-    const timeLeft = calculateTimeLeft(auctionDetails.endTimeTimestamp)
+    const timeLeftEndAuction = calculateTimeLeft(auctionDetails.endTimeTimestamp)
+    const timeLeftCancellationOrder = calculateTimeLeft(
+      auctionDetails.orderCancellationEndDate as number,
+    )
 
-    if (timeLeft < 0) {
-      return
+    const updateStatusWhenTimeIsUp = (remainingAuctionTimes: Array<number>) => {
+      const timersId = remainingAuctionTimes
+        .map((timeLeft) => {
+          if (timeLeft < 0) {
+            return
+          }
+          return setTimeout(() => {
+            setAuctionState(getCurrentState())
+          }, timeLeft * 1000)
+        })
+        .filter(isTimeout)
+      return timersId
     }
-    const timerId = setTimeout(() => {
-      setAuctionState(getCurrentState())
-    }, timeLeft * 1000)
+    const timerEventsId = updateStatusWhenTimeIsUp([timeLeftCancellationOrder, timeLeftEndAuction])
 
     return () => {
-      clearTimeout(timerId)
+      timerEventsId.map((timerId) => clearTimeout(timerId))
     }
   }, [auctionDetails, clearingPriceInfo, noAuctionData])
 
