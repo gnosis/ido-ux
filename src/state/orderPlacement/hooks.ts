@@ -17,7 +17,7 @@ import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDeta
 import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
-import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../utils'
+import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTimeout } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
 import { calculateTimeLeft } from '../../utils/tools'

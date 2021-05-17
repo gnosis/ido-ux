@@ -193,3 +193,7 @@ export function getTokenDisplay(token: Token, chainId: ChainId): string {
 export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
   return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId == 100
 }
+
+export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {
+  return typeof timeId !== 'undefined'
+}
