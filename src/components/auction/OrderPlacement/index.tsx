@@ -42,11 +42,13 @@ import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
+import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
   min-height: 352px;
   min-width: 100%;
+  height: 100%;
 `
 
 const ActionButton = styled(Button)`
@@ -145,6 +147,18 @@ const ButtonWrap = styled(ButtonAnchor)`
   height: 20px;
   margin: -2px 6px 0 0;
   padding: 0 5px;
+`
+
+const Wrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`
+
+const SectionTitle = styled(PageTitle)`
+  margin-bottom: 0;
+  margin-top: 0;
 `
 
 interface OrderPlacementProps {
@@ -344,6 +358,15 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   return (
     <>
+      <Wrap>
+        <SectionTitle as="h2">
+          {(auctionState === AuctionState.ORDER_PLACING ||
+            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
+            'Place Order'}
+          {auctionState === AuctionState.CLAIMING && 'Claim Proceeds'}
+        </SectionTitle>
+        {derivedAuctionInfo.auctionState === AuctionState.CLAIMING && 'Claim Proceeds'}
+      </Wrap>
       <Wrapper>
         {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
         {!auctionInfoLoading && isPrivate && !signatureAvailable && (

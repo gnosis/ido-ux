@@ -21,6 +21,7 @@ const Wrapper = styled.div``
 
 const Table = styled(BaseCard)`
   padding: 0;
+  z-index: 51;
 `
 
 const SectionTitle = styled(PageTitle)`
