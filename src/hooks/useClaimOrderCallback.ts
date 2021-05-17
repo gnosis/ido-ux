@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
+import { useSingleCallResult } from '../state/multicall/hooks'
 import { DerivedAuctionInfo } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
-import { useTransactionAdder } from '../state/transactions/hooks'
+import { useHasPendingClaim, useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
@@ -32,6 +33,14 @@ export interface UseGetClaimInfoReturn {
   error: Maybe<Error>
 }
 
+export enum ClaimState {
+  UNKNOWN,
+  NOT_CLAIMED,
+  PENDING,
+  CLAIMED,
+}
+
+// returns the coded orders that participated in the auction for the current account
 export const useGetClaimInfo = (auctionIdentifier: AuctionIdentifier): UseGetClaimInfoReturn => {
   const { account, library } = useActiveWeb3React()
   const [claimInfo, setClaimInfo] = useState<ClaimInformation>({ sellOrdersFormUser: [] })
@@ -154,7 +163,7 @@ export function useGetAuctionProceeds(
 
 export const useClaimOrderCallback = (
   auctionIdentifier: AuctionIdentifier,
-): (() => Promise<Maybe<string>>) => {
+): [ClaimState, () => Promise<Maybe<string>>] => {
   const { account, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
@@ -186,10 +195,45 @@ export const useClaimOrderCallback = (
     })
 
     addTransaction(response, {
-      summary: 'Claiming tokens',
+      summary: `Claiming tokens auction-${auctionId}`,
     })
     return response.hash
   }, [account, addTransaction, chainId, error, gasPrice, library, auctionId, claimInfo])
 
-  return claimCallback
+  const claimableOrders = claimInfo?.sellOrdersFormUser
+  const userHasAvailableClaim = useUserHasAvailableClaim(auctionIdentifier, claimableOrders)
+  const pendingApproval = useHasPendingClaim(auctionIdentifier.auctionId, account)
+
+  const claimStatus = useMemo(() => {
+    if (!claimableOrders) return ClaimState.UNKNOWN
+
+    return userHasAvailableClaim
+      ? pendingApproval
+        ? ClaimState.PENDING
+        : ClaimState.NOT_CLAIMED
+      : ClaimState.CLAIMED
+  }, [claimableOrders, pendingApproval, userHasAvailableClaim])
+
+  return [claimStatus, claimCallback]
+}
+
+export function useUserHasAvailableClaim(
+  auctionIdentifer: AuctionIdentifier,
+  claimableOrders?: string[],
+): boolean | undefined {
+  const { account, library } = useActiveWeb3React()
+  const { auctionId, chainId } = auctionIdentifer
+
+  const easyAuctionInstance: Contract = getEasyAuctionContract(chainId as ChainId, library, account)
+  const {
+    loading: isLoadingClaimed,
+    result: not_claimed,
+  } = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
+    auctionId,
+    claimableOrders == undefined || claimableOrders[0] == undefined
+      ? queueStartElement
+      : claimableOrders[0],
+  ])
+
+  return Boolean(!isLoadingClaimed && not_claimed && not_claimed[0] === true)
 }

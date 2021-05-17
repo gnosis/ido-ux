@@ -129,3 +129,24 @@ export function useHasPendingApproval(tokenAddress?: string, spender?: string): 
   }
   return hasPendingApproval
 }
+
+// returns whether a account has a pending claim transaction
+export function useHasPendingClaim(auctionId?: number, from?: string | null): boolean {
+  const allTransactions = useAllTransactions()
+
+  return useMemo(() => {
+    return (
+      typeof auctionId === 'number' &&
+      typeof from === 'string' &&
+      Object.keys(allTransactions).some((hash) => {
+        const tx = allTransactions[hash]
+        if (!tx) return false
+        if (tx.receipt) {
+          return false
+        } else {
+          return `Claiming tokens auction-${auctionId}` === tx.summary && isTransactionRecent(tx)
+        }
+      })
+    )
+  }, [allTransactions, auctionId, from])
+}
