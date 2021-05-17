@@ -212,9 +212,13 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
           if (!res.value.ok) {
             // backend returns {"message":"invalid url query"}
             // for bad requests
-            throw await res.value.json()
+            logger.error(
+              'Error getting all auction details with user participation: ',
+              res.value.json(),
+            )
+          } else {
+            allAuctions.push(await res.value.json())
           }
-          allAuctions.push(await res.value.json())
         }
       }
       return allAuctions.flat()
@@ -242,15 +246,24 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
         promises.push(fetch(url))
       }
-      const results = await Promise.all(promises)
+      const results = await Promise.allSettled(promises)
       const allAuctions = []
       for (const res of results) {
-        if (!res.ok) {
-          // backend returns {"message":"invalid url query"}
-          // for bad requests
-          throw await res.json()
+        if (res.status === 'rejected') {
+          logger.error('Error getting all auction details without user participation: ', res.reason)
         }
-        allAuctions.push(await res.json())
+        if (res.status === 'fulfilled') {
+          if (!res.value.ok) {
+            // backend returns {"message":"invalid url query"}
+            // for bad requests
+            logger.error(
+              'Error getting all auction details without user participation: ',
+              res.value.json(),
+            )
+          } else {
+            allAuctions.push(await res.value.json())
+          }
+        }
       }
       return allAuctions.flat()
     } catch (error) {
@@ -308,9 +321,10 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
           if (!res.value.ok) {
             // backend returns {"message":"invalid url query"}
             // for bad requests
-            throw await res.value.json()
+            logger.error('Error getting most interesting auction details: ', res.value.json())
+          } else {
+            allInterestingAuctions.push(await res.value.json())
           }
-          allInterestingAuctions.push(await res.value.json())
         }
       }
 
