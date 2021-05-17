@@ -63,3 +63,7 @@ export const getChainName = (chainId: number) => {
     'Unknown Network'
   )
 }
+
+export const isTimeout = (timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout => {
+  return typeof timeId !== 'undefined'
+}

@@ -20,7 +20,7 @@ import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolu
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
-import { calculateTimeLeft } from '../../utils/tools'
+import { calculateTimeLeft, isTimeout } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
