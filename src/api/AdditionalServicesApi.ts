@@ -212,7 +212,10 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
           if (!res.value.ok) {
             // backend returns {"message":"invalid url query"}
             // for bad requests
-            throw await res.value.json()
+            logger.error(
+              'Error getting all auction details with user participation: ',
+              res.value.json(),
+            )
           }
           allAuctions.push(await res.value.json())
         }
