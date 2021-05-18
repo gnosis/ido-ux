@@ -132,9 +132,9 @@ export const FieldRowPrimaryButton = styled.button`
 `
 
 export const FieldRowPrimaryButtonText = styled.span`
-  margin-left: 2px;
+  margin-left: 3px;
   margin-top: 1px;
-  padding-right: 3px;
+  padding-right: 1px;
 
   &:first-child {
     margin-left: 0;

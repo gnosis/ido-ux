@@ -35,7 +35,7 @@ const DoubleLogoStyled = styled(DoubleLogo)`
 
 const InvertButton = styled(FieldRowLineButton)`
   flex-shrink: 0;
-  height: 15px;
+  height: 16px;
 `
 
 interface Props {
@@ -87,7 +87,7 @@ const PriceInputPanel = (props: Props) => {
                       address: tokens.auctioningToken.address,
                       symbol: tokens.auctioningToken.symbol,
                     }}
-                    size="15px"
+                    size="16px"
                   />
                 ) : (
                   <DoubleLogoStyled
@@ -99,7 +99,7 @@ const PriceInputPanel = (props: Props) => {
                       address: tokens.biddingToken.address,
                       symbol: tokens.biddingToken.symbol,
                     }}
-                    size="15px"
+                    size="16px"
                   />
                 )}
                 <FieldRowTokenSymbol>

@@ -41,6 +41,7 @@ const UnlockButton = styled(FieldRowPrimaryButton)<{ unlocking?: boolean }>`
   background-color: ${(props) =>
     props.unlocking ? '#008c73' : ({ theme }) => theme.buttonPrimary.backgroundColor};
   color: ${(props) => (props.unlocking ? '#fff' : ({ theme }) => theme.buttonPrimary.color)};
+  height: 17px;
 
   &:hover {
     background-color: ${(props) =>
@@ -137,7 +138,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           {token && (
             <FieldRowToken>
               {token.address && (
-                <TokenLogo size={'15px'} token={{ address: token.address, symbol: token.symbol }} />
+                <TokenLogo size={'16px'} token={{ address: token.address, symbol: token.symbol }} />
               )}
               {token && token.symbol && (
                 <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
