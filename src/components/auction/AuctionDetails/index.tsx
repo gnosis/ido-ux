@@ -1,7 +1,7 @@
 import { rgba } from 'polished'
 import React, { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { TokenAmount } from 'uniswap-xdai-sdk'
+import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
@@ -336,65 +336,12 @@ const AuctionDetails = (props: Props) => {
     () =>
       derivedAuctionInfo &&
       auctionDetails &&
-      Number(auctionDetails.currentBiddingAmount) /
-        Number(derivedAuctionInfo.clearingPrice.toSignificant(4)),
+      new Fraction(Number(auctionDetails.currentBiddingAmount).toString(), '1').divide(
+        derivedAuctionInfo.clearingPrice,
+      ),
     [auctionDetails, derivedAuctionInfo],
   )
   const extraDetails: Array<ExtraDetailsItemProps> = [
-    {
-      title: 'Atomic closure possible',
-      tooltip:
-        'If this is allowed, then one arbitrageur is allowed to place one further order at the time of auction settlement. This allows bringing in new on-chain liquidity',
-      value: auctionDetails ? auctionDetails.isAtomicClosureAllowed.toString() : '-',
-    },
-    {
-      title: 'Min bidding amount per order',
-      tooltip: 'Each order must at least bid this amount',
-      value: auctionDetails
-        ? `${new TokenAmount(
-            derivedAuctionInfo?.biddingToken,
-            auctionDetails.minimumBiddingAmountPerOrder,
-          ).toSignificant(4)} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
-        : '-',
-    },
-    {
-      progress: auctionDetails
-        ? auctionDetails.minFundingThreshold === '0x0'
-          ? '-'
-          : BigNumber.from(auctionDetails.currentBiddingAmount)
-              .mul(BigNumber.from(100))
-              .div(BigNumber.from(auctionDetails.minFundingThreshold))
-              .toString()
-              .concat(' %')
-        : '-',
-      title: 'Minimun funding',
-      tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
-      value:
-        auctionDetails == null || auctionDetails.minFundingThreshold == '0x0'
-          ? '-'
-          : `${auctionDetails.minFundingThreshold} ${getTokenDisplay(
-              derivedAuctionInfo?.biddingToken,
-              chainId,
-            )}`,
-    },
-    {
-      progress:
-        tokenSold && derivedAuctionInfo
-          ? (
-              (tokenSold * 100) /
-              Number(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4))
-            )
-              .toString()
-              .concat('%')
-          : '-',
-      title: 'Estimated tokens sold',
-      tooltip:
-        'If no further bids were canceled or placed, then this would be amount of tokens sold',
-      value:
-        tokenSold && derivedAuctionInfo
-          ? `${tokenSold}  ${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)}`
-          : '-',
-    },
     {
       title: 'Last order cancelation date',
       tooltip: 'Last date at which an order cancelation is allowed',
@@ -404,6 +351,81 @@ const AuctionDetails = (props: Props) => {
     {
       title: 'Auction End Date',
       value: auctionDetails && new Date(auctionDetails.endTimeTimestamp * 1000).toLocaleString(),
+    },
+    {
+      progress:
+        auctionDetails && derivedAuctionInfo
+          ? auctionDetails.minFundingThreshold === '0x0'
+            ? '-'
+            : new Fraction(
+                BigNumber.from(10)
+                  .pow(derivedAuctionInfo?.biddingToken.decimals + 2)
+                  .mul(BigNumber.from(auctionDetails.currentBiddingAmount))
+                  .toString(),
+                BigNumber.from(auctionDetails.minFundingThreshold).toString(),
+              )
+                .toSignificant(2)
+                .concat(' %')
+          : '-',
+      title: 'Minimun funding',
+      tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
+      value:
+        auctionDetails == null || auctionDetails.minFundingThreshold == '0x0'
+          ? '0'
+          : `${abbreviation(
+              new TokenAmount(
+                derivedAuctionInfo.biddingToken,
+                auctionDetails.minFundingThreshold,
+              ).toSignificant(2),
+            )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`,
+    },
+    {
+      progress:
+        tokenSold && derivedAuctionInfo && derivedAuctionInfo.initialAuctionOrder
+          ? tokenSold
+              .multiply(
+                new Fraction(
+                  BigNumber.from('10')
+                    .pow(derivedAuctionInfo.auctioningToken.decimals + 2)
+                    .toString(),
+                  derivedAuctionInfo?.initialAuctionOrder?.sellAmount.raw.toString(),
+                ),
+              )
+              .toSignificant(2)
+              .concat('%')
+          : '-',
+      title: 'Estimated tokens sold',
+      tooltip:
+        'If no further bids were canceled or placed, then this would be amount of tokens sold',
+      value:
+        tokenSold && derivedAuctionInfo
+          ? `${abbreviation(tokenSold.toSignificant(2))}  ${getTokenDisplay(
+              derivedAuctionInfo?.auctioningToken,
+              chainId,
+            )}`
+          : '-',
+    },
+    {
+      title: 'Atomic closure ',
+      tooltip:
+        'If atomic closure is enabled, one arbitrageur is allowed to place one further order at the time of auction settlement. This allows bridging on-chain liquidity into the auction',
+      value: auctionDetails
+        ? auctionDetails.isAtomicClosureAllowed
+          ? 'enabled'
+          : 'disabled'
+        : '-',
+    },
+    {
+      title: 'Min bidding amount per order',
+      tooltip: 'Each order must at least bid this amount',
+      value: auctionDetails
+        ? `${abbreviation(
+            new TokenAmount(
+              derivedAuctionInfo?.biddingToken,
+              auctionDetails.minimumBiddingAmountPerOrder,
+            ).toSignificant(2),
+          )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
+        : '-',
     },
     {
       title: 'Allow List Contract',
