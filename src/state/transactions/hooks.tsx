@@ -144,7 +144,11 @@ export function useHasPendingClaim(auctionId?: number, from?: string | null): bo
         if (tx.receipt) {
           return false
         } else {
-          return `Claiming tokens auction-${auctionId}` === tx.summary && isTransactionRecent(tx)
+          return (
+            tx.from === from &&
+            `Claiming tokens auction-${auctionId}` === tx.summary &&
+            isTransactionRecent(tx)
+          )
         }
       })
     )

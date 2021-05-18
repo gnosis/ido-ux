@@ -202,17 +202,17 @@ export const useClaimOrderCallback = (
 
   const claimableOrders = claimInfo?.sellOrdersFormUser
   const userHasAvailableClaim = useUserHasAvailableClaim(auctionIdentifier, claimableOrders)
-  const pendingApproval = useHasPendingClaim(auctionIdentifier.auctionId, account)
+  const pendingClaim = useHasPendingClaim(auctionIdentifier.auctionId, account)
 
   const claimStatus = useMemo(() => {
     if (!claimableOrders) return ClaimState.UNKNOWN
 
     return userHasAvailableClaim
-      ? pendingApproval
+      ? pendingClaim
         ? ClaimState.PENDING
         : ClaimState.NOT_CLAIMED
       : ClaimState.CLAIMED
-  }, [claimableOrders, pendingApproval, userHasAvailableClaim])
+  }, [claimableOrders, pendingClaim, userHasAvailableClaim])
 
   return [claimStatus, claimCallback]
 }
