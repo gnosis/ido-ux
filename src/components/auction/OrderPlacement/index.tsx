@@ -29,7 +29,7 @@ import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import AmountInputPanel from '../../form/AmountInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import { ErrorInfo } from '../../icons/ErrorInfo'
+import { Calendar } from '../../icons/Calendar'
 import { LockBig } from '../../icons/LockBig'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
@@ -83,11 +83,13 @@ const Warning = styled.div`
 `
 
 const WarningText = styled.div`
-  color: ${({ theme }) => theme.error};
+  color: ${({ theme }) => theme.text1};
   font-size: 15px;
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.2;
   margin-left: 8px;
+  position: relative;
+  top: 2px;
   text-align: left;
 `
 
@@ -337,7 +339,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           <>
             {showTopWarning && (
               <Warning>
-                <ErrorInfo />
+                <Calendar />
                 <WarningText>
                   {orderPlacingOnly &&
                     `Orders cannot be canceled once you confirm the transaction.`}
