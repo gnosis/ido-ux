@@ -198,7 +198,7 @@ export const OrderBookTable: React.FC<Props> = () => {
           </TableCell>
           <TableCell minWidth={'120px'}>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>Summary</Wrap>
+              <Wrap margin={'0 10px 0 0'}>Sum</Wrap>
               <Tooltip id="info" place={'bottom'} text={`Summary`} />
             </Wrap>
           </TableCell>

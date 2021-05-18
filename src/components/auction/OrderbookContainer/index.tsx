@@ -11,7 +11,6 @@ import { ChartIcon } from '../../icons/ChartIcon'
 import { TableIcon } from '../../icons/TableIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
-import { AuctionPending } from '../AuctionPending'
 import { OrderBook } from '../Orderbook'
 import { OrderBookTable } from '../OrderbookTable'
 
@@ -120,7 +119,7 @@ const StyledCheckbox = styled(Checkbox)`
 `
 
 export const OrderBookContainer = (props) => {
-  const { auctionIdentifier, auctionState, derivedAuctionInfo } = props
+  const { auctionIdentifier, derivedAuctionInfo } = props
 
   const [isChartVisible, setChartVisibility] = useState(true)
   const dropdownMockData = ['0.001', '0.01', '0.1', '1', '10', '50', '100']
@@ -153,9 +152,6 @@ export const OrderBookContainer = (props) => {
           />
         </Wrap>
       </Wrap>
-      {auctionState === AuctionState.PRICE_SUBMISSION && (
-        <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
-      )}
       {isChartVisible ? (
         <OrderBook auctionIdentifier={auctionIdentifier} derivedAuctionInfo={derivedAuctionInfo} />
       ) : (

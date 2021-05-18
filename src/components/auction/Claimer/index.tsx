@@ -6,7 +6,11 @@ import ReactTooltip from 'react-tooltip'
 import { useActiveWeb3React } from '../../../hooks'
 import { useClaimOrderCallback, useGetAuctionProceeds } from '../../../hooks/useClaimOrderCallback'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
+import {
+  AuctionState,
+  DerivedAuctionInfo,
+  useDerivedClaimInfo,
+} from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { getTokenDisplay, isTokenXDAI } from '../../../utils'
 import { Button } from '../../buttons/Button'
@@ -18,7 +22,9 @@ import { ErrorInfo } from '../../icons/ErrorInfo'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
+import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import TokenLogo from '../../token/TokenLogo'
+import { AuctionPending } from '../AuctionPending'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -71,6 +77,11 @@ const ButtonWrap = styled(ButtonAnchor)`
   height: 20px;
   margin: -2px 0 0 15px;
   padding: 0 5px;
+`
+
+const SectionTitle = styled(PageTitle)`
+  margin-bottom: 0;
+  margin-top: 0;
 `
 
 interface Props {
@@ -134,117 +145,127 @@ const Claimer: React.FC<Props> = (props) => {
   )
 
   return (
-    <Wrapper>
-      {isLoading && <InlineLoading size={SpinnerSize.small} />}
-      {!isLoading && (
-        <>
-          <TokensWrapper>
-            <TokenItem>
-              <Token>
-                {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
-                  <>
-                    <TokenLogo
-                      size={'34px'}
-                      token={{
-                        address: derivedAuctionInfo?.biddingToken.address,
-                        symbol: biddingTokenDisplay,
-                      }}
-                    />
-                    <Text>{biddingTokenDisplay != 'XDAI' ? biddingTokenDisplay : `WXDAI`}</Text>
-                    {isTokenXDAI(derivedAuctionInfo?.biddingToken.address, chainId) && (
-                      <span
-                        className={`tooltipComponent`}
-                        data-for={'wrap_button'}
-                        data-html={true}
-                        data-multiline={true}
-                        data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap. Do it after you claimed your WXDAI`}
-                      >
-                        <ReactTooltip
-                          arrowColor={'#001429'}
-                          backgroundColor={'#001429'}
-                          border
-                          borderColor={'#174172'}
-                          className="customTooltip"
-                          delayHide={50}
-                          delayShow={250}
-                          effect="solid"
-                          id={'wrap_button'}
-                          textColor="#fff"
-                        />
-                        <ButtonWrap
-                          buttonType={ButtonType.primaryInverted}
-                          href={`https://app.honeyswap.org/#/swap?inputCurrency=${derivedAuctionInfo?.biddingToken.address}`}
-                          target="_blank"
-                        >
-                          Unwrap
-                        </ButtonWrap>
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  '-'
-                )}
-              </Token>
-              <Text>
-                {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
-              </Text>
-            </TokenItem>
-            <TokenItem>
-              <Token>
-                {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
-                  <>
-                    <TokenLogo
-                      size={'34px'}
-                      token={{
-                        address: derivedAuctionInfo?.auctioningToken.address,
-                        symbol: auctioningTokenDisplay,
-                      }}
-                    />
-                    <Text>{auctioningTokenDisplay}</Text>
-                  </>
-                ) : (
-                  '-'
-                )}
-              </Token>
-              <Text>
-                {claimableAuctioningToken ? `${claimableAuctioningToken.toSignificant(6)}` : `0.00`}
-              </Text>
-            </TokenItem>
-          </TokensWrapper>
-          {!isValid && account && (
-            <ErrorWrapper>
-              <ErrorRow>
-                <ErrorInfo />
-                <ErrorText>{error}</ErrorText>
-              </ErrorRow>
-            </ErrorWrapper>
-          )}
-          {!account ? (
-            <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-          ) : (
-            <ActionButton
-              disabled={isClaimButtonDisabled}
-              onClick={() => {
-                setShowConfirm(true)
-                onClaimOrder()
-              }}
-            >
-              Claim
-            </ActionButton>
-          )}
-          <ClaimConfirmationModal
-            hash={txHash}
-            isOpen={showConfirm}
-            onDismiss={() => {
-              resetModal()
-              setShowConfirm(false)
-            }}
-            pendingConfirmation={pendingConfirmation}
-            pendingText={pendingText}
-          />
-        </>
+    <>
+      {derivedAuctionInfo.auctionState === AuctionState.PRICE_SUBMISSION && (
+        <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
       )}
-    </Wrapper>
+      <SectionTitle as="h2">
+        {derivedAuctionInfo.auctionState === AuctionState.CLAIMING && 'Claim Proceeds'}
+      </SectionTitle>
+      <Wrapper>
+        {isLoading && <InlineLoading size={SpinnerSize.small} />}
+        {!isLoading && (
+          <>
+            <TokensWrapper>
+              <TokenItem>
+                <Token>
+                  {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
+                    <>
+                      <TokenLogo
+                        size={'34px'}
+                        token={{
+                          address: derivedAuctionInfo?.biddingToken.address,
+                          symbol: biddingTokenDisplay,
+                        }}
+                      />
+                      <Text>{biddingTokenDisplay != 'XDAI' ? biddingTokenDisplay : `WXDAI`}</Text>
+                      {isTokenXDAI(derivedAuctionInfo?.biddingToken.address, chainId) && (
+                        <span
+                          className={`tooltipComponent`}
+                          data-for={'wrap_button'}
+                          data-html={true}
+                          data-multiline={true}
+                          data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap. Do it after you claimed your WXDAI`}
+                        >
+                          <ReactTooltip
+                            arrowColor={'#001429'}
+                            backgroundColor={'#001429'}
+                            border
+                            borderColor={'#174172'}
+                            className="customTooltip"
+                            delayHide={50}
+                            delayShow={250}
+                            effect="solid"
+                            id={'wrap_button'}
+                            textColor="#fff"
+                          />
+                          <ButtonWrap
+                            buttonType={ButtonType.primaryInverted}
+                            href={`https://app.honeyswap.org/#/swap?inputCurrency=${derivedAuctionInfo?.biddingToken.address}`}
+                            target="_blank"
+                          >
+                            Unwrap
+                          </ButtonWrap>
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    '-'
+                  )}
+                </Token>
+                <Text>
+                  {claimableBiddingToken ? `${claimableBiddingToken.toSignificant(6)} ` : `0.00`}
+                </Text>
+              </TokenItem>
+              <TokenItem>
+                <Token>
+                  {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
+                    <>
+                      <TokenLogo
+                        size={'34px'}
+                        token={{
+                          address: derivedAuctionInfo?.auctioningToken.address,
+                          symbol: auctioningTokenDisplay,
+                        }}
+                      />
+                      <Text>{auctioningTokenDisplay}</Text>
+                    </>
+                  ) : (
+                    '-'
+                  )}
+                </Token>
+                <Text>
+                  {claimableAuctioningToken
+                    ? `${claimableAuctioningToken.toSignificant(6)}`
+                    : `0.00`}
+                </Text>
+              </TokenItem>
+            </TokensWrapper>
+            {!isValid && account && (
+              <ErrorWrapper>
+                <ErrorRow>
+                  <ErrorInfo />
+                  <ErrorText>{error}</ErrorText>
+                </ErrorRow>
+              </ErrorWrapper>
+            )}
+            {!account ? (
+              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+            ) : (
+              <ActionButton
+                disabled={isClaimButtonDisabled}
+                onClick={() => {
+                  setShowConfirm(true)
+                  onClaimOrder()
+                }}
+              >
+                Claim
+              </ActionButton>
+            )}
+            <ClaimConfirmationModal
+              hash={txHash}
+              isOpen={showConfirm}
+              onDismiss={() => {
+                resetModal()
+                setShowConfirm(false)
+              }}
+              pendingConfirmation={pendingConfirmation}
+              pendingText={pendingText}
+            />
+          </>
+        )}
+      </Wrapper>
+    </>
   )
 }
 

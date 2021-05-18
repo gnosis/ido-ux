@@ -363,9 +363,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           {(auctionState === AuctionState.ORDER_PLACING ||
             auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
             'Place Order'}
-          {auctionState === AuctionState.CLAIMING && 'Claim Proceeds'}
         </SectionTitle>
-        {derivedAuctionInfo.auctionState === AuctionState.CLAIMING && 'Claim Proceeds'}
       </Wrap>
       <Wrapper>
         {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
