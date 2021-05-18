@@ -197,7 +197,6 @@ const DoubleChevron = styled(DoubleChevronDown)<{ isOpen: boolean }>`
   transform: rotate(${(props) => (props.isOpen ? '180deg' : '0deg')});
 `
 
-
 const ExtraDetailsAnimWrapper = styled.div<{ wrapperHeight?: number }>`
   height: ${(props) => (props.wrapperHeight ? `${props.wrapperHeight}px` : '0')};
   overflow: hidden;
@@ -460,7 +459,6 @@ const AuctionDetails = (props: Props) => {
 
   const [extraDetailsHeight, setExtraDetailsHeight] = useState(0)
   const componentRef = React.useRef(null)
-
 
   const updateExtraDetailsHeight = () => {
     setExtraDetailsHeight(componentRef?.current?.offsetHeight)
