@@ -413,8 +413,8 @@ const AuctionDetails = (props: Props) => {
           'If atomic closure is enabled, one arbitrageur is allowed to place one further order at the time of auction settlement. This allows bridging on-chain liquidity into the auction',
         value: auctionDetails
           ? auctionDetails.isAtomicClosureAllowed
-            ? 'enabled'
-            : 'disabled'
+            ? 'Enabled'
+            : 'Disabled'
           : '-',
       },
       {
