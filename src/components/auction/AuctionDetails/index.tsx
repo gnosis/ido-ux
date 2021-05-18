@@ -197,8 +197,9 @@ const DoubleChevron = styled(DoubleChevronDown)<{ isOpen: boolean }>`
   transform: rotate(${(props) => (props.isOpen ? '180deg' : '0deg')});
 `
 
-const ExtraDetailsAnimWrapper = styled.div<{ height?: number }>`
-  height: ${(props) => (props.height ? `${props.height}px` : 0)};
+
+const ExtraDetailsAnimWrapper = styled.div<{ wrapperHeight?: number }>`
+  height: ${(props) => (props.wrapperHeight ? `${props.wrapperHeight}px` : '0')};
   overflow: hidden;
   position: relative;
   transition: height 0.15s ease-out;
@@ -345,120 +346,133 @@ const AuctionDetails = (props: Props) => {
       ),
     [auctionDetails, derivedAuctionInfo],
   )
-  const extraDetails: Array<ExtraDetailsItemProps> = [
-    {
-      title: 'Last order cancelation date',
-      tooltip: 'Last date at which an order cancelation is allowed',
-      value:
-        auctionDetails && new Date(auctionDetails.orderCancellationEndDate * 1000).toLocaleString(),
-    },
-    {
-      title: 'Auction End Date',
-      value: auctionDetails && new Date(auctionDetails.endTimeTimestamp * 1000).toLocaleString(),
-    },
-    {
-      progress:
-        auctionDetails && derivedAuctionInfo
-          ? auctionDetails.minFundingThreshold === '0x0'
-            ? '-'
-            : new Fraction(
-                BigNumber.from(10)
-                  .pow(derivedAuctionInfo?.biddingToken.decimals + 2)
-                  .mul(BigNumber.from(auctionDetails.currentBiddingAmount))
-                  .toString(),
-                BigNumber.from(auctionDetails.minFundingThreshold).toString(),
-              )
-                .toSignificant(2)
-                .concat(' %')
-          : '-',
-      title: 'Minimun funding',
-      tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
-      value:
-        auctionDetails == null || auctionDetails.minFundingThreshold == '0x0'
-          ? '0'
-          : `${abbreviation(
-              new TokenAmount(
-                derivedAuctionInfo.biddingToken,
-                auctionDetails.minFundingThreshold,
-              ).toSignificant(2),
-            )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`,
-    },
-    {
-      progress:
-        tokenSold && derivedAuctionInfo && derivedAuctionInfo.initialAuctionOrder
-          ? tokenSold
-              .multiply(
-                new Fraction(
-                  BigNumber.from('10')
-                    .pow(derivedAuctionInfo.auctioningToken.decimals + 2)
+  const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
+    () => [
+      {
+        title: 'Last order cancelation date',
+        tooltip: 'Last date at which an order cancelation is allowed',
+        value:
+          auctionDetails &&
+          new Date(auctionDetails.orderCancellationEndDate * 1000).toLocaleString(),
+      },
+      {
+        title: 'Auction End Date',
+        value: auctionDetails && new Date(auctionDetails.endTimeTimestamp * 1000).toLocaleString(),
+      },
+      {
+        progress:
+          auctionDetails && derivedAuctionInfo
+            ? auctionDetails.minFundingThreshold === '0x0'
+              ? '-'
+              : new Fraction(
+                  BigNumber.from(10)
+                    .pow(derivedAuctionInfo?.biddingToken.decimals + 2)
+                    .mul(BigNumber.from(auctionDetails.currentBiddingAmount))
                     .toString(),
-                  derivedAuctionInfo?.initialAuctionOrder?.sellAmount.raw.toString(),
-                ),
-              )
-              .toSignificant(2)
-              .concat('%')
+                  BigNumber.from(auctionDetails.minFundingThreshold).toString(),
+                )
+                  .toSignificant(2)
+                  .concat(' %')
+            : '-',
+        title: 'Minimun funding',
+        tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
+        value:
+          auctionDetails == null || auctionDetails.minFundingThreshold == '0x0'
+            ? '0'
+            : `${abbreviation(
+                new TokenAmount(
+                  derivedAuctionInfo.biddingToken,
+                  auctionDetails.minFundingThreshold,
+                ).toSignificant(2),
+              )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`,
+      },
+      {
+        progress:
+          tokenSold && derivedAuctionInfo && derivedAuctionInfo.initialAuctionOrder
+            ? tokenSold
+                .multiply(
+                  new Fraction(
+                    BigNumber.from('10')
+                      .pow(derivedAuctionInfo.auctioningToken.decimals + 2)
+                      .toString(),
+                    derivedAuctionInfo?.initialAuctionOrder?.sellAmount.raw.toString(),
+                  ),
+                )
+                .toSignificant(2)
+                .concat('%')
+            : '-',
+        title: 'Estimated tokens sold',
+        tooltip:
+          'If no further bids were canceled or placed, then this would be amount of tokens sold',
+        value:
+          tokenSold && derivedAuctionInfo
+            ? `${abbreviation(tokenSold.toSignificant(2))}  ${getTokenDisplay(
+                derivedAuctionInfo?.auctioningToken,
+                chainId,
+              )}`
+            : '-',
+      },
+      {
+        title: 'Atomic closure ',
+        tooltip:
+          'If atomic closure is enabled, one arbitrageur is allowed to place one further order at the time of auction settlement. This allows bridging on-chain liquidity into the auction',
+        value: auctionDetails
+          ? auctionDetails.isAtomicClosureAllowed
+            ? 'Enabled'
+            : 'Disabled'
           : '-',
-      title: 'Estimated tokens sold',
-      tooltip:
-        'If no further bids were canceled or placed, then this would be amount of tokens sold',
-      value:
-        tokenSold && derivedAuctionInfo
-          ? `${abbreviation(tokenSold.toSignificant(2))}  ${getTokenDisplay(
-              derivedAuctionInfo?.auctioningToken,
-              chainId,
-            )}`
+      },
+      {
+        title: 'Min bidding amount per order',
+        tooltip: 'Each order must at least bid this amount',
+        value: auctionDetails
+          ? `${abbreviation(
+              new TokenAmount(
+                derivedAuctionInfo?.biddingToken,
+                auctionDetails.minimumBiddingAmountPerOrder,
+              ).toSignificant(2),
+            )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
           : '-',
-    },
-    {
-      title: 'Atomic closure ',
-      tooltip:
-        'If atomic closure is enabled, one arbitrageur is allowed to place one further order at the time of auction settlement. This allows bridging on-chain liquidity into the auction',
-      value: auctionDetails
-        ? auctionDetails.isAtomicClosureAllowed
-          ? 'enabled'
-          : 'disabled'
-        : '-',
-    },
-    {
-      title: 'Min bidding amount per order',
-      tooltip: 'Each order must at least bid this amount',
-      value: auctionDetails
-        ? `${abbreviation(
-            new TokenAmount(
-              derivedAuctionInfo?.biddingToken,
-              auctionDetails.minimumBiddingAmountPerOrder,
-            ).toSignificant(2),
-          )} ${getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId)}`
-        : '-',
-    },
-    {
-      title: 'Allow List Contract',
-      tooltip: 'Address of the contract managing the allow-list for participation',
-      url: `https://etherscan.io/address/${auctionDetails?.allowListManager}`,
-      value: `${
-        auctionDetails && auctionDetails.allowListManager == ''
-          ? auctionDetails.allowListManager.substr(0, 6).concat('...')
-          : 'None'
-      }`,
-    },
-    {
-      title: 'Signer Address',
-      tooltip: 'Signer Address',
-      url: `https://etherscan.io/address/${auctionDetails?.allowListSigner}`,
-      value: `${
-        auctionDetails && auctionDetails.allowListSigner == ''
-          ? auctionDetails.allowListSigner.substr(0, 6).concat('...')
-          : 'None'
-      }`,
-    },
-  ]
+      },
+      {
+        title: 'Allow List Contract',
+        tooltip: 'Address of the contract managing the allow-list for participation',
+        url: `https://etherscan.io/address/${auctionDetails?.allowListManager}`,
+        value: `${
+          auctionDetails && auctionDetails.allowListManager == ''
+            ? auctionDetails.allowListManager.substr(0, 6).concat('...')
+            : 'None'
+        }`,
+      },
+      {
+        title: 'Signer Address',
+        tooltip: 'Signer Address',
+        url: `https://etherscan.io/address/${auctionDetails?.allowListSigner}`,
+        value: `${
+          auctionDetails && auctionDetails.allowListSigner == ''
+            ? auctionDetails.allowListSigner.substr(0, 6).concat('...')
+            : 'None'
+        }`,
+      },
+    ],
+    [auctionDetails, chainId, derivedAuctionInfo, tokenSold],
+  )
 
   const [extraDetailsHeight, setExtraDetailsHeight] = useState(0)
   const componentRef = React.useRef(null)
 
-  React.useEffect(() => {
+
+  const updateExtraDetailsHeight = () => {
     setExtraDetailsHeight(componentRef?.current?.offsetHeight)
-  }, [])
+  }
+
+  React.useEffect(() => {
+    updateExtraDetailsHeight()
+    // extraDetails is a dependency because we need to update the container's
+    // height if the array's contents change
+  }, [extraDetails])
+
+  window.addEventListener('resize', updateExtraDetailsHeight)
 
   const showEmptyProgressColumn = (index: number): boolean => {
     if (!extraDetails[index + 1]) return false
@@ -596,7 +610,7 @@ const AuctionDetails = (props: Props) => {
         <ToggleExtraDetails onClick={toggleExtraDetails}>
           {showMoreDetails ? 'Less' : 'More Details'} <DoubleChevron isOpen={showMoreDetails} />
         </ToggleExtraDetails>
-        <ExtraDetailsAnimWrapper height={showMoreDetails ? extraDetailsHeight : 0}>
+        <ExtraDetailsAnimWrapper wrapperHeight={showMoreDetails ? extraDetailsHeight : 0}>
           <ExtraDetails ref={componentRef}>
             {extraDetails.map((item, index) => (
               <ExtraDetailsItem
