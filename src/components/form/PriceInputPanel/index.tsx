@@ -104,8 +104,8 @@ const PriceInputPanel = (props: Props) => {
                 )}
                 <FieldRowTokenSymbol>
                   {invertPrices
-                    ? `${tokens.biddingToken.symbol} per ${tokens.auctioningToken.symbol}`
-                    : `${tokens.auctioningToken.symbol} per ${tokens.biddingToken.symbol}`}
+                    ? `${tokens.auctioningToken.symbol} per ${tokens.biddingToken.symbol}`
+                    : `${tokens.biddingToken.symbol} per ${tokens.auctioningToken.symbol}`}
                 </FieldRowTokenSymbol>
               </FieldRowToken>
               <InvertButton onClick={onInvertPrices} title="Invert">
