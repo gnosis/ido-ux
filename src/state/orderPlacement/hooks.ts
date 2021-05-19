@@ -168,7 +168,6 @@ function isNumeric(str: string) {
   return str != '' && str != '-'
 }
 
-// try to parse a user entered amount for a given token
 export function tryParseAmount(value?: string, token?: Token): TokenAmount | undefined {
   if (!value || !token) {
     return
@@ -182,113 +181,103 @@ export function tryParseAmount(value?: string, token?: Token): TokenAmount | und
     // should fail if the user specifies too many decimal places of precision (or maybe exceed max uint?)
     logger.debug(`Failed to parse input amount: "${value}"`, error)
   }
-  // necessary for all paths to return a value
+
   return
 }
 
-export function useGetOrderPlacementError(
+interface Errors {
+  errorAmount: string | undefined
+  errorPrice: string | undefined
+}
+
+export const useGetOrderPlacementError = (
   derivedAuctionInfo: DerivedAuctionInfo,
   auctionState: AuctionState,
   auctionIdentifier: AuctionIdentifier,
   showPricesInverted: boolean,
-): {
-  error?: string
-} {
+): Errors => {
   const { account } = useActiveWeb3React()
   const { chainId } = auctionIdentifier
-
   const { price: priceFromState, sellAmount } = useOrderPlacementState()
   const price = showPricesInverted
     ? getInverse(Number(priceFromState), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
     : priceFromState
-
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
   const biddingTokenBalance =
     relevantTokenBalances?.[derivedAuctionInfo?.biddingToken?.address ?? '']
   const parsedBiddingAmount = tryParseAmount(sellAmount, derivedAuctionInfo?.biddingToken)
-
   const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
     derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
-    price == '-' ? '1' : price,
+    price === '-' ? '1' : price,
     sellAmount,
   )
-  let error: string | undefined
+  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
 
-  if (!sellAmount) {
-    error = error ?? 'Enter an amount'
-  }
-  if (
+  const amountMustBeBigger =
+    amountIn &&
+    price &&
     derivedAuctionInfo?.minBiddingAmountPerOrder &&
     derivedAuctionInfo?.biddingToken &&
     sellAmount &&
     (!sellAmountScaled ||
       (sellAmountScaled &&
         BigNumber.from(derivedAuctionInfo?.minBiddingAmountPerOrder).gte(sellAmountScaled)) ||
-      parseFloat(sellAmount) == 0)
-  ) {
-    const errorMsg =
-      'Amount must be bigger than ' +
-      new Fraction(
+      parseFloat(sellAmount) == 0) &&
+    `Amount must be bigger than
+      ${new Fraction(
         derivedAuctionInfo?.minBiddingAmountPerOrder,
         BigNumber.from(10).pow(derivedAuctionInfo?.biddingToken.decimals).toString(),
-      ).toSignificant(2)
-    error = error ?? errorMsg
-  }
+      ).toSignificant(2)}`
 
-  if (!price) {
-    error = error ?? 'Enter a price'
-  }
-  if (
-    derivedAuctionInfo?.auctioningToken == undefined ||
-    derivedAuctionInfo?.biddingToken == undefined
-  ) {
-    error = 'Please wait a sec'
-  }
+  const insufficientBalance =
+    balanceIn &&
+    amountIn &&
+    balanceIn.lessThan(amountIn) &&
+    `Insufficient ${getTokenDisplay(amountIn.token, chainId)}` + ' balance.'
 
-  if (
-    derivedAuctionInfo?.clearingPriceSellOrder != null &&
-    derivedAuctionInfo?.clearingPrice != null &&
-    derivedAuctionInfo?.auctioningToken != undefined &&
-    derivedAuctionInfo?.biddingToken != undefined &&
-    auctionState == AuctionState.ORDER_PLACING &&
+  const outOfBoundsPricePlacingOrder =
+    amountIn &&
+    price &&
+    derivedAuctionInfo?.clearingPriceSellOrder !== null &&
+    derivedAuctionInfo?.clearingPrice !== null &&
+    derivedAuctionInfo?.auctioningToken !== undefined &&
+    derivedAuctionInfo?.biddingToken !== undefined &&
+    auctionState === AuctionState.ORDER_PLACING &&
     buyAmountScaled &&
     sellAmountScaled
       ?.mul(derivedAuctionInfo?.clearingPriceSellOrder?.buyAmount.raw.toString())
       .lte(
         buyAmountScaled.mul(derivedAuctionInfo?.clearingPriceSellOrder?.sellAmount.raw.toString()),
       )
-  ) {
-    error =
-      error ?? showPricesInverted
-        ? 'Price must be lower than ' + derivedAuctionInfo?.clearingPrice?.invert().toSignificant(5)
-        : 'Price must be higher than ' + derivedAuctionInfo?.clearingPrice?.toSignificant(5)
-  }
+      ? showPricesInverted
+        ? `Price must be lower than ${derivedAuctionInfo?.clearingPrice?.invert().toSignificant(5)}`
+        : `Price must be higher than ${derivedAuctionInfo?.clearingPrice?.toSignificant(5)}`
+      : undefined
 
-  if (
-    derivedAuctionInfo?.initialAuctionOrder != null &&
-    derivedAuctionInfo?.auctioningToken != undefined &&
-    derivedAuctionInfo?.biddingToken != undefined &&
+  const outOfBoundsPrice =
+    amountIn &&
+    price &&
+    derivedAuctionInfo?.initialAuctionOrder !== null &&
+    derivedAuctionInfo?.auctioningToken !== undefined &&
+    derivedAuctionInfo?.biddingToken !== undefined &&
     buyAmountScaled &&
     sellAmountScaled
       ?.mul(derivedAuctionInfo?.initialAuctionOrder?.sellAmount.raw.toString())
       .lte(buyAmountScaled.mul(derivedAuctionInfo?.initialAuctionOrder?.buyAmount.raw.toString()))
-  ) {
-    error =
-      error ?? showPricesInverted
-        ? 'Price must be lower than ' + derivedAuctionInfo?.initialPrice?.invert().toSignificant(5)
-        : 'Price must be higher than ' + derivedAuctionInfo?.initialPrice?.toSignificant(5)
-  }
+      ? showPricesInverted
+        ? `Price must be lower than ${derivedAuctionInfo?.initialPrice?.invert().toSignificant(5)}`
+        : `Price must be higher than ${derivedAuctionInfo?.initialPrice?.toSignificant(5)}`
+      : undefined
 
-  const [balanceIn, amountIn] = [biddingTokenBalance, parsedBiddingAmount]
-  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
-    error = 'Insufficient ' + getTokenDisplay(amountIn.token, chainId) + ' balance'
-  }
+  const errorAmount = amountMustBeBigger || insufficientBalance || undefined
+  const errorPrice = outOfBoundsPricePlacingOrder || outOfBoundsPrice || undefined
 
   return {
-    error,
+    errorAmount,
+    errorPrice,
   }
 }
 

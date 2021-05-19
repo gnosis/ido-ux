@@ -20,25 +20,26 @@ const StyledClose = styled(X)`
   right: 10px;
   top: 10px;
 
-  :hover {
+  &:hover {
     cursor: pointer;
   }
 `
 
 const MobilePopupWrapper = styled.div<{ height: string | number }>`
-  position: relative;
-  max-width: 100%;
   height: ${({ height }) => height};
-  margin: ${({ height }) => (height ? '0 auto;' : 0)};
-  margin-bottom: ${({ height }) => (height ? '20px' : 0)}};
+  margin: ${({ height }) => (height ? '0 auto' : '0')};
+  margin-bottom: ${({ height }) => (height ? '20px' : '0')};
+  max-width: 100%;
+  position: relative;
+  z-index: 50;
 `
 
 const MobilePopupInner = styled.div`
+  display: flex;
+  flex-direction: row;
   height: 99%;
   overflow-x: auto;
   overflow-y: hidden;
-  display: flex;
-  flex-direction: row;
   -webkit-overflow-scrolling: touch;
   ::-webkit-scrollbar {
     display: none;
@@ -46,11 +47,11 @@ const MobilePopupInner = styled.div`
 `
 
 const FixedPopupColumn = styled(AutoColumn)`
-  position: absolute;
-  top: 112px;
-  right: 1rem;
-  max-width: 355px !important;
-  width: 100%;
+  position: fixed;
+  right: 20px;
+  top: 75px;
+  width: 355px;
+  z-index: 50;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
@@ -58,16 +59,14 @@ const FixedPopupColumn = styled(AutoColumn)`
 `
 
 const Popup = styled.div`
-  display: inline-block;
-  width: 100%;
-  padding: 1em;
   background-color: ${({ theme }) => theme.bg1};
-  position: relative;
-  border-radius: 10px;
-  padding: 20px;
-  padding-right: 35px;
-  z-index: 2;
+  border-radius: 6px;
+  display: inline-block;
   overflow: hidden;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  z-index: 2;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 290px;
@@ -140,11 +139,9 @@ function PopupItem({ content, popKey }: { content: PopupContent; popKey: string 
 
 export default function Popups() {
   const theme = useContext(ThemeContext)
-  // get all popups
   const activePopups = useActivePopups()
   const removePopup = useRemovePopup()
 
-  // switch view settings on mobile
   const isMobile = useMediaLayout({ maxWidth: '600px' })
 
   if (!isMobile) {
