@@ -31,7 +31,8 @@ import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetail
 const DETAILS_HEIGHT = '120px'
 
 const Wrapper = styled.div`
-  margin: 0 0 30px;
+  margin: 0 0 32px;
+  min-height: ${TIMER_SIZE};
   position: relative;
 `
 
