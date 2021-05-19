@@ -187,25 +187,25 @@ export const OrderBookTable: React.FC<Props> = () => {
           <TableCell minWidth={'110px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Price (DAI)</Wrap>
-              <Tooltip id="info" place={'bottom'} text={`Price (DAI)`} />
+              <Tooltip text={`Price (DAI)`} />
             </Wrap>
           </TableCell>
           <TableCell minWidth={'150px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Amount (GNO)</Wrap>
-              <Tooltip id="info" place={'bottom'} text={`You have no orders for this auction.`} />
+              <Tooltip text={`You have no orders for this auction.`} />
             </Wrap>
           </TableCell>
           <TableCell minWidth={'120px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Sum</Wrap>
-              <Tooltip id="info" place={'bottom'} text={`Summary`} />
+              <Tooltip text={`Summary`} />
             </Wrap>
           </TableCell>
           <TableCell minWidth={'90px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>My size</Wrap>
-              <Tooltip id="info" place={'bottom'} text={`My size`} />
+              <Tooltip text={`My size`} />
             </Wrap>
           </TableCell>
         </StyledRow>
