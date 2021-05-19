@@ -18,7 +18,6 @@ import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
 import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
-import { ErrorInfo } from '../../icons/ErrorInfo'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
 import { OrderPlaced } from '../../icons/OrderPlaced'
@@ -39,25 +38,6 @@ const TableWrapper = styled(BaseCard)`
 const Title = styled(PageTitle)`
   margin-bottom: 16px;
   margin-top: 0;
-`
-
-const SubTitleWrapperStyled = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 12px;
-`
-
-const SubTitle = styled.h3`
-  align-items: center;
-  color: ${({ theme }) => theme.text1};
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 0 0 10px 0;
-`
-
-const ErrorIcon = styled(ErrorInfo)`
-  margin-right: 8px;
 `
 
 const Row = styled(CellRow)`
@@ -149,13 +129,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
     derivedAuctionInfo?.auctionEndDate !== derivedAuctionInfo?.orderCancellationEndDate &&
     derivedAuctionInfo?.orderCancellationEndDate !== 0
   const orderCancellationEndMilliseconds = derivedAuctionInfo?.orderCancellationEndDate * 1000
-  const orderCancellationEndDate = React.useMemo(() => new Date(orderCancellationEndMilliseconds), [
-    orderCancellationEndMilliseconds,
-  ])
-  const cancelDateFull = React.useMemo(
-    () => (hasLastCancellationDate ? orderCancellationEndDate.toLocaleString() : undefined),
-    [orderCancellationEndDate, hasLastCancellationDate],
-  )
 
   const pendingText = `Cancelling Order`
   const orderStatusText = {
@@ -190,18 +163,6 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   return (
     <Wrapper {...restProps}>
       <Title as="h2">Your Orders</Title>
-      {!ordersEmpty && !orderSubmissionFinished && (hasLastCancellationDate || orderPlacingOnly) && (
-        <SubTitleWrapperStyled>
-          <ErrorIcon />
-          {orderPlacingOnly && <SubTitle>Orders for this auction can&apos;t be canceled.</SubTitle>}
-          {!orderPlacingOnly && !isOrderCancellationExpired && (
-            <SubTitle>
-              The order cancelation period expires on&nbsp;<strong>{cancelDateFull}</strong>. Orders
-              can&apos;t be canceled after this date.
-            </SubTitle>
-          )}
-        </SubTitleWrapperStyled>
-      )}
       {ordersEmpty && (
         <EmptyContentWrapper>
           <InfoIcon />

@@ -145,10 +145,14 @@ const TokenSymbol = styled.span`
   align-items: center;
   display: flex;
   font-size: 18px;
-  line-height: 1.2;
+  line-height: 1.4;
   margin-bottom: 0;
   justify-content: center;
   white-space: nowrap;
+
+  .tokenLogo {
+    margin-top: -4px;
+  }
 
   & > * {
     margin-right: 0;
@@ -156,7 +160,7 @@ const TokenSymbol = styled.span`
 `
 
 const TokenText = styled.span`
-  margin: 0 10px 0 5px;
+  margin: 0 10px 0 6px;
   white-space: nowrap;
 `
 
