@@ -19,6 +19,7 @@ export interface Colors {
   disabled: Color;
   error: Color;
   green1: Color;
+  green2: Color;
   mainBackground: Color;
   modalBG: Color;
   primary1: Color;

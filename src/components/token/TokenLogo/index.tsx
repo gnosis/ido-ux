@@ -5,10 +5,12 @@ import { useTokenListState } from '../../../state/tokenList/hooks'
 import { isAddress } from '../../../utils'
 import { UnregisteredToken } from '../UnregisteredToken'
 
-const Wrapper = styled.div<{ size?: string }>`
+const Wrapper = styled.div<{ size: string }>`
   background-color: #606467;
   border-radius: 50%;
-  border: 3px solid #001429;
+  border-width: ${({ size }) => (parseInt(size, 10) < 20 ? '1px' : '3px')};
+  border-style: solid;
+  border-color: #001429;
   box-sizing: content-box;
   flex-shrink: 0;
   height: ${({ size }) => size};
@@ -37,7 +39,7 @@ const TokenLogo: React.FC<TokenLogoProps> = (props) => {
   const imageURL = validToken && tokens[address.toLowerCase()]
 
   return imageURL ? (
-    <Wrapper size={size} {...restProps}>
+    <Wrapper className="tokenLogo" size={size} {...restProps}>
       <Image src={imageURL} />
     </Wrapper>
   ) : (
