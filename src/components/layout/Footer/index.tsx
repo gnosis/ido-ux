@@ -104,7 +104,7 @@ export const Footer: React.FC = (props) => {
         </Item>
         <Item>
           <ExternalLink
-            href="https://discord.gg/V4WkUEyv"
+            href="https://discord.gg/dR5znXE4"
             rel="noopener noreferrer"
             target="_blank"
           >
