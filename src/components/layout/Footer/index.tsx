@@ -64,6 +64,7 @@ const Item = styled.span`
 const LinkCSS = css`
   color: ${({ theme }) => theme.text1};
   text-decoration: none;
+  transition: color 0.05s linear;
 
   &:hover {
     color: ${({ theme }) => theme.primary2};
@@ -100,6 +101,15 @@ export const Footer: React.FC = (props) => {
         </Item>
         <Item>
           <Link to="/licenses#topAnchor">Licenses</Link>
+        </Item>
+        <Item>
+          <ExternalLink
+            href="https://discord.gg/V4WkUEyv"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Support
+          </ExternalLink>
         </Item>
       </Inner>
     </Wrapper>
