@@ -4,7 +4,11 @@ import styled from 'styled-components'
 import ReactTooltip from 'react-tooltip'
 
 import { useActiveWeb3React } from '../../../hooks'
-import { useClaimOrderCallback, useGetAuctionProceeds } from '../../../hooks/useClaimOrderCallback'
+import {
+  ClaimState,
+  useClaimOrderCallback,
+  useGetAuctionProceeds,
+} from '../../../hooks/useClaimOrderCallback'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
@@ -87,6 +91,7 @@ const Claimer: React.FC<Props> = (props) => {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
   const [txHash, setTxHash] = useState<string>('')
   const pendingText = `Claiming Funds`
+  const [claimStatus, claimOrderCallback] = useClaimOrderCallback(auctionIdentifier)
   const { error, isLoading: isDerivedClaimInfoLoading } = useDerivedClaimInfo(auctionIdentifier)
   const isValid = !error
   const toggleWalletModal = useWalletModalToggle()
@@ -97,7 +102,6 @@ const Claimer: React.FC<Props> = (props) => {
   )
 
   const resetModal = () => setPendingConfirmation(true)
-  const claimOrderCallback = useClaimOrderCallback(auctionIdentifier)
 
   const onClaimOrder = () =>
     claimOrderCallback()
@@ -129,8 +133,13 @@ const Claimer: React.FC<Props> = (props) => {
   )
 
   const isClaimButtonDisabled = useMemo(
-    () => !isValid || showConfirm || isLoading || userConfirmedTx,
-    [isValid, showConfirm, isLoading, userConfirmedTx],
+    () =>
+      !isValid ||
+      showConfirm ||
+      isLoading ||
+      userConfirmedTx ||
+      claimStatus != ClaimState.NOT_CLAIMED,
+    [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus],
   )
 
   return (
@@ -229,7 +238,7 @@ const Claimer: React.FC<Props> = (props) => {
                 onClaimOrder()
               }}
             >
-              Claim
+              {claimStatus === ClaimState.PENDING ? `Claiming ` : `Claim`}
             </ActionButton>
           )}
           <ClaimConfirmationModal
