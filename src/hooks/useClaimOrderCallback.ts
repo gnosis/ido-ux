@@ -1,18 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
-import { useSingleCallResult } from '../state/multicall/hooks'
 import { DerivedAuctionInfo } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useHasPendingClaim, useTransactionAdder } from '../state/transactions/hooks'
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
+import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
 import { useGasPrice } from './useGasPrice'
+
+const logger = getLogger('useClaimOrderCallback')
 
 export const queueStartElement =
   '0x0000000000000000000000000000000000000000000000000000000000000001'
@@ -35,6 +37,7 @@ export interface UseGetClaimInfoReturn {
 
 export enum ClaimState {
   UNKNOWN,
+  NOT_APPLICABLE,
   NOT_CLAIMED,
   PENDING,
   CLAIMED,
@@ -201,39 +204,72 @@ export const useClaimOrderCallback = (
   }, [account, addTransaction, chainId, error, gasPrice, library, auctionId, claimInfo])
 
   const claimableOrders = claimInfo?.sellOrdersFormUser
-  const userHasAvailableClaim = useUserHasAvailableClaim(auctionIdentifier, claimableOrders)
   const pendingClaim = useHasPendingClaim(auctionIdentifier.auctionId, account)
-
-  const claimStatus = useMemo(() => {
-    if (!claimableOrders) return ClaimState.UNKNOWN
-
-    return userHasAvailableClaim
-      ? pendingClaim
-        ? ClaimState.PENDING
-        : ClaimState.NOT_CLAIMED
-      : ClaimState.CLAIMED
-  }, [claimableOrders, pendingClaim, userHasAvailableClaim])
+  const claimStatus = useGetClaimState(auctionIdentifier, claimableOrders, pendingClaim)
 
   return [claimStatus, claimCallback]
 }
 
-export function useUserHasAvailableClaim(
-  auctionIdentifer: AuctionIdentifier,
+export function useGetClaimState(
+  auctionIdentifier: AuctionIdentifier,
   claimableOrders?: string[],
-): boolean | undefined {
+  pendingClaim?: Boolean,
+): ClaimState {
+  const [claimStatus, setClaimStatus] = useState<ClaimState>(ClaimState.UNKNOWN)
   const { account, library } = useActiveWeb3React()
-  const { auctionId, chainId } = auctionIdentifer
+  const { auctionId, chainId } = auctionIdentifier
+  const accountRef = useRef(account)
 
-  const easyAuctionInstance: Contract = getEasyAuctionContract(chainId as ChainId, library, account)
-  const {
-    loading: isLoadingClaimed,
-    result: not_claimed,
-  } = useSingleCallResult(easyAuctionInstance, 'containsOrder', [
-    auctionId,
-    claimableOrders == undefined || claimableOrders[0] == undefined
-      ? queueStartElement
-      : claimableOrders[0],
-  ])
+  useEffect(() => {
+    setClaimStatus(ClaimState.UNKNOWN)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auctionId, chainId, account])
 
-  return Boolean(!isLoadingClaimed && not_claimed && not_claimed[0] === true)
+  useEffect(() => {
+    let cancelled = false
+
+    if (!claimableOrders) return
+
+    if (claimableOrders.length === 0) {
+      setClaimStatus(ClaimState.NOT_APPLICABLE)
+      return
+    }
+
+    async function userHasAvailableClaim() {
+      try {
+        if (!library || !accountRef.current || !claimableOrders) return
+
+        const easyAuctionContract: Contract = getEasyAuctionContract(
+          chainId as ChainId,
+          library,
+          accountRef.current,
+        )
+
+        const method: Function = easyAuctionContract.containsOrder
+        const args: Array<number | string> = [auctionId, claimableOrders[0]]
+
+        const hasAvailableClaim = await method(...args)
+
+        if (!cancelled) {
+          setClaimStatus(
+            hasAvailableClaim
+              ? pendingClaim
+                ? ClaimState.PENDING
+                : ClaimState.NOT_CLAIMED
+              : ClaimState.CLAIMED,
+          )
+        }
+      } catch (error) {
+        if (cancelled) return
+        logger.error(error)
+      }
+    }
+    userHasAvailableClaim()
+
+    return (): void => {
+      cancelled = true
+    }
+  }, [accountRef, auctionId, chainId, claimableOrders, library, pendingClaim])
+
+  return claimStatus
 }
