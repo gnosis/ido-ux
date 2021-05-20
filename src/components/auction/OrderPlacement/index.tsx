@@ -144,18 +144,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
 
-  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
-
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     biddingToken,
   ])
   const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
-
-  useEffect(() => {
-    if (approval === ApprovalState.PENDING) {
-      setApprovalSubmitted(true)
-    }
-  }, [approval, approvalSubmitted])
 
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
@@ -331,7 +323,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
-            <EmptyContentTextNoMargin>You are not allowed place an order.</EmptyContentTextNoMargin>
+            <EmptyContentTextNoMargin>
+              You are not allowed to place an order.
+            </EmptyContentTextNoMargin>
             <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
         )}
