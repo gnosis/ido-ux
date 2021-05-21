@@ -15,7 +15,7 @@ import { ExternalLink } from '../../../theme'
 import { setupNetwork } from '../../../utils/setupNetwork'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
-import { useNetworkCheck } from '../../web3/Web3Status'
+import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 import Modal from '../common/Modal'
 import { ModalTitle } from '../common/ModalTitle'
 import Option from '../common/Option'
@@ -120,7 +120,10 @@ const WalletModal: React.FC = () => {
     if (
       walletModalOpen &&
       ((active && !activePrevious) ||
-        (connector && connector !== connectorPrevious && !error && errorWrongNetwork === undefined))
+        (connector &&
+          connector !== connectorPrevious &&
+          !error &&
+          errorWrongNetwork === NetworkError.noError))
     ) {
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }
@@ -219,13 +222,14 @@ const WalletModal: React.FC = () => {
   const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
   const viewAccountTransactions = account && walletView === WALLET_VIEWS.ACCOUNT
   const connectingToWallet = walletView === WALLET_VIEWS.PENDING
-  const title = networkError
-    ? 'Wrong Network'
-    : error && viewAccountTransactions
-    ? ''
-    : error
-    ? 'Error connecting'
-    : 'Connect to a wallet'
+  const title =
+    networkError === NetworkError.noChainMatch
+      ? 'Wrong Network'
+      : error && viewAccountTransactions
+      ? ''
+      : error
+      ? 'Error connecting'
+      : 'Connect to a wallet'
   const errorMessage =
     error instanceof UnsupportedChainIdError
       ? 'Please connect to the appropriate Ethereum network.'
