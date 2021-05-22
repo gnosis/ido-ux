@@ -1,7 +1,7 @@
-import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import {
@@ -42,7 +42,7 @@ export const walletconnect = {
   4: new WalletConnectConnector({
     rpc: { 4: NETWORK_URL_RINKEBY },
     bridge: 'https://safe-walletconnect.gnosis.io',
-    qrcode: false,
+    qrcode: true,
     pollingInterval: POLLING_INTERVAL,
   }),
   // if no network is defined, we look whether wallet connect supports all possible chains

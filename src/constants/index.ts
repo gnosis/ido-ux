@@ -39,6 +39,7 @@ const MAINNET_WALLETS = {
     description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
     href: null,
     color: '#4196FC',
+    mobile: true,
   },
 }
 
