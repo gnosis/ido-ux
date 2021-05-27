@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { URI_AVAILABLE } from '@anxolin/walletconnect-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
-import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 
 import { injected, walletconnect } from '../../../connectors'
@@ -194,21 +193,6 @@ const WalletModal: React.FC = () => {
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
 
-      if (isMobile) {
-        if (!window.web3 && !window.ethereum && option.mobile) {
-          return (
-            <Option
-              icon={option.icon}
-              key={key}
-              onClick={() => {
-                option.connector !== connector && !option.href && tryActivation(option.connector)
-              }}
-              text={option.name}
-            />
-          )
-        }
-        return null
-      }
       if (option.connector === injected) {
         if (!(window.web3 || window.ethereum)) {
           return null //dont want to return install twice
