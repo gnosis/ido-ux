@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -218,7 +218,6 @@ export function useGetClaimState(
   const [claimStatus, setClaimStatus] = useState<ClaimState>(ClaimState.UNKNOWN)
   const { account, library } = useActiveWeb3React()
   const { auctionId, chainId } = auctionIdentifier
-  const accountRef = useRef(account)
 
   useEffect(() => {
     setClaimStatus(ClaimState.UNKNOWN)
@@ -237,12 +236,12 @@ export function useGetClaimState(
 
     async function userHasAvailableClaim() {
       try {
-        if (!library || !accountRef.current || !claimableOrders) return
+        if (!library || !account || !claimableOrders) return
 
         const easyAuctionContract: Contract = getEasyAuctionContract(
           chainId as ChainId,
           library,
-          accountRef.current,
+          account,
         )
 
         const method: Function = easyAuctionContract.containsOrder
@@ -269,7 +268,7 @@ export function useGetClaimState(
     return (): void => {
       cancelled = true
     }
-  }, [accountRef, auctionId, chainId, claimableOrders, library, pendingClaim])
+  }, [account, auctionId, chainId, claimableOrders, library, pendingClaim])
 
   return claimStatus
 }
