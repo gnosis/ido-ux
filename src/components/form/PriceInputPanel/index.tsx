@@ -68,7 +68,6 @@ const PriceInputPanel = (props: Props) => {
               {invertPrices ? 'Min Bidding Price' : 'Max Bidding Price'}
             </FieldRowLabelStyledText>
             <Tooltip
-              id="price"
               text={invertPrices ? 'Min Bidding Price tooltip' : 'Max Bidding Price tooltip'}
             />
           </FieldRowLabelStyled>

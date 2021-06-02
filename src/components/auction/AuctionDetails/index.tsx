@@ -494,10 +494,7 @@ const AuctionDetails = (props: Props) => {
             itemKey={
               <>
                 <span>Total auctioned</span>
-                <Tooltip
-                  id="totalAuctioned"
-                  text={'Total amount of tokens available to be bought in the auction.'}
-                />
+                <Tooltip text={'Total amount of tokens available to be bought in the auction.'} />
               </>
             }
             itemValue={
@@ -530,10 +527,7 @@ const AuctionDetails = (props: Props) => {
             itemKey={
               <>
                 <span>Bidding with</span>
-                <Tooltip
-                  id="biddingWith"
-                  text={'This is the token that is accepted for bidding in the auction.'}
-                />
+                <Tooltip text={'This is the token that is accepted for bidding in the auction.'} />
               </>
             }
             itemValue={
@@ -564,7 +558,6 @@ const AuctionDetails = (props: Props) => {
               <>
                 <span>{titlePrice}</span>
                 <Tooltip
-                  id="auctionPrice"
                   text={
                     "This will be the auction's Closing Price if no more bids are submitted or canceled, OR it will be the auction's Clearing Price if the auction concludes without additional bids."
                   }
@@ -578,10 +571,7 @@ const AuctionDetails = (props: Props) => {
             itemKey={
               <>
                 <span>{showPriceInverted ? `Max Sell Price` : `Min Sell Price`}</span>
-                <Tooltip
-                  id="minSellPrice"
-                  text={'Minimum bidding price the auctioneer defined for participation.'}
-                />
+                <Tooltip text={'Minimum bidding price the auctioneer defined for participation.'} />
               </>
             }
             itemValue={
@@ -613,7 +603,6 @@ const AuctionDetails = (props: Props) => {
           <ExtraDetails ref={componentRef}>
             {extraDetails.map((item, index) => (
               <ExtraDetailsItem
-                id={`extraDetailsItem_${index}`}
                 key={index}
                 progress={item.progress}
                 showEmptyProgressColumn={showEmptyProgressColumn(index)}
