@@ -8,6 +8,7 @@ import {
   resetOrderbookData,
   resetUserPrice,
   resetUserVolume,
+  setCurrentPrice,
 } from './actions'
 
 export interface OrderbookState {
@@ -16,6 +17,7 @@ export interface OrderbookState {
   error: Maybe<Error>
   userOrderPrice: number
   userOrderVolume: number
+  currentPrice: number
   auctionId: number
   chainId: number
 }
@@ -26,6 +28,7 @@ const initialState: OrderbookState = {
   error: null,
   userOrderPrice: 0,
   userOrderVolume: 0,
+  currentPrice: 0,
   auctionId: 0,
   chainId: 0,
 }
@@ -82,9 +85,16 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
         error,
         userOrderPrice: 0,
         userOrderVolume: 0,
+        currentPrice: 0,
         shouldLoad: false,
         auctionId,
         chainId,
+      }
+    })
+    .addCase(setCurrentPrice, (state, { payload: { price } }) => {
+      return {
+        ...state,
+        currentPrice: price,
       }
     }),
 )

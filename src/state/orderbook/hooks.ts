@@ -14,6 +14,7 @@ import {
   resetOrderbookData,
   resetUserPrice,
   resetUserVolume,
+  setCurrentPrice,
 } from './actions'
 
 const logger = getLogger('orderbook/hooks')
@@ -34,6 +35,7 @@ export function useOrderbookActionHandlers(): {
     orderbook: OrderBookData,
     error: Maybe<Error>,
   ) => void
+  onSetCurrentPrice: (price: number) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -71,6 +73,12 @@ export function useOrderbookActionHandlers(): {
     },
     [dispatch],
   )
+  const onSetCurrentPrice = useCallback(
+    (price: number) => {
+      dispatch(setCurrentPrice({ price }))
+    },
+    [dispatch],
+  )
 
   return {
     onPullOrderbookData,
@@ -79,6 +87,7 @@ export function useOrderbookActionHandlers(): {
     onRemoveBid,
     onResetUserPrice,
     onResetUserVolume,
+    onSetCurrentPrice,
   }
 }
 export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {

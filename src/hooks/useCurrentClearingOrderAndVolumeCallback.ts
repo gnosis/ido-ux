@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 
 import { ClearingPriceAndVolumeData } from '../api/AdditionalServicesApi'
-import { useBlockNumber } from '../state/application/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
@@ -19,7 +18,6 @@ export const useClearingPriceInfo = (
     null,
   )
   const [loading, setLoading] = useState<boolean>(true)
-  const blockNumber = useBlockNumber()
 
   useEffect(() => {
     setClearingPriceAndVolume(null)
@@ -31,7 +29,7 @@ export const useClearingPriceInfo = (
     setLoading(true)
     const fetchApiData = async () => {
       try {
-        if (!chainId || !auctionId || !additionalServiceApi || !blockNumber) {
+        if (!chainId || !auctionId || !additionalServiceApi) {
           return
         }
 
@@ -55,7 +53,7 @@ export const useClearingPriceInfo = (
     return (): void => {
       cancelled = true
     }
-  }, [chainId, auctionId, setClearingPriceAndVolume, blockNumber])
+  }, [chainId, auctionId, setClearingPriceAndVolume])
 
   return {
     clearingPriceInfo: clearingInfo,

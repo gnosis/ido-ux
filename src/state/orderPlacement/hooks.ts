@@ -349,6 +349,7 @@ export function useDerivedAuctionInfo(
   const noAuctionData = !auctionDetails || !clearingPriceInfo
   const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>()
 
+  // update auction state when end date auction or cancellation time is up
   useEffect(() => {
     if (!auctionDetails || !clearingPriceInfo) {
       return
