@@ -11,10 +11,10 @@ import { ClearingPriceAndVolumeData } from '../../api/AdditionalServicesApi'
 import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
-import { Order, decodeOrder, encodeOrder } from '../../hooks/Order'
+import { Order, decodeOrder } from '../../hooks/Order'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
 import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDetails'
-import { useGetClaimInfo } from '../../hooks/useClaimOrderCallback'
+import { ClaimState } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTimeout } from '../../utils'
@@ -507,6 +507,7 @@ export function deriveAuctionState(
 
 export function useDerivedClaimInfo(
   auctionIdentifier: AuctionIdentifier,
+  claimStatus: ClaimState,
 ): {
   auctioningToken?: Token | undefined
   biddingToken?: Token | undefined
@@ -543,29 +544,12 @@ export function useDerivedClaimInfo(
     auctioningToken,
   )
 
-  const { claimInfo, loading: isLoadingClaimInfo } = useGetClaimInfo(auctionIdentifier)
-  const claimableOrders = claimInfo?.sellOrdersFormUser
-  const { loading: isLoadingClaimed, result: claimed } = useSingleCallResult(
-    easyAuctionInstance,
-    'containsOrder',
-    [
-      auctionId,
-      claimableOrders == undefined || claimableOrders[0] == undefined
-        ? encodeOrder({
-            sellAmount: BigNumber.from(0),
-            buyAmount: BigNumber.from(0),
-            userId: BigNumber.from(0),
-          })
-        : claimableOrders[0],
-    ],
-  )
-
   const error =
     clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
       ? 'Price not yet supplied to auction.'
-      : claimableOrders && claimableOrders.length > 0 && claimed && !claimed[0]
+      : claimStatus === ClaimState.CLAIMED
       ? 'You already claimed your funds.'
-      : claimableOrders && claimableOrders.length === 0
+      : claimStatus === ClaimState.NOT_APPLICABLE
       ? 'You had no participation on this auction.'
       : ''
 
@@ -573,8 +557,7 @@ export function useDerivedClaimInfo(
     isLoadingAuctionInfo ||
     isAuctioningTokenLoading ||
     isBiddingTokenLoading ||
-    isLoadingClaimInfo ||
-    isLoadingClaimed
+    claimStatus === ClaimState.UNKNOWN
 
   return {
     auctioningToken,

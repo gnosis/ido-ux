@@ -92,7 +92,10 @@ const Claimer: React.FC<Props> = (props) => {
   const [txHash, setTxHash] = useState<string>('')
   const pendingText = `Claiming Funds`
   const [claimStatus, claimOrderCallback] = useClaimOrderCallback(auctionIdentifier)
-  const { error, isLoading: isDerivedClaimInfoLoading } = useDerivedClaimInfo(auctionIdentifier)
+  const { error, isLoading: isDerivedClaimInfoLoading } = useDerivedClaimInfo(
+    auctionIdentifier,
+    claimStatus,
+  )
   const isValid = !error
   const toggleWalletModal = useWalletModalToggle()
 
