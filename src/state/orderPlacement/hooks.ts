@@ -21,6 +21,7 @@ import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTimeout } from '../.
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
 import { calculateTimeLeft } from '../../utils/tools'
+import { useAuctionPriceHandlers } from '../auctionPrice/hooks'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
@@ -349,7 +350,7 @@ export function useDerivedAuctionInfo(
   const noAuctionData = !auctionDetails || !clearingPriceInfo
   const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>()
 
-  // update auction state when end date auction or cancellation time is up
+  // update auctionState when the auction ends or the cancellation period is over
   useEffect(() => {
     if (!auctionDetails || !clearingPriceInfo) {
       return

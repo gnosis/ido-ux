@@ -30,7 +30,3 @@ export const resetUserPrice = createAction<{
 export const resetUserVolume = createAction<{
   volume: number
 }>('ResetUserVolume')
-
-export const setCurrentPrice = createAction<{
-  price: number
-}>('setCurrentPrice')

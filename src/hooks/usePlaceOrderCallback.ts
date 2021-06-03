@@ -8,6 +8,7 @@ import { additionalServiceApi } from '../api'
 import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPlaceOrder.json'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../constants/config'
+import { useAuctionPriceHandlers } from '../state/auctionPrice/hooks'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
@@ -58,6 +59,7 @@ export function usePlaceOrderCallback(
     : priceFromSwapState
   ).toString()
   const { onNewBid } = useOrderbookActionHandlers()
+  const { onPriceAlteration } = useAuctionPriceHandlers()
   const gasPrice = useGasPrice(chainId)
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
@@ -235,6 +237,7 @@ export function usePlaceOrderCallback(
               volume: parseFloat(sellAmount),
               price: parseFloat(price),
             })
+            onPriceAlteration()
             return response.hash
           })
           .catch((error) => {
@@ -244,19 +247,20 @@ export function usePlaceOrderCallback(
       }
     }
   }, [
-    account,
-    addTransaction,
-    auctionId,
-    auctioningToken,
-    biddingToken,
     chainId,
     library,
-    onNewBid,
-    onNewOrder,
-    price,
-    gasPrice,
-    sellAmount,
-    signature,
+    account,
     userId,
+    signature,
+    auctioningToken,
+    biddingToken,
+    price,
+    sellAmount,
+    auctionId,
+    gasPrice,
+    addTransaction,
+    onNewOrder,
+    onNewBid,
+    onPriceAlteration,
   ])
 }

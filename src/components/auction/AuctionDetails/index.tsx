@@ -7,6 +7,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
+import { useAuctionPriceState } from '../../../state/auctionPrice/hooks'
 import {
   AuctionState,
   DerivedAuctionInfo,
@@ -255,6 +256,10 @@ const AuctionDetails = (props: Props) => {
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
 
   const { showPriceInverted } = useOrderPlacementState()
+  const {
+    currentPrice: auctionCurrentPrice,
+    currentPriceReversed: auctionPriceReversed,
+  } = useAuctionPriceState()
   const { onInvertPrices } = useSwapActionHandlers()
 
   // Start with inverted prices, if orderbook is also show inverted,
@@ -272,7 +277,6 @@ const AuctionDetails = (props: Props) => {
     [chainId, derivedAuctionInfo?.biddingToken],
   )
 
-  const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
   const biddingTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
     [derivedAuctionInfo?.biddingToken, chainId],
@@ -282,16 +286,7 @@ const AuctionDetails = (props: Props) => {
     [derivedAuctionInfo?.auctioningToken, chainId],
   )
   const clearingPriceDisplay = useMemo(() => {
-    const clearingPriceInfoAsSellOrder =
-      clearingPriceInfo &&
-      orderToSellOrder(
-        clearingPriceInfo.clearingOrder,
-        derivedAuctionInfo?.biddingToken,
-        derivedAuctionInfo?.auctioningToken,
-      )
-    const clearingPriceNumber = showPriceInverted
-      ? orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
-      : orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
+    const clearingPriceNumber = showPriceInverted ? auctionPriceReversed : auctionCurrentPrice
 
     const priceSymbolStrings = showPriceInverted
       ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)} per
@@ -309,10 +304,11 @@ const AuctionDetails = (props: Props) => {
       '-'
     )
   }, [
-    derivedAuctionInfo?.auctioningToken,
     showPriceInverted,
+    auctionPriceReversed,
+    auctionCurrentPrice,
+    derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
-    clearingPriceInfo,
     chainId,
   ])
 

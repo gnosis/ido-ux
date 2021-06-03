@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { getLogger } from '../../utils/logger'
 import { useAddPopup, useBlockNumber } from '../application/hooks'
+import { updateCurrentPrice } from '../auctionPrice/actions'
 import { AppDispatch, AppState } from '../index'
 import { finalizeOrderCancellation, finalizeOrderPlacement } from '../orders/actions'
 import { finalizeTransaction } from './actions'
@@ -53,6 +54,7 @@ export default function Updater() {
               )
               dispatch(finalizeOrderCancellation())
               dispatch(finalizeOrderPlacement())
+              dispatch(updateCurrentPrice())
               // add success or failure popup
               if (receipt.status === 1) {
                 addPopup({

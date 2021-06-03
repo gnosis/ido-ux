@@ -2,6 +2,7 @@ import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { load, save } from 'redux-localstorage-simple'
 
 import application from './application/reducer'
+import auctionPrice from './auctionPrice/reducer'
 import multicall from './multicall/reducer'
 import orderPlacement from './orderPlacement/reducer'
 import orderbook from './orderbook/reducer'
@@ -23,6 +24,7 @@ const store = configureStore({
     orderbook,
     multicall,
     tokenList,
+    auctionPrice,
   },
   middleware: [...getDefaultMiddleware(), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS }),

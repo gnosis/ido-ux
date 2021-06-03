@@ -5,6 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
 import { chainNames } from '../constants'
+import { alterationCurrentPrice } from '../state/auctionPrice/actions'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -77,6 +78,7 @@ export function useCancelOrderCallback(
               biddingToken.symbol,
           })
           actionCancelOrder(orderId)
+          alterationCurrentPrice()
 
           return response.hash
         })
