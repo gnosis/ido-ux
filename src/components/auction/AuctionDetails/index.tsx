@@ -6,13 +6,10 @@ import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
-import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { useAuctionPriceState } from '../../../state/auctionPrice/hooks'
 import {
   AuctionState,
   DerivedAuctionInfo,
-  orderToPrice,
-  orderToSellOrder,
   useOrderPlacementState,
   useSwapActionHandlers,
 } from '../../../state/orderPlacement/hooks'

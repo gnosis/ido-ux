@@ -21,7 +21,6 @@ import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTimeout } from '../.
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
 import { calculateTimeLeft } from '../../utils/tools'
-import { useAuctionPriceHandlers } from '../auctionPrice/hooks'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'

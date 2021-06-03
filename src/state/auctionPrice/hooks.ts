@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
-import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
+import { useClearingPriceInfo2 } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { DerivedAuctionInfo, orderToPrice, orderToSellOrder } from '../orderPlacement/hooks'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
 import { alterationCurrentPrice, setCurrentPrice, updateCurrentPrice } from './actions'
@@ -45,7 +45,7 @@ export function useSetCurrentPrice(
   shouldLoadPrice: Maybe<boolean>,
 ) {
   const { onSetCurrentPrice } = useAuctionPriceHandlers()
-  const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
+  const { clearingPriceInfo } = useClearingPriceInfo2(auctionIdentifier, shouldLoadPrice)
 
   useEffect(() => {
     if (!clearingPriceInfo || !derivedAuctionInfo || !shouldLoadPrice) return
@@ -58,6 +58,5 @@ export function useSetCurrentPrice(
     const price = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
     const priceReversed = orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
     onSetCurrentPrice(price as string, priceReversed as string)
-    console.log('clearingPriceInfo', clearingPriceInfo)
   }, [clearingPriceInfo, derivedAuctionInfo, auctionIdentifier, shouldLoadPrice, onSetCurrentPrice])
 }
