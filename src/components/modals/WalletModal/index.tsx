@@ -95,6 +95,7 @@ const WalletModal: React.FC = () => {
     }
   }, [account, previousAccount, toggleWalletModal, walletModalOpen])
 
+  // always reset to account view
   useEffect(() => {
     if (walletModalOpen) {
       setPendingError(false)
@@ -193,6 +194,7 @@ const WalletModal: React.FC = () => {
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
 
+      // overwrite injected when needed
       if (option.connector === injected) {
         if (!(window.web3 || window.ethereum)) {
           return null //dont want to return install twice
@@ -203,6 +205,7 @@ const WalletModal: React.FC = () => {
         }
       }
 
+      // return rest of options
       return (
         <Option
           disabled={!termsAccepted}

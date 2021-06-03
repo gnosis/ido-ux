@@ -4,14 +4,11 @@ import styled from 'styled-components'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
-import { walletconnect } from '../../../../connectors'
-import { useOrderPlacementState } from '../../../../state/orderPlacement/hooks'
 import { Button } from '../../../buttons/Button'
 import { InlineLoading } from '../../../common/InlineLoading'
 import { AlertIcon } from '../../../icons/AlertIcon'
 import { IconWrapper } from '../../common/pureStyledComponents/IconWrapper'
 import { Text } from '../../common/pureStyledComponents/Text'
-import WalletConnectData from '../WalletConnectData'
 
 const Wrapper = styled.div``
 
@@ -33,10 +30,8 @@ interface Props {
 }
 
 const PendingView: React.FC<Props> = (props) => {
-  const { connector, error = false, setPendingError, tryActivation, uri = '', ...restProps } = props
-  const { chainId } = useOrderPlacementState()
+  const { connector, error = false, setPendingError, tryActivation, ...restProps } = props
 
-  const isWalletConnect = connector === walletconnect[chainId]
   return (
     <Wrapper {...restProps}>
       {error && (
@@ -57,15 +52,7 @@ const PendingView: React.FC<Props> = (props) => {
           </ActionButton>
         </>
       )}
-      {!error && isWalletConnect && (
-        <>
-          <WalletConnectData size={220} uri={uri} />
-          <Text fontSize="18px" textAlign="center">
-            Scan QR code with a compatible wallet...
-          </Text>
-        </>
-      )}
-      {!error && !isWalletConnect && <LoadingWrapper message={'Connecting...'} />}
+      {!error && <LoadingWrapper message={'Connecting...'} />}
     </Wrapper>
   )
 }
