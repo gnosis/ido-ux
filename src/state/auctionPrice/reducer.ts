@@ -2,16 +2,22 @@ import { createReducer } from '@reduxjs/toolkit'
 
 import { alterationCurrentPrice, setCurrentPrice, updateCurrentPrice } from './actions'
 
+export enum PriceStatus {
+  CONFIGURED = 0,
+  ALTERED = 1,
+  NEEDS_UPDATING = 2,
+}
+
 export interface AuctionPriceState {
   currentPrice: Maybe<string>
   currentPriceReversed: Maybe<string>
-  shouldLoad: Maybe<boolean>
+  shouldLoad: PriceStatus
 }
 
 const initialState: AuctionPriceState = {
   currentPrice: null,
   currentPriceReversed: null,
-  shouldLoad: true,
+  shouldLoad: PriceStatus.NEEDS_UPDATING,
 }
 
 export default createReducer<AuctionPriceState>(initialState, (builder) =>
@@ -21,20 +27,22 @@ export default createReducer<AuctionPriceState>(initialState, (builder) =>
         ...state,
         currentPrice: price,
         currentPriceReversed: priceReversed,
-        shouldLoad: false,
+        shouldLoad: PriceStatus.CONFIGURED,
       }
     })
     .addCase(alterationCurrentPrice, (state: AuctionPriceState) => {
       return {
         ...state,
-        shouldLoad: null,
+        shouldLoad: PriceStatus.ALTERED,
       }
     })
     .addCase(updateCurrentPrice, (state: AuctionPriceState) => {
-      const isPriceAltered = state.shouldLoad === null
       return {
         ...state,
-        shouldLoad: isPriceAltered,
+        shouldLoad:
+          state.shouldLoad === PriceStatus.ALTERED
+            ? PriceStatus.NEEDS_UPDATING
+            : PriceStatus.CONFIGURED,
       }
     }),
 )

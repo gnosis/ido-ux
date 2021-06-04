@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { ClearingPriceAndVolumeData } from '../api/AdditionalServicesApi'
+import { PriceStatus } from '../state/auctionPrice/reducer'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
@@ -63,7 +64,7 @@ export const useClearingPriceInfo = (
 
 export const useClearingPriceInfo2 = (
   auctionIdentifer: AuctionIdentifier,
-  loadAgain: Maybe<boolean>,
+  loadAgain: PriceStatus,
 ): {
   clearingPriceInfo: Maybe<ClearingPriceAndVolumeData> | undefined
   loadingClearingPrice: boolean
@@ -84,7 +85,12 @@ export const useClearingPriceInfo2 = (
     setLoading(true)
     const fetchApiData = async () => {
       try {
-        if (!chainId || !auctionId || !additionalServiceApi || !loadAgain) {
+        if (
+          !chainId ||
+          !auctionId ||
+          !additionalServiceApi ||
+          loadAgain !== PriceStatus.NEEDS_UPDATING
+        ) {
           return
         }
 

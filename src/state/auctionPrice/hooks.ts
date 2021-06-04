@@ -7,6 +7,7 @@ import { useClearingPriceInfo2 } from '../../hooks/useCurrentClearingOrderAndVol
 import { DerivedAuctionInfo, orderToPrice, orderToSellOrder } from '../orderPlacement/hooks'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
 import { alterationCurrentPrice, setCurrentPrice, updateCurrentPrice } from './actions'
+import { PriceStatus } from './reducer'
 
 export function useAuctionPriceState(): AppState['auctionPrice'] {
   return useSelector<AppState, AppState['auctionPrice']>((state) => state.auctionPrice)
@@ -42,7 +43,7 @@ export function useAuctionPriceHandlers(): {
 export function useSetCurrentPrice(
   auctionIdentifier: AuctionIdentifier,
   derivedAuctionInfo: DerivedAuctionInfo,
-  shouldLoadPrice: Maybe<boolean>,
+  shouldLoadPrice: PriceStatus,
 ) {
   const { onSetCurrentPrice } = useAuctionPriceHandlers()
   const { clearingPriceInfo } = useClearingPriceInfo2(auctionIdentifier, shouldLoadPrice)
