@@ -127,6 +127,7 @@
     "react-router-dom": "^5.0.0",
     "react-router-hash-link": "^2.4.0",
     "react-scripts": "^4.0.1",
+    "react-scrollbar": "^0.5.6",
     "react-spring": "^8.0.27",
     "react-table": "^7.6.3",
     "react-tooltip": "^4.2.19",

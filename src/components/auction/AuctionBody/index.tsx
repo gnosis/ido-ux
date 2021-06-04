@@ -15,7 +15,7 @@ const Grid = styled.div`
   row-gap: 20px;
   margin: 0 0 40px;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.lg}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     column-gap: 18px;
     grid-template-columns: calc(50% - 20px) 50%;
   }

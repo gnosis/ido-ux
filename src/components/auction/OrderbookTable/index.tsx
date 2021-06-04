@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
+import ScrollArea from 'react-scrollbar'
 
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -22,13 +23,15 @@ const Table = styled(BaseCard)`
   overflow-x: auto;
 `
 
-const TableBody = styled.div`
+const TableBody = styled(ScrollArea)`
   max-height: 100%;
-  overflow-y: auto;
   overflow-x: hidden;
   min-width: 560px;
   @media (min-width: 1180px) {
     min-width: auto;
+  }
+  .scrollarea-content {
+    touch-action: auto;
   }
 `
 interface CellProps {
@@ -37,7 +40,7 @@ interface CellProps {
 const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   text-align: right;
   min-width: ${(props) => (props.minWidth ? props.minWidth : 'auto')};
-  padding: 13px 0;
+  padding: 13px 5px;
   flex-grow: 1;
   .tooltipComponent {
     a {
@@ -76,6 +79,7 @@ const StyledRow = styled(Row)`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-column-gap: 15px;
   min-width: 560px;
+  min-height: 50px;
   &:nth-child(odd) {
     ${({ theme }) => `background-color: ${transparentize(0.98, theme.textField.color)};`}
   }
@@ -184,7 +188,7 @@ export const OrderBookTable: React.FC<Props> = () => {
     <OverflowWrap>
       <Table>
         <StyledRow cols={'1fr 1fr 1fr 1fr'}>
-          <TableCell minWidth={'110px'}>
+          <TableCell minWidth={'115px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Price (DAI)</Wrap>
               <Tooltip text={`Price (DAI)`} />
@@ -209,7 +213,7 @@ export const OrderBookTable: React.FC<Props> = () => {
             </Wrap>
           </TableCell>
         </StyledRow>
-        <TableBody>
+        <TableBody smoothScrolling speed={0.8}>
           {tableData.map((row, i) => {
             return (
               <StyledRow cols={'1fr 1fr 1fr 1fr'} key={i}>
