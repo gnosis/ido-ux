@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { AbstractConnector } from '@web3-react/abstract-connector'
 
 import { Button } from '../../../buttons/Button'
@@ -45,7 +44,7 @@ const PendingView: React.FC<Props> = (props) => {
           <ActionButton
             onClick={() => {
               setPendingError(false)
-              tryActivation(connector)
+              connector && tryActivation(connector)
             }}
           >
             Try Again

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { URI_AVAILABLE } from '@anxolin/walletconnect-connector'
+import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import ReactGA from 'react-ga'
 
@@ -80,7 +81,7 @@ const WALLET_VIEWS = {
 const WalletModal: React.FC = () => {
   const { account, activate, active, connector, error } = useWeb3React()
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-  const [pendingWallet, setPendingWallet] = useState()
+  const [pendingWallet, setPendingWallet] = useState<AbstractConnector>()
   const [pendingError, setPendingError] = useState<boolean>()
   const walletModalOpen = useWalletModalOpen()
   const toggleWalletModal = useWalletModalToggle()
@@ -139,7 +140,7 @@ const WalletModal: React.FC = () => {
     connectorPrevious,
   ])
 
-  const tryActivation = async (connector) => {
+  const tryActivation = async (connector: AbstractConnector) => {
     let name = ''
     Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
@@ -167,10 +168,16 @@ const WalletModal: React.FC = () => {
       // if connector is an object with the set variable of [chainId], we know that its walletconnect object
       // otherwise, we will just use Metamask connector object
       if (connector[chainId]) {
-        setPendingWallet(connector[chainId]) // set wallet for pending view
+        setPendingWallet(connector) // set wallet for pending view
         setWalletView(WALLET_VIEWS.PENDING)
 
-        await activate(connector[chainId], undefined, true)
+        const walletConnect = connector[chainId]
+        // if the user has already tried to connect, manually reset the connector
+        if (walletConnect.walletConnectProvider?.wc?.uri) {
+          walletConnect.walletConnectProvider = undefined
+        }
+
+        await activate(walletConnect, undefined, true)
       } else {
         setPendingWallet(connector) // set wallet for pending view
         setWalletView(WALLET_VIEWS.PENDING)
@@ -205,7 +212,6 @@ const WalletModal: React.FC = () => {
         }
       }
 
-      // return rest of options
       return (
         <Option
           disabled={!termsAccepted}
