@@ -562,7 +562,7 @@ export function useDerivedClaimInfo(
 
   const error =
     clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
-      ? 'Price not yet supplied to auction.'
+      ? 'Waiting for on-chain price calculation.'
       : claimableOrders && claimableOrders.length > 0 && claimed && !claimed[0]
       ? 'You already claimed your funds.'
       : claimableOrders && claimableOrders.length === 0
