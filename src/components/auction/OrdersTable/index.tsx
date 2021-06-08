@@ -171,7 +171,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
       )}
       {!ordersEmpty && (
         <TableWrapper>
-          {ordersSortered.map((order, index) => (
+          {ordersSortered.map((order) => (
             <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
               <Cell>
                 <KeyValue
@@ -179,10 +179,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   itemKey={
                     <>
                       <span>Amount</span>
-                      <Tooltip
-                        id={`amount_${index}`}
-                        text={'The amount of bidding token committed to the order.'}
-                      />
+                      <Tooltip text={'The amount of bidding token committed to the order.'} />
                     </>
                   }
                   itemValue={abbreviation(order.sellAmount)}
@@ -194,7 +191,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   itemKey={
                     <>
                       <span>Limit Price</span>
-                      <Tooltip id={`limitPrice_${index}`} text={priceExplainer} />
+                      <Tooltip text={priceExplainer} />
                     </>
                   }
                   itemValue={abbreviation(
