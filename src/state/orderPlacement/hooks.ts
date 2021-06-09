@@ -151,7 +151,7 @@ export function useSwapActionHandlers(): {
         dispatch(
           resetUserPrice({
             price: isInvertedPrice
-              ? parseFloat(getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString())
+              ? parseFloat(getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION))
               : parseFloat(price),
           }),
         )
@@ -200,7 +200,7 @@ export const useGetOrderPlacementError = (
   const { chainId } = auctionIdentifier
   const { price: priceFromState, sellAmount } = useOrderPlacementState()
   const price = showPricesInverted
-    ? getInverse(Number(priceFromState), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+    ? getInverse(priceFromState, NUMBER_OF_DIGITS_FOR_INVERSION)
     : priceFromState
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,

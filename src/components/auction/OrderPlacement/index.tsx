@@ -213,7 +213,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
     const standardizedPrice = showPriceInverted
-      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      ? getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION)
       : price
 
     const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
