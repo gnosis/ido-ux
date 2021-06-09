@@ -281,7 +281,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           }
         : notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
         ? {
-            text: 'You need to unlock DAI to allow the smart contract to interact with it.',
+            text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
             type: InfoType.info,
           }
         : errorAmount
@@ -290,7 +290,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             type: InfoType.error,
           }
         : null,
-    [account, approval, errorAmount, notApproved],
+    [account, approval, errorAmount, notApproved, biddingTokenDisplay],
   )
 
   const priceInfo = React.useMemo(
