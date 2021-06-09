@@ -219,6 +219,7 @@ export const useGetOrderPlacementError = (
   const amountMustBeBigger =
     amountIn &&
     price &&
+    price !== '0' &&
     derivedAuctionInfo?.minBiddingAmountPerOrder &&
     derivedAuctionInfo?.biddingToken &&
     sellAmount &&
@@ -238,6 +239,7 @@ export const useGetOrderPlacementError = (
     balanceIn.lessThan(amountIn) &&
     `Insufficient ${getTokenDisplay(amountIn.token, chainId)}` + ' balance.'
 
+  const priceEqualsZero = amountIn && price && price === '0' ? `Price must not be 0` : undefined
   const outOfBoundsPricePlacingOrder =
     amountIn &&
     price &&
@@ -273,7 +275,8 @@ export const useGetOrderPlacementError = (
       : undefined
 
   const errorAmount = amountMustBeBigger || insufficientBalance || undefined
-  const errorPrice = outOfBoundsPricePlacingOrder || outOfBoundsPrice || undefined
+  const errorPrice =
+    priceEqualsZero || outOfBoundsPricePlacingOrder || outOfBoundsPrice || undefined
 
   return {
     errorAmount,
