@@ -144,18 +144,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
 
-  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
-
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
     biddingToken,
   ])
   const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
-
-  useEffect(() => {
-    if (approval === ApprovalState.PENDING) {
-      setApprovalSubmitted(true)
-    }
-  }, [approval, approvalSubmitted])
 
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
@@ -221,7 +213,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
     const standardizedPrice = showPriceInverted
-      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      ? getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION)
       : price
 
     const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
@@ -289,7 +281,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           }
         : notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
         ? {
-            text: 'You need to unlock DAI to allow the smart contract to interact with it.',
+            text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
             type: InfoType.info,
           }
         : errorAmount
@@ -298,7 +290,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             type: InfoType.error,
           }
         : null,
-    [account, approval, errorAmount, notApproved],
+    [account, approval, errorAmount, notApproved, biddingTokenDisplay],
   )
 
   const priceInfo = React.useMemo(
@@ -331,7 +323,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
-            <EmptyContentTextNoMargin>You are not allowed place an order.</EmptyContentTextNoMargin>
+            <EmptyContentTextNoMargin>
+              You are not allowed to place an order.
+            </EmptyContentTextNoMargin>
             <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
         )}

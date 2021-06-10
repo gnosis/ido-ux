@@ -94,10 +94,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
   const { buyAmountScaled } = convertPriceIntoBuyAndSellAmount(
     auctioningToken,
     biddingToken,
-    (isPriceInverted
-      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION)
-      : price
-    ).toString(),
+    isPriceInverted ? getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION) : price,
     sellAmount,
   )
 

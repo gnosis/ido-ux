@@ -302,7 +302,7 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
       for (const networkId in this.urlsByNetwork) {
         const url = await this.getMostInterestingAuctionDetailsUrl({
           networkId: Number(networkId),
-          numberOfAuctions: 3,
+          numberOfAuctions: 4,
         })
 
         promises.push(fetch(url))
