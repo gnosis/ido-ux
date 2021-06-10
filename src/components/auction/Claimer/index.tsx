@@ -85,7 +85,7 @@ interface Props {
 const Claimer: React.FC<Props> = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
   const { chainId } = auctionIdentifier
-  const { account } = useActiveWeb3React()
+  const { account, chainId: Web3ChainId } = useActiveWeb3React()
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [userConfirmedTx, setUserConfirmedTx] = useState<boolean>(false)
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
@@ -104,6 +104,8 @@ const Claimer: React.FC<Props> = (props) => {
     derivedAuctionInfo,
   )
 
+  const { auctioningToken, biddingToken } = derivedAuctionInfo
+
   const resetModal = () => setPendingConfirmation(true)
 
   const onClaimOrder = () =>
@@ -119,10 +121,10 @@ const Claimer: React.FC<Props> = (props) => {
         setUserConfirmedTx(false)
       })
 
-  const biddingTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
-    [derivedAuctionInfo, chainId],
-  )
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
 
   const biddingTokenDisplayWrapped = useMemo(
     () =>
@@ -134,10 +136,10 @@ const Claimer: React.FC<Props> = (props) => {
     [biddingTokenDisplay],
   )
 
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
-    [derivedAuctionInfo, chainId],
-  )
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
 
   const isLoading = useMemo(
     () =>
@@ -155,12 +157,24 @@ const Claimer: React.FC<Props> = (props) => {
     [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus],
   )
 
+  const isXDAI = isTokenXDAI(derivedAuctionInfo.biddingToken.address, chainId)
+  const isWETH = isTokenWETH(derivedAuctionInfo.biddingToken.address, chainId)
+
   const showUnwrapButton = useMemo(
     () =>
-      isTokenXDAI(derivedAuctionInfo.biddingToken.address, chainId) ||
-      isTokenWETH(derivedAuctionInfo.biddingToken.address, chainId),
-    [chainId, derivedAuctionInfo.biddingToken.address],
+      (isXDAI || isWETH) &&
+      account &&
+      chainId === Web3ChainId &&
+      claimableBiddingToken.greaterThan('0'),
+    [Web3ChainId, account, chainId, claimableBiddingToken, isWETH, isXDAI],
   )
+
+  const unwrapTooltip = `Unwrap ${biddingToken.symbol} on ${
+    isXDAI ? 'Honeyswap' : 'Uniswap'
+  }. Do it after you claimed your ${biddingTokenDisplayWrapped}`
+  const unwrapURL = isXDAI
+    ? `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`
+    : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
 
   return (
     <Wrapper>
@@ -170,12 +184,12 @@ const Claimer: React.FC<Props> = (props) => {
           <TokensWrapper>
             <TokenItem>
               <Token>
-                {derivedAuctionInfo?.biddingToken && biddingTokenDisplay ? (
+                {biddingToken && biddingTokenDisplay ? (
                   <>
                     <TokenLogo
                       size={'34px'}
                       token={{
-                        address: derivedAuctionInfo?.biddingToken.address,
+                        address: biddingToken.address,
                         symbol: biddingTokenDisplay,
                       }}
                     />
@@ -186,7 +200,7 @@ const Claimer: React.FC<Props> = (props) => {
                         data-for={'wrap_button'}
                         data-html={true}
                         data-multiline={true}
-                        data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap. Do it after you claimed your ${biddingTokenDisplayWrapped}`}
+                        data-tip={unwrapTooltip}
                       >
                         <ReactTooltip
                           arrowColor={'#001429'}
@@ -202,7 +216,7 @@ const Claimer: React.FC<Props> = (props) => {
                         />
                         <ButtonWrap
                           buttonType={ButtonType.primaryInverted}
-                          href={`https://app.honeyswap.org/#/swap?inputCurrency=${derivedAuctionInfo?.biddingToken.address}`}
+                          href={unwrapURL}
                           target="_blank"
                         >
                           Unwrap
@@ -220,12 +234,12 @@ const Claimer: React.FC<Props> = (props) => {
             </TokenItem>
             <TokenItem>
               <Token>
-                {derivedAuctionInfo?.auctioningToken && auctioningTokenDisplay ? (
+                {auctioningToken && auctioningTokenDisplay ? (
                   <>
                     <TokenLogo
                       size={'34px'}
                       token={{
-                        address: derivedAuctionInfo?.auctioningToken.address,
+                        address: auctioningToken.address,
                         symbol: auctioningTokenDisplay,
                       }}
                     />
