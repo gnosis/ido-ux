@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { useWeb3React } from '@web3-react/core'
-import { InjectedConnector } from '@web3-react/injected-connector'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useDarkModeManager } from '../../../state/user/hooks'
