@@ -21,7 +21,7 @@ import { SpinnerSize } from '../../common/Spinner'
 import { ErrorInfo } from '../../icons/ErrorInfo'
 import ClaimConfirmationModal from '../../modals/ClaimConfirmationModal'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
-import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
+import { ErrorRow, ErrorText } from '../../pureStyledComponents/Error'
 import TokenLogo from '../../token/TokenLogo'
 
 const Wrapper = styled(BaseCard)`
@@ -223,14 +223,6 @@ const Claimer: React.FC<Props> = (props) => {
               </Text>
             </TokenItem>
           </TokensWrapper>
-          {!isValid && account && (
-            <ErrorWrapper>
-              <ErrorRow>
-                <ErrorInfo />
-                <ErrorText>{error}</ErrorText>
-              </ErrorRow>
-            </ErrorWrapper>
-          )}
           {!account ? (
             <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
           ) : (
@@ -241,7 +233,18 @@ const Claimer: React.FC<Props> = (props) => {
                 onClaimOrder()
               }}
             >
-              {claimStatus === ClaimState.PENDING ? `Claiming ` : `Claim`}
+              {claimStatus === ClaimState.PENDING ? (
+                `Claiming `
+              ) : !isValid && account ? (
+                <>
+                  <ErrorRow>
+                    <ErrorInfo />
+                    <ErrorText>{error}</ErrorText>
+                  </ErrorRow>
+                </>
+              ) : (
+                `Claim`
+              )}
             </ActionButton>
           )}
           <ClaimConfirmationModal

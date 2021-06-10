@@ -551,7 +551,7 @@ export function useDerivedClaimInfo(
 
   const error =
     clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
-      ? 'Price not yet supplied to auction.'
+      ? 'Waiting for on-chain price calculation.'
       : claimStatus === ClaimState.CLAIMED
       ? 'You already claimed your funds.'
       : claimStatus === ClaimState.NOT_APPLICABLE
