@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { HashLink } from 'react-router-hash-link'
 
 import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
+import HighestVolumeAuctions from '../../components/auctions/HighestVolumeAuctions'
 import { ButtonCSS } from '../../components/buttons/buttonStylingTypes'
 import { Send } from '../../components/icons/Send'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
@@ -225,6 +226,7 @@ export const Landing: React.FC = () => {
       {featuredAuctions && (
         <Featured className="featuredAuctions" featuredAuctions={featuredAuctions} />
       )}
+      <HighestVolumeAuctions highestVolumeAuctions={featuredAuctions} />
       <BlockGrid>
         <TextBlock>
           <SubTitle>Best Price Discovery</SubTitle>
