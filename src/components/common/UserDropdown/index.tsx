@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { useWeb3React } from '@web3-react/core'
+import { InjectedConnector } from '@web3-react/injected-connector'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useDarkModeManager } from '../../../state/user/hooks'
@@ -189,10 +191,17 @@ export const UserDropdown: React.FC<Props> = (props) => {
     return isMetaMask ? 'MetaMask' : isWalletConnect ? 'WalletConnect' : 'Unknown'
   }, [library])
 
-  const disconnect = React.useCallback(async () => {
-    deactivate()
-    localStorage.removeItem('walletconnect')
-  }, [deactivate])
+  const disconnect = React.useCallback(
+    async (connector) => {
+      if (connector instanceof WalletConnectConnector && typeof connector.close === 'function') {
+        connector.close()
+      } else {
+        deactivate()
+      }
+      localStorage.removeItem('walletconnect')
+    },
+    [deactivate],
+  )
 
   const UserDropdownContent = () => {
     const items = [
@@ -237,8 +246,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
             buttonType={ButtonType.danger}
             onClick={() => {
               const c: any = connector
-              if (typeof c.close === 'function') c.close()
-              else disconnect()
+              disconnect(c)
             }}
           >
             Disconnect
