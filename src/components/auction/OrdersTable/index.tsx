@@ -78,12 +78,12 @@ const ActionButton = styled(Button)`
   }
 `
 
-interface OrderTableProps {
+interface OrdersTableProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
-const OrderTable: React.FC<OrderTableProps> = (props) => {
+const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const {
     auctionIdentifier,
     derivedAuctionInfo,
@@ -276,4 +276,4 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
   )
 }
 
-export default OrderTable
+export default OrdersTable
