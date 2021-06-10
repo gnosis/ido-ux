@@ -199,7 +199,7 @@ const OrderTable: React.FC<OrderTableProps> = (props) => {
                   }
                   itemValue={abbreviation(
                     showPriceInverted
-                      ? getInverse(Number(order.price), NUMBER_OF_DIGITS_FOR_INVERSION)
+                      ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION)
                       : order.price,
                   )}
                 />

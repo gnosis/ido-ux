@@ -54,7 +54,7 @@ export function usePlaceOrderCallback(
   const { auctionId } = auctionIdentifer
   const { price: priceFromSwapState, sellAmount } = useOrderPlacementState()
   const price = (isPriceInverted
-    ? getInverse(Number(priceFromSwapState), NUMBER_OF_DIGITS_FOR_INVERSION)
+    ? getInverse(priceFromSwapState, NUMBER_OF_DIGITS_FOR_INVERSION)
     : priceFromSwapState
   ).toString()
   const { onNewBid } = useOrderbookActionHandlers()

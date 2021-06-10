@@ -52,7 +52,7 @@ export default createReducer<OrderPlacementState>(initialState, (builder) =>
     .addCase(invertPrice, (state) => {
       return {
         ...state,
-        price: getInverse(Number(state.price), NUMBER_OF_DIGITS_FOR_INVERSION).toString(),
+        price: getInverse(state.price, NUMBER_OF_DIGITS_FOR_INVERSION),
         showPriceInverted: !state.showPriceInverted,
       }
     })
