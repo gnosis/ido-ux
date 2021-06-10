@@ -238,7 +238,7 @@ const WalletModal: React.FC = () => {
       ? ''
       : error
       ? 'Error connecting'
-      : 'Connect to a wallet'
+      : 'Connect a wallet'
   const errorMessage =
     error instanceof UnsupportedChainIdError
       ? 'Please connect to the appropriate Ethereum network.'
