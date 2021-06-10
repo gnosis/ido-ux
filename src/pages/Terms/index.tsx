@@ -516,7 +516,9 @@ export const Terms: React.FC = () => {
                 If an alleged breach, controversy, claim, dispute or difference arises out of or in
                 connection with the present Terms between you and us (a{' '}
                 <strong>&quot;Dispute&quot;</strong>), you agree to seek to resolve the matter with
-                us amicably by referring the matter first to:
+                us amicably by referring the matter first to GnosisDAO subcategory of the
+                gnosis.forum.io with a detailed description, the date and time the issue arose, your
+                handle to contact you on and the outcome you are seeking.
               </span>
             </LiMultiNumber>
             <LiMultiNumber>
