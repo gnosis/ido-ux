@@ -73,6 +73,11 @@ export function useApproveCallback(
       return
     }
 
+    if (!addressToApprove) {
+      logger.error('missing address to approve')
+      return
+    }
+
     let useExact = false
     const estimatedGas = await tokenContract.estimateGas
       .approve(addressToApprove, MaxUint256)
@@ -90,7 +95,7 @@ export function useApproveCallback(
       .then((response: TransactionResponse) => {
         addTransaction(response, {
           summary: 'Approve ' + amountToApprove?.token?.symbol,
-          approval: { tokenAddress: amountToApprove?.token?.address, spender: addressToApprove },
+          approval: { tokenAddress: amountToApprove.token.address, spender: addressToApprove },
         })
       })
       .catch((error: Error) => {

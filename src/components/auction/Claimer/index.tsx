@@ -12,7 +12,7 @@ import {
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getTokenDisplay, isTokenXDAI } from '../../../utils'
+import { getTokenDisplay, isTokenWETH, isTokenXDAI } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import { ButtonAnchor } from '../../buttons/ButtonAnchor'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
@@ -124,6 +124,16 @@ const Claimer: React.FC<Props> = (props) => {
     [derivedAuctionInfo, chainId],
   )
 
+  const biddingTokenDisplayWrapped = useMemo(
+    () =>
+      biddingTokenDisplay === 'XDAI'
+        ? 'WXDAI'
+        : biddingTokenDisplay === 'ETH'
+        ? 'WETH'
+        : biddingTokenDisplay,
+    [biddingTokenDisplay],
+  )
+
   const auctioningTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
     [derivedAuctionInfo, chainId],
@@ -145,6 +155,13 @@ const Claimer: React.FC<Props> = (props) => {
     [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus],
   )
 
+  const showUnwrapButton = useMemo(
+    () =>
+      isTokenXDAI(derivedAuctionInfo.biddingToken.address, chainId) ||
+      isTokenWETH(derivedAuctionInfo.biddingToken.address, chainId),
+    [chainId, derivedAuctionInfo.biddingToken.address],
+  )
+
   return (
     <Wrapper>
       {isLoading && <InlineLoading size={SpinnerSize.small} />}
@@ -162,14 +179,14 @@ const Claimer: React.FC<Props> = (props) => {
                         symbol: biddingTokenDisplay,
                       }}
                     />
-                    <Text>{biddingTokenDisplay != 'XDAI' ? biddingTokenDisplay : `WXDAI`}</Text>
-                    {isTokenXDAI(derivedAuctionInfo?.biddingToken.address, chainId) && (
+                    <Text>{biddingTokenDisplayWrapped}</Text>
+                    {showUnwrapButton && (
                       <span
                         className={`tooltipComponent`}
                         data-for={'wrap_button'}
                         data-html={true}
                         data-multiline={true}
-                        data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap. Do it after you claimed your WXDAI`}
+                        data-tip={`Unwrap ${derivedAuctionInfo?.biddingToken.symbol} on Honeyswap. Do it after you claimed your ${biddingTokenDisplayWrapped}`}
                       >
                         <ReactTooltip
                           arrowColor={'#001429'}

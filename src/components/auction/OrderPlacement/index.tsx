@@ -21,7 +21,13 @@ import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
 import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
-import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTokenXDAI } from '../../../utils'
+import {
+  ChainId,
+  EASY_AUCTION_NETWORKS,
+  getTokenDisplay,
+  isTokenWETH,
+  isTokenXDAI,
+} from '../../../utils'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
@@ -315,6 +321,12 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       price === '') &&
     true
 
+  const isWrappable =
+    biddingTokenBalance.greaterThan('0') &&
+    (isTokenXDAI(biddingToken.address, chainId) || isTokenWETH(biddingToken.address, chainId)) &&
+    !!account &&
+    !!biddingToken.address
+
   return (
     <>
       <Wrapper>
@@ -353,14 +365,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
               value={sellAmount}
               wrap={{
-                isWrappable:
-                  balanceString &&
-                  isTokenXDAI(biddingToken.address, chainId) &&
-                  account &&
-                  biddingToken &&
-                  biddingToken.address
-                    ? true
-                    : false,
+                isWrappable,
                 onClick: () =>
                   window.open(
                     `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
