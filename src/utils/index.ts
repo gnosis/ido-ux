@@ -195,9 +195,13 @@ export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
   return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId === 100
 }
 
-// TODO use WETH object? because this should also work in rinkeby
 export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
-  return tokenAddress === '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' && chainId === 1
+  return (
+    !!tokenAddress &&
+    !!chainId &&
+    tokenAddress == WETH[chainId].address &&
+    (chainId === 1 || chainId === 4)
+  )
 }
 
 export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {

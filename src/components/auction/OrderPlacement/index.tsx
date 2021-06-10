@@ -20,7 +20,7 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
+import { useTokenBalancesTreatWETHAsETH } from '../../../state/wallet/hooks'
 import {
   ChainId,
   EASY_AUCTION_NETWORKS,
@@ -150,9 +150,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
 
-  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
-    biddingToken,
-  ])
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [biddingToken])
   const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
 
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
@@ -322,6 +320,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     true
 
   const isWrappable =
+    biddingTokenBalance &&
     biddingTokenBalance.greaterThan('0') &&
     (isTokenXDAI(biddingToken.address, chainId) || isTokenWETH(biddingToken.address, chainId)) &&
     !!account &&
