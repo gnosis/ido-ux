@@ -366,9 +366,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               wrap={{
                 isWrappable,
                 onClick: () =>
-                  window.open(
-                    `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                  ),
+                  chainId == 100
+                    ? window.open(
+                        `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      )
+                    : window.open(
+                        `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      ),
               }}
             />
             <PriceInputPanel
