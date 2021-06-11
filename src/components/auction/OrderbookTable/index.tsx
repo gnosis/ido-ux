@@ -145,9 +145,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           </TableCell>
           <TableCell minWidth={'150px'}>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>
-                Amount ({derivedAuctionInfo.auctioningToken.symbol})
-              </Wrap>
+              <Wrap margin={'0 10px 0 0'}>Amount ({derivedAuctionInfo.biddingToken.symbol})</Wrap>
               <Tooltip text={`Sell amount of all orders in the rows particular price range`} />
             </Wrap>
           </TableCell>
