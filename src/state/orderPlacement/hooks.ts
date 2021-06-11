@@ -26,7 +26,7 @@ import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
-import { useTokenBalancesTreatWETHAsETHonXDAI } from '../wallet/hooks'
+import { useTokenBalancesTreatWETHAsETH } from '../wallet/hooks'
 import {
   invertPrice,
   priceInput,
@@ -151,7 +151,7 @@ export function useSwapActionHandlers(): {
         dispatch(
           resetUserPrice({
             price: isInvertedPrice
-              ? parseFloat(getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString())
+              ? parseFloat(getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION))
               : parseFloat(price),
           }),
         )
@@ -200,9 +200,9 @@ export const useGetOrderPlacementError = (
   const { chainId } = auctionIdentifier
   const { price: priceFromState, sellAmount } = useOrderPlacementState()
   const price = showPricesInverted
-    ? getInverse(Number(priceFromState), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+    ? getInverse(priceFromState, NUMBER_OF_DIGITS_FOR_INVERSION)
     : priceFromState
-  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
   const biddingTokenBalance =
@@ -219,6 +219,8 @@ export const useGetOrderPlacementError = (
   const amountMustBeBigger =
     amountIn &&
     price &&
+    price !== '0' &&
+    price !== 'Infinity' &&
     derivedAuctionInfo?.minBiddingAmountPerOrder &&
     derivedAuctionInfo?.biddingToken &&
     sellAmount &&
@@ -238,6 +240,8 @@ export const useGetOrderPlacementError = (
     balanceIn.lessThan(amountIn) &&
     `Insufficient ${getTokenDisplay(amountIn.token, chainId)}` + ' balance.'
 
+  const priceEqualsZero =
+    amountIn && price && (price === '0' || price === 'Infinity') ? `Price must not be 0` : undefined
   const outOfBoundsPricePlacingOrder =
     amountIn &&
     price &&
@@ -273,7 +277,8 @@ export const useGetOrderPlacementError = (
       : undefined
 
   const errorAmount = amountMustBeBigger || insufficientBalance || undefined
-  const errorPrice = outOfBoundsPricePlacingOrder || outOfBoundsPrice || undefined
+  const errorPrice =
+    priceEqualsZero || outOfBoundsPricePlacingOrder || outOfBoundsPrice || undefined
 
   return {
     errorAmount,
@@ -546,7 +551,7 @@ export function useDerivedClaimInfo(
 
   const error =
     clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
-      ? 'Price not yet supplied to auction.'
+      ? 'Waiting for on-chain price calculation.'
       : claimStatus === ClaimState.CLAIMED
       ? 'You already claimed your funds.'
       : claimStatus === ClaimState.NOT_APPLICABLE

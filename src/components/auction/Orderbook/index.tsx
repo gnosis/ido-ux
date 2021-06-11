@@ -59,8 +59,8 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
 
   if (showChartsInverted(baseToken)) {
     for (const p of processedOrderbook) {
-      p.priceNumber = getInverse(p.price, NUMBER_OF_DIGITS_FOR_INVERSION)
-      p.priceFormatted = getInverse(p.price, NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      p.priceNumber = Number(getInverse(p.price.toString(), NUMBER_OF_DIGITS_FOR_INVERSION))
+      p.priceFormatted = getInverse(p.price.toString(), NUMBER_OF_DIGITS_FOR_INVERSION)
     }
   }
 

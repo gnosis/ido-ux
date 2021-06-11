@@ -5,11 +5,14 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { STABLE_TOKENS_FOR_INVERTED_CHARTS } from '../constants/config'
 import { tryParseAmount } from '../state/orderPlacement/hooks'
 
-export function getInverse(price: number, nrDigits: number): number {
+export function getInverse(price: string, nrDigits: number): string {
+  if (price == '-') {
+    return '-'
+  }
   // if 1/price has more than `nrDigits`, we make a cut off and only take the first `nrDigits`
   const re = new RegExp('(\\d+\\.\\d{' + nrDigits + '})(\\d)'),
-    m = (1 / price).toString().match(re)
-  return m ? parseFloat(m[1]) : (1 / price).valueOf()
+    m = (1 / Number(price)).toString().match(re)
+  return (m ? parseFloat(m[1]) : (1 / Number(price)).valueOf()).toString()
 }
 
 export function convertPriceIntoBuyAndSellAmount(
