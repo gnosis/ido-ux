@@ -376,6 +376,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               }}
             />
             <PriceInputPanel
+              chainId={chainId}
               info={priceInfo}
               invertPrices={showPriceInverted}
               onInvertPrices={onInvertPrices}

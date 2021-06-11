@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
-import { useActiveWeb3React } from '../../../hooks'
 import { getTokenDisplay } from '../../../utils'
 import { Tooltip } from '../../common/Tooltip'
 import { InvertIcon } from '../../icons/InvertIcon'
@@ -41,6 +40,7 @@ const InvertButton = styled(FieldRowLineButton)`
 `
 
 interface Props {
+  chainId: number
   info?: FieldRowInfoProps
   invertPrices: boolean
   onInvertPrices: () => void
@@ -51,6 +51,7 @@ interface Props {
 
 const PriceInputPanel = (props: Props) => {
   const {
+    chainId,
     info,
     invertPrices,
     onInvertPrices,
@@ -60,8 +61,6 @@ const PriceInputPanel = (props: Props) => {
     ...restProps
   } = props
   const error = info?.type === InfoType.error
-
-  const { chainId } = useActiveWeb3React()
 
   const { auctioningTokenDisplay, biddingTokenDisplay } = useMemo(() => {
     if (tokens && chainId && tokens.auctioningToken && tokens.biddingToken) {
