@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
+import { useActiveWeb3React } from '../../../hooks'
+import { getTokenDisplay } from '../../../utils'
 import { Tooltip } from '../../common/Tooltip'
 import { InvertIcon } from '../../icons/InvertIcon'
 import { MiniInfoIcon } from '../../icons/MiniInfoIcon'
@@ -59,6 +61,19 @@ const PriceInputPanel = (props: Props) => {
   } = props
   const error = info?.type === InfoType.error
 
+  const { chainId } = useActiveWeb3React()
+
+  const { auctioningTokenDisplay, biddingTokenDisplay } = useMemo(() => {
+    if (tokens && chainId && tokens.auctioningToken && tokens.biddingToken) {
+      return {
+        auctioningTokenDisplay: getTokenDisplay(tokens.auctioningToken, chainId),
+        biddingTokenDisplay: getTokenDisplay(tokens.biddingToken, chainId),
+      }
+    } else {
+      return { auctioningTokenDisplay: '-', biddingTokenDisplay: '-' }
+    }
+  }, [chainId, tokens])
+
   return (
     <>
       <FieldRowWrapper error={error} {...restProps}>
@@ -104,8 +119,8 @@ const PriceInputPanel = (props: Props) => {
                 )}
                 <FieldRowTokenSymbol>
                   {invertPrices
-                    ? `${tokens.auctioningToken.symbol} per ${tokens.biddingToken.symbol}`
-                    : `${tokens.biddingToken.symbol} per ${tokens.auctioningToken.symbol}`}
+                    ? `${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                    : `${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
                 </FieldRowTokenSymbol>
               </FieldRowToken>
               <InvertButton onClick={onInvertPrices} title="Invert">
