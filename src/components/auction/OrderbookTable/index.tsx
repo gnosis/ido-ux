@@ -1,16 +1,20 @@
 import { transparentize } from 'polished'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 import ScrollArea from 'react-scrollbar'
 
+import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
+import { useOrderState } from '../../../state/orders/hooks'
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { Cell } from '../../pureStyledComponents/Cell'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { Row } from '../../pureStyledComponents/Row'
+import { buildTableData } from './helpers'
 
 export interface Props {
   tableData?: any[]
@@ -100,89 +104,34 @@ const StyledRow = styled(Row)`
 const StyledEmptyContentWrapper = styled(EmptyContentWrapper)`
   min-height: 352px;
 `
+interface OrderBookTableProps {
+  derivedAuctionInfo: DerivedAuctionInfo
+  granularity: string
+}
 
-export const OrderBookTable: React.FC<Props> = () => {
-  const tableData = [
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '65742129.20000',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '65742129.20000',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '65742129.20000',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-    {
-      price: '0.07508',
-      amount: '399573787.95950',
-      summary: '2197559000',
-      mySize: '0.00',
-    },
-  ]
+export const OrderBookTable: React.FC<OrderBookTableProps> = ({
+  derivedAuctionInfo,
+  granularity,
+}) => {
+  // TODO: add the current user order?
+  const { bids, error /*, userOrderPrice, userOrderVolume*/ } = useOrderbookState()
+  const { orders } = useOrderState()
 
-  const noAuctions = tableData.length === 0
+  const tableData = useMemo(() => {
+    const myBids = orders.map((order) => ({
+      price: Number(order.price),
+      volume: Number(order.sellAmount),
+    }))
 
-  return noAuctions ? (
+    return buildTableData(bids, myBids, Number(granularity))
+  }, [bids, orders, granularity])
+
+  const noBids = tableData.length === 0
+
+  return noBids || error ? (
     <StyledEmptyContentWrapper>
       <InfoIcon />
-      <EmptyContentText>{noAuctions && 'No auctions.'}</EmptyContentText>
+      <EmptyContentText>No bids.</EmptyContentText>
     </StyledEmptyContentWrapper>
   ) : (
     <OverflowWrap>
@@ -190,26 +139,32 @@ export const OrderBookTable: React.FC<Props> = () => {
         <StyledRow cols={'1fr 1fr 1fr 1fr'}>
           <TableCell minWidth={'115px'}>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>Price (DAI)</Wrap>
-              <Tooltip text={`Price (DAI)`} />
+              <Wrap margin={'0 10px 0 0'}>Price ({derivedAuctionInfo.biddingToken.symbol})</Wrap>
+              <Tooltip text={'Price range of limit orders for a given granularity'} />
             </Wrap>
           </TableCell>
           <TableCell minWidth={'150px'}>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>Amount (GNO)</Wrap>
-              <Tooltip text={`You have no orders for this auction.`} />
+              <Wrap margin={'0 10px 0 0'}>
+                Amount ({derivedAuctionInfo.auctioningToken.symbol})
+              </Wrap>
+              <Tooltip text={`Sell amount of all orders in the rows particular price range`} />
             </Wrap>
           </TableCell>
           <TableCell minWidth={'120px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Sum</Wrap>
-              <Tooltip text={`Summary`} />
+              <Tooltip
+                text={
+                  'Cumulative sum of sell amounts of all orders with a limit price lower than the price mentioned in the price column'
+                }
+              />
             </Wrap>
           </TableCell>
           <TableCell minWidth={'90px'}>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>My size</Wrap>
-              <Tooltip text={`My size`} />
+              <Wrap margin={'0 10px 0 0'}>My Size</Wrap>
+              <Tooltip text="Percentage of your sell amount in the overall sell amount of this column" />
             </Wrap>
           </TableCell>
         </StyledRow>
@@ -219,7 +174,7 @@ export const OrderBookTable: React.FC<Props> = () => {
               <StyledRow cols={'1fr 1fr 1fr 1fr'} key={i}>
                 <TableCell minWidth={'110px'}>{row.price}</TableCell>
                 <TableCell minWidth={'150px'}>{row.amount}</TableCell>
-                <TableCell minWidth={'120px'}>{row.summary}</TableCell>
+                <TableCell minWidth={'120px'}>{row.sum}</TableCell>
                 <TableCell minWidth={'90px'}>{row.mySize}%</TableCell>
               </StyledRow>
             )

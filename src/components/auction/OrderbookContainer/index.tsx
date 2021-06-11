@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 
 import { AuctionState } from '../../../state/orderPlacement/hooks'
+import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { ButtonToggle } from '../../buttons/ButtonToggle'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
@@ -118,11 +119,30 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `
 
+// TODO: Build the array dynamically based on the current bids
+const granularityOptions = ['0.001', '0.01', '0.1', '1', '10', '50', '100']
+const getClosestNumber = (numbers: string[], goal: number) => {
+  return numbers.reduce(function (prev, curr) {
+    return Math.abs(Number(curr) - goal) < Math.abs(Number(prev) - goal) ? curr : prev
+  })
+}
+
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
-
   const [isChartVisible, setChartVisibility] = useState(true)
-  const dropdownMockData = ['0.001', '0.01', '0.1', '1', '10', '50', '100']
+  const [granularity, setGranularity] = useState(granularityOptions[0])
+  const { bids, error } = useOrderbookState()
+
+  useOrderbookDataCallback(auctionIdentifier)
+
+  useEffect(() => {
+    if (bids?.length > 1 && !error) {
+      const current = (bids[0].price - bids[bids.length - 1].price) / 10
+      const closest = getClosestNumber(granularityOptions, current)
+      setGranularity(closest)
+    }
+  }, [bids, error])
+
   return (
     <>
       <Wrap alignItems={['flex-start', 'center']} flexDir={['column', 'row']} margin={'0 0 16px 0'}>
@@ -134,12 +154,13 @@ export const OrderBookContainer = (props) => {
         <Wrap flexDir={['row-reverse', 'row']} margin={['20px 0', '0']}>
           {!isChartVisible && (
             <StyledDropdown
+              disabled={!granularity}
               dropdownButtonContent={<StyledButtonSelect content={'Granularity'} />}
               dropdownPosition={DropdownPosition.right}
-              items={dropdownMockData.map((item, index) => (
-                <StyledDropdownItem key={index}>
+              items={granularityOptions.map((item, index) => (
+                <StyledDropdownItem key={index} onClick={() => setGranularity(item)}>
                   {item}
-                  <StyledCheckbox />
+                  <StyledCheckbox checked={item === granularity} />
                 </StyledDropdownItem>
               ))}
             />
@@ -153,9 +174,9 @@ export const OrderBookContainer = (props) => {
         </Wrap>
       </Wrap>
       {isChartVisible ? (
-        <OrderBook auctionIdentifier={auctionIdentifier} derivedAuctionInfo={derivedAuctionInfo} />
+        <OrderBook derivedAuctionInfo={derivedAuctionInfo} />
       ) : (
-        <OrderBookTable />
+        <OrderBookTable derivedAuctionInfo={derivedAuctionInfo} granularity={granularity} />
       )}
     </>
   )
