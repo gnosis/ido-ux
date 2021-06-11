@@ -1,7 +1,11 @@
 name: Deploy
 
 # Run on every commit
-on: push
+on: 
+  push:
+    branches:
+    - '*'
+    - '!main'
 
 jobs:
   ci:
