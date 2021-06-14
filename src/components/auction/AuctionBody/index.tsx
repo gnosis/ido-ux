@@ -3,18 +3,11 @@ import styled from 'styled-components'
 
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { AuctionNotStarted } from '../AuctionNotStarted'
-import { AuctionPending } from '../AuctionPending'
 import Claimer from '../Claimer'
 import OrderPlacement from '../OrderPlacement'
-import { OrderBook } from '../Orderbook'
+import { OrderBookContainer } from '../OrderbookContainer'
 import OrdersTable from '../OrdersTable'
-
-const SectionTitle = styled(PageTitle)`
-  margin-bottom: 16px;
-  margin-top: 0;
-`
 
 const Grid = styled.div`
   display: grid;
@@ -22,10 +15,17 @@ const Grid = styled.div`
   row-gap: 20px;
   margin: 0 0 40px;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     column-gap: 18px;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: calc(50% - 20px) 50%;
   }
+`
+
+const GridCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow-x: auto;
 `
 
 interface AuctionBodyProps {
@@ -47,35 +47,29 @@ const AuctionBody = (props: AuctionBodyProps) => {
   return (
     <>
       {auctionStarted && (
-        <SectionTitle as="h2">
-          {(auctionState === AuctionState.ORDER_PLACING ||
-            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
-            'Place Order'}
-          {auctionState === AuctionState.CLAIMING && 'Claim Proceeds'}
-        </SectionTitle>
-      )}
-      {auctionStarted && (
         <Grid>
-          {(auctionState === AuctionState.ORDER_PLACING ||
-            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
-            <OrderPlacement
+          <GridCol>
+            {(auctionState === AuctionState.ORDER_PLACING ||
+              auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
+              <OrderPlacement
+                auctionIdentifier={auctionIdentifier}
+                derivedAuctionInfo={derivedAuctionInfo}
+              />
+            )}
+            {auctionState === AuctionState.CLAIMING && (
+              <Claimer
+                auctionIdentifier={auctionIdentifier}
+                derivedAuctionInfo={derivedAuctionInfo}
+              />
+            )}
+          </GridCol>
+          <GridCol>
+            <OrderBookContainer
               auctionIdentifier={auctionIdentifier}
+              auctionState={auctionState}
               derivedAuctionInfo={derivedAuctionInfo}
             />
-          )}
-          {auctionState === AuctionState.CLAIMING && (
-            <Claimer
-              auctionIdentifier={auctionIdentifier}
-              derivedAuctionInfo={derivedAuctionInfo}
-            />
-          )}
-          {auctionState === AuctionState.PRICE_SUBMISSION && (
-            <AuctionPending>Auction closed. Pending on-chain price-calculation.</AuctionPending>
-          )}
-          <OrderBook
-            auctionIdentifier={auctionIdentifier}
-            derivedAuctionInfo={derivedAuctionInfo}
-          />
+          </GridCol>
         </Grid>
       )}
       {auctionState === AuctionState.NOT_YET_STARTED && <AuctionNotStarted />}
