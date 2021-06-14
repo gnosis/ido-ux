@@ -2,164 +2,19 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import * as CSS from 'csstype'
 import moment from 'moment'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import { getChainName } from '../../../utils/tools'
-import { ChevronRight } from '../../icons/ChevronRight'
 import { ChevronRightBig } from '../../icons/ChevronRightBig'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { NetworkIcon } from '../../icons/NetworkIcon'
-import { YesIcon } from '../../icons/YesIcon'
 import { EmptyContentText, EmptyContentWrapper } from '../../pureStyledComponents/EmptyContent'
 import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import DoubleLogo from '../../token/DoubleLogo'
 
-interface WrapProps {
-  margin?: any
-  borders?: any
-  padding?: any
-  flexDir?: any
-  flexWrap?: any
-  alignItems?: any
-  justifyCont?: any
-  grow?: string
-  br?: any
-  fs?: string
-  fw?: string
-  color?: string
-  maxWidth?: any
-  hiddenMD?: boolean
-  hiddenXL?: boolean
-}
-
-const Wrapper = styled.div<Partial<CSS.Properties & WrapProps>>`
-  display: flex;
-  width: ${(props) => props.width || 'auto'};
-  max-width: ${(props) =>
-    props.maxWidth
-      ? typeof props.maxWidth !== 'string'
-        ? props.maxWidth[0]
-        : props.maxWidth
-      : '100%'};
-  flex-direction: ${(props) =>
-    props.flexDir ? (typeof props.flexDir !== 'string' ? props.flexDir[0] : props.flexDir) : 'row'};
-  flex-wrap: ${(props) =>
-    props.flexWrap
-      ? (typeof props.flexWrap === 'string' && props.flexWrap === 'row-reverse') ||
-        (typeof props.flexWrap === 'string' && props.flexWrap === 'row') ||
-        (typeof props.flexWrap !== 'string' && props.flexWrap[0] === 'row-reverse') ||
-        (typeof props.flexWrap !== 'string' && props.flexWrap[0] === 'row')
-        ? 'wrap'
-        : 'nowrap'
-      : props.flexDir
-      ? (typeof props.flexDir === 'string' && props.flexDir === 'column') ||
-        (typeof props.flexDir !== 'string' && props.flexDir[0] === 'column')
-        ? 'nowrap'
-        : 'wrap'
-      : 'wrap'};
-  align-items: ${(props) =>
-    props.alignItems
-      ? typeof props.alignItems !== 'string'
-        ? props.alignItems[0]
-        : props.alignItems
-      : 'flex-start'};
-  justify-content: ${(props) =>
-    props.justifyCont
-      ? typeof props.justifyCont !== 'string'
-        ? props.justifyCont[0]
-        : props.justifyCont
-      : 'flex-start'};
-  padding: ${(props) =>
-    props.padding ? (typeof props.padding !== 'string' ? props.padding[0] : props.padding) : '0'};
-  margin: ${(props) =>
-    props.margin ? (typeof props.margin !== 'string' ? props.margin[0] : props.margin) : '0'};
-  font-size: ${(props) => props.fs || '16px'};
-  font-weight: ${(props) => props.fw || '400'};
-  ${(props) =>
-    props.borders
-      ? typeof props.borders !== 'string'
-        ? props.borders.length > 1
-          ? props.borders[0].map(
-              (item: any) =>
-                `border-${item.side}: ${item.width ? item.width : '1px'} solid ${
-                  item.color || props.theme.dropdown.item.borderColor
-                };`,
-            )
-          : props.borders.map(
-              (item: any) =>
-                `border-${item.side}: ${item.width ? item.width : '1px'} solid ${
-                  item.color || props.theme.dropdown.item.borderColor
-                };`,
-            )
-        : `border: 1px solid ${props.borders || props.theme.dropdown.item.borderColor};`
-      : 'border: 0;'}
-  flex-grow: ${(props) => props.grow || '0'};
-  border-radius: ${(props: any) =>
-    props.br ? (typeof props.br !== 'string' ? props.br[0] : props.br) : '0'};
-  color: ${(props: any) => props.color || props.theme.text1};
-  ${(props: any) => props.hiddenMD && 'display: none;'}
-  @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
-    ${(props: any) => props.hiddenXL && 'display: none;'}
-    ${(props: any) => props.hiddenMD && 'display: flex;'}
-    flex-wrap: ${(props) =>
-      props.flexWrap
-        ? (typeof props.flexWrap === 'string' && props.flexWrap === 'row-reverse') ||
-          (typeof props.flexWrap === 'string' && props.flexWrap === 'row') ||
-          (typeof props.flexWrap !== 'string' && props.flexWrap[1] === 'row-reverse') ||
-          (typeof props.flexWrap !== 'string' && props.flexWrap[1] === 'row')
-          ? 'wrap'
-          : 'nowrap'
-        : props.flexDir
-        ? (typeof props.flexDir === 'string' && props.flexDir === 'column') ||
-          (typeof props.flexDir !== 'string' && props.flexDir[1] === 'column')
-          ? 'nowrap'
-          : 'wrap'
-        : 'wrap'};
-    align-items: ${(props) =>
-      props.alignItems
-        ? typeof props.alignItems !== 'string'
-          ? props.alignItems[1]
-          : props.alignItems
-        : 'flex-start'};
-    justify-content: ${(props) =>
-      props.justifyCont
-        ? typeof props.justifyCont !== 'string'
-          ? props.justifyCont[1]
-          : props.justifyCont
-        : 'flex-start'};
-    padding: ${(props) =>
-      props.padding ? (typeof props.padding !== 'string' ? props.padding[1] : props.padding) : '0'};
-    max-width: ${(props) =>
-      props.maxWidth
-        ? typeof props.maxWidth !== 'string'
-          ? props.maxWidth[1]
-          : props.maxWidth
-        : '100%'};
-    margin: ${(props) =>
-      props.margin ? (typeof props.margin !== 'string' ? props.margin[1] : props.margin) : '0'};
-    ${(props) =>
-      props.borders
-        ? typeof props.borders !== 'string'
-          ? props.borders.length > 1
-            ? props.borders[1].map(
-                (item: any) =>
-                  `border-${item.side}: ${item.width ? item.width : '1px'} solid ${
-                    item.color || props.theme.dropdown.item.borderColor
-                  };`,
-              )
-            : props.borders.map(
-                (item: any) =>
-                  `border-${item.side}: ${item.width ? item.width : '1px'} solid ${
-                    item.color || props.theme.dropdown.item.borderColor
-                  };`,
-              )
-          : `border: 1px solid ${props.borders || props.theme.dropdown.item.borderColor};`
-        : 'border: 0;'}
-    border-radius: ${(props: any) =>
-      props.br ? (typeof props.br !== 'string' ? props.br[1] : props.br) : '0'};
-  }
+const Wrapper = styled.div`
+  margin: 0 0 40px 0;
 `
 
 const StyledNavLink = styled(NavLink)`
@@ -187,11 +42,7 @@ const BottomIconNetwork = styled(NetworkIcon)`
 
 const SectionTitle = styled(PageTitle)`
   font-size: 22px;
-  margin-bottom: 14px;
-`
-
-const ChevronLeft = styled(ChevronRight)`
-  transform: rotateZ(180deg);
+  margin-bottom: 24px;
 `
 
 const Chevron = styled(ChevronRightBig)`
@@ -199,9 +50,169 @@ const Chevron = styled(ChevronRightBig)`
   width: 11px;
 `
 
-const CheckIcon = styled(YesIcon)`
-  height: 14px;
-  width: 14px;
+const StyledTable = styled.div`
+  border-radius: 12px;
+  width: 100%;
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+    display: grid;
+    grid-column-gap: 15px;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+    border: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
+    grid-column-gap: 0;
+    grid-template-columns: 1fr;
+  }
+`
+
+const StyledTHead = styled.div`
+  display: none;
+  width: 100%;
+  grid-template-columns: 2.8fr 0.9fr 0.8fr 1.1fr;
+  grid-column-gap: 15px;
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+    display: grid;
+    border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
+  }
+`
+
+export const StyledTr = styled.div`
+  display: flex;
+  border: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
+  border-radius: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+    display: grid;
+    grid-template-columns: 110px 1.1fr 0.6fr 1fr 1fr 1fr 1fr 40px;
+    border-top: 0;
+    margin-bottom: 0;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+    border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
+  }
+`
+
+const StyledTd = styled.div`
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  padding: 7px 10px;
+  span {
+    font-size: 16px;
+    color: ${(props) => props.theme.dropdown.item.color};
+    opacity: 0.5;
+    font-weight: normal;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      display: none;
+    }
+  }
+  &:first-child {
+    width: 100%;
+    order: 3;
+    justify-content: center;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      padding-left: 30px;
+      width: auto;
+      order: unset;
+      justify-content: flex-start;
+    }
+  }
+  &:nth-child(2) {
+    order: 4;
+    font-size: 24px;
+    width: 100%;
+    justify-content: center;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      width: auto;
+      font-size: 20px;
+      order: unset;
+      justify-content: flex-start;
+    }
+  }
+  &:nth-child(3) {
+    order: 1;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      width: auto;
+      order: unset;
+      justify-content: flex-start;
+    }
+  }
+  &:nth-child(4) {
+    order: 5;
+    width: 100%;
+    justify-content: center;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      width: auto;
+      order: unset;
+      justify-content: flex-start;
+    }
+  }
+  &:nth-child(5) {
+    order: 6;
+    width: 100%;
+    justify-content: center;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      width: auto;
+      order: unset;
+      justify-content: flex-start;
+    }
+  }
+  &:nth-child(6) {
+    order: 7;
+    width: 100%;
+    justify-content: center;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      width: auto;
+      order: unset;
+      justify-content: flex-start;
+    }
+  }
+  &:nth-child(7) {
+    order: 2;
+    justify-content: flex-end;
+    font-size: 14px;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      width: auto;
+      order: unset;
+      font-size: 18px;
+      justify-content: flex-start;
+    }
+  }
+  &:last-child {
+    display: none;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      display: flex;
+    }
+  }
+`
+
+const StyledThCell = styled.div`
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 18px;
+  padding: 7px 10px;
+  &:nth-child(2) {
+    justify-content: center;
+  }
+  &:first-child {
+    padding-left: 30px;
+    justify-content: flex-end;
+  }
+`
+
+const SmallLbl = styled.div`
+  font-size: 11px;
+  color: ${(props) => props.theme.dropdown.item.color};
+  opacity: 0.5;
+  font-weight: normal;
 `
 
 interface HVAuctionsProps {
@@ -210,10 +221,8 @@ interface HVAuctionsProps {
 
 const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
   const noAuctions = !highestVolumeAuctions || highestVolumeAuctions?.length === 0
-
-  console.log(highestVolumeAuctions)
   return (
-    <Wrapper flexDir={'column'} margin={'0 0 40px 0'}>
+    <Wrapper>
       <SectionTitle style={{ display: 'block' }}>Highest Volume Auctions</SectionTitle>
       {noAuctions ? (
         <EmptyContentWrapper>
@@ -221,117 +230,49 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
           <EmptyContentText>No auctions.</EmptyContentText>
         </EmptyContentWrapper>
       ) : (
-        <Wrapper
-          borders={[
-            ['0'],
-            [{ side: 'top' }, { side: 'left' }, { side: 'right' }, { side: 'bottom' }],
-          ]}
-          br={'12px '}
-          flexDir={'column'}
-          width={'100%'}
-        >
-          <Wrapper
-            borders={[[{ side: 'bottom', color: 'transparent' }], [{ side: 'bottom' }]]}
-            hiddenMD
-            justifyCont={'flex-end'}
-            width={'100%'}
-          >
-            <Wrapper grow={'1'} maxWidth={'15%'} padding={'10px'}>
-              Sell Ammount
-            </Wrapper>
-            <Wrapper grow={'1'} maxWidth={'15%'} padding={'10px'}>
-              Buy Ammount
-            </Wrapper>
-            <Wrapper grow={'1'} maxWidth={'15%'} padding={'10px'}>
-              USD Volume
-            </Wrapper>
-            <Wrapper grow={'1'} maxWidth={'calc(15% + 30px'} padding={'10px'}>
-              End Date
-            </Wrapper>
-          </Wrapper>
+        <StyledTable>
+          <StyledTHead>
+            <StyledThCell>Sell Ammount</StyledThCell>
+            <StyledThCell>Buy Ammount</StyledThCell>
+            <StyledThCell>USD Volume</StyledThCell>
+            <StyledThCell>End Date</StyledThCell>
+          </StyledTHead>
           {highestVolumeAuctions.map((auction, index) => (
-            <Wrapper
-              alignItems={'center'}
-              borders={[
-                [{ side: 'top' }, { side: 'left' }, { side: 'right' }, { side: 'bottom' }],
-                [{ side: 'bottom' }],
-              ]}
-              br={['12px', '0']}
-              key={index}
-              width={'100%'}
-            >
-              <Wrapper alignItems={'center'} grow={'1'} justifyCont={'space-between'} width={'40%'}>
-                <Wrapper maxWidth={['100%', '100px']} padding={'7px 10px'} width={'100%'}>
-                  <DoubleLogo
-                    auctioningToken={{
-                      address: auction.addressAuctioningToken,
-                      symbol: auction.symbolAuctioningToken,
-                    }}
-                    biddingToken={{
-                      address: auction.addressBiddingToken,
-                      symbol: auction.symbolBiddingToken,
-                    }}
-                    size="35px"
-                  />
-                </Wrapper>
-                <Wrapper fs={'20px'} fw={'bold'} grow={'1'} padding={'7px 10px'}>
-                  {auction.symbolAuctioningToken} / {auction.symbolBiddingToken}
-                </Wrapper>
-                <Wrapper alignItems={'center'} grow={'1'} padding={'7px 10px'}>
-                  <BottomIconNetwork />
-                  <Wrapper color={'rgba(255, 255, 255, 0.6)'} fs={'12px'} margin={'0 0 0 2px'}>
-                    {getChainName(parseInt(auction.chainId.toString()))}
-                  </Wrapper>
-                </Wrapper>
-              </Wrapper>
-              <Wrapper
-                alignItems={'center'}
-                fs={'18px'}
-                fw={'bold'}
-                grow={'1'}
-                padding={'7px 10px'}
-                width={'15%'}
-              >
+            <StyledTr key={index}>
+              <StyledTd>
+                <DoubleLogo
+                  auctioningToken={{
+                    address: auction.addressAuctioningToken,
+                    symbol: auction.symbolAuctioningToken,
+                  }}
+                  biddingToken={{
+                    address: auction.addressBiddingToken,
+                    symbol: auction.symbolBiddingToken,
+                  }}
+                  size="35px"
+                />
+              </StyledTd>
+              <StyledTd>
+                {auction.symbolAuctioningToken} / {auction.symbolBiddingToken}
+              </StyledTd>
+              <StyledTd>
+                <BottomIconNetwork />
+                <SmallLbl>{getChainName(parseInt(auction.chainId.toString()))}</SmallLbl>
+              </StyledTd>
+              <StyledTd>
+                <span>Sell Ammount:&nbsp;</span>
                 {auction.order.volume + ' ' + auction.symbolAuctioningToken}
-              </Wrapper>
-              <Wrapper
-                alignItems={'center'}
-                fs={'18px'}
-                fw={'bold'}
-                grow={'1'}
-                padding={'7px 10px'}
-                width={'15%'}
-              >
+              </StyledTd>
+              <StyledTd>
+                <span>Buy Ammount:&nbsp;</span>
                 {auction.order.volume + ' ' + auction.symbolAuctioningToken}
-              </Wrapper>
-              <Wrapper
-                alignItems={'center'}
-                fs={'18px'}
-                fw={'bold'}
-                grow={'1'}
-                padding={'7px 10px'}
-                width={'15%'}
-              >
+              </StyledTd>
+              <StyledTd>
+                <span>USD Volume:&nbsp;</span>
                 {'$' + auction.order.volume}
-              </Wrapper>
-              <Wrapper
-                alignItems={'center'}
-                fs={'18px'}
-                fw={'bold'}
-                grow={'1'}
-                padding={'7px 10px'}
-                width={'15%'}
-              >
-                {moment(new Date()).format('DD/MM/YYYY')}
-              </Wrapper>
-              <Wrapper
-                alignItems={'center'}
-                fs={'18px'}
-                fw={'bold'}
-                grow={'1'}
-                padding={'7px 10px'}
-                width={'30px'}
-              >
+              </StyledTd>
+              <StyledTd>{moment(new Date()).format('DD/MM/YYYY')}</StyledTd>
+              <StyledTd>
                 <StyledNavLink
                   to={`/auction?auctionId=${auction.auctionId}&chainId=${Number(
                     auction.chainId,
@@ -339,10 +280,10 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
                 >
                   <Chevron />
                 </StyledNavLink>
-              </Wrapper>
-            </Wrapper>
+              </StyledTd>
+            </StyledTr>
           ))}
-        </Wrapper>
+        </StyledTable>
       )}
     </Wrapper>
   )
