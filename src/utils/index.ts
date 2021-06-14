@@ -187,11 +187,21 @@ export function escapeRegExp(string: string): string {
 // Always return a non-undefined token display
 export function getTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
+  if (isTokenWETH(token.address, chainId)) return `ETH`
   return token?.symbol || token?.name || token?.address || '🤔'
 }
 
 export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
-  return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId == 100
+  return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId === 100
+}
+
+export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
+  return (
+    !!tokenAddress &&
+    !!chainId &&
+    tokenAddress == WETH[chainId].address &&
+    (chainId === 1 || chainId === 4)
+  )
 }
 
 export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {

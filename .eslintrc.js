@@ -41,7 +41,7 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
-    'prettier/prettier': 'error',
+    'prettier/prettier': ["error", { "endOfLine": "auto" }],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': 'off',
     'react/prop-types': 'off',

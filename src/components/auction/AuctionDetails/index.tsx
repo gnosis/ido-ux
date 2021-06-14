@@ -366,7 +366,7 @@ const AuctionDetails = (props: Props) => {
                   .toSignificant(2)
                   .concat(' %')
             : '-',
-        title: 'Minimun funding',
+        title: 'Minimum funding',
         tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
         value:
           auctionDetails == null || auctionDetails.minFundingThreshold == '0x0'

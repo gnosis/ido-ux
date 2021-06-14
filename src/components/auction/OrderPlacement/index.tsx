@@ -20,8 +20,14 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
-import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTokenXDAI } from '../../../utils'
+import { useTokenBalancesTreatWETHAsETH } from '../../../state/wallet/hooks'
+import {
+  ChainId,
+  EASY_AUCTION_NETWORKS,
+  getTokenDisplay,
+  isTokenWETH,
+  isTokenXDAI,
+} from '../../../utils'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
@@ -144,18 +150,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
 
-  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
-
-  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
-    biddingToken,
-  ])
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [biddingToken])
   const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
-
-  useEffect(() => {
-    if (approval === ApprovalState.PENDING) {
-      setApprovalSubmitted(true)
-    }
-  }, [approval, approvalSubmitted])
 
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
@@ -221,7 +217,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
     const standardizedPrice = showPriceInverted
-      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      ? getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION)
       : price
 
     const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
@@ -289,7 +285,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           }
         : notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
         ? {
-            text: 'You need to unlock DAI to allow the smart contract to interact with it.',
+            text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
             type: InfoType.info,
           }
         : errorAmount
@@ -298,7 +294,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             type: InfoType.error,
           }
         : null,
-    [account, approval, errorAmount, notApproved],
+    [account, approval, errorAmount, notApproved, biddingTokenDisplay],
   )
 
   const priceInfo = React.useMemo(
@@ -323,6 +319,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
       price === '') &&
     true
 
+  const isWrappable =
+    biddingTokenBalance &&
+    biddingTokenBalance.greaterThan('0') &&
+    (isTokenXDAI(biddingToken.address, chainId) || isTokenWETH(biddingToken.address, chainId)) &&
+    !!account &&
+    !!biddingToken.address
+
   return (
     <>
       <Wrapper>
@@ -331,7 +334,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
           <PrivateWrapper>
             <LockBig />
             <TextBig>Private auction</TextBig>
-            <EmptyContentTextNoMargin>You are not allowed place an order.</EmptyContentTextNoMargin>
+            <EmptyContentTextNoMargin>
+              You are not allowed to place an order.
+            </EmptyContentTextNoMargin>
             <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
           </PrivateWrapper>
         )}
@@ -359,21 +364,19 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
               unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
               value={sellAmount}
               wrap={{
-                isWrappable:
-                  balanceString &&
-                  isTokenXDAI(biddingToken.address, chainId) &&
-                  account &&
-                  biddingToken &&
-                  biddingToken.address
-                    ? true
-                    : false,
+                isWrappable,
                 onClick: () =>
-                  window.open(
-                    `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
-                  ),
+                  chainId == 100
+                    ? window.open(
+                        `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      )
+                    : window.open(
+                        `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      ),
               }}
             />
             <PriceInputPanel
+              chainId={chainId}
               info={priceInfo}
               invertPrices={showPriceInverted}
               onInvertPrices={onInvertPrices}
