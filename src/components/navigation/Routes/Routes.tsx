@@ -2,7 +2,6 @@ import React from 'react'
 import { Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 
-//import ScrollArea from 'react-scrollbar'
 import ReactTooltip from 'react-tooltip'
 
 import Auction from '../../../pages/Auction'

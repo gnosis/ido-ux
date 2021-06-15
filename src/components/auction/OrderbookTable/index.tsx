@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
-import ScrollArea from 'react-scrollbar'
+import { Scrollbars } from 'react-custom-scrollbars'
 
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
@@ -27,15 +27,18 @@ const Table = styled(BaseCard)`
   overflow-x: auto;
 `
 
-const TableBody = styled(ScrollArea)`
+const TableBody = styled(Scrollbars)`
   max-height: 100%;
   overflow-x: hidden;
   min-width: 560px;
   @media (min-width: 1180px) {
     min-width: auto;
   }
-  .scrollarea-content {
-    touch-action: auto;
+  span:last-child {
+    padding-right: 25px;
+    @media (min-width: 1180px) {
+      padding-right: 5px;
+    }
   }
 `
 interface CellProps {
@@ -45,7 +48,6 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   text-align: right;
   min-width: ${(props) => (props.minWidth ? props.minWidth : 'auto')};
   padding: 13px 5px;
-  flex-grow: 1;
   .tooltipComponent {
     a {
       border-radius: 50%;
@@ -66,7 +68,7 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   justify-content: flex-end;
   color: ${({ theme }) => theme.textField.color};
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   margin: ${(props) => (props.margin ? props.margin : '0')};
 `
 
@@ -83,7 +85,6 @@ const StyledRow = styled(Row)`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-column-gap: 15px;
   min-width: 560px;
-  min-height: 50px;
   &:nth-child(odd) {
     ${({ theme }) => `background-color: ${transparentize(0.98, theme.textField.color)};`}
   }
@@ -92,9 +93,6 @@ const StyledRow = styled(Row)`
       border-top-left-radius: ${({ theme }) => theme.cards.borderRadius};
       border-top-right-radius: ${({ theme }) => theme.cards.borderRadius};
     }
-  }
-  @media (min-width: 768px) {
-    display: flex;
   }
   @media (min-width: 1180px) {
     min-width: auto;
@@ -168,7 +166,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
             </Wrap>
           </TableCell>
         </StyledRow>
-        <TableBody smoothScrolling speed={0.8}>
+        <TableBody style={{ height: '300px' }}>
           {tableData.map((row, i) => {
             return (
               <StyledRow cols={'1fr 1fr 1fr 1fr'} key={i}>

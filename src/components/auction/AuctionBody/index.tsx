@@ -25,7 +25,10 @@ const GridCol = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 100%;
-  overflow-x: auto;
+  justify-content: flex-end;
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
+    overflow-x: auto;
+  }
 `
 
 interface AuctionBodyProps {
