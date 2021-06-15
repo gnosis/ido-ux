@@ -234,6 +234,7 @@ export const useGetOrderPlacementError = (
         BigNumber.from(10).pow(derivedAuctionInfo?.biddingToken.decimals).toString(),
       ).toSignificant(2)}`
 
+  const invalidAmount = sellAmount && !amountIn && `Invalid Amount`
   const insufficientBalance =
     balanceIn &&
     amountIn &&
@@ -276,7 +277,7 @@ export const useGetOrderPlacementError = (
         : `Price must be higher than ${derivedAuctionInfo?.initialPrice?.toSignificant(5)}`
       : undefined
 
-  const errorAmount = amountMustBeBigger || insufficientBalance || undefined
+  const errorAmount = amountMustBeBigger || insufficientBalance || invalidAmount || undefined
   const errorPrice =
     priceEqualsZero || outOfBoundsPricePlacingOrder || outOfBoundsPrice || undefined
 
