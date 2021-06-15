@@ -26,7 +26,7 @@ import { useSingleCallResult } from '../multicall/hooks'
 import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
-import { useTokenBalancesTreatWETHAsETHonXDAI } from '../wallet/hooks'
+import { useTokenBalancesTreatWETHAsETH } from '../wallet/hooks'
 import {
   invertPrice,
   priceInput,
@@ -202,7 +202,7 @@ export const useGetOrderPlacementError = (
   const price = showPricesInverted
     ? getInverse(priceFromState, NUMBER_OF_DIGITS_FOR_INVERSION)
     : priceFromState
-  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [
     derivedAuctionInfo?.biddingToken,
   ])
   const biddingTokenBalance =
@@ -551,7 +551,7 @@ export function useDerivedClaimInfo(
 
   const error =
     clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
-      ? 'Price not yet supplied to auction.'
+      ? 'Waiting for on-chain price calculation.'
       : claimStatus === ClaimState.CLAIMED
       ? 'You already claimed your funds.'
       : claimStatus === ClaimState.NOT_APPLICABLE
