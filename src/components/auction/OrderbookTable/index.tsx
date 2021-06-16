@@ -53,6 +53,10 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   text-align: right;
   min-width: ${(props) => (props.minWidth ? props.minWidth : 'auto')};
   padding: 13px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
   .tooltipComponent {
     a {
       border-radius: 50%;
@@ -75,6 +79,7 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   font-weight: 600;
   font-size: 14px;
   margin: ${(props) => (props.margin ? props.margin : '0')};
+  white-space: normal;
 `
 
 const OverflowWrap = styled.div`
@@ -188,13 +193,24 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           {tableData.map((row, i) => {
             return (
               <StyledRow cols={'1fr 1fr 1fr 1fr'} key={i}>
-                <TableCell minWidth={'110px'}>
+                <TableCell
+                  minWidth={'110px'}
+                  title={
+                    showPriceInverted
+                      ? getInverse(String(row.price), NUMBER_OF_DIGITS_FOR_INVERSION)
+                      : String(row.price)
+                  }
+                >
                   {showPriceInverted
                     ? getInverse(String(row.price), NUMBER_OF_DIGITS_FOR_INVERSION)
                     : row.price}
                 </TableCell>
-                <TableCell minWidth={'150px'}>{round(row.amount, 6)}</TableCell>
-                <TableCell minWidth={'120px'}>{round(row.sum, 6)}</TableCell>
+                <TableCell minWidth={'150px'} title={round(row.amount, 6)}>
+                  {round(row.amount, 6)}
+                </TableCell>
+                <TableCell minWidth={'120px'} title={round(row.sum, 6)}>
+                  {round(row.sum, 6)}
+                </TableCell>
                 <TableCell minWidth={'90px'}>{row.mySize}%</TableCell>
               </StyledRow>
             )
