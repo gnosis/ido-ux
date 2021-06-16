@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 
 import { AuctionState } from '../../../state/orderPlacement/hooks'
-import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
+import {
+  useGranularityOptions,
+  useOrderbookDataCallback,
+  useOrderbookState,
+} from '../../../state/orderbook/hooks'
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { ButtonToggle } from '../../buttons/ButtonToggle'
 import { Dropdown, DropdownItem, DropdownPosition } from '../../common/Dropdown'
@@ -99,7 +103,7 @@ const StyledDropdown = styled(Dropdown)`
     }
   }
   .dropdownItems {
-    min-width: 82px;
+    min-width: 110px;
   }
 `
 
@@ -119,29 +123,13 @@ const StyledCheckbox = styled(Checkbox)`
   }
 `
 
-// TODO: Build the array dynamically based on the current bids
-const granularityOptions = ['0.001', '0.01', '0.1', '1', '10', '50', '100']
-const getClosestNumber = (numbers: string[], goal: number) => {
-  return numbers.reduce(function (prev, curr) {
-    return Math.abs(Number(curr) - goal) < Math.abs(Number(prev) - goal) ? curr : prev
-  })
-}
-
 export const OrderBookContainer = (props) => {
   const { auctionIdentifier, derivedAuctionInfo } = props
   const [isChartVisible, setChartVisibility] = useState(true)
-  const [granularity, setGranularity] = useState(granularityOptions[0])
-  const { bids, error } = useOrderbookState()
+  const { bids } = useOrderbookState()
+  const { granularity, granularityOptions, setGranularity } = useGranularityOptions(bids)
 
   useOrderbookDataCallback(auctionIdentifier)
-
-  useEffect(() => {
-    if (bids?.length > 1 && !error) {
-      const current = (bids[0].price - bids[bids.length - 1].price) / 10
-      const closest = getClosestNumber(granularityOptions, current)
-      setGranularity(closest)
-    }
-  }, [bids, error])
 
   return (
     <>
@@ -152,7 +140,7 @@ export const OrderBookContainer = (props) => {
             'Orderbook'}
         </SectionTitle>
         <Wrap flexDir={['row-reverse', 'row']} margin={['20px 0', '0']}>
-          {!isChartVisible && (
+          {!isChartVisible && granularityOptions.length > 0 && (
             <StyledDropdown
               disabled={!granularity}
               dropdownButtonContent={<StyledButtonSelect content={granularity} />}

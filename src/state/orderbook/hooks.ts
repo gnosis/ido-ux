@@ -1,5 +1,6 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
+import round from 'lodash.round'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
@@ -112,4 +113,42 @@ export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
       makeCall()
     }
   }, [shouldLoad, makeCall])
+}
+
+const getClosestNumber = (numbers: string[], goal: number) => {
+  return numbers.reduce(function (prev, curr) {
+    return Math.abs(Number(curr) - goal) < Math.abs(Number(prev) - goal) ? curr : prev
+  })
+}
+
+const exp = (n: number) => round(10 ** n, Math.abs(n))
+
+const buildGranularityOptions = (digits: number) => {
+  digits = digits > 0 ? Math.min(digits, 2) : Math.max(digits, -4)
+  const middle = exp(digits)
+  return [exp(digits + 2), exp(digits + 1), middle, exp(digits - 1), exp(digits - 2)].map((n) =>
+    String(n),
+  )
+}
+
+export const useGranularityOptions = (bids: PricePoint[]) => {
+  const [granularityOptions, setGranularityOptions] = useState<string[]>([])
+  const [granularity, setGranularity] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (bids?.length > 1) {
+      const sortedBids = [...bids].sort((a, b) => b.price - a.price)
+      const current = (sortedBids[0].price - sortedBids[sortedBids.length - 1].price) / 10
+      const digits =
+        current > 1
+          ? Math.floor(Math.log10(Math.trunc(current)) + 1)
+          : Math.floor(Math.log10(current))
+      const granularityOptions = buildGranularityOptions(digits)
+      const closest = getClosestNumber(granularityOptions, current)
+      setGranularity(closest)
+      setGranularityOptions(granularityOptions)
+    }
+  }, [bids])
+
+  return { granularityOptions, granularity, setGranularity }
 }
