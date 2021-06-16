@@ -137,7 +137,10 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
         <StyledRow cols={'1fr 1fr 1fr 1fr'}>
           <TableCell minWidth={'115px'}>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>Price ({derivedAuctionInfo.biddingToken.symbol})</Wrap>
+              <Wrap margin={'0 10px 0 0'}>
+                {derivedAuctionInfo.biddingToken.symbol} per{' '}
+                {derivedAuctionInfo.auctioningToken.symbol}
+              </Wrap>
               <Tooltip text={'Price range of limit orders for a given granularity'} />
             </Wrap>
           </TableCell>

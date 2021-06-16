@@ -155,7 +155,7 @@ export const OrderBookContainer = (props) => {
           {!isChartVisible && (
             <StyledDropdown
               disabled={!granularity}
-              dropdownButtonContent={<StyledButtonSelect content={'Granularity'} />}
+              dropdownButtonContent={<StyledButtonSelect content={granularity} />}
               dropdownPosition={DropdownPosition.right}
               items={granularityOptions.map((item, index) => (
                 <StyledDropdownItem key={index} onClick={() => setGranularity(item)}>
