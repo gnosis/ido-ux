@@ -26,7 +26,8 @@ export interface Props {
 const Table = styled(BaseCard)`
   padding: 0;
   min-height: 352px;
-  max-height: 392px;
+  max-height: 100%;
+  height: 100%;
   overflow-x: auto;
 `
 
