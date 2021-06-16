@@ -18,6 +18,7 @@ export interface OrderbookState {
   userOrderVolume: number
   auctionId: number
   chainId: number
+  shouldLoad: boolean
 }
 
 const initialState: OrderbookState = {
@@ -28,6 +29,7 @@ const initialState: OrderbookState = {
   userOrderVolume: 0,
   auctionId: 0,
   chainId: 0,
+  shouldLoad: false,
 }
 
 export default createReducer<OrderbookState>(initialState, (builder) =>

@@ -84,29 +84,32 @@ export function useOrderbookActionHandlers(): {
 export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
   const { auctionId, chainId } = auctionIdentifer
   const { onResetOrderbookData } = useOrderbookActionHandlers()
-  useEffect(() => {
-    let cancelled = false
-    async function fetchData() {
-      try {
-        if (!chainId || !auctionId) {
-          return
-        }
-        const rawData = await additionalServiceApi.getOrderBookData({
-          networkId: chainId,
-          auctionId,
-        })
-        if (!cancelled) {
-          onResetOrderbookData(auctionId, chainId, rawData, null)
-        }
-      } catch (error) {
-        logger.error('Error populating orderbook with data', error)
-        onResetOrderbookData(auctionId, chainId, { bids: [], asks: [] }, null)
-        if (cancelled) return
+  const { shouldLoad } = useOrderbookState()
+
+  const makeCall = useCallback(async () => {
+    try {
+      if (!chainId || !auctionId) {
+        return
       }
-    }
-    fetchData()
-    return (): void => {
-      cancelled = true
+      const rawData = await additionalServiceApi.getOrderBookData({
+        networkId: chainId,
+        auctionId,
+      })
+
+      onResetOrderbookData(auctionId, chainId, rawData, null)
+    } catch (error) {
+      logger.error('Error populating orderbook with data', error)
+      onResetOrderbookData(auctionId, chainId, { bids: [], asks: [] }, null)
     }
   }, [chainId, auctionId, onResetOrderbookData])
+
+  useEffect(() => {
+    makeCall()
+  }, [chainId, auctionId, onResetOrderbookData, makeCall])
+
+  useEffect(() => {
+    if (shouldLoad) {
+      makeCall()
+    }
+  }, [shouldLoad, makeCall])
 }
