@@ -190,17 +190,14 @@ export const UserDropdown: React.FC<Props> = (props) => {
     return isMetaMask ? 'MetaMask' : isWalletConnect ? 'WalletConnect' : 'Unknown'
   }, [library])
 
-  const disconnect = React.useCallback(
-    async (connector) => {
-      if (connector instanceof WalletConnectConnector && typeof connector.close === 'function') {
-        connector.close()
-      } else {
-        deactivate()
-      }
+  const disconnect = React.useCallback(async () => {
+    deactivate()
+    if (connector instanceof WalletConnectConnector && typeof connector.close === 'function') {
+      connector.close()
+      connector.walletConnectProvider = null
       localStorage.removeItem('walletconnect')
-    },
-    [deactivate],
-  )
+    }
+  }, [connector, deactivate])
 
   const UserDropdownContent = () => {
     const items = [
@@ -244,8 +241,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
           <DisconnectButton
             buttonType={ButtonType.danger}
             onClick={() => {
-              const c: any = connector
-              disconnect(c)
+              disconnect()
             }}
           >
             Disconnect
