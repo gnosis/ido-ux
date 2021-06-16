@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import * as CSS from 'csstype'
+import round from 'lodash.round'
 import { Scrollbars } from 'react-custom-scrollbars'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
@@ -180,8 +181,8 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
                     ? getInverse(String(row.price), NUMBER_OF_DIGITS_FOR_INVERSION)
                     : row.price}
                 </TableCell>
-                <TableCell minWidth={'150px'}>{row.amount}</TableCell>
-                <TableCell minWidth={'120px'}>{row.sum}</TableCell>
+                <TableCell minWidth={'150px'}>{round(row.amount, 6)}</TableCell>
+                <TableCell minWidth={'120px'}>{round(row.sum, 6)}</TableCell>
                 <TableCell minWidth={'90px'}>{row.mySize}%</TableCell>
               </StyledRow>
             )
