@@ -204,12 +204,8 @@ const StyledTd = styled.div<Partial<CSS.Properties & StyledTdProps>>`
     align-items: flex-start;
     width: 50%;
     span:nth-child(2) {
-      color: ${({ theme }) => theme.primary1};
       font-weight: bold;
-      opacity:1;
-      border-radius: 10px;
-      padding: 0 10px;
-      background-color: ${(props) => transparentize(0.7, props.theme.primary1)};v
+      opacity: 1;
     }
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       width: auto;
@@ -219,12 +215,8 @@ const StyledTd = styled.div<Partial<CSS.Properties & StyledTdProps>>`
       flex-direction: row;
       align-items: center;
       span:nth-child(2) {
-        color: ${({ theme }) => theme.dropdown.item.color};
         font-weight: bold;
-        opacity:1;
-        border-radius: 0;
-        padding: 0;
-        background-color: transparent;
+        opacity: 1;
       }
     }
   }
