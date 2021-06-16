@@ -173,7 +173,7 @@ const AuctionsButton = styled(HashLink)`
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  padding: 0 0 30px;
+  padding: 0 0 55px;
 `
 
 const SendIcon = styled(Send)`

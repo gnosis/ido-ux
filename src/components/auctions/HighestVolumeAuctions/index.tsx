@@ -3,6 +3,8 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import * as CSS from 'csstype'
+
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import { getChainName } from '../../../utils/tools'
 import { ChevronRightBig } from '../../icons/ChevronRightBig'
@@ -13,11 +15,10 @@ import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import DoubleLogo from '../../token/DoubleLogo'
 
 const Wrapper = styled.div`
-  margin: 0 0 50px;
+  margin: 0 auto 50px;
   max-width: 400px;
-  margin: auto;
   @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
-    margin: 0 0 80px;
+    margin: 0 0 120px;
     max-width: 100%;
   }
 `
@@ -80,8 +81,10 @@ export const StyledTr = styled(NavLink)`
   flex-wrap: wrap;
   margin-bottom: 15px;
   color: ${(props) => props.theme.dropdown.item.color};
+  padding: 15px;
   @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
     display: grid;
+    padding: 0;
     grid-template-columns: 110px 1.1fr 0.6fr 1fr 1fr 1fr 1fr 40px;
     border-top: 0;
     margin-bottom: 0;
@@ -101,7 +104,11 @@ export const StyledTr = styled(NavLink)`
   }
 `
 
-const StyledTd = styled.div`
+interface StyledTdProps {
+  primary1?: string
+}
+
+const StyledTd = styled.div<Partial<CSS.Properties & StyledTdProps>>`
   display: flex;
   flex-grow: 1;
   align-items: center;
@@ -113,13 +120,15 @@ const StyledTd = styled.div`
     color: ${(props) => props.theme.dropdown.item.color};
     opacity: 0.5;
     font-weight: normal;
-    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
-      display: none;
+    &:not(:nth-child(2)) {
+      @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+        display: none;
+      }
     }
   }
   &:first-child {
     width: 100%;
-    order: 3;
+    order: 2;
     justify-content: center;
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       padding-left: 30px;
@@ -129,7 +138,7 @@ const StyledTd = styled.div`
     }
   }
   &:nth-child(2) {
-    order: 4;
+    order: 3;
     font-size: 24px;
     width: 100%;
     justify-content: center;
@@ -142,6 +151,8 @@ const StyledTd = styled.div`
   }
   &:nth-child(3) {
     order: 1;
+    width: 100%;
+    justify-content: center;
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       width: auto;
       order: unset;
@@ -149,45 +160,72 @@ const StyledTd = styled.div`
     }
   }
   &:nth-child(4) {
-    order: 5;
-    width: 100%;
-    justify-content: center;
+    order: 4;
+    width: 50%;
+    flex-direction: column;
+    align-items: flex-start;
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       width: auto;
       order: unset;
       justify-content: flex-start;
+      flex-direction: row;
+      align-items: center;
     }
   }
   &:nth-child(5) {
-    order: 6;
-    width: 100%;
-    justify-content: center;
+    order: 5;
+    width: 50%;
+    align-items: flex-start;
+    flex-direction: column;
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       width: auto;
       order: unset;
       justify-content: flex-start;
+      flex-direction: row;
+      align-items: center;
     }
   }
   &:nth-child(6) {
-    order: 7;
-    width: 100%;
-    justify-content: center;
+    order: 6;
+    width: 50%;
+    flex-direction: column;
+    align-items: flex-start;
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       width: auto;
       order: unset;
       justify-content: flex-start;
+      flex-direction: row;
+      align-items: center;
     }
   }
   &:nth-child(7) {
-    order: 2;
-    justify-content: flex-end;
-    font-size: 14px;
-    color: ${({ theme }) => theme.primary1};
+    order: 7;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 50%;
+    span:nth-child(2) {
+      color: ${({ theme }) => theme.primary1};
+      font-weight: bold;
+      opacity:1;
+      border-radius: 10px;
+      padding: 0 10px;
+      background-color: ${(props) => transparentize(0.7, props.theme.primary1)};v
+    }
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       width: auto;
       order: unset;
       font-size: 18px;
       justify-content: flex-start;
+      flex-direction: row;
+      align-items: center;
+      span:nth-child(2) {
+        color: ${({ theme }) => theme.dropdown.item.color};
+        font-weight: bold;
+        opacity:1;
+        border-radius: 0;
+        padding: 0;
+        background-color: transparent;
+      }
     }
   }
   &:last-child {
@@ -222,6 +260,17 @@ const SmallLbl = styled.div`
   font-weight: normal;
 `
 
+const StyledDoubleLogo = styled(DoubleLogo)`
+  > div {
+    width: 62px;
+    height: 62px;
+    @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
+      width: 35px;
+      height: 35px;
+    }
+  }
+`
+
 interface HVAuctionsProps {
   highestVolumeAuctions?: Maybe<AuctionInfo[]>
 }
@@ -253,7 +302,7 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
               )}#topAnchor`}
             >
               <StyledTd>
-                <DoubleLogo
+                <StyledDoubleLogo
                   auctioningToken={{
                     address: auction.addressAuctioningToken,
                     symbol: auction.symbolAuctioningToken,
@@ -286,7 +335,7 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
               </StyledTd>
               <StyledTd>
                 <span>End Date:&nbsp;</span>
-                {mockDate.toLocaleDateString()}
+                <span>{mockDate.toLocaleDateString()}</span>
               </StyledTd>
               <StyledTd>
                 <Chevron />
