@@ -3,6 +3,7 @@ import { Token } from 'uniswap-xdai-sdk'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
+import { Decimal } from 'decimal.js'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
 
@@ -160,7 +161,11 @@ interface DrawInformation {
 }
 
 const formatNumberForChartTooltip = (n: number) => {
-  return numberFormatter.format(n, '###.00 a')
+  const d = new Decimal(n)
+  const nd = d.toSignificantDigits(6)
+  const digits = nd.decimalPlaces()
+  const decimalFormatPart = `.${'0'.repeat(digits)}`
+  return numberFormatter.format(nd.toNumber(), `###${digits > 0 ? decimalFormatPart : ''} a`)
 }
 
 export const drawInformation = (props: DrawInformation) => {
