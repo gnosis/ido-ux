@@ -5,9 +5,11 @@ import styled from 'styled-components'
 import * as CSS from 'csstype'
 import { Scrollbars } from 'react-custom-scrollbars'
 
-import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
+import { DerivedAuctionInfo, useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { useOrderState } from '../../../state/orders/hooks'
+import { getInverse } from '../../../utils/prices'
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
@@ -114,6 +116,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
   // TODO: add the current user order?
   const { bids, error /*, userOrderPrice, userOrderVolume*/ } = useOrderbookState()
   const { orders } = useOrderState()
+  const { showPriceInverted } = useOrderPlacementState()
 
   const tableData = useMemo(() => {
     const myBids = orders.map((order) => ({
@@ -138,8 +141,9 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           <TableCell minWidth={'115px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>
-                {derivedAuctionInfo.biddingToken.symbol} per{' '}
-                {derivedAuctionInfo.auctioningToken.symbol}
+                {showPriceInverted
+                  ? `${derivedAuctionInfo.auctioningToken.symbol} per ${derivedAuctionInfo.biddingToken.symbol}`
+                  : `${derivedAuctionInfo.biddingToken.symbol} per ${derivedAuctionInfo.auctioningToken.symbol}`}
               </Wrap>
               <Tooltip text={'Price range of limit orders for a given granularity'} />
             </Wrap>
@@ -154,9 +158,9 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Sum</Wrap>
               <Tooltip
-                text={
-                  'Cumulative sum of sell amounts of all orders with a limit price lower than the price mentioned in the price column'
-                }
+                text={`Cumulative sum of sell amounts of all orders with a limit price ${
+                  showPriceInverted ? 'higher' : 'lower'
+                } than the price mentioned in the price column`}
               />
             </Wrap>
           </TableCell>
@@ -171,7 +175,11 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           {tableData.map((row, i) => {
             return (
               <StyledRow cols={'1fr 1fr 1fr 1fr'} key={i}>
-                <TableCell minWidth={'110px'}>{row.price}</TableCell>
+                <TableCell minWidth={'110px'}>
+                  {showPriceInverted
+                    ? getInverse(String(row.price), NUMBER_OF_DIGITS_FOR_INVERSION)
+                    : row.price}
+                </TableCell>
                 <TableCell minWidth={'150px'}>{row.amount}</TableCell>
                 <TableCell minWidth={'120px'}>{row.sum}</TableCell>
                 <TableCell minWidth={'90px'}>{row.mySize}%</TableCell>
