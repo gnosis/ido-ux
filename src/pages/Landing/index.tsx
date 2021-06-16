@@ -21,6 +21,7 @@ const Welcome = styled.div`
   margin: 0 0 50px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    margin: 0 0 80px;
     flex-direction: row;
     padding-top: 25px;
   }
@@ -72,10 +73,11 @@ const AuctionsBlock = styled.div`
   max-width: 100%;
   min-height: 340px;
   padding: 20px;
-  width: 340px;
+  width: 400px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     margin: 0 0 0 auto;
+    width: 340px;
   }
 `
 
@@ -98,7 +100,7 @@ const Featured = styled(FeaturedAuctions)`
     margin-bottom: 50px;
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-      margin-bottom: 120px;
+      margin-bottom: 80px;
     }
   }
 `

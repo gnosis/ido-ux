@@ -1,8 +1,7 @@
+import { transparentize } from 'polished'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-
-import moment from 'moment'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
 import { getChainName } from '../../../utils/tools'
@@ -14,15 +13,12 @@ import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import DoubleLogo from '../../token/DoubleLogo'
 
 const Wrapper = styled.div`
-  margin: 0 0 40px 0;
-`
-
-const StyledNavLink = styled(NavLink)`
-  &,
-  &:hover,
-  &:focus {
-    text-decoration: none;
-    outline: none;
+  margin: 0 0 50px;
+  max-width: 400px;
+  margin: auto;
+  @media (min-width: ${(props) => props.theme.themeBreakPoints.md}) {
+    margin: 0 0 80px;
+    max-width: 100%;
   }
 `
 
@@ -76,13 +72,14 @@ const StyledTHead = styled.div`
   }
 `
 
-export const StyledTr = styled.div`
+export const StyledTr = styled(NavLink)`
   display: flex;
   border: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
   border-radius: 12px;
   width: 100%;
   flex-wrap: wrap;
   margin-bottom: 15px;
+  color: ${(props) => props.theme.dropdown.item.color};
   @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
     display: grid;
     grid-template-columns: 110px 1.1fr 0.6fr 1fr 1fr 1fr 1fr 40px;
@@ -92,6 +89,15 @@ export const StyledTr = styled.div`
     border-left: 0;
     border-radius: 0;
     border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
+  }
+  &,
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    outline: none;
+  }
+  &:hover {
+    background-color: ${(props) => transparentize(0.95, props.theme.dropdown.item.color)};
   }
 `
 
@@ -176,6 +182,7 @@ const StyledTd = styled.div`
     order: 2;
     justify-content: flex-end;
     font-size: 14px;
+    color: ${({ theme }) => theme.primary1};
     @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
       width: auto;
       order: unset;
@@ -221,6 +228,7 @@ interface HVAuctionsProps {
 
 const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
   const noAuctions = !highestVolumeAuctions || highestVolumeAuctions?.length === 0
+  const mockDate = new Date()
   return (
     <Wrapper>
       <SectionTitle style={{ display: 'block' }}>Highest Volume Auctions</SectionTitle>
@@ -232,13 +240,18 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
       ) : (
         <StyledTable>
           <StyledTHead>
-            <StyledThCell>Sell Ammount</StyledThCell>
-            <StyledThCell>Buy Ammount</StyledThCell>
+            <StyledThCell>Sell Amount</StyledThCell>
+            <StyledThCell>Buy Amount</StyledThCell>
             <StyledThCell>USD Volume</StyledThCell>
             <StyledThCell>End Date</StyledThCell>
           </StyledTHead>
           {highestVolumeAuctions.map((auction, index) => (
-            <StyledTr key={index}>
+            <StyledTr
+              key={index}
+              to={`/auction?auctionId=${auction.auctionId}&chainId=${Number(
+                auction.chainId,
+              )}#topAnchor`}
+            >
               <StyledTd>
                 <DoubleLogo
                   auctioningToken={{
@@ -260,26 +273,23 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
                 <SmallLbl>{getChainName(parseInt(auction.chainId.toString()))}</SmallLbl>
               </StyledTd>
               <StyledTd>
-                <span>Sell Ammount:&nbsp;</span>
+                <span>Sell Amount:&nbsp;</span>
                 {auction.order.volume + ' ' + auction.symbolAuctioningToken}
               </StyledTd>
               <StyledTd>
-                <span>Buy Ammount:&nbsp;</span>
+                <span>Buy Amount:&nbsp;</span>
                 {auction.order.volume + ' ' + auction.symbolAuctioningToken}
               </StyledTd>
               <StyledTd>
                 <span>USD Volume:&nbsp;</span>
                 {'$' + auction.order.volume}
               </StyledTd>
-              <StyledTd>{moment(new Date()).format('DD/MM/YYYY')}</StyledTd>
               <StyledTd>
-                <StyledNavLink
-                  to={`/auction?auctionId=${auction.auctionId}&chainId=${Number(
-                    auction.chainId,
-                  )}#topAnchor`}
-                >
-                  <Chevron />
-                </StyledNavLink>
+                <span>End Date:&nbsp;</span>
+                {mockDate.toLocaleDateString()}
+              </StyledTd>
+              <StyledTd>
+                <Chevron />
               </StyledTd>
             </StyledTr>
           ))}
