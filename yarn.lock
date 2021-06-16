@@ -6705,7 +6705,6 @@
     "lodash" "^4.17.19"
     "log-symbols" "^3.0.0"
     "minimist" "^1.2.5"
-    "moment" "^2.27.0"
     "ospath" "^1.2.2"
     "pretty-bytes" "^5.3.0"
     "ramda" "~0.26.1"
@@ -12808,11 +12807,6 @@
     "prop-types" "^15.7.2"
     "react-syntax-highlighter" "^10.2.1"
     "shortid" "^2.2.14"
-
-"moment@^2.27.0":
-  "integrity" "sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ=="
-  "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.1.tgz"
-  "version" "2.29.1"
 
 "move-concurrently@^1.0.1":
   "integrity" "sha1-viwAX9oy4LKa8fBdfEszIUxwH5I="
