@@ -25,7 +25,9 @@ export const buildTableData = (bids: PricePoint[], myBids: PricePoint[], granula
   const rangeVolume = new Map<number, OrderBookTableData>()
   let cumulativeSum = 0
 
-  for (const bid of bids) {
+  const sortedBids = [...bids].sort((a, b) => b.price - a.price)
+
+  for (const bid of sortedBids) {
     const key = getPriceRangeKey(bid.price, granularity)
     const currentValue = rangeVolume.get(key) || { amount: 0, sum: cumulativeSum, mySize: 0 }
     currentValue.amount = currentValue.amount + bid.volume
