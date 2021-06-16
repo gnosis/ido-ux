@@ -10,6 +10,7 @@ import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { DerivedAuctionInfo, useOrderPlacementState } from '../../../state/orderPlacement/hooks'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { useOrderState } from '../../../state/orders/hooks'
+import { getTokenDisplay } from '../../../utils'
 import { getInverse } from '../../../utils/prices'
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -116,9 +117,19 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
   granularity,
 }) => {
   // TODO: add the current user order?
-  const { bids, error /*, userOrderPrice, userOrderVolume*/ } = useOrderbookState()
+  const { bids, chainId, error /*, userOrderPrice, userOrderVolume*/ } = useOrderbookState()
   const { orders } = useOrderState()
   const { showPriceInverted } = useOrderPlacementState()
+
+  const biddingTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
+    [derivedAuctionInfo?.biddingToken, chainId],
+  )
+
+  const auctioningTokenDisplay = useMemo(
+    () => getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId),
+    [derivedAuctionInfo?.auctioningToken, chainId],
+  )
 
   const tableData = useMemo(() => {
     const myBids = orders.map((order) => ({
@@ -144,15 +155,15 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>
                 {showPriceInverted
-                  ? `${derivedAuctionInfo.auctioningToken.symbol} per ${derivedAuctionInfo.biddingToken.symbol}`
-                  : `${derivedAuctionInfo.biddingToken.symbol} per ${derivedAuctionInfo.auctioningToken.symbol}`}
+                  ? `${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                  : `${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
               </Wrap>
               <Tooltip text={'Price range of limit orders for a given granularity'} />
             </Wrap>
           </TableCell>
           <TableCell minWidth={'150px'}>
             <Wrap>
-              <Wrap margin={'0 10px 0 0'}>Amount ({derivedAuctionInfo.biddingToken.symbol})</Wrap>
+              <Wrap margin={'0 10px 0 0'}>Amount ({biddingTokenDisplay})</Wrap>
               <Tooltip text={`Sell amount of all orders in the rows particular price range`} />
             </Wrap>
           </TableCell>
