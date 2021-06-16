@@ -23,9 +23,14 @@ export interface OrderBookTableData {
 
 export const buildTableData = (bids: PricePoint[], myBids: PricePoint[], granularity: number) => {
   const rangeVolume = new Map<number, OrderBookTableData>()
+  const myBidsPriceRange = new Map<number, number>()
   let cumulativeSum = 0
 
   const sortedBids = [...bids].sort((a, b) => b.price - a.price)
+  for (const myBid of myBids) {
+    const priceRange = getPriceRangeKey(myBid.price, granularity)
+    myBidsPriceRange.set(myBid.price, priceRange)
+  }
 
   for (const bid of sortedBids) {
     const key = getPriceRangeKey(bid.price, granularity)
@@ -36,7 +41,7 @@ export const buildTableData = (bids: PricePoint[], myBids: PricePoint[], granula
 
     let mySize = 0
     for (const myBid of myBids) {
-      const priceRange = getPriceRangeKey(myBid.price, granularity)
+      const priceRange = myBidsPriceRange.get(myBid.price)
       if (priceRange === key) {
         mySize += round((myBid.volume / currentValue.amount) * 100, 2)
       }
