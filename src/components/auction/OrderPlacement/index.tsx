@@ -100,18 +100,6 @@ const WarningText = styled.div`
   text-align: left;
 `
 
-const Wrap = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-`
-
-const SectionTitle = styled(PageTitle)`
-  margin-bottom: 0;
-  margin-top: 0;
-`
-
 interface OrderPlacementProps {
   auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
@@ -341,13 +329,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
 
   return (
     <>
-      <Wrap>
-        <SectionTitle as="h2">
-          {(auctionState === AuctionState.ORDER_PLACING ||
-            auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
-            'Place Order'}
-        </SectionTitle>
-      </Wrap>
       <Wrapper>
         {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
         {!auctionInfoLoading && isPrivate && !signatureAvailable && (

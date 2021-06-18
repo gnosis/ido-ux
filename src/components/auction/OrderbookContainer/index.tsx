@@ -134,11 +134,7 @@ export const OrderBookContainer = (props) => {
   return (
     <>
       <Wrap alignItems={['flex-start', 'center']} flexDir={['column', 'row']} margin={'0 0 16px 0'}>
-        <SectionTitle as="h2">
-          {(derivedAuctionInfo.auctionState === AuctionState.ORDER_PLACING ||
-            derivedAuctionInfo.auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) &&
-            'Orderbook'}
-        </SectionTitle>
+        <SectionTitle as="h2">Orderbook</SectionTitle>
         <Wrap flexDir={['row-reverse', 'row']} margin={['20px 0', '0']}>
           {!isChartVisible && granularityOptions.length > 0 && (
             <StyledDropdown

@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { AuctionState, DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
+import { PageTitle } from '../../pureStyledComponents/PageTitle'
 import { AuctionNotStarted } from '../AuctionNotStarted'
 import Claimer from '../Claimer'
 import OrderPlacement from '../OrderPlacement'
@@ -17,7 +18,7 @@ const Grid = styled.div`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     column-gap: 18px;
-    grid-template-columns: calc(50% - 20px) 50%;
+    grid-template-columns: 1fr 1fr;
   }
 `
 
@@ -29,6 +30,18 @@ const GridCol = styled.div`
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     overflow-x: auto;
   }
+`
+
+const Wrap = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`
+
+const SectionTitle = styled(PageTitle)`
+  margin-bottom: 0;
+  margin-top: 0;
 `
 
 interface AuctionBodyProps {
@@ -52,6 +65,9 @@ const AuctionBody = (props: AuctionBodyProps) => {
       {auctionStarted && (
         <Grid>
           <GridCol>
+            <Wrap>
+              <SectionTitle as="h2">Place Order</SectionTitle>
+            </Wrap>
             {(auctionState === AuctionState.ORDER_PLACING ||
               auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
               <OrderPlacement
