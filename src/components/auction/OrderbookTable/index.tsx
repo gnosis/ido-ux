@@ -159,9 +159,10 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
           <TableCell minWidth={'115px'}>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>
+                Price{' '}
                 {showPriceInverted
-                  ? `${auctioningTokenDisplay} per ${biddingTokenDisplay}`
-                  : `${biddingTokenDisplay} per ${auctioningTokenDisplay}`}
+                  ? `(${auctioningTokenDisplay} per ${biddingTokenDisplay})`
+                  : `(${biddingTokenDisplay} per ${auctioningTokenDisplay})`}
               </Wrap>
               <Tooltip text={'Price range of limit orders for a given granularity'} />
             </Wrap>
