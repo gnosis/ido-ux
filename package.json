@@ -100,6 +100,7 @@
     "cross-env": "^7.0.2",
     "csstype": "^3.0.8",
     "cypress": "^4.5.0",
+    "decimal.js": "^10.2.1",
     "i18next": "^15.0.9",
     "i18next-browser-languagedetector": "^3.0.1",
     "i18next-xhr-backend": "^2.0.1",

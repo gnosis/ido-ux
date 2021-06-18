@@ -266,7 +266,8 @@ const AuctionDetails = (props: Props) => {
         onInvertPrices()
       }
     }
-  }, [derivedAuctionInfo?.auctioningToken, onInvertPrices, showPriceInverted])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [derivedAuctionInfo?.auctioningToken, onInvertPrices])
 
   const biddingTokenAddress = useMemo(
     () => getExplorerLink(chainId, derivedAuctionInfo?.biddingToken?.address, 'address'),
