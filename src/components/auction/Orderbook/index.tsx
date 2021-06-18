@@ -4,8 +4,8 @@ import styled from 'styled-components'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { AuctionIdentifier, parseURL } from '../../../state/orderPlacement/reducer'
-import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
+import { parseURL } from '../../../state/orderPlacement/reducer'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getInverse, showChartsInverted } from '../../../utils/prices'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
@@ -22,13 +22,11 @@ const Wrapper = styled(BaseCard)`
   min-width: 100%;
 `
 interface OrderbookProps {
-  auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
 export const OrderBook: React.FC<OrderbookProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
-  useOrderbookDataCallback(auctionIdentifier)
+  const { derivedAuctionInfo } = props
   const {
     asks,
     auctionId: orderbookAuctionId,
