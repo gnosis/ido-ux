@@ -43,7 +43,6 @@ import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
-import { PageTitle } from '../../pureStyledComponents/PageTitle'
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;

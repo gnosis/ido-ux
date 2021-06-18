@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import * as CSS from 'csstype'
 
-import { AuctionState } from '../../../state/orderPlacement/hooks'
 import {
   useGranularityOptions,
   useOrderbookDataCallback,
