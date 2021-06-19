@@ -29,7 +29,8 @@ import { ExtraDetailsItem, Props as ExtraDetailsItemProps } from '../ExtraDetail
 const DETAILS_HEIGHT = '120px'
 
 const Wrapper = styled.div`
-  margin: 0 0 30px;
+  margin: 0 0 32px;
+  min-height: ${TIMER_SIZE};
   position: relative;
 `
 
@@ -267,7 +268,8 @@ const AuctionDetails = (props: Props) => {
         onInvertPrices()
       }
     }
-  }, [derivedAuctionInfo?.auctioningToken, onInvertPrices, showPriceInverted])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [derivedAuctionInfo?.auctioningToken, onInvertPrices])
 
   const biddingTokenAddress = useMemo(
     () => getExplorerLink(chainId, derivedAuctionInfo?.biddingToken?.address, 'address'),
@@ -486,10 +488,7 @@ const AuctionDetails = (props: Props) => {
             itemKey={
               <>
                 <span>Total auctioned</span>
-                <Tooltip
-                  id="totalAuctioned"
-                  text={'Total amount of tokens available to be bought in the auction.'}
-                />
+                <Tooltip text={'Total amount of tokens available to be bought in the auction.'} />
               </>
             }
             itemValue={
@@ -522,10 +521,7 @@ const AuctionDetails = (props: Props) => {
             itemKey={
               <>
                 <span>Bidding with</span>
-                <Tooltip
-                  id="biddingWith"
-                  text={'This is the token that is accepted for bidding in the auction.'}
-                />
+                <Tooltip text={'This is the token that is accepted for bidding in the auction.'} />
               </>
             }
             itemValue={
@@ -556,7 +552,6 @@ const AuctionDetails = (props: Props) => {
               <>
                 <span>{titlePrice}</span>
                 <Tooltip
-                  id="auctionPrice"
                   text={
                     "This will be the auction's Closing Price if no more bids are submitted or canceled, OR it will be the auction's Clearing Price if the auction concludes without additional bids."
                   }
@@ -570,10 +565,7 @@ const AuctionDetails = (props: Props) => {
             itemKey={
               <>
                 <span>{showPriceInverted ? `Max Sell Price` : `Min Sell Price`}</span>
-                <Tooltip
-                  id="minSellPrice"
-                  text={'Minimum bidding price the auctioneer defined for participation.'}
-                />
+                <Tooltip text={'Minimum bidding price the auctioneer defined for participation.'} />
               </>
             }
             itemValue={
@@ -605,7 +597,6 @@ const AuctionDetails = (props: Props) => {
           <ExtraDetails ref={componentRef}>
             {extraDetails.map((item, index) => (
               <ExtraDetailsItem
-                id={`extraDetailsItem_${index}`}
                 key={index}
                 progress={item.progress}
                 showEmptyProgressColumn={showEmptyProgressColumn(index)}
