@@ -75,6 +75,7 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  height: 100%;
   color: ${({ theme }) => theme.textField.color};
   font-weight: 600;
   font-size: 14px;
@@ -110,6 +111,7 @@ const StyledRow = styled(Row)`
 `
 
 const StyledEmptyContentWrapper = styled(EmptyContentWrapper)`
+  height: 100%;
   min-height: 352px;
 `
 interface OrderBookTableProps {
@@ -156,7 +158,7 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
     <OverflowWrap>
       <Table>
         <StyledRow cols={'1fr 1fr 1fr 1fr'}>
-          <TableCell minWidth={'115px'}>
+          <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>
                 Price{' '}
@@ -167,13 +169,13 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
               <Tooltip text={'Price range of limit orders for a given granularity'} />
             </Wrap>
           </TableCell>
-          <TableCell minWidth={'150px'}>
+          <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Amount ({biddingTokenDisplay})</Wrap>
               <Tooltip text={`Sell amount of all orders in the rows particular price range`} />
             </Wrap>
           </TableCell>
-          <TableCell minWidth={'120px'}>
+          <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>Sum</Wrap>
               <Tooltip
@@ -183,19 +185,18 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
               />
             </Wrap>
           </TableCell>
-          <TableCell minWidth={'90px'}>
+          <TableCell>
             <Wrap>
               <Wrap margin={'0 10px 0 0'}>My Size</Wrap>
               <Tooltip text="Percentage of your sell amount in the overall sell amount of this column" />
             </Wrap>
           </TableCell>
         </StyledRow>
-        <TableBody style={{ height: '300px' }}>
+        <TableBody>
           {tableData.map((row, i) => {
             return (
               <StyledRow cols={'1fr 1fr 1fr 1fr'} key={i}>
                 <TableCell
-                  minWidth={'110px'}
                   title={
                     showPriceInverted
                       ? getInverse(String(row.price), NUMBER_OF_DIGITS_FOR_INVERSION)
@@ -206,13 +207,9 @@ export const OrderBookTable: React.FC<OrderBookTableProps> = ({
                     ? getInverse(String(row.price), NUMBER_OF_DIGITS_FOR_INVERSION)
                     : row.price}
                 </TableCell>
-                <TableCell minWidth={'150px'} title={round(row.amount, 6)}>
-                  {round(row.amount, 6)}
-                </TableCell>
-                <TableCell minWidth={'120px'} title={round(row.sum, 6)}>
-                  {round(row.sum, 6)}
-                </TableCell>
-                <TableCell minWidth={'90px'}>{row.mySize}%</TableCell>
+                <TableCell title={round(row.amount, 6)}>{round(row.amount, 6)}</TableCell>
+                <TableCell title={round(row.sum, 6)}>{round(row.sum, 6)}</TableCell>
+                <TableCell>{row.mySize}%</TableCell>
               </StyledRow>
             )
           })}
