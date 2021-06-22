@@ -140,14 +140,16 @@ export const useGranularityOptions = (bids: PricePoint[]) => {
       const sortedBids = [...bids].sort((a, b) => b.price - a.price)
       const len = sortedBids.length
       const mid = Math.ceil(len / 2)
-      const median =
+      const medianDivTen =
         len % 2 == 0
-          ? (sortedBids[mid].price + sortedBids[mid - 1].price) / 2
-          : sortedBids[mid - 1].price
+          ? (sortedBids[mid].price + sortedBids[mid - 1].price) / 20
+          : sortedBids[mid - 1].price / 10
       const digits =
-        median > 1 ? Math.floor(Math.log10(Math.trunc(median)) + 1) : Math.floor(Math.log10(median))
+        medianDivTen > 1
+          ? Math.floor(Math.log10(Math.trunc(medianDivTen)) + 1)
+          : Math.floor(Math.log10(medianDivTen))
       const granularityOptions = buildGranularityOptions(digits)
-      const closest = getClosestNumber(granularityOptions, median)
+      const closest = getClosestNumber(granularityOptions, medianDivTen)
       setGranularity(closest)
       setGranularityOptions(granularityOptions)
     }
