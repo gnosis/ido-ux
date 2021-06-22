@@ -138,13 +138,18 @@ export const useGranularityOptions = (bids: PricePoint[]) => {
   useEffect(() => {
     if (bids?.length > 1) {
       const sortedBids = [...bids].sort((a, b) => b.price - a.price)
-      const current = (sortedBids[0].price - sortedBids[sortedBids.length - 1].price) / 10
+      const len = sortedBids.length
+      const mid = Math.ceil(len / 2)
+      const medianDivTen =
+        len % 2 == 0
+          ? (sortedBids[mid].price + sortedBids[mid - 1].price) / 20
+          : sortedBids[mid - 1].price / 10
       const digits =
-        current > 1
-          ? Math.floor(Math.log10(Math.trunc(current)) + 1)
-          : Math.floor(Math.log10(current))
+        medianDivTen > 1
+          ? Math.floor(Math.log10(Math.trunc(medianDivTen)) + 1)
+          : Math.floor(Math.log10(medianDivTen))
       const granularityOptions = buildGranularityOptions(digits)
-      const closest = getClosestNumber(granularityOptions, current)
+      const closest = getClosestNumber(granularityOptions, medianDivTen)
       setGranularity(closest)
       setGranularityOptions(granularityOptions)
     }
