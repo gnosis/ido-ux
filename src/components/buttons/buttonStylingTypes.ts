@@ -14,6 +14,17 @@ export interface ButtonCommonProps {
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, ButtonCommonProps {}
 
+export interface ButtonGroupCommonProps {
+  left?: any
+  right?: any
+  theme?: any
+  activate?: boolean
+}
+
+export interface ButtonGroupProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    ButtonGroupCommonProps {}
+
 export interface ButtonLinkProps
   extends AnchorHTMLAttributes<HTMLAnchorElement>,
     ButtonCommonProps {}
