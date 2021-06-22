@@ -2,6 +2,8 @@ import React from 'react'
 import { Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 
+import ReactTooltip from 'react-tooltip'
+
 import Auction from '../../../pages/Auction'
 import { Documentation } from '../../../pages/Documentation'
 import { Landing } from '../../../pages/Landing'
@@ -44,6 +46,17 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
     <MainWrapper>
       <Header />
       <Popups />
+      <ReactTooltip
+        arrowColor="#001429"
+        backgroundColor="#001429"
+        border
+        borderColor="#174172"
+        className="customTooltip"
+        delayHide={250}
+        delayShow={50}
+        effect="solid"
+        textColor="#fff"
+      />
       {showTopWarning && <TopDisclaimer />}
       <MainScroll>
         <span id="topAnchor" />

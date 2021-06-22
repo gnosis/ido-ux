@@ -8,7 +8,7 @@ export const reactTooltipCSS = css`
     font-weight: normal;
     hyphens: auto;
     line-height: 1.2;
-    max-width: 300px;
+    max-width: 200px;
     opacity: 1;
     overflow-wrap: break-word;
     padding: 10px 12px;

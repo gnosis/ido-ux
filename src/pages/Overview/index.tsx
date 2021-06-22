@@ -74,10 +74,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       date: (
         <>
           <span>{new Date(item.endTimeTimestamp * 1000).toLocaleDateString()}</span>
-          <Tooltip
-            id={`auction_date${item.auctionId}`}
-            text={new Date(item.endTimeTimestamp * 1000).toString()}
-          />
+          <Tooltip text={new Date(item.endTimeTimestamp * 1000).toString()} />
         </>
       ),
       participation: item.hasParticipation ? (
