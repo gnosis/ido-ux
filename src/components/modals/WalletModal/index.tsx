@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { URI_AVAILABLE } from '@anxolin/walletconnect-connector'
+import { URI_AVAILABLE, WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import ReactGA from 'react-ga'
@@ -188,7 +188,11 @@ const WalletModal: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
-        activate(connector) // a little janky...can't use setError because the connector isn't set
+        let c = connector
+        if (c[chainId] instanceof WalletConnectConnector) {
+          c = c[chainId]
+        }
+        activate(c) // a little janky...can't use setError because the connector isn't set
       } else {
         setPendingError(true)
       }
