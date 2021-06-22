@@ -244,18 +244,25 @@ export const useGetOrderPlacementError = (
     balanceIn.lessThan(amountIn) &&
     `Insufficient ${getTokenDisplay(amountIn.token, chainId)}` + ' balance.'
 
+  const messageHigherInitialPrice = `Price must be higher than ${derivedAuctionInfo?.initialPrice?.toSignificant(
+    5,
+  )}`
   const messageHigherClearingPrice = `Price must be higher than ${derivedAuctionInfo?.clearingPrice?.toSignificant(
     5,
   )}`
-  const messageInitialPrice = () =>
-    showPricesInverted ? `Price must be higher than 0` : messageHigherClearingPrice
+  const messageMinimunPrice = () =>
+    showPricesInverted
+      ? `Price must be higher than 0`
+      : auctionState === AuctionState.ORDER_PLACING
+      ? messageHigherClearingPrice
+      : messageHigherInitialPrice
 
   const priceEqualsZero =
     amountIn && price && (price === '0' || price === 'Infinity' || price === '.' || price === '0.')
-      ? messageInitialPrice()
+      ? messageMinimunPrice()
       : undefined
   const invalidSellAmount =
-    sellAmount && amountIn && price && !sellAmountScaled && `Invalid Bidding price`
+    sellAmount && amountIn && price && !sellAmountScaled && `Invalid bidding price`
   const outOfBoundsPricePlacingOrder =
     amountIn &&
     price &&
@@ -287,7 +294,7 @@ export const useGetOrderPlacementError = (
       .lte(buyAmountScaled.mul(derivedAuctionInfo?.initialAuctionOrder?.buyAmount.raw.toString()))
       ? showPricesInverted
         ? `Price must be lower than ${derivedAuctionInfo?.initialPrice?.invert().toSignificant(5)}`
-        : `Price must be higher than ${derivedAuctionInfo?.initialPrice?.toSignificant(5)}`
+        : messageHigherInitialPrice
       : undefined
 
   const errorAmount = amountMustBeBigger || insufficientBalance || invalidAmount || undefined
