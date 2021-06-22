@@ -169,7 +169,7 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
           {isConnected && chainMismatch && (
             <Error>
               <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
-              <Tooltip id="wrongNetwork" text={`Supported networks are: ${chainNamesFormatted}`} />
+              <Tooltip text={`Supported networks are: ${chainNamesFormatted}`} />
             </Error>
           )}
           {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}

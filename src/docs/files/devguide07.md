@@ -18,7 +18,7 @@ Auctioneers: After the auction time has ended, submit the transaction to settle 
 
 2.  The smart contract works back from the highest bid, adding each bid's amount of tokens to buy, until the original amount to sell is reached
 
-3.  The bid that adds up the amount of tokens to sell is selected as the final closing for all participants. 
+3.  The bid that adds up the amount of tokens to sell is selected as the final closing for all participants.
 
 4.  Participants that selected a maximum price at the final closing price or higher receive tokens, the ones that had selected a maximum price below the closing price are left out
 
@@ -46,13 +46,13 @@ You can always cancel your bid (before the optional cancelation period set up by
 
 #### How many transactions does a bidder need to submit?
 
--   Approve the bid token (only if this wasn't done before)
+- Approve the bid token (only if this wasn't done before)
 
--   Submit bid 
+- Submit bid
 
--   Claim auction proceeds/receive funds back if not included
+- Claim auction proceeds/receive funds back if not included
 
--   Cancelation (optional)
+- Cancelation (optional)
 
 Note: after the auction ends, bidders (anyone) can theoretically also submit the transaction for auction settlement. Nonetheless, we expect the auctioneer to carry out this process
 
@@ -64,13 +64,13 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 
 <img src="/assets/FAQChartImage.png" alt="drawing" width="500"/>
 
--   Dotted white line -> shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends
+- Dotted white line -> shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends
 
--   Green line -> shows the price (x axis) and cumulative size (y axis) of the bids that have been placed, both expressed in the bid token
+- Green line -> shows the price (x axis) and cumulative size (y axis) of the bids that have been placed, both expressed in the bid token
 
--   Red line -> shows the minimum sell price (x axis) the auctioneer is willing to accept.
+- Red line -> shows the minimum sell price (x axis) the auctioneer is willing to accept.
 
--   Orange line -> shows the order that the user will submitt
+- Orange line -> shows the order that the user will submitt
 
 #### What is the settlement transaction?
 
@@ -91,10 +91,6 @@ Please note the ether (gas) spent to submit the bid order cannot be claimed as i
 #### What type of tokens can be auctioned and used for bidding?
 
 Currently, only ERC20 tokens can be auctioned and used for bidding. Gnosis Auction does not support ERC721 (NFTs) or any other token type.
-
-#### Why do I need to wrap my ETH to participate?
-
-As outlined in section "What type of tokens can be auctioned and used for bidding?", Gnosis Auction only supports ERC20 tokens and since ETH is not an ERC20, as a user, you need to wrap your ETH to participate in Auctions that accept WETH bids.
 
 #### Can I place as many orders as I want to?
 
