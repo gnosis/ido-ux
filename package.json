@@ -147,6 +147,9 @@
     "uniswap-xdai-sdk": "^3.0.2-a3",
     "use-media": "^1.4.0"
   },
+  "resolutions": {
+    "@walletconnect/web3-provider": "1.4.2-rc.2"
+  },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
       "yarn run lint:fix",
