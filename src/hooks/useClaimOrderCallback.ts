@@ -12,6 +12,7 @@ import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
 import { decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+import { useAuctionDetails } from './useAuctionDetails'
 import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('useClaimOrderCallback')
@@ -101,57 +102,90 @@ export function useGetAuctionProceeds(
   auctionIdentifier: AuctionIdentifier,
   derivedAuctionInfo: DerivedAuctionInfo,
 ): AuctionProceedings {
+  const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { claimInfo } = useGetClaimInfo(auctionIdentifier)
+  const {
+    auctioningToken,
+    biddingToken,
+    clearingPriceOrder,
+    clearingPriceSellOrder,
+    clearingPriceVolume,
+  } = derivedAuctionInfo
 
   if (
     !claimInfo ||
-    !derivedAuctionInfo?.biddingToken ||
-    !derivedAuctionInfo?.auctioningToken ||
-    !derivedAuctionInfo?.clearingPriceSellOrder ||
-    !derivedAuctionInfo?.clearingPriceOrder ||
-    !derivedAuctionInfo?.clearingPriceVolume
+    !biddingToken ||
+    !auctioningToken ||
+    !clearingPriceSellOrder ||
+    !clearingPriceOrder ||
+    !clearingPriceVolume ||
+    auctionInfoLoading ||
+    !auctionDetails
   ) {
     return {
       claimableBiddingToken: null,
       claimableAuctioningToken: null,
     }
   }
-  let claimableAuctioningToken = new TokenAmount(derivedAuctionInfo?.auctioningToken, '0')
-  let claimableBiddingToken = new TokenAmount(derivedAuctionInfo?.biddingToken, '0')
+
+  let claimableAuctioningToken = new TokenAmount(auctioningToken, '0')
+  let claimableBiddingToken = new TokenAmount(biddingToken, '0')
+
+  const minFundingThresholdAmount = new TokenAmount(
+    biddingToken,
+    auctionDetails.minFundingThreshold,
+  )
+
+  // TODO Use token decimals.
+  const currentBiddingAmount = BigNumber.from(auctionDetails.currentBiddingAmount)
+  const minFundingReached = currentBiddingAmount.gte(minFundingThresholdAmount.toExact())
+
+  if (!minFundingReached) {
+    for (const order of claimInfo.sellOrdersFormUser) {
+      const decodedOrder = decodeOrder(order)
+      claimableBiddingToken = claimableBiddingToken.add(
+        new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
+      )
+    }
+
+    return {
+      claimableBiddingToken,
+      claimableAuctioningToken,
+    }
+  }
+
+  // Min funding is reached, for each order from user.
   for (const order of claimInfo.sellOrdersFormUser) {
     const decodedOrder = decodeOrder(order)
-    if (JSON.stringify(decodedOrder) == JSON.stringify(derivedAuctionInfo?.clearingPriceOrder)) {
+    if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(
-          derivedAuctionInfo?.biddingToken,
-          decodedOrder.sellAmount.sub(derivedAuctionInfo?.clearingPriceVolume).toString(),
-        ),
+        new TokenAmount(biddingToken, decodedOrder.sellAmount.sub(clearingPriceVolume).toString()),
       )
       claimableAuctioningToken = claimableAuctioningToken.add(
         new TokenAmount(
-          derivedAuctionInfo?.auctioningToken,
-          derivedAuctionInfo?.clearingPriceVolume
-            .mul(derivedAuctionInfo?.clearingPriceOrder.buyAmount)
-            .div(derivedAuctionInfo?.clearingPriceOrder.sellAmount)
+          auctioningToken,
+          clearingPriceVolume
+            .mul(clearingPriceOrder.buyAmount)
+            .div(clearingPriceOrder.sellAmount)
             .toString(),
         ),
       )
     } else if (
-      derivedAuctionInfo?.clearingPriceOrder.buyAmount
+      clearingPriceOrder.buyAmount
         .mul(decodedOrder.sellAmount)
-        .lt(decodedOrder.buyAmount.mul(derivedAuctionInfo?.clearingPriceOrder.sellAmount))
+        .lt(decodedOrder.buyAmount.mul(clearingPriceOrder.sellAmount))
     ) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(derivedAuctionInfo?.biddingToken, decodedOrder.sellAmount.toString()),
+        new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
       )
     } else {
-      if (derivedAuctionInfo?.clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
+      if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
-            derivedAuctionInfo?.auctioningToken,
+            auctioningToken,
             decodedOrder.sellAmount
-              .mul(derivedAuctionInfo?.clearingPriceOrder.buyAmount)
-              .div(derivedAuctionInfo?.clearingPriceOrder.sellAmount)
+              .mul(clearingPriceOrder.buyAmount)
+              .div(clearingPriceOrder.sellAmount)
               .toString(),
           ),
         )
