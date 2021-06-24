@@ -66,7 +66,9 @@ const AuctionBody = (props: AuctionBodyProps) => {
         <Grid>
           <GridCol>
             <Wrap>
-              <SectionTitle as="h2">Place Order</SectionTitle>
+              <SectionTitle as="h2">
+                {auctionState === AuctionState.CLAIMING ? 'Claiming Proceeds' : 'Place Order'}
+              </SectionTitle>
             </Wrap>
             {(auctionState === AuctionState.ORDER_PLACING ||
               auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
