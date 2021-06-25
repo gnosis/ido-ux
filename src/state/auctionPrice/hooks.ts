@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -55,8 +55,16 @@ export function useSetCurrentPrice(
   derivedAuctionInfo: DerivedAuctionInfo,
 ) {
   const { shouldLoad: shouldLoadPrice } = useAuctionPriceState()
-  const { onSetCurrentPrice } = useAuctionPriceHandlers()
-  const { clearingPriceInfo } = useClearingPriceInfoConditioned(auctionIdentifier, shouldLoadPrice)
+  const { onResetCurrentPrice, onSetCurrentPrice } = useAuctionPriceHandlers()
+  const { current: auctionIdentifierRef } = useRef(auctionIdentifier)
+  const { clearingPriceInfo } = useClearingPriceInfoConditioned(
+    auctionIdentifierRef,
+    shouldLoadPrice,
+  )
+
+  useEffect(() => {
+    onResetCurrentPrice()
+  }, [auctionIdentifierRef, onResetCurrentPrice])
 
   useEffect(() => {
     if (!clearingPriceInfo || !derivedAuctionInfo || shouldLoadPrice !== PriceStatus.NEEDS_UPDATING)
@@ -70,5 +78,11 @@ export function useSetCurrentPrice(
     const price = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
     const priceReversed = orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
     onSetCurrentPrice(price as string, priceReversed as string)
-  }, [clearingPriceInfo, derivedAuctionInfo, auctionIdentifier, shouldLoadPrice, onSetCurrentPrice])
+  }, [
+    clearingPriceInfo,
+    derivedAuctionInfo,
+    auctionIdentifierRef,
+    shouldLoadPrice,
+    onSetCurrentPrice,
+  ])
 }
