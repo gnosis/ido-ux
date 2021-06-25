@@ -56,7 +56,7 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
+  color: ${({ theme }) => theme.textField.color};
   .tooltipComponent {
     a {
       border-radius: 50%;
