@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Fraction, JSBI, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -625,16 +625,14 @@ export function useAllUserOrders(
   const { account } = useActiveWeb3React()
   const { auctionId, chainId } = auctionIdentifier
   const { onResetOrder } = useOrderActionHandlers()
+  const {
+    current: { auctioningToken, biddingToken },
+  } = useRef(derivedAuctionInfo)
 
   useEffect(() => {
     let cancelled = false
     async function fetchData() {
-      if (
-        !chainId ||
-        !account ||
-        !derivedAuctionInfo?.biddingToken ||
-        !derivedAuctionInfo?.auctioningToken
-      ) {
+      if (!chainId || !account || !biddingToken || !auctioningToken) {
         return
       }
 
@@ -664,15 +662,11 @@ export function useAllUserOrders(
           id: orderString,
           sellAmount: new Fraction(
             order.sellAmount.toString(),
-            BigNumber.from(10).pow(derivedAuctionInfo?.biddingToken.decimals).toString(),
+            BigNumber.from(10).pow(biddingToken.decimals).toString(),
           ).toSignificant(6),
           price: new Fraction(
-            order.sellAmount
-              .mul(BigNumber.from(10).pow(derivedAuctionInfo.auctioningToken.decimals))
-              .toString(),
-            order.buyAmount
-              .mul(BigNumber.from(10).pow(derivedAuctionInfo.biddingToken.decimals))
-              .toString(),
+            order.sellAmount.mul(BigNumber.from(10).pow(auctioningToken.decimals)).toString(),
+            order.buyAmount.mul(BigNumber.from(10).pow(biddingToken.decimals)).toString(),
           ).toSignificant(6),
           chainId,
           status: OrderStatus.PLACED,
@@ -684,12 +678,5 @@ export function useAllUserOrders(
     return (): void => {
       cancelled = true
     }
-  }, [
-    chainId,
-    account,
-    auctionId,
-    onResetOrder,
-    derivedAuctionInfo?.auctioningToken,
-    derivedAuctionInfo?.biddingToken,
-  ])
+  }, [chainId, account, auctionId, onResetOrder, auctioningToken, biddingToken])
 }

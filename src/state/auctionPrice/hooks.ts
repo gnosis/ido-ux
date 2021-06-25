@@ -3,10 +3,15 @@ import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
-import { useClearingPriceInfo2 } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
+import { useClearingPriceInfoConditioned } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import { DerivedAuctionInfo, orderToPrice, orderToSellOrder } from '../orderPlacement/hooks'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
-import { alterationCurrentPrice, setCurrentPrice, updateCurrentPrice } from './actions'
+import {
+  alterationCurrentPrice,
+  resetCurrentPrice,
+  setCurrentPrice,
+  updateCurrentPrice,
+} from './actions'
 import { PriceStatus } from './reducer'
 
 export function useAuctionPriceState(): AppState['auctionPrice'] {
@@ -17,6 +22,7 @@ export function useAuctionPriceHandlers(): {
   onSetCurrentPrice: (price: string, priceReversed: string) => void
   onPriceAlteration: () => void
   onUpdateIfPriceChanged: () => void
+  onResetCurrentPrice: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
 
@@ -32,24 +38,29 @@ export function useAuctionPriceHandlers(): {
   const onUpdateIfPriceChanged = useCallback(() => {
     dispatch(updateCurrentPrice())
   }, [dispatch])
+  const onResetCurrentPrice = useCallback(() => {
+    dispatch(resetCurrentPrice())
+  }, [dispatch])
 
   return {
     onSetCurrentPrice,
     onPriceAlteration,
     onUpdateIfPriceChanged,
+    onResetCurrentPrice,
   }
 }
 
 export function useSetCurrentPrice(
   auctionIdentifier: AuctionIdentifier,
   derivedAuctionInfo: DerivedAuctionInfo,
-  shouldLoadPrice: PriceStatus,
 ) {
+  const { shouldLoad: shouldLoadPrice } = useAuctionPriceState()
   const { onSetCurrentPrice } = useAuctionPriceHandlers()
-  const { clearingPriceInfo } = useClearingPriceInfo2(auctionIdentifier, shouldLoadPrice)
+  const { clearingPriceInfo } = useClearingPriceInfoConditioned(auctionIdentifier, shouldLoadPrice)
 
   useEffect(() => {
-    if (!clearingPriceInfo || !derivedAuctionInfo || !shouldLoadPrice) return
+    if (!clearingPriceInfo || !derivedAuctionInfo || shouldLoadPrice !== PriceStatus.NEEDS_UPDATING)
+      return
 
     const clearingPriceInfoAsSellOrder = orderToSellOrder(
       clearingPriceInfo.clearingOrder,

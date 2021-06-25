@@ -6,3 +6,4 @@ export const setCurrentPrice = createAction<{
   price: string
   priceReversed: string
 }>('setCurrentPrice')
+export const resetCurrentPrice = createAction<void>('resetCurrentPrice')

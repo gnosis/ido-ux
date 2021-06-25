@@ -62,7 +62,7 @@ export const useClearingPriceInfo = (
   }
 }
 
-export const useClearingPriceInfo2 = (
+export const useClearingPriceInfoConditioned = (
   auctionIdentifer: AuctionIdentifier,
   loadAgain: PriceStatus,
 ): {

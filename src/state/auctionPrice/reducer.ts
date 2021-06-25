@@ -1,6 +1,11 @@
 import { createReducer } from '@reduxjs/toolkit'
 
-import { alterationCurrentPrice, setCurrentPrice, updateCurrentPrice } from './actions'
+import {
+  alterationCurrentPrice,
+  resetCurrentPrice,
+  setCurrentPrice,
+  updateCurrentPrice,
+} from './actions'
 
 export enum PriceStatus {
   SETTLED = 0,
@@ -43,6 +48,11 @@ export default createReducer<AuctionPriceState>(initialState, (builder) =>
           state.shouldLoad === PriceStatus.CHANGED
             ? PriceStatus.NEEDS_UPDATING
             : PriceStatus.SETTLED,
+      }
+    })
+    .addCase(resetCurrentPrice, () => {
+      return {
+        ...initialState,
       }
     }),
 )
