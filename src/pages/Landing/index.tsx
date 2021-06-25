@@ -190,6 +190,7 @@ const TextGradient = styled.span`
 export const Landing: React.FC = () => {
   const allAuctions = useAllAuctionInfo()
   const featuredAuctions = useInterestingAuctionInfo()
+  const highestVolumeAuctions = useInterestingAuctionInfo({ closedAuctions: true })
 
   useSetNoDefaultNetworkId()
 
@@ -228,7 +229,7 @@ export const Landing: React.FC = () => {
       {featuredAuctions && (
         <Featured className="featuredAuctions" featuredAuctions={featuredAuctions} />
       )}
-      <HighestVolumeAuctions highestVolumeAuctions={featuredAuctions} />
+      <HighestVolumeAuctions highestVolumeAuctions={highestVolumeAuctions} />
       <BlockGrid>
         <TextBlock>
           <SubTitle>Best Price Discovery</SubTitle>

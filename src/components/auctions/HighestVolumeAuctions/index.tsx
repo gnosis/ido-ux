@@ -1,11 +1,12 @@
 import { transparentize } from 'polished'
-import React from 'react'
+import React, { FC } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import * as CSS from 'csstype'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
+import { abbreviation } from '../../../utils/numeral'
 import { getChainName } from '../../../utils/tools'
 import { ChevronRightBig } from '../../icons/ChevronRightBig'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -267,9 +268,16 @@ interface HVAuctionsProps {
   highestVolumeAuctions?: Maybe<AuctionInfo[]>
 }
 
-const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
-  const noAuctions = !highestVolumeAuctions || highestVolumeAuctions?.length === 0
-  const mockDate = new Date()
+const HighestVolumeAuctions: FC<HVAuctionsProps> = ({ highestVolumeAuctions }) => {
+  const auctions = React.useMemo(
+    () =>
+      [...(highestVolumeAuctions || [])]
+        .sort((a, b) => b.usdAmountTraded - a.usdAmountTraded)
+        .slice(0, 4),
+    [highestVolumeAuctions],
+  )
+  const noAuctions = !auctions || auctions?.length === 0
+
   return (
     <Wrapper>
       <SectionTitle style={{ display: 'block' }}>Highest Volume Auctions</SectionTitle>
@@ -286,9 +294,9 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
             <StyledThCell>USD Volume</StyledThCell>
             <StyledThCell>End Date</StyledThCell>
           </StyledTHead>
-          {highestVolumeAuctions.map((auction, index) => (
+          {auctions.map((auction) => (
             <StyledTr
-              key={index}
+              key={auction.auctionId}
               to={`/auction?auctionId=${auction.auctionId}&chainId=${Number(
                 auction.chainId,
               )}#topAnchor`}
@@ -315,19 +323,19 @@ const HighestVolumeAuctions = ({ highestVolumeAuctions }: HVAuctionsProps) => {
               </StyledTd>
               <StyledTd>
                 <span>Sell Amount:&nbsp;</span>
-                {auction.order.volume + ' ' + auction.symbolAuctioningToken}
+                {abbreviation(auction.order.volume) + ' ' + auction.symbolAuctioningToken}
               </StyledTd>
               <StyledTd>
                 <span>Buy Amount:&nbsp;</span>
-                {auction.order.volume + ' ' + auction.symbolAuctioningToken}
+                {abbreviation(auction.currentBiddingAmount) + ' ' + auction.symbolBiddingToken}
               </StyledTd>
               <StyledTd>
                 <span>USD Volume:&nbsp;</span>
-                {'$' + auction.order.volume}
+                {'$' + abbreviation(auction.usdAmountTraded)}
               </StyledTd>
               <StyledTd>
                 <span>End Date:&nbsp;</span>
-                <span>{mockDate.toLocaleDateString()}</span>
+                <span>{new Date(auction.endTimeTimestamp * 1000).toLocaleDateString()}</span>
               </StyledTd>
               <StyledTd>
                 <Chevron />

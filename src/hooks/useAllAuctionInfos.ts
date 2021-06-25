@@ -13,11 +13,13 @@ export interface AuctionInfo {
   allowListSigner: string
   auctionId: number
   chainId: String
+  currentBiddingAmount: number
   currentClearingPrice: number
   decimalsAuctioningToken: number
   decimalsBiddingToken: number
   endTimeTimestamp: number
   exactOrder: string
+  hasParticipation: boolean
   interestScore: number
   isPrivateAuction: boolean
   minFundingThreshold: string
@@ -27,7 +29,7 @@ export interface AuctionInfo {
   startingTimestamp: number
   symbolAuctioningToken: string
   symbolBiddingToken: string
-  hasParticipation: boolean
+  usdAmountTraded: number
 }
 
 export const useAllAuctionInfo = (): Maybe<AuctionInfo[]> => {

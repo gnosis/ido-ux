@@ -17,7 +17,8 @@ export interface AdditionalServicesApi {
   getAllUserOrdersUrl(params: UserOrderParams): string
   getAllUserOrders(params: UserOrderParams): Promise<string[]>
   getMostInterestingAuctionDetailsUrl(params: InterestingAuctionParams): string
-  getMostInterestingAuctionDetails(): Promise<AuctionInfo[]>
+  getMostInterestingClosedAuctionDetailsUrl(params: InterestingAuctionParams): string
+  getMostInterestingAuctionDetails(closedAuctions?: boolean): Promise<AuctionInfo[]>
   getAllAuctionDetailsUrl(networkId: number): string
   getAllAuctionDetails(): Promise<AuctionInfo[]>
   getAllAuctionDetailsWithUserParticipationUrl(
@@ -161,6 +162,15 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url
   }
 
+  public getMostInterestingClosedAuctionDetailsUrl(params: InterestingAuctionParams): string {
+    const { networkId, numberOfAuctions } = params
+
+    const baseUrl = this._getBaseUrl(networkId)
+
+    const url = `${baseUrl}get_details_of_most_interesting_closed_auctions/${numberOfAuctions}`
+    return url
+  }
+
   public getAllAuctionDetailsUrl(networkId: number): string {
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -296,11 +306,16 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     }
   }
 
-  public async getMostInterestingAuctionDetails(): Promise<Maybe<AuctionInfo[]>> {
+  public async getMostInterestingAuctionDetails(
+    closedAuctions = false,
+  ): Promise<Maybe<AuctionInfo[]>> {
     try {
       const promises: Promise<Response>[] = []
       for (const networkId in this.urlsByNetwork) {
-        const url = await this.getMostInterestingAuctionDetailsUrl({
+        const fn = closedAuctions
+          ? this.getMostInterestingClosedAuctionDetailsUrl
+          : this.getMostInterestingAuctionDetailsUrl
+        const url = fn.bind(this)({
           networkId: Number(networkId),
           numberOfAuctions: 4,
         })
