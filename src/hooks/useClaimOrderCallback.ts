@@ -136,9 +136,15 @@ export function useGetAuctionProceeds(
     auctionDetails.minFundingThreshold,
   )
 
-  // TODO Use token decimals.
-  const currentBiddingAmount = BigNumber.from(auctionDetails.currentBiddingAmount)
-  const minFundingReached = currentBiddingAmount.gte(minFundingThresholdAmount.toExact())
+  const currentBiddingAmount = new TokenAmount(
+    biddingToken,
+    BigNumber.from(auctionDetails.currentBiddingAmount)
+      .mul(BigNumber.from(10).pow(biddingToken.decimals))
+      .toString(),
+  )
+
+  const minFundingReached = currentBiddingAmount.greaterThan(minFundingThresholdAmount)
+  const currentPrice = clearingPriceOrder.buyAmount.div(clearingPriceOrder.sellAmount)
 
   if (!minFundingReached) {
     for (const order of claimInfo.sellOrdersFormUser) {
@@ -154,7 +160,8 @@ export function useGetAuctionProceeds(
     }
   }
 
-  // Min funding is reached, for each order from user.
+  // Min funding is reached
+  // For each order from user add to claimable amounts (bidding or auctioning).
   for (const order of claimInfo.sellOrdersFormUser) {
     const decodedOrder = decodeOrder(order)
     if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
@@ -162,13 +169,7 @@ export function useGetAuctionProceeds(
         new TokenAmount(biddingToken, decodedOrder.sellAmount.sub(clearingPriceVolume).toString()),
       )
       claimableAuctioningToken = claimableAuctioningToken.add(
-        new TokenAmount(
-          auctioningToken,
-          clearingPriceVolume
-            .mul(clearingPriceOrder.buyAmount)
-            .div(clearingPriceOrder.sellAmount)
-            .toString(),
-        ),
+        new TokenAmount(auctioningToken, clearingPriceVolume.mul(currentPrice).toString()),
       )
     } else if (
       clearingPriceOrder.buyAmount
@@ -181,13 +182,7 @@ export function useGetAuctionProceeds(
     } else {
       if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
-          new TokenAmount(
-            auctioningToken,
-            decodedOrder.sellAmount
-              .mul(clearingPriceOrder.buyAmount)
-              .div(clearingPriceOrder.sellAmount)
-              .toString(),
-          ),
+          new TokenAmount(auctioningToken, decodedOrder.sellAmount.mul(currentPrice).toString()),
         )
       }
     }
