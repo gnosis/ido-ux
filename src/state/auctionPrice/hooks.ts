@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react'
+import { Token } from 'uniswap-xdai-sdk'
 
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
-import { useClearingPriceInfoConditioned } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
+import { additionalServiceApi } from '../../api'
+import { Order } from '../../hooks/Order'
 import { DerivedAuctionInfo, orderToPrice, orderToSellOrder } from '../orderPlacement/hooks'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
 import {
@@ -50,39 +52,75 @@ export function useAuctionPriceHandlers(): {
   }
 }
 
+function calculateClearingPrice(
+  clearingOrder: Order | null | undefined,
+  auctioningToken: Token | undefined,
+  biddingToken: Token | undefined,
+) {
+  const clearingPriceInfoAsSellOrder = orderToSellOrder(
+    clearingOrder,
+    biddingToken,
+    auctioningToken,
+  )
+  const price = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
+  const priceReversed = orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
+
+  return [price, priceReversed]
+}
+
 export function useSetCurrentPrice(
   auctionIdentifier: AuctionIdentifier,
   derivedAuctionInfo: DerivedAuctionInfo,
 ) {
   const { shouldLoad: shouldLoadPrice } = useAuctionPriceState()
   const { onResetCurrentPrice, onSetCurrentPrice } = useAuctionPriceHandlers()
-  const { current: auctionIdentifierRef } = useRef(auctionIdentifier)
-  const { clearingPriceInfo } = useClearingPriceInfoConditioned(
-    auctionIdentifierRef,
-    shouldLoadPrice,
-  )
+  const {
+    current: { auctionId, chainId },
+  } = useRef(auctionIdentifier)
 
   useEffect(() => {
     onResetCurrentPrice()
-  }, [auctionIdentifierRef, onResetCurrentPrice])
+  }, [auctionId, chainId, onResetCurrentPrice])
 
   useEffect(() => {
-    if (!clearingPriceInfo || !derivedAuctionInfo || shouldLoadPrice !== PriceStatus.NEEDS_UPDATING)
-      return
+    if (!derivedAuctionInfo || shouldLoadPrice !== PriceStatus.NEEDS_UPDATING) return
 
-    const clearingPriceInfoAsSellOrder = orderToSellOrder(
-      clearingPriceInfo.clearingOrder,
-      derivedAuctionInfo.biddingToken,
-      derivedAuctionInfo.auctioningToken,
-    )
-    const price = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
-    const priceReversed = orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
-    onSetCurrentPrice(price as string, priceReversed as string)
+    let cancelled = false
+    const fetchApiData = async () => {
+      try {
+        if (!chainId || !auctionId || !additionalServiceApi) {
+          return
+        }
+
+        const clearingOrderAndVolume = await additionalServiceApi.getClearingPriceOrderAndVolume({
+          networkId: chainId,
+          auctionId,
+        })
+
+        if (!cancelled) {
+          const [price, priceReversed] = calculateClearingPrice(
+            clearingOrderAndVolume.clearingOrder,
+            derivedAuctionInfo.auctioningToken,
+            derivedAuctionInfo.biddingToken,
+          )
+          onSetCurrentPrice(price as string, priceReversed as string)
+        }
+      } catch (error) {
+        onResetCurrentPrice()
+        console.error('Error getting clearing price info', error)
+      }
+    }
+
+    fetchApiData()
+    return (): void => {
+      cancelled = true
+    }
   }, [
-    clearingPriceInfo,
     derivedAuctionInfo,
-    auctionIdentifierRef,
     shouldLoadPrice,
     onSetCurrentPrice,
+    chainId,
+    auctionId,
+    onResetCurrentPrice,
   ])
 }

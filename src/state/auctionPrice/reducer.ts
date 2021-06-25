@@ -8,9 +8,9 @@ import {
 } from './actions'
 
 export enum PriceStatus {
-  SETTLED = 0,
-  CHANGED = 1,
-  NEEDS_UPDATING = 2,
+  NEEDS_UPDATING = 0,
+  SETTLED = 1,
+  CHANGED = 2,
 }
 
 export interface AuctionPriceState {
