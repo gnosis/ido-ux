@@ -51,6 +51,7 @@ const Wrapper = styled.div`
   flex-shrink: 0;
   height: 340px;
   justify-content: center;
+  height: 100%;
   max-height: 340px;
   position: relative;
   width: 100%;

@@ -115,7 +115,6 @@ const Link = styled(ExternalLink)`
 `
 
 export interface Props {
-  id?: string
   progress?: string
   showEmptyProgressColumn?: boolean
   title: string
@@ -125,7 +124,7 @@ export interface Props {
 }
 
 export const ExtraDetailsItem: React.FC<Props> = (props) => {
-  const { id, progress, showEmptyProgressColumn, title, tooltip, url, value, ...restProps } = props
+  const { progress, showEmptyProgressColumn, title, tooltip, url, value, ...restProps } = props
 
   return (
     <Wrapper showProgressColumn={progress !== undefined || showEmptyProgressColumn} {...restProps}>
@@ -145,7 +144,7 @@ export const ExtraDetailsItem: React.FC<Props> = (props) => {
         </Value>
         <Title>
           <TitleText className="text">{title}</TitleText>
-          {tooltip && <Tooltip id={id} text={tooltip} />}
+          {tooltip && <Tooltip text={tooltip} />}
         </Title>
       </TextContents>
     </Wrapper>

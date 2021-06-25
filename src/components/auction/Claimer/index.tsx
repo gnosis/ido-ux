@@ -28,6 +28,7 @@ const Wrapper = styled(BaseCard)`
   max-width: 100%;
   min-height: 352px;
   min-width: 100%;
+  height: calc(100% - 35px);
 `
 
 const ActionButton = styled(Button)`
