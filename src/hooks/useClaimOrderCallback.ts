@@ -144,7 +144,7 @@ export function useGetAuctionProceeds(
   )
 
   const minFundingReached = currentBiddingAmount.greaterThan(minFundingThresholdAmount)
-  const currentPrice = clearingPriceOrder.buyAmount.div(clearingPriceOrder.sellAmount)
+  const clearingPrice = clearingPriceOrder.buyAmount.div(clearingPriceOrder.sellAmount)
 
   if (!minFundingReached) {
     for (const order of claimInfo.sellOrdersFormUser) {
@@ -169,7 +169,7 @@ export function useGetAuctionProceeds(
         new TokenAmount(biddingToken, decodedOrder.sellAmount.sub(clearingPriceVolume).toString()),
       )
       claimableAuctioningToken = claimableAuctioningToken.add(
-        new TokenAmount(auctioningToken, clearingPriceVolume.mul(currentPrice).toString()),
+        new TokenAmount(auctioningToken, clearingPriceVolume.mul(clearingPrice).toString()),
       )
     } else if (
       clearingPriceOrder.buyAmount
@@ -182,7 +182,7 @@ export function useGetAuctionProceeds(
     } else {
       if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
-          new TokenAmount(auctioningToken, decodedOrder.sellAmount.mul(currentPrice).toString()),
+          new TokenAmount(auctioningToken, decodedOrder.sellAmount.mul(clearingPrice).toString()),
         )
       }
     }
