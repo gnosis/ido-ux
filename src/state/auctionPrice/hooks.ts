@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 import { Token } from 'uniswap-xdai-sdk'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -74,9 +74,7 @@ export function useSetCurrentPrice(
 ) {
   const { shouldLoad: shouldLoadPrice } = useAuctionPriceState()
   const { onResetCurrentPrice, onSetCurrentPrice } = useAuctionPriceHandlers()
-  const {
-    current: { auctionId, chainId },
-  } = useRef(auctionIdentifier)
+  const { auctionId, chainId } = auctionIdentifier
 
   useEffect(() => {
     onResetCurrentPrice()
