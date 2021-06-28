@@ -1,4 +1,4 @@
-name: deploy-production-with-staging-config
+name: deploy-production
 on:
   push:
     tags: [d*]
