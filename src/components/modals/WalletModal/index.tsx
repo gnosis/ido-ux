@@ -188,11 +188,10 @@ const WalletModal: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
-        let c = connector
-        if (c[chainId] instanceof WalletConnectConnector) {
-          c = c[chainId]
-        }
-        activate(c) // a little janky...can't use setError because the connector isn't set
+        // a little janky...can't use setError because the connector isn't set
+        activate(
+          connector[chainId] instanceof WalletConnectConnector ? connector[chainId] : connector,
+        )
       } else {
         setPendingError(true)
       }
