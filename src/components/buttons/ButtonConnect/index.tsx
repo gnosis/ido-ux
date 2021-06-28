@@ -41,6 +41,7 @@ const Wrapper = styled.button`
 
 const Text = styled.span`
   margin-right: 10px;
+  font-family: 'Averta', sans-serif;
 `
 
 export const ButtonConnect: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
