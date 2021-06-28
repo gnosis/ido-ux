@@ -143,50 +143,42 @@ export function useGetAuctionProceeds(
       .toString(),
   )
 
-  const minFundingReached = currentBiddingAmount.greaterThan(minFundingThresholdAmount)
+  const minFundingThresholdNotReached = minFundingThresholdAmount.greaterThan(currentBiddingAmount)
   const clearingPrice = clearingPriceOrder.buyAmount.div(clearingPriceOrder.sellAmount)
 
-  if (!minFundingReached) {
-    for (const order of claimInfo.sellOrdersFormUser) {
-      const decodedOrder = decodeOrder(order)
-      claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
-      )
-    }
-
-    return {
-      claimableBiddingToken,
-      claimableAuctioningToken,
-    }
-  }
-
-  // Min funding is reached
   // For each order from user add to claimable amounts (bidding or auctioning).
   for (const order of claimInfo.sellOrdersFormUser) {
     const decodedOrder = decodeOrder(order)
-    if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
+    const { buyAmount, sellAmount } = decodedOrder
+
+    if (minFundingThresholdNotReached) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(biddingToken, decodedOrder.sellAmount.sub(clearingPriceVolume).toString()),
+        new TokenAmount(biddingToken, sellAmount.toString()),
+      )
+      // Order from the same user, buyAmount and sellAmount
+    } else if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
+      claimableBiddingToken = claimableBiddingToken.add(
+        new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
       )
       claimableAuctioningToken = claimableAuctioningToken.add(
         new TokenAmount(auctioningToken, clearingPriceVolume.mul(clearingPrice).toString()),
       )
     } else if (
-      clearingPriceOrder.buyAmount
-        .mul(decodedOrder.sellAmount)
-        .lt(decodedOrder.buyAmount.mul(clearingPriceOrder.sellAmount))
+      clearingPriceOrder.buyAmount.mul(sellAmount).lt(buyAmount.mul(clearingPriceOrder.sellAmount))
     ) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(biddingToken, decodedOrder.sellAmount.toString()),
+        new TokenAmount(biddingToken, sellAmount.toString()),
       )
     } else {
+      // (orders[i].smallerThan(auction.clearingPriceOrder)
       if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
-          new TokenAmount(auctioningToken, decodedOrder.sellAmount.mul(clearingPrice).toString()),
+          new TokenAmount(auctioningToken, sellAmount.mul(clearingPrice).toString()),
         )
       }
     }
   }
+
   return {
     claimableBiddingToken,
     claimableAuctioningToken,
