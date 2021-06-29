@@ -1,3 +1,4 @@
+import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import * as am4charts from '@amcharts/amcharts4/charts'
@@ -46,6 +47,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
     white: '#FFFFFF',
     grey: '#565A69',
     orange: '#FF6347',
+    tooltipBg: '#001429',
+    tooltipBorder: '#174172',
   }
 
   // Create axes
@@ -148,7 +151,11 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Legend
   chart.legend = new am4charts.Legend()
   chart.legend.labels.template.fill = am4core.color(colors.white)
-  chart.legend.itemContainers.template.tooltipText = '{dataContext.dummyData.description}'
+  chart.tooltip.getFillFromObject = false
+  chart.tooltip.background.fill = am4core.color(colors.tooltipBg)
+  chart.tooltip.background.stroke = am4core.color(colors.tooltipBorder)
+  chart.legend.itemContainers.template.tooltipHTML =
+    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
 
   return chart
 }
