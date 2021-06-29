@@ -9,9 +9,16 @@ export function getInverse(price: string, nrDigits: number): string {
   if (price == '-') {
     return '-'
   }
+
+  // prevent division by 0
+  if (price === '0') {
+    return price
+  }
+
   // if 1/price has more than `nrDigits`, we make a cut off and only take the first `nrDigits`
-  const re = new RegExp('(\\d+\\.\\d{' + nrDigits + '})(\\d)'),
-    m = (1 / Number(price)).toString().match(re)
+  const re = new RegExp('(\\d+\\.\\d{' + nrDigits + '})(\\d)')
+  const m = (1 / Number(price)).toString().match(re)
+
   return (m ? parseFloat(m[1]) : (1 / Number(price)).valueOf()).toString()
 }
 
