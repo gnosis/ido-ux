@@ -38,6 +38,7 @@ export const FieldRowBottom = styled.div`
   align-items: center;
   display: flex;
   margin-top: auto;
+  justify-content: space-between;
 `
 
 export const FieldRowLabel = styled.label`
@@ -72,22 +73,25 @@ export const FieldRowTokenSymbol = styled.div`
 
 export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   background: none;
-  border: none;
+  border: 1px solid ${(props) =>
+    props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.border};};
   color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
   flex-grow: 1;
+  border-radius: 6px;
   flex-shrink: 1;
-  font-size: 23px;
+  font-size: 20px;
   font-weight: 400;
-  height: 22px;
+  height: 30px;
   line-height: 1;
   margin-left: auto;
   margin: 0 0 0 20px;
   min-width: 0;
   outline: none;
-  padding: 0;
+  padding: 5px;
   text-align: right;
   transition: color 0.15s linear;
   width: auto;
+  max-width: 50%;
 
   &::placeholder {
     color: #bfdeff;

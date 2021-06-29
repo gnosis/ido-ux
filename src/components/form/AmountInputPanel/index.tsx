@@ -137,57 +137,66 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           </FieldRowLineButton>
         </FieldRowTop>
         <FieldRowBottom>
-          {token && (
-            <FieldRowToken>
-              {token.address && (
-                <TokenLogo size={'16px'} token={{ address: token.address, symbol: token.symbol }} />
-              )}
-              {token && token.symbol && (
-                <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
-              )}
-            </FieldRowToken>
-          )}
-          {unlock.isLocked && (
-            <UnlockButton disabled={isUnlocking} onClick={unlock.onUnlock} unlocking={isUnlocking}>
-              {isUnlocking ? (
-                <>
-                  <SpinningLaVidaLoca>
-                    <MiniSpinner />
-                  </SpinningLaVidaLoca>
-                  <FieldRowPrimaryButtonText>Unlocking</FieldRowPrimaryButtonText>
-                </>
-              ) : (
-                <>
-                  <MiniLock />
-                  <FieldRowPrimaryButtonText>Unlock</FieldRowPrimaryButtonText>
-                </>
-              )}
-            </UnlockButton>
-          )}
-          {wrap.isWrappable && (
-            <FieldRowPrimaryButton
-              className={`tooltipComponent`}
-              data-for={'wrap_button'}
-              data-html={true}
-              data-multiline={true}
-              data-tip={dataTip}
-              onClick={wrap.onClick}
-            >
-              <ReactTooltip
-                arrowColor={'#001429'}
-                backgroundColor={'#001429'}
-                border
-                borderColor={'#174172'}
-                className="customTooltip"
-                delayHide={50}
-                delayShow={250}
-                effect="solid"
-                id={'wrap_button'}
-                textColor="#fff"
-              />
-              <FieldRowPrimaryButtonText>Unwrap</FieldRowPrimaryButtonText>
-            </FieldRowPrimaryButton>
-          )}
+          <div>
+            {token && (
+              <FieldRowToken>
+                {token.address && (
+                  <TokenLogo
+                    size={'16px'}
+                    token={{ address: token.address, symbol: token.symbol }}
+                  />
+                )}
+                {token && token.symbol && (
+                  <FieldRowTokenSymbol>{getTokenDisplay(token, chainId)}</FieldRowTokenSymbol>
+                )}
+              </FieldRowToken>
+            )}
+            {unlock.isLocked && (
+              <UnlockButton
+                disabled={isUnlocking}
+                onClick={unlock.onUnlock}
+                unlocking={isUnlocking}
+              >
+                {isUnlocking ? (
+                  <>
+                    <SpinningLaVidaLoca>
+                      <MiniSpinner />
+                    </SpinningLaVidaLoca>
+                    <FieldRowPrimaryButtonText>Unlocking</FieldRowPrimaryButtonText>
+                  </>
+                ) : (
+                  <>
+                    <MiniLock />
+                    <FieldRowPrimaryButtonText>Unlock</FieldRowPrimaryButtonText>
+                  </>
+                )}
+              </UnlockButton>
+            )}
+            {wrap.isWrappable && (
+              <FieldRowPrimaryButton
+                className={`tooltipComponent`}
+                data-for={'wrap_button'}
+                data-html={true}
+                data-multiline={true}
+                data-tip={dataTip}
+                onClick={wrap.onClick}
+              >
+                <ReactTooltip
+                  arrowColor={'#001429'}
+                  backgroundColor={'#001429'}
+                  border
+                  borderColor={'#174172'}
+                  className="customTooltip"
+                  delayHide={50}
+                  delayShow={250}
+                  effect="solid"
+                  id={'wrap_button'}
+                  textColor="#fff"
+                />
+                <FieldRowPrimaryButtonText>Unwrap</FieldRowPrimaryButtonText>
+              </FieldRowPrimaryButton>
+            )}
+          </div>
           <FieldRowInput
             disabled={!account}
             hasError={error}
