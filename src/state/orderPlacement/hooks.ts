@@ -7,7 +7,6 @@ import { parseUnits } from '@ethersproject/units'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { additionalServiceApi } from '../../api'
-import { ClearingPriceAndVolumeData } from '../../api/AdditionalServicesApi'
 import easyAuctionABI from '../../constants/abis/easyAuction/easyAuction.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../constants/config'
 import { useActiveWeb3React } from '../../hooks'
@@ -374,42 +373,10 @@ export function useDerivedAuctionInfo(
   const { chainId } = auctionIdentifier
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
   const { clearingPriceInfo, loadingClearingPrice } = useClearingPriceInfo(auctionIdentifier)
+  const auctionState = useDeriveAuctionState(auctionDetails)
 
   const isLoading = auctionInfoLoading || loadingClearingPrice
   const noAuctionData = !auctionDetails || !clearingPriceInfo
-  const [auctionState, setAuctionState] = useState<Maybe<AuctionState>>()
-
-  useEffect(() => {
-    if (!auctionDetails || !clearingPriceInfo) {
-      return
-    }
-
-    const getCurrentState = () => deriveAuctionState(auctionDetails, clearingPriceInfo).auctionState
-    setAuctionState(getCurrentState())
-    const timeLeftEndAuction = calculateTimeLeft(auctionDetails.endTimeTimestamp)
-    const timeLeftCancellationOrder = calculateTimeLeft(
-      auctionDetails.orderCancellationEndDate as number,
-    )
-
-    const updateStatusWhenTimeIsUp = (remainingAuctionTimes: Array<number>) => {
-      const timersId = remainingAuctionTimes
-        .map((timeLeft) => {
-          if (timeLeft < 0) {
-            return
-          }
-          return setTimeout(() => {
-            setAuctionState(getCurrentState())
-          }, timeLeft * 1000)
-        })
-        .filter(isTimeout)
-      return timersId
-    }
-    const timerEventsId = updateStatusWhenTimeIsUp([timeLeftCancellationOrder, timeLeftEndAuction])
-
-    return () => {
-      timerEventsId.map((timerId) => clearTimeout(timerId))
-    }
-  }, [auctionDetails, clearingPriceInfo, noAuctionData])
 
   if (isLoading) {
     return null
@@ -488,60 +455,119 @@ export function useDerivedAuctionInfo(
   }
 }
 
-export function deriveAuctionState(
+export function useDeriveAuctionState(
   auctionDetails: AuctionInfoDetail | null | undefined,
-  clearingPriceInfo: ClearingPriceAndVolumeData | null | undefined,
-): {
-  auctionState: Maybe<AuctionState>
-} {
-  const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
+): Maybe<AuctionState> {
+  const [currentState, setCurrentState] = useState<Maybe<AuctionState>>(null)
+  const { clearingPriceSellOrder } = useOnChainAuctionData({
+    auctionId: auctionDetails?.auctionId ?? 0,
+    chainId: Number(auctionDetails?.chainId ?? '1'),
+  })
 
-  let auctionState: Maybe<AuctionState> = null
-  if (!auctioningTokenAddress) {
-    auctionState = AuctionState.NOT_YET_STARTED
-  } else {
-    const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
-
-    const auctionEndDate = auctionDetails?.endTimeTimestamp
-    const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
-
-    let clearingPrice: Fraction | undefined
-    if (
-      !clearingPriceOrder ||
-      clearingPriceOrder.buyAmount == undefined ||
-      clearingPriceOrder.sellAmount == undefined
-    ) {
-      clearingPrice = undefined
+  const getCurrentState = useCallback(() => {
+    const auctioningTokenAddress: string | undefined = auctionDetails?.addressAuctioningToken
+    let auctionState: Maybe<AuctionState> = null
+    if (!auctioningTokenAddress) {
+      auctionState = AuctionState.NOT_YET_STARTED
     } else {
-      clearingPrice = new Fraction(
-        clearingPriceOrder.sellAmount.toString(),
-        clearingPriceOrder.buyAmount.toString(),
-      )
-    }
+      const auctionEndDate = auctionDetails?.endTimeTimestamp
+      const orderCancellationEndDate = auctionDetails?.orderCancellationEndDate
 
-    if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
-      auctionState = AuctionState.ORDER_PLACING
-      if (orderCancellationEndDate && orderCancellationEndDate >= new Date().getTime() / 1000) {
-        auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
-      }
-    } else {
-      if (clearingPrice?.toSignificant(1) == '0') {
-        auctionState = AuctionState.PRICE_SUBMISSION
+      if (auctionEndDate && auctionEndDate > new Date().getTime() / 1000) {
+        auctionState = AuctionState.ORDER_PLACING
+        if (orderCancellationEndDate && orderCancellationEndDate >= new Date().getTime() / 1000) {
+          auctionState = AuctionState.ORDER_PLACING_AND_CANCELING
+        }
       } else {
-        if (clearingPrice) auctionState = AuctionState.CLAIMING
+        if (clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0') {
+          auctionState = AuctionState.PRICE_SUBMISSION
+        } else {
+          if (clearingPriceSellOrder) auctionState = AuctionState.CLAIMING
+        }
       }
     }
-  }
-  return { auctionState }
+
+    return auctionState
+  }, [auctionDetails, clearingPriceSellOrder])
+
+  useEffect(() => {
+    setCurrentState(getCurrentState())
+  }, [auctionDetails, getCurrentState])
+
+  useEffect(() => {
+    if (!auctionDetails) {
+      return
+    }
+
+    const timeLeftEndAuction = calculateTimeLeft(auctionDetails.endTimeTimestamp)
+    const timeLeftCancellationOrder = calculateTimeLeft(
+      auctionDetails.orderCancellationEndDate as number,
+    )
+
+    const updateStatusWhenTimeIsUp = (remainingAuctionTimes: Array<number>) => {
+      const timersId = remainingAuctionTimes
+        .map((timeLeft) => {
+          if (timeLeft < 0) {
+            return
+          }
+          return setTimeout(() => {
+            setCurrentState(getCurrentState())
+          }, timeLeft * 1000)
+        })
+        .filter(isTimeout)
+      return timersId
+    }
+    const timerEventsId = updateStatusWhenTimeIsUp([timeLeftCancellationOrder, timeLeftEndAuction])
+
+    return () => {
+      timerEventsId.map((timerId) => clearTimeout(timerId))
+    }
+  }, [auctionDetails, getCurrentState])
+
+  return currentState
 }
 
 export function useDerivedClaimInfo(
   auctionIdentifier: AuctionIdentifier,
   claimStatus: ClaimState,
 ): {
-  auctioningToken?: Token | undefined
-  biddingToken?: Token | undefined
+  auctioningToken?: Maybe<Token>
+  biddingToken?: Maybe<Token>
   error?: string | undefined
+  isLoading: boolean
+} {
+  const {
+    auctioningToken,
+    biddingToken,
+    clearingPriceSellOrder,
+    isLoading: isAuctionDataLoading,
+  } = useOnChainAuctionData(auctionIdentifier)
+
+  const error =
+    clearingPriceSellOrder?.buyAmount?.raw?.toString() === '0'
+      ? 'Waiting for on-chain price calculation.'
+      : claimStatus === ClaimState.CLAIMED
+      ? 'You already claimed your funds.'
+      : claimStatus === ClaimState.NOT_APPLICABLE
+      ? 'You had no participation on this auction.'
+      : ''
+
+  const isLoading = isAuctionDataLoading || claimStatus === ClaimState.UNKNOWN
+
+  return {
+    auctioningToken,
+    biddingToken,
+    error,
+    isLoading,
+  }
+}
+
+export function useOnChainAuctionData(
+  auctionIdentifier: AuctionIdentifier,
+): {
+  auctioningToken?: Maybe<Token>
+  biddingToken?: Maybe<Token>
+  clearingPriceSellOrder: Maybe<SellOrder>
   isLoading: boolean
 } {
   const { auctionId, chainId } = auctionIdentifier
@@ -574,25 +600,12 @@ export function useDerivedClaimInfo(
     auctioningToken,
   )
 
-  const error =
-    clearingPriceSellOrder && clearingPriceSellOrder.buyAmount.raw.toString() === '0'
-      ? 'Waiting for on-chain price calculation.'
-      : claimStatus === ClaimState.CLAIMED
-      ? 'You already claimed your funds.'
-      : claimStatus === ClaimState.NOT_APPLICABLE
-      ? 'You had no participation on this auction.'
-      : ''
-
-  const isLoading =
-    isLoadingAuctionInfo ||
-    isAuctioningTokenLoading ||
-    isBiddingTokenLoading ||
-    claimStatus === ClaimState.UNKNOWN
+  const isLoading = isLoadingAuctionInfo || isAuctioningTokenLoading || isBiddingTokenLoading
 
   return {
     auctioningToken,
     biddingToken,
-    error,
+    clearingPriceSellOrder,
     isLoading,
   }
 }

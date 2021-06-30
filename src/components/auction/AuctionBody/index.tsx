@@ -77,7 +77,8 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 derivedAuctionInfo={derivedAuctionInfo}
               />
             )}
-            {auctionState === AuctionState.CLAIMING && (
+            {(auctionState === AuctionState.CLAIMING ||
+              auctionState === AuctionState.PRICE_SUBMISSION) && (
               <Claimer
                 auctionIdentifier={auctionIdentifier}
                 derivedAuctionInfo={derivedAuctionInfo}
