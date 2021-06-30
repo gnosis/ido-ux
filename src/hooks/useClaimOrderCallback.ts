@@ -104,8 +104,7 @@ interface getClaimableDataProps {
   biddingToken: Token
   clearingPriceOrder: Order
   ordersFromUser: string[]
-  minFundingThreshold: string
-  currentBiddingAmount: string
+  minFundingThresholdNotReached: boolean
   clearingPriceVolume: BigNumber
 }
 export const getClaimableData = ({
@@ -113,44 +112,11 @@ export const getClaimableData = ({
   biddingToken,
   clearingPriceOrder,
   clearingPriceVolume,
-  currentBiddingAmount: currentBidding,
-  minFundingThreshold,
+  minFundingThresholdNotReached,
   ordersFromUser,
 }: getClaimableDataProps): Required<AuctionProceedings> => {
   let claimableAuctioningToken = new TokenAmount(auctioningToken, '0')
   let claimableBiddingToken = new TokenAmount(biddingToken, '0')
-
-  console.log(
-    'auctioning',
-    auctioningToken,
-    'bidding',
-    biddingToken,
-    'clearingPrice buy',
-    clearingPriceOrder.buyAmount.toString(),
-    'clearing price sell',
-    clearingPriceOrder.sellAmount.toString(),
-    'volumne',
-    clearingPriceVolume.toString(),
-    'current bidding',
-    currentBidding,
-    'min funding',
-    BigNumber.from(minFundingThreshold).toString(),
-    'order from user',
-    ordersFromUser.map((o) => {
-      const d = decodeOrder(o)
-      return { b: d.buyAmount.toString(), c: d.sellAmount.toString() }
-    }),
-  )
-  const minFundingThresholdAmount = new TokenAmount(biddingToken, minFundingThreshold)
-  const currentBiddingAmount = new TokenAmount(
-    biddingToken,
-    BigNumber.from(currentBidding).mul(BigNumber.from(10).pow(biddingToken.decimals)).toString(),
-  )
-  const minFundingThresholdNotReached = minFundingThresholdAmount.greaterThan(currentBiddingAmount)
-
-  const clearingPrice = clearingPriceOrder.buyAmount.div(clearingPriceOrder.sellAmount)
-
-  console.log('clearing price', clearingPrice)
 
   // For each order from user add to claimable amounts (bidding or auctioning).
   for (const order of ordersFromUser) {
@@ -167,7 +133,13 @@ export const getClaimableData = ({
         new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
       )
       claimableAuctioningToken = claimableAuctioningToken.add(
-        new TokenAmount(auctioningToken, clearingPriceVolume.mul(clearingPrice).toString()),
+        new TokenAmount(
+          auctioningToken,
+          clearingPriceVolume
+            .mul(clearingPriceOrder.buyAmount)
+            .div(clearingPriceOrder.sellAmount)
+            .toString(),
+        ),
       )
     } else if (
       clearingPriceOrder.buyAmount.mul(sellAmount).lt(buyAmount.mul(clearingPriceOrder.sellAmount))
@@ -179,7 +151,13 @@ export const getClaimableData = ({
       // (orders[i].smallerThan(auction.clearingPriceOrder)
       if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
         claimableAuctioningToken = claimableAuctioningToken.add(
-          new TokenAmount(auctioningToken, sellAmount.mul(clearingPrice).toString()),
+          new TokenAmount(
+            auctioningToken,
+            sellAmount
+              .mul(clearingPriceOrder.buyAmount)
+              .div(clearingPriceOrder.sellAmount)
+              .toString(),
+          ),
         )
       }
     }
@@ -189,6 +167,21 @@ export const getClaimableData = ({
     claimableBiddingToken,
     claimableAuctioningToken,
   }
+}
+
+export const isMinFundingReached = (
+  biddingToken: Token,
+  currentBidding: string,
+  minFundingThreshold: string,
+) => {
+  const minFundingThresholdAmount = new TokenAmount(biddingToken, minFundingThreshold)
+  const currentBiddingAmount = new TokenAmount(
+    biddingToken,
+    BigNumber.from(currentBidding).mul(BigNumber.from(10).pow(biddingToken.decimals)).toString(),
+  )
+
+  // TODO This could be renamed to NotReached, or also can be something like currentBdding.gt(minFunding) || currentBidding.eq(mindFunding)
+  return !minFundingThresholdAmount.greaterThan(currentBiddingAmount)
 }
 
 export function useGetAuctionProceeds(
@@ -226,8 +219,11 @@ export function useGetAuctionProceeds(
         biddingToken,
         clearingPriceOrder,
         clearingPriceVolume,
-        currentBiddingAmount: auctionDetails.currentBiddingAmount,
-        minFundingThreshold: auctionDetails.minFundingThreshold,
+        minFundingThresholdNotReached: !isMinFundingReached(
+          biddingToken,
+          auctionDetails.currentBiddingAmount,
+          auctionDetails.minFundingThreshold,
+        ),
         ordersFromUser: claimInfo.sellOrdersFormUser,
       })
     }
