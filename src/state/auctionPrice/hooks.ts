@@ -27,7 +27,7 @@ export function useAuctionPriceHandlers(): {
   onResetCurrentPrice: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
-  const { asks, bids, userOrderPrice, userOrderVolume } = useOrderbookState()
+  const { userOrderPrice, userOrderVolume } = useOrderbookState()
 
   const onSetCurrentPrice = useCallback(
     (price: string, priceReversed: string) => {
@@ -36,16 +36,8 @@ export function useAuctionPriceHandlers(): {
     [dispatch],
   )
   const onPriceAlteration = useCallback(() => {
-    const { price, priceReversed } = new CalculatorClearingPrice(
-      bids,
-      {
-        price: userOrderPrice,
-        volume: userOrderVolume,
-      },
-      asks[0],
-    ).calculate()
-    dispatch(alterationCurrentPrice({ price, priceReversed }))
-  }, [asks, bids, dispatch, userOrderPrice, userOrderVolume])
+    dispatch(alterationCurrentPrice({ userOrderPrice, userOrderVolume }))
+  }, [dispatch, userOrderPrice, userOrderVolume])
   const onUpdateIfPriceChanged = useCallback(() => {
     dispatch(updateCurrentPrice())
   }, [dispatch])
@@ -69,19 +61,33 @@ export function useSetCurrentPrice(
   auctionIdentifier: AuctionIdentifier,
   derivedAuctionInfo: AuctionInfoDefined,
 ) {
-  const { calculatedAfterOrder, shouldLoad: shouldLoadPrice } = useAuctionPriceState()
+  const { changedUserOrder, shouldLoad: shouldLoadPrice } = useAuctionPriceState()
   const { onResetCurrentPrice, onSetCurrentPrice } = useAuctionPriceHandlers()
   const { auctionId, chainId } = auctionIdentifier
+  const { asks, bids } = useOrderbookState()
+  const isInitialAuctionOrderLoaded = changedUserOrder && !asks[0]
 
   useEffect(() => {
     onResetCurrentPrice()
   }, [auctionId, chainId, onResetCurrentPrice])
 
   useEffect(() => {
-    if (!derivedAuctionInfo || shouldLoadPrice !== PriceStatus.NEEDS_UPDATING) return
+    if (
+      !derivedAuctionInfo ||
+      shouldLoadPrice !== PriceStatus.NEEDS_UPDATING ||
+      isInitialAuctionOrderLoaded
+    )
+      return
 
-    const { price, priceReversed } = calculatedAfterOrder
-      ? calculatedAfterOrder
+    const { price, priceReversed } = changedUserOrder
+      ? new CalculatorClearingPrice(
+          bids,
+          {
+            price: changedUserOrder.userOrderPrice,
+            volume: changedUserOrder.userOrderVolume,
+          },
+          asks[0],
+        ).calculate()
       : CalculatorClearingPrice.convertFromFraction(derivedAuctionInfo.clearingPrice)
 
     onSetCurrentPrice(price, priceReversed)
@@ -92,6 +98,9 @@ export function useSetCurrentPrice(
     chainId,
     auctionId,
     onResetCurrentPrice,
-    calculatedAfterOrder,
+    asks,
+    bids,
+    changedUserOrder,
+    isInitialAuctionOrderLoaded,
   ])
 }

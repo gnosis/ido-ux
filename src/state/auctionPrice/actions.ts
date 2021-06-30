@@ -1,8 +1,8 @@
 import { createAction } from '@reduxjs/toolkit'
 
 export const alterationCurrentPrice = createAction<{
-  price: string
-  priceReversed: string
+  userOrderVolume: number
+  userOrderPrice: number
 }>('alterationCurrentPrice')
 export const updateCurrentPrice = createAction<void>('updateCurrentPrice')
 export const setCurrentPrice = createAction<{

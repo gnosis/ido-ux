@@ -14,22 +14,22 @@ export enum PriceStatus {
 }
 
 export interface CalculatedAfterOrder {
-  price: string
-  priceReversed: string
+  userOrderVolume: number
+  userOrderPrice: number
 }
 
 export interface AuctionPriceState {
   currentPrice: Maybe<string>
   currentPriceReversed: Maybe<string>
   shouldLoad: PriceStatus
-  calculatedAfterOrder: Maybe<CalculatedAfterOrder>
+  changedUserOrder: Maybe<CalculatedAfterOrder>
 }
 
 const initialState: AuctionPriceState = {
   currentPrice: null,
   currentPriceReversed: null,
   shouldLoad: PriceStatus.NEEDS_UPDATING,
-  calculatedAfterOrder: null,
+  changedUserOrder: null,
 }
 
 export default createReducer<AuctionPriceState>(initialState, (builder) =>
@@ -39,15 +39,16 @@ export default createReducer<AuctionPriceState>(initialState, (builder) =>
         ...state,
         currentPrice: price,
         currentPriceReversed: priceReversed,
+        changedUserOrder: null,
         shouldLoad: PriceStatus.SETTLED,
       }
     })
     .addCase(
       alterationCurrentPrice,
-      (state: AuctionPriceState, { payload: { price, priceReversed } }) => {
+      (state: AuctionPriceState, { payload: { userOrderPrice, userOrderVolume } }) => {
         return {
           ...state,
-          calculatedAfterOrder: { price, priceReversed },
+          changedUserOrder: { userOrderVolume, userOrderPrice },
           shouldLoad: PriceStatus.CHANGED,
         }
       },

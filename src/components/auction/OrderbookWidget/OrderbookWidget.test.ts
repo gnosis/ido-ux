@@ -6,14 +6,32 @@ import { CalculatorClearingPrice, findClearingPrice } from './'
 // Calculate Clearing Price
 export default describe('findClearingPrice', () => {
   describe('When the auction has no sell orders', () => {
-    it('should return expected clearingPrice', () => {
+    it('there is not an userOrder', () => {
       const sellOrders = []
-      const userOrder = factoryPricePoint(1500, 1)
+      const userOrder = { price: undefined, volume: undefined }
       const initialAuctionPrice = factoryInitialAuctionOrder()
 
       const clearingPrice = findClearingPrice(sellOrders, userOrder, initialAuctionPrice)
 
-      expect(clearingPrice).toEqual(1)
+      expect(clearingPrice).toEqual(initialAuctionPrice.price)
+    })
+    it('there is an userOrder which totalSellVolume is less than minimumBuyAmount', () => {
+      const sellOrders = []
+      const userOrder = factoryPricePoint(900, 1)
+      const initialAuctionPrice = factoryInitialAuctionOrder()
+
+      const clearingPrice = findClearingPrice(sellOrders, userOrder, initialAuctionPrice)
+
+      expect(clearingPrice).toEqual(0.6)
+    })
+    it('there is an userOrder which totalSellVolume is gte than minimumBuyAmount', () => {
+      const sellOrders = []
+      const userOrder = factoryPricePoint(3000, 2)
+      const initialAuctionPrice = factoryInitialAuctionOrder()
+
+      const clearingPrice = findClearingPrice(sellOrders, userOrder, initialAuctionPrice)
+
+      expect(clearingPrice).toEqual(2)
     })
   })
 
@@ -31,27 +49,46 @@ export default describe('findClearingPrice', () => {
 })
 
 describe('CalculatorClearingPrice', () => {
-  it('should get clearingPrice from offers and demand', () => {
-    const bids = factorySellOrders()
-    const userOffer = factoryPricePoint(3000, 2)
-    const asks = factoryInitialAuctionOrder()
-    const calculatorClearingPrice = new CalculatorClearingPrice(bids, userOffer, asks)
+  describe('calculate clearingPrice locally from bids and asks', () => {
+    it('should get clearingPrice from offers and demand', () => {
+      const bids = factorySellOrders()
+      const userOffer = factoryPricePoint(3000, 2)
+      const asks = factoryInitialAuctionOrder()
+      const calculatorClearingPrice = new CalculatorClearingPrice(bids, userOffer, asks)
 
-    const { price, priceReversed } = calculatorClearingPrice.calculate()
+      const { price, priceReversed } = calculatorClearingPrice.calculate()
 
-    expect(price).toEqual('2')
-    expect(priceReversed).toEqual('0.5')
+      expect(price).toEqual('2')
+      expect(priceReversed).toEqual('0.5')
+    })
+    it('bids prices with 18 decimals, totalSellAmount less than than minimumBuyAmount', () => {
+      const bids = factorySellOrders([
+        [0.6000240009600384, 100],
+        [0.5005397978211796, 51],
+      ])
+      const userOffer = factoryPricePoint(900, 1)
+      const asks = factoryInitialAuctionOrder()
+      const calculatorClearingPrice = new CalculatorClearingPrice(bids, userOffer, asks)
+
+      const { price, priceReversed } = calculatorClearingPrice.calculate()
+
+      expect(price).toEqual('0.60002')
+      expect(priceReversed).toEqual('1.6666')
+    })
   })
-  it('should get clearingPrice from Fraction', () => {
-    const buyAmount = JSBI.BigInt(4500)
-    const sellAmount = JSBI.BigInt(1500)
-    const fractionClearingPrice = new Fraction(buyAmount, sellAmount)
-    const { price, priceReversed } = CalculatorClearingPrice.convertFromFraction(
-      fractionClearingPrice,
-    )
 
-    expect(price).toEqual('3')
-    expect(priceReversed).toEqual('0.33333')
+  describe('Fraction derived from API services', () => {
+    it('should get clearingPrice from Fraction', () => {
+      const buyAmount = JSBI.BigInt(4500)
+      const sellAmount = JSBI.BigInt(1500)
+      const fractionClearingPrice = new Fraction(buyAmount, sellAmount)
+      const { price, priceReversed } = CalculatorClearingPrice.convertFromFraction(
+        fractionClearingPrice,
+      )
+
+      expect(price).toEqual('3')
+      expect(priceReversed).toEqual('0.33333')
+    })
   })
 })
 

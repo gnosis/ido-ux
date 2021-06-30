@@ -408,9 +408,19 @@ export class CalculatorClearingPrice {
 
   calculate() {
     const price = findClearingPrice([...this.sellOrders], this.userOrder, this.initialAuctionOrder)
-    return { price: price.toString(), priceReversed: '0.' }
+    const priceReversed = this._findPriceReversed()
+    return { price: price.toString(), priceReversed: priceReversed.toString() }
   }
 
+  _findPriceReversed() {
+    return 0
+  }
+  /**
+   * Allows to get the clearingPrice from Fraction with
+   * SellOrder (sellAmountToken / buyAmountToken)
+   *
+   * That info is assembled from API.
+   */
   static convertFromFraction(fractionClearingPrice: Fraction) {
     const price = fractionClearingPrice.toSignificant(5)
     const priceReversed = fractionClearingPrice.invert().toSignificant(5)
