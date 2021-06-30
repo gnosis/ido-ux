@@ -1,4 +1,4 @@
-import { Token } from 'uniswap-xdai-sdk'
+import { Fraction, Token } from 'uniswap-xdai-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
 import { MAX_DECIMALS_PRICE_FORMAT } from '../../../constants/config'
@@ -393,4 +393,28 @@ export const processOrderbookData = ({
 
 export interface OrderBookProps extends Omit<OrderBookChartProps, 'data'> {
   auctionId?: number
+}
+
+export class CalculatorClearingPrice {
+  sellOrders: readonly PricePoint[]
+  readonly userOrder: PricePoint
+  readonly initialAuctionOrder: PricePoint
+
+  constructor(sellOrders: PricePoint[], userOrder: PricePoint, initialAuctionOrder: PricePoint) {
+    this.sellOrders = sellOrders
+    this.userOrder = userOrder
+    this.initialAuctionOrder = initialAuctionOrder
+  }
+
+  calculate() {
+    const price = findClearingPrice([...this.sellOrders], this.userOrder, this.initialAuctionOrder)
+    return { price: price.toString(), priceReversed: '0.' }
+  }
+
+  static convertFromFraction(fractionClearingPrice: Fraction) {
+    const price = fractionClearingPrice.toSignificant(5)
+    const priceReversed = fractionClearingPrice.invert().toSignificant(5)
+
+    return { price, priceReversed }
+  }
 }

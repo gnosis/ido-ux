@@ -1,13 +1,13 @@
 import { useCallback, useEffect } from 'react'
-import { Token } from 'uniswap-xdai-sdk'
+import { Fraction } from 'uniswap-xdai-sdk'
 
 import { useDispatch, useSelector } from 'react-redux'
 
 import { AppDispatch, AppState } from '..'
-import { additionalServiceApi } from '../../api'
-import { Order } from '../../hooks/Order'
-import { DerivedAuctionInfo, orderToPrice, orderToSellOrder } from '../orderPlacement/hooks'
+import { CalculatorClearingPrice } from '../../components/auction/OrderbookWidget'
+import { DerivedAuctionInfo } from '../orderPlacement/hooks'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
+import { useOrderbookState } from '../orderbook/hooks'
 import {
   alterationCurrentPrice,
   resetCurrentPrice,
@@ -27,6 +27,7 @@ export function useAuctionPriceHandlers(): {
   onResetCurrentPrice: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
+  const { asks, bids, userOrderPrice, userOrderVolume } = useOrderbookState()
 
   const onSetCurrentPrice = useCallback(
     (price: string, priceReversed: string) => {
@@ -35,8 +36,16 @@ export function useAuctionPriceHandlers(): {
     [dispatch],
   )
   const onPriceAlteration = useCallback(() => {
-    dispatch(alterationCurrentPrice())
-  }, [dispatch])
+    const { price, priceReversed } = new CalculatorClearingPrice(
+      bids,
+      {
+        price: userOrderPrice,
+        volume: userOrderVolume,
+      },
+      asks[0],
+    ).calculate()
+    dispatch(alterationCurrentPrice({ price, priceReversed }))
+  }, [asks, bids, dispatch, userOrderPrice, userOrderVolume])
   const onUpdateIfPriceChanged = useCallback(() => {
     dispatch(updateCurrentPrice())
   }, [dispatch])
@@ -52,27 +61,15 @@ export function useAuctionPriceHandlers(): {
   }
 }
 
-function calculateClearingPrice(
-  clearingOrder: Order | null | undefined,
-  auctioningToken: Token | undefined,
-  biddingToken: Token | undefined,
-) {
-  const clearingPriceInfoAsSellOrder = orderToSellOrder(
-    clearingOrder,
-    biddingToken,
-    auctioningToken,
-  )
-  const price = orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
-  const priceReversed = orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
-
-  return [price, priceReversed]
+interface AuctionInfoDefined extends Omit<DerivedAuctionInfo, 'clearingPrice'> {
+  clearingPrice: Fraction
 }
 
 export function useSetCurrentPrice(
   auctionIdentifier: AuctionIdentifier,
-  derivedAuctionInfo: DerivedAuctionInfo,
+  derivedAuctionInfo: AuctionInfoDefined,
 ) {
-  const { shouldLoad: shouldLoadPrice } = useAuctionPriceState()
+  const { calculatedAfterOrder, shouldLoad: shouldLoadPrice } = useAuctionPriceState()
   const { onResetCurrentPrice, onSetCurrentPrice } = useAuctionPriceHandlers()
   const { auctionId, chainId } = auctionIdentifier
 
@@ -83,36 +80,11 @@ export function useSetCurrentPrice(
   useEffect(() => {
     if (!derivedAuctionInfo || shouldLoadPrice !== PriceStatus.NEEDS_UPDATING) return
 
-    let cancelled = false
-    const fetchApiData = async () => {
-      try {
-        if (!chainId || !auctionId || !additionalServiceApi) {
-          return
-        }
+    const { price, priceReversed } = calculatedAfterOrder
+      ? calculatedAfterOrder
+      : CalculatorClearingPrice.convertFromFraction(derivedAuctionInfo.clearingPrice)
 
-        const clearingOrderAndVolume = await additionalServiceApi.getClearingPriceOrderAndVolume({
-          networkId: chainId,
-          auctionId,
-        })
-
-        if (!cancelled) {
-          const [price, priceReversed] = calculateClearingPrice(
-            clearingOrderAndVolume.clearingOrder,
-            derivedAuctionInfo.auctioningToken,
-            derivedAuctionInfo.biddingToken,
-          )
-          onSetCurrentPrice(price as string, priceReversed as string)
-        }
-      } catch (error) {
-        onResetCurrentPrice()
-        console.error('Error getting clearing price info', error)
-      }
-    }
-
-    fetchApiData()
-    return (): void => {
-      cancelled = true
-    }
+    onSetCurrentPrice(price, priceReversed)
   }, [
     derivedAuctionInfo,
     shouldLoadPrice,
@@ -120,5 +92,6 @@ export function useSetCurrentPrice(
     chainId,
     auctionId,
     onResetCurrentPrice,
+    calculatedAfterOrder,
   ])
 }
