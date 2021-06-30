@@ -378,66 +378,84 @@ export function useDerivedAuctionInfo(
   const isLoading = auctionInfoLoading || loadingClearingPrice
   const noAuctionData = !auctionDetails || !clearingPriceInfo
 
+  const auctioningToken = useMemo(
+    () =>
+      !auctionDetails
+        ? undefined
+        : new Token(
+            chainId as ChainId,
+            auctionDetails.addressAuctioningToken,
+            parseInt(auctionDetails.decimalsAuctioningToken, 16),
+            auctionDetails.symbolAuctioningToken,
+          ),
+    [auctionDetails, chainId],
+  )
+
+  const biddingToken = useMemo(
+    () =>
+      !auctionDetails
+        ? undefined
+        : new Token(
+            chainId as ChainId,
+            auctionDetails.addressBiddingToken,
+            parseInt(auctionDetails.decimalsBiddingToken, 16),
+            auctionDetails.symbolBiddingToken,
+          ),
+    [auctionDetails, chainId],
+  )
+
+  const clearingPriceVolume = clearingPriceInfo?.volume
+
+  const initialAuctionOrder: Maybe<SellOrder> = useMemo(
+    () => decodeSellOrder(auctionDetails?.exactOrder, auctioningToken, biddingToken),
+    [auctionDetails, auctioningToken, biddingToken],
+  )
+
+  const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
+
+  const clearingPriceSellOrder: Maybe<SellOrder> = useMemo(
+    () =>
+      decodeSellOrderFromAPI(
+        clearingPriceOrder?.sellAmount,
+        clearingPriceOrder?.buyAmount,
+        biddingToken,
+        auctioningToken,
+      ),
+    [clearingPriceOrder, biddingToken, auctioningToken],
+  )
+
+  const minBiddingAmountPerOrder = useMemo(
+    () => BigNumber.from(auctionDetails?.minimumBiddingAmountPerOrder ?? 0).toString(),
+    [auctionDetails],
+  )
+
+  const clearingPrice: Fraction | undefined = useMemo(() => orderToPrice(clearingPriceSellOrder), [
+    clearingPriceSellOrder,
+  ])
+
+  const initialPrice = useMemo(() => {
+    let initialPrice: Fraction | undefined
+    if (initialAuctionOrder?.buyAmount == undefined) {
+      initialPrice = undefined
+    } else {
+      initialPrice = new Fraction(
+        BigNumber.from(initialAuctionOrder?.buyAmount?.raw.toString())
+          .mul(BigNumber.from('10').pow(initialAuctionOrder?.sellAmount?.token.decimals))
+          .toString(),
+        BigNumber.from(initialAuctionOrder?.sellAmount?.raw.toString())
+          .mul(BigNumber.from('10').pow(initialAuctionOrder?.buyAmount?.token.decimals))
+          .toString(),
+      )
+    }
+    return initialPrice
+  }, [initialAuctionOrder])
+
   if (isLoading) {
     return null
   } else if (noAuctionData) {
     return undefined
   }
 
-  const auctioningToken = !auctionDetails
-    ? undefined
-    : new Token(
-        chainId as ChainId,
-        auctionDetails.addressAuctioningToken,
-        parseInt(auctionDetails.decimalsAuctioningToken, 16),
-        auctionDetails.symbolAuctioningToken,
-      )
-
-  const biddingToken = !auctionDetails
-    ? undefined
-    : new Token(
-        chainId as ChainId,
-        auctionDetails.addressBiddingToken,
-        parseInt(auctionDetails.decimalsBiddingToken, 16),
-        auctionDetails.symbolBiddingToken,
-      )
-
-  const clearingPriceVolume = clearingPriceInfo?.volume
-
-  const initialAuctionOrder: Maybe<SellOrder> = decodeSellOrder(
-    auctionDetails?.exactOrder,
-    auctioningToken,
-    biddingToken,
-  )
-
-  const clearingPriceOrder: Order | undefined = clearingPriceInfo?.clearingOrder
-
-  const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrderFromAPI(
-    clearingPriceOrder?.sellAmount,
-    clearingPriceOrder?.buyAmount,
-    biddingToken,
-    auctioningToken,
-  )
-
-  const minBiddingAmountPerOrder = BigNumber.from(
-    auctionDetails?.minimumBiddingAmountPerOrder ?? 0,
-  ).toString()
-
-  const clearingPrice: Fraction | undefined = orderToPrice(clearingPriceSellOrder)
-
-  let initialPrice: Fraction | undefined
-  if (initialAuctionOrder?.buyAmount == undefined) {
-    initialPrice = undefined
-  } else {
-    initialPrice = new Fraction(
-      BigNumber.from(initialAuctionOrder?.buyAmount?.raw.toString())
-        .mul(BigNumber.from('10').pow(initialAuctionOrder?.sellAmount?.token.decimals))
-        .toString(),
-      BigNumber.from(initialAuctionOrder?.sellAmount?.raw.toString())
-        .mul(BigNumber.from('10').pow(initialAuctionOrder?.buyAmount?.token.decimals))
-        .toString(),
-    )
-  }
   return {
     auctioningToken,
     biddingToken,
