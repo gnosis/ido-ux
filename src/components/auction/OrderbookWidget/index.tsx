@@ -1,9 +1,12 @@
 import { Fraction, Token } from 'uniswap-xdai-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
-import { MAX_DECIMALS_PRICE_FORMAT } from '../../../constants/config'
+import {
+  MAX_DECIMALS_PRICE_FORMAT,
+  NUMBER_OF_DIGITS_FOR_INVERSION,
+} from '../../../constants/config'
 import { getLogger } from '../../../utils/logger'
-import { showChartsInverted } from '../../../utils/prices'
+import { getInverse, showChartsInverted } from '../../../utils/prices'
 import { Offer, Props as OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
 
 const logger = getLogger('OrderbookWidget')
@@ -408,13 +411,11 @@ export class CalculatorClearingPrice {
 
   calculate() {
     const price = findClearingPrice([...this.sellOrders], this.userOrder, this.initialAuctionOrder)
-    const priceReversed = this._findPriceReversed()
-    return { price: price.toString(), priceReversed: priceReversed.toString() }
+    const priceReversed = getInverse(String(price), NUMBER_OF_DIGITS_FOR_INVERSION)
+
+    return { price: String(price), priceReversed }
   }
 
-  _findPriceReversed() {
-    return 0
-  }
   /**
    * Allows to get the clearingPrice from Fraction with
    * SellOrder (sellAmountToken / buyAmountToken)

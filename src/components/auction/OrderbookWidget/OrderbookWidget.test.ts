@@ -61,7 +61,7 @@ describe('CalculatorClearingPrice', () => {
       expect(price).toEqual('2')
       expect(priceReversed).toEqual('0.5')
     })
-    it('bids prices with 18 decimals, totalSellAmount less than than minimumBuyAmount', () => {
+    it('bids prices with 18 decimals when totalSellAmount less than than minimum bidding BuyAmount', () => {
       const bids = factorySellOrders([
         [0.6000240009600384, 100],
         [0.5005397978211796, 51],
@@ -72,8 +72,8 @@ describe('CalculatorClearingPrice', () => {
 
       const { price, priceReversed } = calculatorClearingPrice.calculate()
 
-      expect(price).toEqual('0.60002')
-      expect(priceReversed).toEqual('1.6666')
+      expect(Number(price)).toBeCloseTo(Number('0.60002'))
+      expect(Number(priceReversed)).toBeCloseTo(Number('1.6666'))
     })
   })
 
