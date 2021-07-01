@@ -8,6 +8,7 @@ const logger = getLogger('TokenLogosServiceApi')
 
 const TOKEN_LIST_RESOURCES = [
   // 'https://tokens.coingecko.com/uniswap/all.json',
+  'http://testnet.tokenlist.eth',
   'http://t2crtokens.eth.link',
   'https://tokens.1inch.eth.link',
   'https://bafybeih3zii2hukln4enn2qiacqeb4jgvqescxpbudxhpvtfiex4cjpgce.ipfs.dweb.link/',
