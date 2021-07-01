@@ -366,7 +366,7 @@ const AuctionDetails = (props: Props) => {
                   BigNumber.from(auctionDetails.minFundingThreshold).toString(),
                 )
                   .toSignificant(2)
-                  .concat(' %')
+                  .concat('%')
             : '-',
         title: 'Minimum funding',
         tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
