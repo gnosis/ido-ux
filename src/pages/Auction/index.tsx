@@ -9,7 +9,6 @@ import { InlineLoading } from '../../components/common/InlineLoading'
 import { NetworkIcon } from '../../components/icons/NetworkIcon'
 import WarningModal from '../../components/modals/WarningModal'
 import { PageTitle } from '../../components/pureStyledComponents/PageTitle'
-import { useSetCurrentPrice } from '../../state/auctionPrice/hooks'
 import { useDefaultsFromURLSearch, useDerivedAuctionInfo } from '../../state/orderPlacement/hooks'
 import { parseURL } from '../../state/orderPlacement/reducer'
 import { useTokenListState } from '../../state/tokenList/hooks'
@@ -78,7 +77,6 @@ const Auction: React.FC<Props> = (props) => {
 
   const auctionIdentifier = parseURL(search)
   const derivedAuctionInfo = useDerivedAuctionInfo(auctionIdentifier)
-  useSetCurrentPrice(auctionIdentifier, derivedAuctionInfo)
   const { tokens } = useTokenListState()
   const url = window.location.href
 

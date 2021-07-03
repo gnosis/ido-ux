@@ -6,7 +6,6 @@ import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
-import { useAuctionPriceState } from '../../../state/auctionPrice/hooks'
 import {
   AuctionState,
   DerivedAuctionInfo,
@@ -14,6 +13,7 @@ import {
   useSwapActionHandlers,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { showChartsInverted } from '../../../utils/prices'
@@ -257,7 +257,7 @@ const AuctionDetails = (props: Props) => {
   const {
     currentPrice: auctionCurrentPrice,
     currentPriceReversed: auctionPriceReversed,
-  } = useAuctionPriceState()
+  } = useOrderbookState()
   const { onInvertPrices } = useSwapActionHandlers()
 
   // Start with inverted prices, if orderbook is also show inverted,

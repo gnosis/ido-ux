@@ -54,12 +54,13 @@ describe('CalculatorClearingPrice', () => {
       const bids = factorySellOrders()
       const userOffer = factoryPricePoint(3000, 2)
       const asks = factoryInitialAuctionOrder()
-      const calculatorClearingPrice = new CalculatorClearingPrice(bids, userOffer, asks)
 
-      const { price, priceReversed } = calculatorClearingPrice.calculate()
+      const { price, priceReversed } = CalculatorClearingPrice.fromOrderbook(bids, asks, userOffer)
 
-      expect(price).toEqual('2')
-      expect(priceReversed).toEqual('0.5')
+      const expectedPrice = 2
+      const expectedPriceReversed = 0.5
+      expect(price).toEqual(expectedPrice)
+      expect(priceReversed).toEqual(expectedPriceReversed)
     })
     it('bids prices with 18 decimals when totalSellAmount less than than minimum bidding BuyAmount', () => {
       const bids = factorySellOrders([
@@ -68,12 +69,13 @@ describe('CalculatorClearingPrice', () => {
       ])
       const userOffer = factoryPricePoint(900, 1)
       const asks = factoryInitialAuctionOrder()
-      const calculatorClearingPrice = new CalculatorClearingPrice(bids, userOffer, asks)
 
-      const { price, priceReversed } = calculatorClearingPrice.calculate()
+      const { price, priceReversed } = CalculatorClearingPrice.fromOrderbook(bids, asks, userOffer)
 
-      expect(Number(price)).toBeCloseTo(Number('0.60002'))
-      expect(Number(priceReversed)).toBeCloseTo(Number('1.6666'))
+      const expectedPrice = 0.60002
+      const expectedPriceReversed = 1.6666
+      expect(price).toBeCloseTo(expectedPrice)
+      expect(priceReversed).toBeCloseTo(expectedPriceReversed)
     })
   })
 

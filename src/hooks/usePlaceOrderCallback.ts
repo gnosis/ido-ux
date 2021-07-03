@@ -9,7 +9,6 @@ import { additionalServiceApi } from '../api'
 import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPlaceOrder.json'
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../constants/config'
-import { useAuctionPriceHandlers } from '../state/auctionPrice/hooks'
 import { Result, useSingleCallResult } from '../state/multicall/hooks'
 import { useOrderPlacementState } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
@@ -64,7 +63,6 @@ export function usePlaceOrderCallback(
   const { onNewOrder } = useOrderActionHandlers()
   const { price: priceFromSwapState, sellAmount } = useOrderPlacementState()
   const { onNewBid } = useOrderbookActionHandlers()
-  const { onPriceAlteration } = useAuctionPriceHandlers()
   const gasPrice = useGasPrice(chainId)
 
   const price = (isPriceInverted
@@ -166,7 +164,6 @@ export function usePlaceOrderCallback(
             volume: parseFloat(sellAmount),
             price: parseFloat(price),
           })
-          onPriceAlteration()
           return response.hash
         })
         .catch((error) => {
@@ -189,7 +186,6 @@ export function usePlaceOrderCallback(
     addTransaction,
     onNewOrder,
     onNewBid,
-    onPriceAlteration,
   ])
 }
 

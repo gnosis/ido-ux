@@ -399,21 +399,15 @@ export interface OrderBookProps extends Omit<OrderBookChartProps, 'data'> {
 }
 
 export class CalculatorClearingPrice {
-  sellOrders: readonly PricePoint[]
-  readonly userOrder: PricePoint
-  readonly initialAuctionOrder: PricePoint
-
-  constructor(sellOrders: PricePoint[], userOrder: PricePoint, initialAuctionOrder: PricePoint) {
-    this.sellOrders = sellOrders
-    this.userOrder = userOrder
-    this.initialAuctionOrder = initialAuctionOrder
-  }
-
-  calculate() {
-    const price = findClearingPrice([...this.sellOrders], this.userOrder, this.initialAuctionOrder)
+  static fromOrderbook(
+    sellOrders: PricePoint[],
+    initialAuctionOrder: PricePoint,
+    userOrder?: PricePoint,
+  ) {
+    const price = findClearingPrice([...sellOrders], userOrder, initialAuctionOrder)
     const priceReversed = getInverse(String(price), NUMBER_OF_DIGITS_FOR_INVERSION)
 
-    return { price: String(price), priceReversed }
+    return { price: price ? price : 0, priceReversed: Number(priceReversed) }
   }
 
   /**

@@ -5,7 +5,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 
 import { chainNames } from '../constants'
-import { useAuctionPriceHandlers } from '../state/auctionPrice/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'
 import { useOrderActionHandlers } from '../state/orders/hooks'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -27,7 +26,6 @@ export function useCancelOrderCallback(
   const { onCancelOrder: actionCancelOrder } = useOrderActionHandlers()
   const { auctionId, chainId: orderChainId } = auctionIdentifier
   const gasPrice = useGasPrice(chainId)
-  const { onPriceAlteration } = useAuctionPriceHandlers()
 
   return useMemo(() => {
     return async function onCancelOrder(orderId: string) {
@@ -79,7 +77,6 @@ export function useCancelOrderCallback(
               biddingToken.symbol,
           })
           actionCancelOrder(orderId)
-          onPriceAlteration()
 
           return response.hash
         })
@@ -99,6 +96,5 @@ export function useCancelOrderCallback(
     biddingToken.decimals,
     biddingToken.symbol,
     actionCancelOrder,
-    onPriceAlteration,
   ])
 }
