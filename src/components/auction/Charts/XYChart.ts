@@ -1,4 +1,3 @@
-import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import * as am4charts from '@amcharts/amcharts4/charts'
