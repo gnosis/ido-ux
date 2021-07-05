@@ -130,9 +130,11 @@ export const getClaimableData = ({
       // Order from the same user, buyAmount and sellAmount
     } else {
       if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
-        claimableBiddingToken = claimableBiddingToken.add(
-          new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
-        )
+        if (sellAmount.sub(clearingPriceVolume).gt(0)) {
+          claimableBiddingToken = claimableBiddingToken.add(
+            new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
+          )
+        }
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
             auctioningToken,
