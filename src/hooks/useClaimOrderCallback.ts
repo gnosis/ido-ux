@@ -185,8 +185,10 @@ export const isMinFundingReached = (
     biddingToken,
     BigNumber.from(currentBidding).mul(BigNumber.from(10).pow(biddingToken.decimals)).toString(),
   )
-
-  return minFundingThresholdAmount.lessThan(currentBiddingAmount)
+  return (
+    minFundingThresholdAmount.lessThan(currentBiddingAmount) ||
+    minFundingThresholdAmount.equalTo(currentBiddingAmount)
+  )
 }
 
 export function useGetAuctionProceeds(
