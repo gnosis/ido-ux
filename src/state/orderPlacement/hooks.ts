@@ -500,7 +500,7 @@ export function useDeriveAuctionState(
         if (clearingPriceSellOrder?.buyAmount?.toSignificant(1) == '0') {
           auctionState = AuctionState.PRICE_SUBMISSION
         } else {
-          if (clearingPriceSellOrder) auctionState = AuctionState.CLAIMING
+          auctionState = AuctionState.CLAIMING
         }
       }
     }
