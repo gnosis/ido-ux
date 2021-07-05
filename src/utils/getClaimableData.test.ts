@@ -1,6 +1,7 @@
 import { ChainId, Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
 
 import { encodeOrder } from '../hooks/Order'
 import { getClaimableData } from '../hooks/useClaimOrderCallback'
@@ -9,7 +10,7 @@ const weth = new Token(
   ChainId.RINKEBY,
   '0xc778417E063141139Fce010982780140Aa0cD5Ab',
   18,
-  'USDC',
+  'WETH',
   '',
 )
 
@@ -21,17 +22,17 @@ describe('getClaimableData', () => {
   it('checks that participant receives all their biddingTokens back if minFundingThreshold was not met', () => {
     const sellOrders = [
       {
-        sellAmount: BigNumber.from('10000000'),
-        buyAmount: BigNumber.from('1000000000000000000'),
         userId: BigNumber.from(2),
+        buyAmount: BigNumber.from('1000000000000000000'),
+        sellAmount: BigNumber.from('10000000'),
       },
     ]
     const ordersFromUser = sellOrders.map((o) => encodeOrder(o))
     const clearingPriceVolume = BigNumber.from('50000')
     const clearingPriceOrder = {
-      sellAmount: BigNumber.from('10000000'),
-      buyAmount: BigNumber.from('200000000000000000000'),
       userId: BigNumber.from(2),
+      buyAmount: BigNumber.from('200000000000000000000'),
+      sellAmount: BigNumber.from('10000000'),
     }
 
     const claimed = getClaimableData({
@@ -49,20 +50,20 @@ describe('getClaimableData', () => {
     })
   })
 
-  it('checks that participant receives auctioning tokens if minFundingThreshold is met', () => {
+  fit('checks that participant receives auctioning tokens if minFundingThreshold is met', () => {
     const sellOrders = [
       {
-        sellAmount: BigNumber.from('100000000000000000'),
-        buyAmount: BigNumber.from('149925037481259370314'),
         userId: BigNumber.from(2),
+        buyAmount: BigNumber.from('149925037481259370314'), // WETH
+        sellAmount: BigNumber.from('100000000000000000'), // DAI
       },
     ]
     const ordersFromUser = sellOrders.map((o) => encodeOrder(o))
     const clearingPriceVolume = BigNumber.from('10005000000000000')
     const clearingPriceOrder = {
-      sellAmount: BigNumber.from('100000000000000000'),
-      buyAmount: BigNumber.from('149925037481259370314'),
       userId: BigNumber.from(2),
+      buyAmount: BigNumber.from('149925037481259370314'), // WETH
+      sellAmount: BigNumber.from('100000000000000000'), // DAI
     }
 
     const claimed = getClaimableData({
