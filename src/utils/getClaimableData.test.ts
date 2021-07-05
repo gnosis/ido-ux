@@ -49,7 +49,7 @@ describe('getClaimableData', () => {
     })
   })
 
-  it('checks that participant receives auctioning tokens back if minFundingThreshold is met', () => {
+  it('checks that participant receives auctioning tokens if minFundingThreshold is met', () => {
     const sellOrders = [
       {
         sellAmount: BigNumber.from('100000000000000000'),
@@ -66,18 +66,17 @@ describe('getClaimableData', () => {
     }
 
     const claimed = getClaimableData({
-      auctioningToken: weth,
-      biddingToken: dai,
+      auctioningToken: dai,
+      biddingToken: weth,
       clearingPriceVolume,
       clearingPriceOrder,
-      minFundingThresholdNotReached: true,
+      minFundingThresholdNotReached: false,
       ordersFromUser,
     })
-
     // 0 and 100
     expect(claimed).toStrictEqual({
-      claimableAuctioningToken: new TokenAmount(weth, '0'),
-      claimableBiddingToken: new TokenAmount(dai, '100'),
+      claimableAuctioningToken: new TokenAmount(dai, '149925037481259370314'),
+      claimableBiddingToken: new TokenAmount(weth, '0'),
     })
   })
 })

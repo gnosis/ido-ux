@@ -128,37 +128,41 @@ export const getClaimableData = ({
         new TokenAmount(biddingToken, sellAmount.toString()),
       )
       // Order from the same user, buyAmount and sellAmount
-    } else if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
-      claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
-      )
-      claimableAuctioningToken = claimableAuctioningToken.add(
-        new TokenAmount(
-          auctioningToken,
-          clearingPriceVolume
-            .mul(clearingPriceOrder.buyAmount)
-            .div(clearingPriceOrder.sellAmount)
-            .toString(),
-        ),
-      )
-    } else if (
-      clearingPriceOrder.buyAmount.mul(sellAmount).lt(buyAmount.mul(clearingPriceOrder.sellAmount))
-    ) {
-      claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(biddingToken, sellAmount.toString()),
-      )
     } else {
-      // (orders[i].smallerThan(auction.clearingPriceOrder)
-      if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
+      if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
+        claimableBiddingToken = claimableBiddingToken.add(
+          new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
+        )
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
             auctioningToken,
-            sellAmount
+            clearingPriceVolume
               .mul(clearingPriceOrder.buyAmount)
               .div(clearingPriceOrder.sellAmount)
               .toString(),
           ),
         )
+      } else if (
+        clearingPriceOrder.buyAmount
+          .mul(sellAmount)
+          .lt(buyAmount.mul(clearingPriceOrder.sellAmount))
+      ) {
+        claimableBiddingToken = claimableBiddingToken.add(
+          new TokenAmount(biddingToken, sellAmount.toString()),
+        )
+      } else {
+        // (orders[i].smallerThan(auction.clearingPriceOrder)
+        if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
+          claimableAuctioningToken = claimableAuctioningToken.add(
+            new TokenAmount(
+              auctioningToken,
+              sellAmount
+                .mul(clearingPriceOrder.buyAmount)
+                .div(clearingPriceOrder.sellAmount)
+                .toString(),
+            ),
+          )
+        }
       }
     }
   }
@@ -180,8 +184,7 @@ export const isMinFundingReached = (
     BigNumber.from(currentBidding).mul(BigNumber.from(10).pow(biddingToken.decimals)).toString(),
   )
 
-  // TODO This could be renamed to NotReached, or also can be something like currentBdding.gt(minFunding) || currentBidding.eq(mindFunding)
-  return !minFundingThresholdAmount.greaterThan(currentBiddingAmount)
+  return minFundingThresholdAmount.lessThan(currentBiddingAmount)
 }
 
 export function useGetAuctionProceeds(
