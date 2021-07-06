@@ -49,7 +49,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-grow: 1;
   flex-shrink: 0;
-  height: 340px;
   justify-content: center;
   max-height: 340px;
   position: relative;
@@ -60,9 +59,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-grow: 1;
     flex-shrink: 0;
-    height: 340px;
     justify-content: center;
-    max-height: 340px;
     width: 100%;
 
     > svg {

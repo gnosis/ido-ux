@@ -38,7 +38,6 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.paddingLeft = 0
   chart.paddingRight = 0
   chart.marginBottom = 0
-  // chart.
 
   // Colors
   const colors = {

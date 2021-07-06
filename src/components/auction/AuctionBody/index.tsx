@@ -11,11 +11,12 @@ import { OrderBookContainer } from '../OrderbookContainer'
 import OrdersTable from '../OrdersTable'
 
 const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 20px;
+  display: flex;
+  flex-direction: column;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
+    display: grid;
+    row-gap: 20px;
     column-gap: 18px;
     grid-template-columns: 1fr 1fr;
   }
