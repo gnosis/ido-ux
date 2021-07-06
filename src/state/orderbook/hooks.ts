@@ -44,6 +44,7 @@ export function useOrderbookActionHandlers(): {
   ) => void
 } {
   const dispatch = useDispatch<AppDispatch>()
+  const { asks, bids, userOrderVolume } = useOrderbookState()
 
   const onNewBid = useCallback(
     (order: PricePoint) => {
@@ -63,9 +64,19 @@ export function useOrderbookActionHandlers(): {
 
   const onResetUserPrice = useCallback(
     (price: number) => {
-      dispatch(resetUserPrice({ price }))
+      const initialAuction = asks[0]
+      const userOrder = { price: Number(price), volume: userOrderVolume }
+      let calculatedAuctionPrice
+      if (initialAuction) {
+        calculatedAuctionPrice = CalculatorClearingPrice.fromOrderbook(
+          bids,
+          initialAuction,
+          userOrder,
+        )
+      }
+      dispatch(resetUserPrice({ price, calculatedAuctionPrice }))
     },
-    [dispatch],
+    [asks, bids, dispatch, userOrderVolume],
   )
   const onResetUserVolume = useCallback(
     (volume: number) => {

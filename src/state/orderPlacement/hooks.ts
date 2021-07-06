@@ -23,7 +23,8 @@ import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices
 import { calculateTimeLeft } from '../../utils/tools'
 import { AppDispatch, AppState } from '../index'
 import { useSingleCallResult } from '../multicall/hooks'
-import { resetUserPrice, resetUserVolume } from '../orderbook/actions'
+import { resetUserVolume } from '../orderbook/actions'
+import { useOrderbookActionHandlers } from '../orderbook/hooks'
 import { useOrderActionHandlers } from '../orders/hooks'
 import { OrderDisplay, OrderStatus } from '../orders/reducer'
 import { useTokenBalancesTreatWETHAsETH } from '../wallet/hooks'
@@ -133,6 +134,7 @@ export function useSwapActionHandlers(): {
   onInvertPrices: () => void
 } {
   const dispatch = useDispatch<AppDispatch>()
+  const { onResetUserPrice } = useOrderbookActionHandlers()
 
   const onUserSellAmountInput = useCallback(
     (sellAmount: string) => {
@@ -148,17 +150,15 @@ export function useSwapActionHandlers(): {
   const onUserPriceInput = useCallback(
     (price: string, isInvertedPrice: boolean) => {
       if (isNumeric(price)) {
-        dispatch(
-          resetUserPrice({
-            price: isInvertedPrice
-              ? parseFloat(getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION))
-              : parseFloat(price),
-          }),
+        onResetUserPrice(
+          isInvertedPrice
+            ? parseFloat(getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION))
+            : parseFloat(price),
         )
       }
       dispatch(priceInput({ price }))
     },
-    [dispatch],
+    [dispatch, onResetUserPrice],
   )
 
   return { onUserPriceInput, onUserSellAmountInput, onInvertPrices }

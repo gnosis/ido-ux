@@ -19,8 +19,8 @@ export interface OrderbookState {
   auctionId: number
   chainId: number
   shouldLoad: boolean
-  currentPrice: number
-  currentPriceReversed: number
+  orderbookPrice: number
+  orderbookPriceReversed: number
 }
 
 const initialState: OrderbookState = {
@@ -32,8 +32,8 @@ const initialState: OrderbookState = {
   auctionId: 0,
   chainId: 0,
   shouldLoad: false,
-  currentPrice: 0,
-  currentPriceReversed: 0,
+  orderbookPrice: 0,
+  orderbookPriceReversed: 0,
 }
 
 export default createReducer<OrderbookState>(initialState, (builder) =>
@@ -69,12 +69,21 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
         shouldLoad: true,
       }
     })
-    .addCase(resetUserPrice, (state: OrderbookState, { payload: { price } }) => {
-      return {
-        ...state,
-        userOrderPrice: price,
-      }
-    })
+    .addCase(
+      resetUserPrice,
+      (state: OrderbookState, { payload: { calculatedAuctionPrice, price } }) => {
+        return {
+          ...state,
+          userOrderPrice: price,
+          orderbookPrice: calculatedAuctionPrice
+            ? calculatedAuctionPrice.price
+            : state.orderbookPrice,
+          orderbookPriceReversed: calculatedAuctionPrice
+            ? calculatedAuctionPrice.priceReversed
+            : state.orderbookPriceReversed,
+        }
+      },
+    )
     .addCase(resetUserVolume, (state, { payload: { volume } }) => {
       return {
         ...state,
@@ -93,8 +102,8 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
           shouldLoad: false,
           auctionId,
           chainId,
-          currentPrice: calculatedAuctionPrice.price,
-          currentPriceReversed: calculatedAuctionPrice.priceReversed,
+          orderbookPrice: calculatedAuctionPrice.price,
+          orderbookPriceReversed: calculatedAuctionPrice.priceReversed,
         }
       },
     ),
