@@ -150,9 +150,8 @@ export const OrderBookContainer = (props) => {
           )}
           <ButtonToggle
             activate={isChartVisible}
-            left={{ icon: <ChartIcon />, label: 'Chart' }}
-            onClick={() => setChartVisibility(!isChartVisible)}
-            right={{ icon: <TableIcon />, label: 'List' }}
+            left={{ icon: <ChartIcon />, label: 'Chart', onClick: () => setChartVisibility(true) }}
+            right={{ icon: <TableIcon />, label: 'List', onClick: () => setChartVisibility(false) }}
           />
         </Wrap>
       </Wrap>
