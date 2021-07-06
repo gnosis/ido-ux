@@ -13,7 +13,7 @@ export interface AuctionInfo {
   allowListSigner: string
   auctionId: number
   chainId: String
-  currentBiddingAmount: number
+  currentBiddingAmount: string
   currentClearingPrice: number
   decimalsAuctioningToken: number
   decimalsBiddingToken: number
