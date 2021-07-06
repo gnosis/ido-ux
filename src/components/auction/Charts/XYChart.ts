@@ -38,6 +38,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.paddingLeft = 0
   chart.paddingRight = 0
   chart.marginBottom = 0
+  // chart.
 
   // Colors
   const colors = {
@@ -46,6 +47,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
     white: '#FFFFFF',
     grey: '#565A69',
     orange: '#FF6347',
+    darkBlue: '#001429',
+    blue: '#174172',
   }
 
   // Create axes
@@ -81,7 +84,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   bidSeries.fillOpacity = 0.1
   bidSeries.dummyData = {
     description:
-      'Shows the price (x axis) and size (y axis) of the bids that have been placed, both expressed in the bid token',
+      'Shows the price (x axis) and size (y axis)<br/> of the bids that have been placed,<br/> both expressed in the bid token',
   }
 
   // Create serie, red line, shows the minimum sell price (x axis) the auctioneer is willing to accept
@@ -94,7 +97,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.fillOpacity = 0.1
   askSeries.dummyData = {
     description:
-      'Shows sell supply of the auction based on the price and nominated in the bidding token',
+      'Shows sell supply of the auction<br/> based on the price and nominated<br/> in the bidding token',
   }
 
   // New order to be placed
@@ -107,11 +110,13 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   inputSeries.fillOpacity = 0.1
   inputSeries.dummyData = {
     description:
-      'Shows the new order that would be placed based on the current amount and price input',
+      'Shows the new order<br/> that would be placed based<br/> on the current amount and price input',
   }
 
   // Dotted white line -> shows the Current price, which is the closing price of the auction if
   // no more bids are submitted or cancelled and the auction ends
+  const currPriceMockVal = 4.05
+
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
@@ -121,8 +126,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.fill = inputSeries.stroke
   priceSeries.fillOpacity = 0.1
   priceSeries.dummyData = {
-    description:
-      'Shows the current price. This price would be the closing price of the auction if no more bids are submitted or cancelled',
+    description: `Shows the current price: <strong style="font-size:18px;">[${currPriceMockVal}]</strong> <br/>This price would be<br/> the closing price of the auction<br/> if no more bids are submitted or cancelled`,
   }
 
   // Add cursor
@@ -148,7 +152,11 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Legend
   chart.legend = new am4charts.Legend()
   chart.legend.labels.template.fill = am4core.color(colors.white)
-  chart.legend.itemContainers.template.tooltipText = '{dataContext.dummyData.description}'
+  chart.legend.itemContainers.template.tooltipHTML =
+    '<div>{dataContext.dummyData.description}</div>'
+  chart.tooltip.getFillFromObject = false
+  chart.tooltip.background.stroke = am4core.color(colors.blue)
+  chart.tooltip.background.fill = am4core.color(colors.darkBlue)
 
   return chart
 }
@@ -194,7 +202,7 @@ export const drawInformation = (props: DrawInformation) => {
     const askPrice = formatNumberForChartTooltip(valueX)
     const volume = formatNumberForChartTooltip(valueY)
 
-    return `[bold]${market}[/]\nAsk Price: [bold] ${askPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
+    return `[bold]${market}[/]<br/>Ask Price: [bold] ${askPrice} [/] ${quoteTokenLabel}<br/>Volume: [bold] ${volume} [/] ${quoteTokenLabel}`
   })
 
   bidPricesSeries.adapter.add('tooltipText', (text, target) => {
@@ -204,6 +212,6 @@ export const drawInformation = (props: DrawInformation) => {
     const bidPrice = formatNumberForChartTooltip(valueX)
     const volume = formatNumberForChartTooltip(valueY)
 
-    return `[bold]${market}[/]\nBid Price: [bold] ${bidPrice} [/] ${quoteTokenLabel}\nVolume: [bold] ${volume} [/] ${quoteTokenLabel}`
+    return `[bold]${market}[/]<br/>Bid Price: [bold] ${bidPrice} [/] ${quoteTokenLabel}<br/>Volume: [bold] ${volume} [/] ${quoteTokenLabel}`
   })
 }
