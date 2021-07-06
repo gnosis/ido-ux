@@ -57,8 +57,8 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
         effect="solid"
         textColor="#fff"
       />
-      {showTopWarning && <TopDisclaimer />}
       <MainScroll>
+        {showTopWarning && <TopDisclaimer />}
         <span id="topAnchor" />
         <Inner>
           <Web3ReactManager>
