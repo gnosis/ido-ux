@@ -36,6 +36,7 @@ const TableBody = styled(Scrollbars)`
   max-height: 100%;
   overflow-x: hidden;
   min-width: 560px;
+  min-height: 280px;
   @media (min-width: 1180px) {
     min-width: auto;
   }
@@ -56,7 +57,7 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
+  color: ${({ theme }) => theme.textField.color};
   .tooltipComponent {
     a {
       border-radius: 50%;

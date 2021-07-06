@@ -175,7 +175,7 @@ export const AuctionTimer = (props: AuctionTimerProps) => {
 
   const auctionStateTitle = React.useMemo(() => {
     if (auctionState === AuctionState.PRICE_SUBMISSION) {
-      return <TextBig>Auction Closed</TextBig>
+      return <TextBig>Waiting settlement</TextBig>
     } else if (
       auctionState !== AuctionState.NOT_YET_STARTED &&
       auctionState !== AuctionState.ORDER_PLACING_AND_CANCELING &&
