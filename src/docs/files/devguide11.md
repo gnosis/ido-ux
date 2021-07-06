@@ -1,12 +1,24 @@
 ### Media kit
-#### Identity
 
-[Gnosis Safe](https://gnosis-safe.io/) that you control deployed in Mainnet.
+<img src="/assets/media-kit/GA-dark-bg.png" alt="GA Media Kit" />
 
-<img src="/assets/GA_SafeApp_2.png" alt="drawing" width="500"/>
+[Download this file in SVG format (dark background)](/assets/media-kit/GA-MediaKit-dark-bg.svg)
 
-#### Font Family
+<img src="/assets/media-kit/GA-light-bg.png" alt="GA Media Kit" />
 
-We use Averta font family.
+[Download this file in SVG format (light background)](/assets/media-kit/GA-MediaKit-withe-bg.svg)
+
+
+#### Typography
+
+Typography is a major part of the Gnosis brand. We've taken care to select a family of fonts that promote legibility and accessibility.
+
+We use **Averta** font family as a first choice. Otherwise use **Poppins**.
 
 #### Colors
+<img src="/assets/media-kit/main-colors.svg" alt="GA colors" width="40%"/>
+
+We use this colors (hexa): 
+- Dark Blue: #001429
+- Orange: #E8663D 
+- White: #FFFFFF
