@@ -14,7 +14,6 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   row-gap: 20px;
-  margin: 0 0 40px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     column-gap: 18px;
@@ -27,6 +26,7 @@ const GridCol = styled.div`
   flex-direction: column;
   max-width: 100%;
   justify-content: flex-end;
+  margin: 0 0 40px;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     overflow-x: auto;
   }
