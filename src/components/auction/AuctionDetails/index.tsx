@@ -342,9 +342,10 @@ const AuctionDetails = (props: Props) => {
     () =>
       derivedAuctionInfo &&
       auctionDetails &&
-      new Fraction(Number(auctionDetails.currentBiddingAmount).toString(), '1').divide(
-        derivedAuctionInfo.clearingPrice,
-      ),
+      new Fraction(
+        auctionDetails.currentBiddingAmount,
+        BigNumber.from('10').pow(auctionDetails.decimalsBiddingToken).toString(),
+      ).divide(derivedAuctionInfo.clearingPrice),
     [auctionDetails, derivedAuctionInfo],
   )
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
@@ -366,10 +367,7 @@ const AuctionDetails = (props: Props) => {
             ? auctionDetails.minFundingThreshold === '0x0'
               ? '-'
               : new Fraction(
-                  BigNumber.from(10)
-                    .pow(derivedAuctionInfo?.biddingToken.decimals + 2)
-                    .mul(BigNumber.from(auctionDetails.currentBiddingAmount))
-                    .toString(),
+                  BigNumber.from(auctionDetails.currentBiddingAmount).mul(100).toString(),
                   BigNumber.from(auctionDetails.minFundingThreshold).toString(),
                 )
                   .toSignificant(2)
