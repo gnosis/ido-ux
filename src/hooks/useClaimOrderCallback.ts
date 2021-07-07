@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { TokenAmount } from 'uniswap-xdai-sdk'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Token, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
@@ -10,8 +10,9 @@ import { useHasPendingClaim, useTransactionAdder } from '../state/transactions/h
 import { ChainId, calculateGasMargin, getEasyAuctionContract } from '../utils'
 import { getLogger } from '../utils/logger'
 import { additionalServiceApi } from './../api'
-import { decodeOrder } from './Order'
+import { Order, decodeOrder } from './Order'
 import { useActiveWeb3React } from './index'
+import { useAuctionDetails } from './useAuctionDetails'
 import { useGasPrice } from './useGasPrice'
 
 const logger = getLogger('useClaimOrderCallback')
@@ -97,71 +98,150 @@ export const useGetClaimInfo = (auctionIdentifier: AuctionIdentifier): UseGetCla
     error,
   }
 }
-export function useGetAuctionProceeds(
-  auctionIdentifier: AuctionIdentifier,
-  derivedAuctionInfo: DerivedAuctionInfo,
-): AuctionProceedings {
-  const { claimInfo } = useGetClaimInfo(auctionIdentifier)
 
-  if (
-    !claimInfo ||
-    !derivedAuctionInfo?.biddingToken ||
-    !derivedAuctionInfo?.auctioningToken ||
-    !derivedAuctionInfo?.clearingPriceSellOrder ||
-    !derivedAuctionInfo?.clearingPriceOrder ||
-    !derivedAuctionInfo?.clearingPriceVolume
-  ) {
-    return {
-      claimableBiddingToken: null,
-      claimableAuctioningToken: null,
-    }
-  }
-  let claimableAuctioningToken = new TokenAmount(derivedAuctionInfo?.auctioningToken, '0')
-  let claimableBiddingToken = new TokenAmount(derivedAuctionInfo?.biddingToken, '0')
-  for (const order of claimInfo.sellOrdersFormUser) {
+interface getClaimableDataProps {
+  auctioningToken: Token
+  biddingToken: Token
+  clearingPriceOrder: Order
+  ordersFromUser: string[]
+  minFundingThresholdNotReached: boolean
+  clearingPriceVolume: BigNumber
+}
+export const getClaimableData = ({
+  auctioningToken,
+  biddingToken,
+  clearingPriceOrder,
+  clearingPriceVolume,
+  minFundingThresholdNotReached,
+  ordersFromUser,
+}: getClaimableDataProps): Required<AuctionProceedings> => {
+  let claimableAuctioningToken = new TokenAmount(auctioningToken, '0')
+  let claimableBiddingToken = new TokenAmount(biddingToken, '0')
+
+  // For each order from user add to claimable amounts (bidding or auctioning).
+  for (const order of ordersFromUser) {
     const decodedOrder = decodeOrder(order)
-    if (JSON.stringify(decodedOrder) == JSON.stringify(derivedAuctionInfo?.clearingPriceOrder)) {
+    const { buyAmount, sellAmount } = decodedOrder
+
+    if (minFundingThresholdNotReached) {
       claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(
-          derivedAuctionInfo?.biddingToken,
-          decodedOrder.sellAmount.sub(derivedAuctionInfo?.clearingPriceVolume).toString(),
-        ),
+        new TokenAmount(biddingToken, sellAmount.toString()),
       )
-      claimableAuctioningToken = claimableAuctioningToken.add(
-        new TokenAmount(
-          derivedAuctionInfo?.auctioningToken,
-          derivedAuctionInfo?.clearingPriceVolume
-            .mul(derivedAuctionInfo?.clearingPriceOrder.buyAmount)
-            .div(derivedAuctionInfo?.clearingPriceOrder.sellAmount)
-            .toString(),
-        ),
-      )
-    } else if (
-      derivedAuctionInfo?.clearingPriceOrder.buyAmount
-        .mul(decodedOrder.sellAmount)
-        .lt(decodedOrder.buyAmount.mul(derivedAuctionInfo?.clearingPriceOrder.sellAmount))
-    ) {
-      claimableBiddingToken = claimableBiddingToken.add(
-        new TokenAmount(derivedAuctionInfo?.biddingToken, decodedOrder.sellAmount.toString()),
-      )
+      // Order from the same user, buyAmount and sellAmount
     } else {
-      if (derivedAuctionInfo?.clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
+      if (JSON.stringify(decodedOrder) === JSON.stringify(clearingPriceOrder)) {
+        if (sellAmount.sub(clearingPriceVolume).gt(0)) {
+          claimableBiddingToken = claimableBiddingToken.add(
+            new TokenAmount(biddingToken, sellAmount.sub(clearingPriceVolume).toString()),
+          )
+        }
         claimableAuctioningToken = claimableAuctioningToken.add(
           new TokenAmount(
-            derivedAuctionInfo?.auctioningToken,
-            decodedOrder.sellAmount
-              .mul(derivedAuctionInfo?.clearingPriceOrder.buyAmount)
-              .div(derivedAuctionInfo?.clearingPriceOrder.sellAmount)
+            auctioningToken,
+            clearingPriceVolume
+              .mul(clearingPriceOrder.buyAmount)
+              .div(clearingPriceOrder.sellAmount)
               .toString(),
           ),
         )
+      } else if (
+        clearingPriceOrder.buyAmount
+          .mul(sellAmount)
+          .lt(buyAmount.mul(clearingPriceOrder.sellAmount))
+      ) {
+        claimableBiddingToken = claimableBiddingToken.add(
+          new TokenAmount(biddingToken, sellAmount.toString()),
+        )
+      } else {
+        // (orders[i].smallerThan(auction.clearingPriceOrder)
+        if (clearingPriceOrder.sellAmount.gt(BigNumber.from('0'))) {
+          claimableAuctioningToken = claimableAuctioningToken.add(
+            new TokenAmount(
+              auctioningToken,
+              sellAmount
+                .mul(clearingPriceOrder.buyAmount)
+                .div(clearingPriceOrder.sellAmount)
+                .toString(),
+            ),
+          )
+        }
       }
     }
   }
+
   return {
     claimableBiddingToken,
     claimableAuctioningToken,
   }
+}
+
+export const isMinFundingReached = (
+  biddingToken: Token,
+  currentBidding: string,
+  minFundingThreshold: string,
+) => {
+  const minFundingThresholdAmount = new TokenAmount(biddingToken, minFundingThreshold)
+  const currentBiddingAmount = new TokenAmount(biddingToken, currentBidding)
+
+  return (
+    minFundingThresholdAmount.lessThan(currentBiddingAmount) ||
+    minFundingThresholdAmount.equalTo(currentBiddingAmount)
+  )
+}
+
+export function useGetAuctionProceeds(
+  auctionIdentifier: AuctionIdentifier,
+  derivedAuctionInfo: DerivedAuctionInfo,
+): AuctionProceedings {
+  const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
+  const { claimInfo } = useGetClaimInfo(auctionIdentifier)
+  const {
+    auctioningToken,
+    biddingToken,
+    clearingPriceOrder,
+    clearingPriceSellOrder,
+    clearingPriceVolume,
+  } = derivedAuctionInfo
+
+  return useMemo(() => {
+    if (
+      !claimInfo ||
+      !biddingToken ||
+      !auctioningToken ||
+      !clearingPriceSellOrder ||
+      !clearingPriceOrder ||
+      !clearingPriceVolume ||
+      auctionInfoLoading ||
+      !auctionDetails
+    ) {
+      return {
+        claimableBiddingToken: null,
+        claimableAuctioningToken: null,
+      }
+    } else {
+      return getClaimableData({
+        auctioningToken,
+        biddingToken,
+        clearingPriceOrder,
+        clearingPriceVolume,
+        minFundingThresholdNotReached: !isMinFundingReached(
+          biddingToken,
+          auctionDetails.currentBiddingAmount,
+          auctionDetails.minFundingThreshold,
+        ),
+        ordersFromUser: claimInfo.sellOrdersFormUser,
+      })
+    }
+  }, [
+    auctionDetails,
+    auctionInfoLoading,
+    auctioningToken,
+    biddingToken,
+    claimInfo,
+    clearingPriceOrder,
+    clearingPriceSellOrder,
+    clearingPriceVolume,
+  ])
 }
 
 export const useClaimOrderCallback = (
