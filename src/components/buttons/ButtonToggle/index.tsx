@@ -17,7 +17,6 @@ interface BtnProps {
 }
 
 const Wrap = styled.button<Partial<CSS.Properties & BtnProps>>`
-  color: ${(props) => props.theme.buttonPrimary.borderColor};
   font-size: 13px;
   padding: 2px 6px;
   line-height: 13px;
@@ -27,8 +26,9 @@ const Wrap = styled.button<Partial<CSS.Properties & BtnProps>>`
   display: flex;
   align-items: center;
   cursor: pointer;
-  bckground-image: none;
+  background-image: none;
   background-color: ${({ theme }) => theme.textField.backgroundColor};
+  color: ${(props) => props.theme.buttonPrimary.borderColor};
   border: 0;
   &:not(:last-child) {
     border-top-left-radius: ${({ theme }) => theme.textField.borderRadius};
@@ -47,9 +47,10 @@ const Wrap = styled.button<Partial<CSS.Properties & BtnProps>>`
     fill: ${(props) => props.theme.buttonPrimary.borderColor};
   }
   &.active {
-    pointer-events: none;
     background-color: ${(props) => props.theme.buttonPrimary.borderColor};
-    color: ${({ theme }) => theme.textField.backgroundColor};
+    span {
+      color: ${({ theme }) => theme.textField.backgroundColor};
+    }
     &:not(:last-child) {
       border-top-left-radius: calc(${({ theme }) => theme.textField.borderRadius} / 2);
       border-bottom-left-radius: calc(${({ theme }) => theme.textField.borderRadius} / 2);
@@ -65,15 +66,15 @@ const Wrap = styled.button<Partial<CSS.Properties & BtnProps>>`
 `
 
 export const ButtonToggle: React.FC<ButtonGroupProps> = (props: ButtonGroupProps) => {
-  const { activate, left, onClick, right } = props
+  const { activate, left, right } = props
 
   return (
     <ButtonToggleWrap>
-      <Wrap className={activate ? 'active' : ''} onClick={onClick}>
+      <Wrap className={activate ? 'active' : ''} onClick={left.onClick}>
         {left.icon}
         <span>{left.label}</span>
       </Wrap>
-      <Wrap className={!activate ? 'active' : ''} onClick={onClick}>
+      <Wrap className={!activate ? 'active' : ''} onClick={right.onClick}>
         {right.icon}
         <span>{right.label}</span>
       </Wrap>

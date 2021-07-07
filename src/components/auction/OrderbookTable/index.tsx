@@ -36,6 +36,7 @@ const TableBody = styled(Scrollbars)`
   max-height: 100%;
   overflow-x: hidden;
   min-width: 560px;
+  min-height: 280px;
   @media (min-width: 1180px) {
     min-width: auto;
   }

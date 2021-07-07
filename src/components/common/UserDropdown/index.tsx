@@ -144,6 +144,7 @@ const DisconnectButton = styled(Button)`
   height: 28px;
   line-height: 1;
   width: 100%;
+  font-family: 'Averta', sans-serif;
 `
 
 const UserDropdownButton = () => {
