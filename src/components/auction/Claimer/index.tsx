@@ -166,6 +166,7 @@ const Claimer: React.FC<Props> = (props) => {
       (isXDAI || isWETH) &&
       account &&
       chainId === Web3ChainId &&
+      claimableBiddingToken &&
       claimableBiddingToken.greaterThan('0'),
     [Web3ChainId, account, chainId, claimableBiddingToken, isWETH, isXDAI],
   )
