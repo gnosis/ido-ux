@@ -367,10 +367,8 @@ const AuctionDetails = (props: Props) => {
             ? auctionDetails.minFundingThreshold === '0x0'
               ? '-'
               : new Fraction(
-                  auctionDetails.currentBiddingAmount,
-                  BigNumber.from(auctionDetails.minFundingThreshold)
-                    .div(BigNumber.from(10).pow(2))
-                    .toString(),
+                  BigNumber.from(auctionDetails.currentBiddingAmount).mul(100).toString(),
+                  BigNumber.from(auctionDetails.minFundingThreshold).toString(),
                 )
                   .toSignificant(2)
                   .concat('%')
