@@ -1,12 +1,13 @@
 ### Media kit
 
+#### Every auction that is done using Gnosis Auction can use this Media kit:
 <img src="/assets/media-kit/GA-dark-bg.png" alt="GA Media Kit" />
 
-[Download this file in SVG format (dark background)](/assets/media-kit/GA-MediaKit-dark-bg.svg)
+[Download this file in SVG format (dark background)](/assets/media-kit/GA-MediaKit-dark-bg.svg). Also we have a light background version to [download in SVG format](/assets/media-kit/GA-MediaKit-withe-bg.svg).
 
-<img src="/assets/media-kit/GA-light-bg.png" alt="GA Media Kit" />
+**Important notice to auction participants:**
 
-[Download this file in SVG format (light background)](/assets/media-kit/GA-MediaKit-withe-bg.svg)
+Gnosis Auction enables permissionless P2P auctions applying a batch auction mechanism without the need for intermediaries. Auctions are initiated and organised by the auctioneers. Gnosis Auction and GnosisDAO do not control, initiate or organise auctions nor are we involved with the auctioneers. Please do your own due diligence before participating in an auction.
 
 
 #### Typography
@@ -26,7 +27,7 @@ We use this colors (hex):
 ### Extra images archive
 This images are available in .png image format.
 
-<img src="/assets/media-kit/GA-logo-text-white.png" alt="GA Logo" width="80%"/>
+<img src="/assets/media-kit/GA-logo-text-white.png" alt="GA Logo" width="70%"/>
 
 <img src="/assets/media-kit/GA-logo-white.png" alt="GA Logo"/> 
 
