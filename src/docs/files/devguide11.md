@@ -33,4 +33,3 @@ This images are available in .png image format.
 
 <img src="/assets/media-kit/GA-logo-orange.png" alt="GA Logo"/>
 
-<!-- [Download here all variants (.svg + .png) packed into a .zip]() -->
