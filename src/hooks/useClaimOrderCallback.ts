@@ -181,10 +181,8 @@ export const isMinFundingReached = (
   minFundingThreshold: string,
 ) => {
   const minFundingThresholdAmount = new TokenAmount(biddingToken, minFundingThreshold)
-  const currentBiddingAmount = new TokenAmount(
-    biddingToken,
-    BigNumber.from(currentBidding).mul(BigNumber.from(10).pow(biddingToken.decimals)).toString(),
-  )
+  const currentBiddingAmount = new TokenAmount(biddingToken, currentBidding)
+
   return (
     minFundingThresholdAmount.lessThan(currentBiddingAmount) ||
     minFundingThresholdAmount.equalTo(currentBiddingAmount)

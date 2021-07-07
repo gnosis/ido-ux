@@ -14,21 +14,21 @@ const weth = new Token(
 
 describe('isMinFundingReached', () => {
   it('should return true when current bidding is higher than min threshold', () => {
-    const currentBidding = '10'
+    const currentBidding = parseUnits('10').toString()
     const minFundingThreshold = parseUnits('0.1').toString()
 
     expect(isMinFundingReached(weth, currentBidding, minFundingThreshold)).toBeTruthy()
   })
 
   it('should return false when current bidding is lower than min threshold', () => {
-    const currentBidding = '1'
+    const currentBidding = parseUnits('1').toString()
     const minFundingThreshold = parseUnits('10').toString()
 
     expect(isMinFundingReached(weth, currentBidding, minFundingThreshold)).toBeFalsy()
   })
 
   it('should return true when current bidding is equal to min threshold', () => {
-    const currentBidding = '10'
+    const currentBidding = parseUnits('10').toString()
     const minFundingThreshold = parseUnits('10').toString()
 
     expect(isMinFundingReached(weth, currentBidding, minFundingThreshold)).toBeTruthy()
