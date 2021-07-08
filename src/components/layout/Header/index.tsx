@@ -26,8 +26,11 @@ const Wrapper = styled.header`
   border-bottom: 1px solid ${({ theme }) => theme.border};
   display: flex;
   flex-shrink: 0;
-  position: relative;
-  z-index: 100;
+  position: fixed;
+  z-index: 12345;
+  left: 0;
+  right: 0;
+  background-color: ${({ theme }) => theme.mainBackground};
 `
 
 const Inner = styled(InnerContainer)`
