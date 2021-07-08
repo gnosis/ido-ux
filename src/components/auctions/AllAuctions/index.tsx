@@ -6,7 +6,6 @@ import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-tabl
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { Dropdown, DropdownDirection, DropdownItem, DropdownPosition } from '../../common/Dropdown'
-import { KeyValue } from '../../common/KeyValue'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -28,9 +27,8 @@ const SectionTitle = styled(PageTitle)`
   font-size: 22px;
   margin-bottom: 14px;
 `
-
-const RowLink = styled(NavLink)<CellRowProps>`
-  ${CellRowCSS}
+const rowCss = `
+ ${CellRowCSS}
   column-gap: 6px;
   cursor: pointer;
   grid-template-columns: 1fr 1fr;
@@ -54,6 +52,14 @@ const RowLink = styled(NavLink)<CellRowProps>`
   }
 `
 
+const RowLink = styled(NavLink)<CellRowProps>`
+  ${rowCss}
+`
+
+const RowHead = styled.div<CellRowProps>`
+  ${rowCss}
+`
+
 const TableCell = styled(Cell)`
   &:last-child {
     position: absolute;
@@ -69,13 +75,6 @@ const TableCell = styled(Cell)`
       top: auto;
       transform: none;
     }
-  }
-`
-
-const KeyValueStyled = styled(KeyValue)`
-  .itemKey,
-  .itemValue {
-    white-space: nowrap;
   }
 `
 
@@ -398,6 +397,7 @@ const AllAuctions = (props: Props) => {
   const {
     canNextPage,
     canPreviousPage,
+    headers,
     nextPage,
     page,
     prepareRow,
@@ -533,6 +533,7 @@ const AllAuctions = (props: Props) => {
       ) : (
         <>
           <Table>
+            <RowHead>ok</RowHead>
             {page.map((row, i) => {
               prepareRow(row)
               return (
@@ -543,16 +544,7 @@ const AllAuctions = (props: Props) => {
                 >
                   {row.cells.map(
                     (cell, j) =>
-                      cell.render('show') && (
-                        <TableCell key={j}>
-                          <KeyValueStyled
-                            align={cell.render('align')}
-                            itemKey={cell.render('Header')}
-                            itemValue={cell.render('Cell')}
-                            style={cell.render('style')}
-                          />
-                        </TableCell>
-                      ),
+                      cell.render('show') && <TableCell key={j}>{cell.render('Cell')}</TableCell>,
                   )}
                 </RowLink>
               )
