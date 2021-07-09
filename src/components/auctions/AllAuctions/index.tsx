@@ -27,8 +27,8 @@ const SectionTitle = styled(PageTitle)`
   font-size: 22px;
   margin-bottom: 14px;
 `
-const rowCss = `
- ${CellRowCSS}
+const rowCss = css<CellRowProps>`
+  ${CellRowCSS}
   column-gap: 6px;
   cursor: pointer;
   grid-template-columns: 1fr 1fr;
@@ -58,14 +58,41 @@ const RowLink = styled(NavLink)<CellRowProps>`
 
 const RowHead = styled.div<CellRowProps>`
   ${rowCss}
+  pointer-events: none;
+  font-weight: bold;
+  font-size: 16px;
+  display: none;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    display: grid;
+  }
 `
 
 const TableCell = styled(Cell)`
+  color: ${({ theme }) => theme.textField.color};
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 14px;
   &:last-child {
     position: absolute;
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
+  }
+
+  > span {
+    display: flex;
+    align-items: center;
+    > *:not(:last-child) {
+      margin-right: 6px;
+    }
+    &:last-child {
+      font-size: 16px;
+      font-weight: bold;
+      @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+        display: none;
+      }
+    }
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
@@ -397,7 +424,6 @@ const AllAuctions = (props: Props) => {
   const {
     canNextPage,
     canPreviousPage,
-    headers,
     nextPage,
     page,
     prepareRow,
@@ -533,7 +559,13 @@ const AllAuctions = (props: Props) => {
       ) : (
         <>
           <Table>
-            <RowHead>ok</RowHead>
+            <RowHead columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}>
+              {prepareRow(page[0])}
+              {page[0].cells.map(
+                (cell, i) =>
+                  cell.render('show') && <TableCell key={i}>{cell.render('Header')}</TableCell>,
+              )}
+            </RowHead>
             {page.map((row, i) => {
               prepareRow(row)
               return (
@@ -544,7 +576,12 @@ const AllAuctions = (props: Props) => {
                 >
                   {row.cells.map(
                     (cell, j) =>
-                      cell.render('show') && <TableCell key={j}>{cell.render('Cell')}</TableCell>,
+                      cell.render('show') && (
+                        <TableCell key={j}>
+                          <span>{cell.render('Cell')}</span>
+                          <span>{cell.render('Header')}</span>
+                        </TableCell>
+                      ),
                   )}
                 </RowLink>
               )
