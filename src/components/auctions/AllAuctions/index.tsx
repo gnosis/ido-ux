@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import { Scrollbars } from 'react-custom-scrollbars'
 import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
@@ -42,7 +43,7 @@ const rowCss = css<CellRowProps>`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     column-gap: 10px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 80px 1fr 1fr 1fr 1fr 100px 1fr 100px 20px;
     padding-left: 15px;
     padding-right: 15px;
   }
@@ -59,11 +60,11 @@ const RowLink = styled(NavLink)<CellRowProps>`
 const RowHead = styled.div<CellRowProps>`
   ${rowCss}
   pointer-events: none;
-  font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   display: none;
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     display: grid;
+    grid-template-columns: 1fr 80px 1fr 1fr 1fr 1fr 100px 1fr 100px 20px;
   }
 `
 
@@ -72,7 +73,7 @@ const TableCell = styled(Cell)`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  font-size: 14px;
+  font-size: 16px;
   &:last-child {
     position: absolute;
     right: 15px;
@@ -89,7 +90,7 @@ const TableCell = styled(Cell)`
     &:last-child {
       font-size: 16px;
       font-weight: bold;
-      @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+      @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
         display: none;
       }
     }
@@ -282,6 +283,18 @@ const PaginationItem = styled.div`
 
   &:hover {
     background-color: ${(props) => props.theme.dropdown.item.backgroundColorHover};
+  }
+`
+
+const TBody = styled(Scrollbars)`
+  min-height: 266px;
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    > div:first-child {
+      position: relative !important;
+    }
+    > div:not(:first-child) {
+      display: none !important;
+    }
   }
 `
 
@@ -566,26 +579,28 @@ const AllAuctions = (props: Props) => {
                   cell.render('show') && <TableCell key={i}>{cell.render('Header')}</TableCell>,
               )}
             </RowHead>
-            {page.map((row, i) => {
-              prepareRow(row)
-              return (
-                <RowLink
-                  columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
-                  key={i}
-                  to={row.original['url'] ? row.original['url'] : '#'}
-                >
-                  {row.cells.map(
-                    (cell, j) =>
-                      cell.render('show') && (
-                        <TableCell key={j}>
-                          <span>{cell.render('Cell')}</span>
-                          <span>{cell.render('Header')}</span>
-                        </TableCell>
-                      ),
-                  )}
-                </RowLink>
-              )
-            })}
+            <TBody>
+              {page.map((row, i) => {
+                prepareRow(row)
+                return (
+                  <RowLink
+                    columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
+                    key={i}
+                    to={row.original['url'] ? row.original['url'] : '#'}
+                  >
+                    {row.cells.map(
+                      (cell, j) =>
+                        cell.render('show') && (
+                          <TableCell key={j}>
+                            <span>{cell.render('Cell')}</span>
+                            <span>{cell.render('Header')}</span>
+                          </TableCell>
+                        ),
+                    )}
+                  </RowLink>
+                )
+              })}
+            </TBody>
             <Pagination>
               <PaginationBlock>
                 <PaginationText>Items per page</PaginationText>{' '}
