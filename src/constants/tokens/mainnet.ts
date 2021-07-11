@@ -470,7 +470,7 @@ export default [
     'VERI',
     'Veritaseum',
   ),
-  new Token(ChainId.MAINNET, '0x81f8f0bb1cb2a06649e51913a151f0e7ef6fa321', 18, 'VITA', 'VITA'),
+  new Token(ChainId.MAINNET, '0x81f8f0bb1cB2A06649E51913A151F0E7Ef6FA321', 18, 'VITA', 'VITA'),
   new Token(
     ChainId.MAINNET,
     '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',

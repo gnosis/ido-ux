@@ -3,6 +3,7 @@ import React, { FC } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import * as CSS from 'csstype'
 
 import { AuctionInfo } from '../../../hooks/useAllAuctionInfos'
@@ -327,7 +328,13 @@ const HighestVolumeAuctions: FC<HVAuctionsProps> = ({ highestVolumeAuctions }) =
               </StyledTd>
               <StyledTd>
                 <span>Buy Amount:&nbsp;</span>
-                {abbreviation(auction.currentBiddingAmount) + ' ' + auction.symbolBiddingToken}
+                {abbreviation(
+                  BigNumber.from(auction.currentBiddingAmount)
+                    .div(BigNumber.from(10).pow(auction.decimalsBiddingToken))
+                    .toString(),
+                ) +
+                  ' ' +
+                  auction.symbolBiddingToken}
               </StyledTd>
               <StyledTd>
                 <span>USD Volume:&nbsp;</span>
