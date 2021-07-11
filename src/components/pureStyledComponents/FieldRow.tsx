@@ -38,7 +38,6 @@ export const FieldRowBottom = styled.div`
   align-items: center;
   display: flex;
   margin-top: auto;
-  justify-content: space-between;
 `
 
 export const FieldRowLabel = styled.label`
@@ -76,20 +75,19 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   border: none;
   color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
   flex-grow: 1;
-  border-radius: 6px;
   flex-shrink: 1;
-  font-size: 20px;
+  font-family: 'Averta', sans-serif;
+  font-size: 23px;
   font-weight: 400;
-  height: 30px;
+  height: 22px;
   line-height: 1;
   margin: 0 0 0 20px;
   min-width: 0;
   outline: none;
-  padding: 5px;
+  padding: 0;
   text-align: right;
   transition: color 0.15s linear;
   width: auto;
-  max-width: 50%;
 
   &::placeholder {
     color: #bfdeff;

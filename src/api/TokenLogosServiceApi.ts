@@ -7,7 +7,8 @@ import { getLogger } from '../utils/logger'
 const logger = getLogger('TokenLogosServiceApi')
 
 const TOKEN_LIST_RESOURCES = [
-  // 'https://tokens.coingecko.com/uniswap/all.json',
+  'https://tokens.coingecko.com/uniswap/all.json',
+  'https://t2crtokens.eth.link',
   'https://tokens.1inch.eth.link',
   'https://bafybeih3zii2hukln4enn2qiacqeb4jgvqescxpbudxhpvtfiex4cjpgce.ipfs.dweb.link/',
   'https://raw.githubusercontent.com/gnosis/ido-contracts/master/assets/tokens/rinkeby-token-list.json',
@@ -60,12 +61,13 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
 
       for (const res of responses) {
         if (res.status === 'rejected') {
-          logger.error('Error getting most interesting auction details: ', res.reason)
+          logger.error('Error getting token logo details: ', res.reason)
         }
 
         if (res.status === 'fulfilled') {
           res.value.forEach((token) => {
-            tokens[token.address.toLowerCase()] = token.logoURI
+            if (token.logoURI != undefined)
+              tokens[token.address.toLowerCase()] = resolveIPFSTokenUrI(token.logoURI)
           })
         }
       }
@@ -77,4 +79,8 @@ export class TokenLogosServiceApi implements TokenLogosServiceApiInterface {
 
     return tokens
   }
+}
+
+function resolveIPFSTokenUrI(uri: string): string {
+  return uri.startsWith('ipfs://') ? 'https://ipfs.io/ipfs/' + uri.substring(7) : uri
 }

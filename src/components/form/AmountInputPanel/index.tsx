@@ -1,5 +1,5 @@
 import { rgba } from 'polished'
-import React from 'react'
+import React, { useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
@@ -118,6 +118,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
     wrap,
     ...restProps
   } = props
+  const [readonly, setReadonly] = useState(true)
   const { account } = useActiveWeb3React()
   const isUnlocking = unlock.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
@@ -200,9 +201,12 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           <FieldRowInput
             disabled={!account}
             hasError={error}
+            onBlur={() => setReadonly(true)}
+            onFocus={() => setReadonly(false)}
             onUserSellAmountInput={(val) => {
               onUserSellAmountInput(val)
             }}
+            readOnly={readonly}
             value={value}
           />
         </FieldRowBottom>
