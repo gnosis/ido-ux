@@ -73,8 +73,7 @@ export const FieldRowTokenSymbol = styled.div`
 
 export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   background: none;
-  border: 1px solid ${(props) =>
-    props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.border};};
+  border: none;
   color: ${(props) => (props.hasError ? ({ theme }) => theme.error : ({ theme }) => theme.text1)};
   flex-grow: 1;
   border-radius: 6px;
@@ -83,7 +82,6 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   font-weight: 400;
   height: 30px;
   line-height: 1;
-  margin-left: auto;
   margin: 0 0 0 20px;
   min-width: 0;
   outline: none;
@@ -103,6 +101,11 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
 
   &[disabled] {
     opacity: 0.7;
+  }
+  &[readonly] {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 `
 
