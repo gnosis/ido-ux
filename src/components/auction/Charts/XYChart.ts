@@ -76,6 +76,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const bidSeries = chart.series.push(new am4charts.StepLineSeries())
   bidSeries.dataFields.valueX = 'priceNumber'
   bidSeries.dataFields.valueY = 'bidValueY'
+  bidSeries.name = 'Bids'
   bidSeries.strokeWidth = 1
   bidSeries.stroke = am4core.color(colors.green)
   bidSeries.fill = bidSeries.stroke
@@ -90,6 +91,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
+  askSeries.name = 'Sell Suply'
   askSeries.strokeWidth = 1
   askSeries.stroke = am4core.color(colors.red)
   askSeries.fill = askSeries.stroke
@@ -103,6 +105,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
+  inputSeries.name = 'New orders'
   inputSeries.strokeWidth = 1
   inputSeries.stroke = am4core.color(colors.orange)
   inputSeries.fill = inputSeries.stroke
@@ -119,10 +122,11 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
+  priceSeries.name = 'Current price'
   priceSeries.strokeWidth = 2
   priceSeries.strokeDasharray = '3,3'
   priceSeries.stroke = am4core.color(colors.white)
-  priceSeries.fill = inputSeries.stroke
+  priceSeries.fill = priceSeries.stroke
   priceSeries.fillOpacity = 0.1
   priceSeries.dummyData = {
     description: `Shows the current price: <strong style="font-size:14px;">[${currPriceMockVal}]</strong> <br/>This price would be<br/> the closing price of the auction<br/> if no more bids are submitted or cancelled`,
