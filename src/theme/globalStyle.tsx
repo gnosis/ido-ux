@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 
 import { reactTooltipCSS } from './reactTooltipCSS'
+import { reactWalletConnectModalCSS } from './walletConnectModalCSS'
 
 export const GlobalStyle = createGlobalStyle<{ theme: any }>`
 
@@ -22,6 +23,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: any }>`
   }
 
   ${reactTooltipCSS}
+  ${reactWalletConnectModalCSS}
 `
 
 export const ThemedGlobalStyle = createGlobalStyle`
