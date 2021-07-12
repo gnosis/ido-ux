@@ -154,8 +154,9 @@ const Claimer: React.FC<Props> = (props) => {
       showConfirm ||
       isLoading ||
       userConfirmedTx ||
-      claimStatus != ClaimState.NOT_CLAIMED,
-    [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus],
+      claimStatus != ClaimState.NOT_CLAIMED ||
+      chainId !== Web3ChainId,
+    [isValid, showConfirm, isLoading, userConfirmedTx, claimStatus, chainId, Web3ChainId],
   )
 
   const isXDAI = isTokenXDAI(derivedAuctionInfo.biddingToken.address, chainId)
