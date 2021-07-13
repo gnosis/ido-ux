@@ -63,7 +63,7 @@ const StyledTable = styled.div`
 const StyledTHead = styled.div`
   display: none;
   width: 100%;
-  grid-template-columns: 2.8fr 0.9fr 0.8fr 1.1fr;
+  grid-template-columns: 2.75fr 1fr 0.8fr 1.1fr;
   grid-column-gap: 15px;
   @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
     display: grid;
@@ -243,7 +243,7 @@ const StyledThCell = styled.div`
 `
 
 const SmallLbl = styled.div`
-  font-size: 11px;
+  font-size: 9px;
   color: ${(props) => props.theme.dropdown.item.color};
   font-weight: normal;
 `
