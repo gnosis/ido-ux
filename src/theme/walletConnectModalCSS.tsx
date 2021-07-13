@@ -1,6 +1,6 @@
 import { css } from 'styled-components'
 
-export const reactWalletConnectModalCSS = css`
+export const walletConnectModalCSS = css`
   #walletconnect-wrapper {
     .walletconnect-modal__close__line1,
     .walletconnect-modal__close__line2 {
