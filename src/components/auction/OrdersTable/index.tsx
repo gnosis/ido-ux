@@ -102,6 +102,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
   const [orderError, setOrderError] = useState<string>()
   const [txHash, setTxHash] = useState<string>('')
   const [orderId, setOrderId] = useState<string>('')
+  const [canceledOrder, setCanceledOrder] = useState(null)
   const { showPriceInverted } = useOrderPlacementState()
 
   const resetModal = useCallback(() => {
@@ -159,6 +160,14 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
         : 'The maximum price you are willing to participate at. You might receive a better price, but if the clearing price is higher, you will not participate and can claim your funds back when the auction ends.',
     [showPriceInverted],
   )
+
+  const auctioningToken = React.useMemo(() => derivedAuctionInfo.auctioningToken, [
+    derivedAuctionInfo.auctioningToken,
+  ])
+
+  const biddingToken = React.useMemo(() => derivedAuctionInfo.biddingToken, [
+    derivedAuctionInfo.biddingToken,
+  ])
 
   return (
     <Wrapper {...restProps}>
@@ -235,6 +244,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
                       onClick={() => {
                         setOrderId(order.id)
                         setShowConfirm(true)
+                        setCanceledOrder(order)
                       }}
                     >
                       Cancel
@@ -247,7 +257,13 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
           <ConfirmationModal
             attemptingTxn={attemptingTxn}
             content={
-              <CancelModalFooter confirmText={'Cancel Order'} onCancelOrder={onCancelOrder} />
+              <CancelModalFooter
+                confirmText={'Cancel Order'}
+                invertPrices={showPriceInverted}
+                onCancelOrder={onCancelOrder}
+                orderData={canceledOrder}
+                tokens={{ auctioningToken: auctioningToken, biddingToken: biddingToken }}
+              />
             }
             hash={txHash}
             isOpen={showConfirm}
@@ -257,8 +273,8 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
             }}
             pendingConfirmation={pendingConfirmation}
             pendingText={pendingText}
-            title="Warning!"
-            width={394}
+            title="Confirm order Cancelation"
+            width={450}
           />
           <WarningModal
             content={orderError}
