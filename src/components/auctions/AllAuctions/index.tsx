@@ -66,6 +66,9 @@ const RowHead = styled.div<CellRowProps>`
     display: grid;
     grid-template-columns: 1fr 80px 1fr 1fr 1fr 1fr 100px 1fr 100px 20px;
   }
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    grid-template-columns: ${(props) => getColumns(props.columns)};
+  }
 `
 
 const TableCell = styled(Cell)`
