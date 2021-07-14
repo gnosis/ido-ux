@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { URI_AVAILABLE, WalletConnectConnector } from '@anxolin/walletconnect-connector'
+import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import ReactGA from 'react-ga'
 
-import { injected, walletconnect } from '../../../connectors'
+import { injected } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
@@ -79,7 +79,7 @@ const WALLET_VIEWS = {
 }
 
 const WalletModal: React.FC = () => {
-  const { account, activate, active, connector, error } = useWeb3React()
+  const { account, activate, active, connector, deactivate, error } = useWeb3React()
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector>()
   const [pendingError, setPendingError] = useState<boolean>()
@@ -89,6 +89,7 @@ const WalletModal: React.FC = () => {
   const { errorWrongNetwork } = useNetworkCheck()
   const [termsAccepted, setTermsAccepted] = useState(false)
   const { chainId } = useOrderPlacementState()
+  const [walletConnectChainError, setWalletConnectChainError] = useState<NetworkError>()
 
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
@@ -101,19 +102,9 @@ const WalletModal: React.FC = () => {
     if (walletModalOpen) {
       setPendingError(false)
       setWalletView(WALLET_VIEWS.ACCOUNT)
+      setWalletConnectChainError(undefined)
     }
   }, [walletModalOpen])
-
-  const [uri, setUri] = useState()
-  useEffect(() => {
-    const activateWC = (uri) => {
-      setUri(uri)
-    }
-    walletconnect[chainId].on(URI_AVAILABLE, activateWC)
-    return () => {
-      walletconnect[chainId].off(URI_AVAILABLE, activateWC)
-    }
-  }, [chainId])
 
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
@@ -189,9 +180,13 @@ const WalletModal: React.FC = () => {
     } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
         // a little janky...can't use setError because the connector isn't set
-        activate(
-          connector[chainId] instanceof WalletConnectConnector ? connector[chainId] : connector,
-        )
+        const muteWalletConnectError = () => {
+          deactivate()
+          setWalletConnectChainError(NetworkError.noChainMatch)
+        }
+        connector[chainId] instanceof WalletConnectConnector
+          ? activate(connector[chainId], muteWalletConnectError)
+          : activate(connector)
       } else {
         setPendingError(true)
       }
@@ -231,7 +226,8 @@ const WalletModal: React.FC = () => {
     })
   }
 
-  const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
+  const networkError =
+    error instanceof UnsupportedChainIdError || errorWrongNetwork || walletConnectChainError
   const viewAccountTransactions = account && walletView === WALLET_VIEWS.ACCOUNT
   const connectingToWallet = walletView === WALLET_VIEWS.PENDING
   const title =
@@ -243,7 +239,7 @@ const WalletModal: React.FC = () => {
       ? 'Error connecting'
       : 'Connect a wallet'
   const errorMessage =
-    error instanceof UnsupportedChainIdError
+    error instanceof UnsupportedChainIdError || walletConnectChainError
       ? 'Please connect to the appropriate Ethereum network.'
       : errorWrongNetwork
       ? errorWrongNetwork
@@ -257,7 +253,7 @@ const WalletModal: React.FC = () => {
     >
       <ModalTitle onClose={toggleWalletModal} title={title} />
       <Content>
-        {error && (
+        {(error || walletConnectChainError) && (
           <>
             <IconWrapper>
               <AlertIcon />
@@ -286,13 +282,12 @@ const WalletModal: React.FC = () => {
             </Footer>
           </>
         )}
-        {!error && connectingToWallet && (
+        {!error && !walletConnectChainError && connectingToWallet && (
           <PendingView
             connector={pendingWallet}
             error={pendingError}
             setPendingError={setPendingError}
             tryActivation={tryActivation}
-            uri={uri}
           />
         )}
       </Content>
