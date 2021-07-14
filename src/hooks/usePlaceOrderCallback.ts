@@ -172,20 +172,20 @@ export function usePlaceOrderCallback(
         })
     }
   }, [
-    chainId,
-    library,
     account,
-    userId,
-    signature,
+    addTransaction,
+    auctionId,
     auctioningToken,
     biddingToken,
+    chainId,
+    gasPrice,
+    library,
+    onNewBid,
+    onNewOrder,
     price,
     sellAmount,
-    auctionId,
-    gasPrice,
-    addTransaction,
-    onNewOrder,
-    onNewBid,
+    signature,
+    userId,
   ])
 }
 
