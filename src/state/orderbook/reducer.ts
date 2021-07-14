@@ -69,21 +69,12 @@ export default createReducer<OrderbookState>(initialState, (builder) =>
         shouldLoad: true,
       }
     })
-    .addCase(
-      resetUserPrice,
-      (state: OrderbookState, { payload: { calculatedAuctionPrice, price } }) => {
-        return {
-          ...state,
-          userOrderPrice: price,
-          orderbookPrice: calculatedAuctionPrice
-            ? calculatedAuctionPrice.price
-            : state.orderbookPrice,
-          orderbookPriceReversed: calculatedAuctionPrice
-            ? calculatedAuctionPrice.priceReversed
-            : state.orderbookPriceReversed,
-        }
-      },
-    )
+    .addCase(resetUserPrice, (state: OrderbookState, { payload: { price } }) => {
+      return {
+        ...state,
+        userOrderPrice: price,
+      }
+    })
     .addCase(resetUserVolume, (state, { payload: { volume } }) => {
       return {
         ...state,

@@ -27,7 +27,6 @@ export const resetUserBid = createAction<{
 
 export const resetUserPrice = createAction<{
   price: number
-  calculatedAuctionPrice?: CalculatedAuctionPrice
 }>('ResetUserPrice')
 
 export const resetUserVolume = createAction<{
