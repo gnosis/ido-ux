@@ -61,7 +61,8 @@ const FixedPopupColumn = styled(AutoColumn)`
 const Popup = styled.div`
   background-color: ${({ theme }) => theme.bg1};
   border-radius: 6px;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   overflow: hidden;
   padding: 20px;
   position: relative;
