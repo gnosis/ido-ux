@@ -25,7 +25,6 @@ interface Props {
   error?: boolean
   setPendingError: (error: boolean) => void
   tryActivation: (connector: AbstractConnector) => void
-  uri?: string
 }
 
 const PendingView: React.FC<Props> = (props) => {
