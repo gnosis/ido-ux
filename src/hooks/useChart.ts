@@ -13,10 +13,11 @@ interface Props {
   baseToken: Token
   quoteToken: Token
   chainId: ChainId
+  textAuctionCurrentPrice: string
 }
 
 const useChart = (props: Props) => {
-  const { baseToken, chainId, createChart, data, quoteToken } = props
+  const { baseToken, chainId, createChart, data, quoteToken, textAuctionCurrentPrice } = props
 
   const [loading, setLoading] = useState(false)
 
@@ -54,10 +55,11 @@ const useChart = (props: Props) => {
       baseToken,
       quoteToken,
       chainId,
+      textAuctionCurrentPrice,
     })
 
     chartRef.current.data = data
-  }, [baseToken, quoteToken, data, chainId])
+  }, [baseToken, quoteToken, data, chainId, textAuctionCurrentPrice])
 
   return { chartRef, mountPoint, loading }
 }
