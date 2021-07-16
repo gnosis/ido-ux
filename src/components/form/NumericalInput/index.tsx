@@ -9,12 +9,15 @@ interface Props {
   onUserSellAmountInput: (string) => void
   value: string | number
   className?: string
+  onFocus?: any
+  onBlur?: any
+  readOnly?: boolean
 }
 
 export const NumericalInput = React.memo(function InnerInput(
   props: Props & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>,
 ) {
-  const { className, onUserSellAmountInput, placeholder, value } = props
+  const { className, onBlur, onFocus, onUserSellAmountInput, placeholder, readOnly, value } = props
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserSellAmountInput(nextUserInput)
@@ -29,11 +32,14 @@ export const NumericalInput = React.memo(function InnerInput(
       inputMode="decimal"
       maxLength={79}
       minLength={1}
+      onBlur={onBlur}
       onChange={(event) => {
         enforcer(event.target.value.replace(/,/g, '.'))
       }}
+      onFocus={onFocus}
       pattern="^[0-9]*[.,]?[0-9]*$"
       placeholder={placeholder || '0.0'}
+      readOnly={readOnly}
       spellCheck="false"
       type="text"
       value={value}
