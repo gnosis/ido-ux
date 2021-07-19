@@ -3,10 +3,14 @@ import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
 import useChart from '../../../hooks/useChart'
+import { useOrderPlacementState } from '../../../state/orderPlacement/hooks'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { ChainId } from '../../../utils'
+import { abbreviation } from '../../../utils/numeral'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
 import { XYChart } from '../Charts/XYChart'
+import { CalculatorClearingPrice } from '../OrderbookWidget'
 
 export enum Offer {
   Bid,
@@ -100,6 +104,16 @@ const Wrapper = styled.div`
 
 const OrderBookChart: React.FC<Props> = (props) => {
   const { baseToken, chainId, data, quoteToken } = props
+  const { asks, bids, userOrderPrice, userOrderVolume } = useOrderbookState()
+  const { showPriceInverted } = useOrderPlacementState()
+  const calculatedAuctionPrice = CalculatorClearingPrice.fromOrderbook(bids, asks[0], {
+    price: userOrderPrice,
+    volume: userOrderVolume,
+  })
+
+  const textAuctionCurrentPrice = showPriceInverted
+    ? `${abbreviation(calculatedAuctionPrice.priceReversed)} ${baseToken.symbol}`
+    : `${abbreviation(calculatedAuctionPrice.price)} ${quoteToken.symbol}`
 
   const { loading, mountPoint } = useChart({
     createChart: XYChart,
@@ -107,6 +121,7 @@ const OrderBookChart: React.FC<Props> = (props) => {
     baseToken,
     quoteToken,
     chainId,
+    textAuctionCurrentPrice,
   })
 
   return (

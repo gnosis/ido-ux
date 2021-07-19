@@ -169,6 +169,7 @@ interface DrawInformation {
   baseToken: Token
   quoteToken: Token
   chainId: ChainId
+  textAuctionCurrentPrice: string
 }
 
 const formatNumberForChartTooltip = (n: number) => {
@@ -180,7 +181,7 @@ const formatNumberForChartTooltip = (n: number) => {
 }
 
 export const drawInformation = (props: DrawInformation) => {
-  const { baseToken, chainId, chart, quoteToken } = props
+  const { baseToken, chainId, chart, quoteToken, textAuctionCurrentPrice } = props
   const baseTokenLabel = baseToken.symbol
   const quoteTokenLabel = getTokenDisplay(quoteToken, chainId)
   const market = quoteTokenLabel + '-' + baseTokenLabel
@@ -193,10 +194,17 @@ export const drawInformation = (props: DrawInformation) => {
 
   xAxis.title.text = priceTitle
   yAxis.title.text = volumeTitle
+  const renderCurrentPriceLegentText = (textToReplace: string) => {
+    return textToReplace.replace(/(?<=">)[^<\\/strong>]*/, textAuctionCurrentPrice)
+  }
 
   const {
-    values: [askPricesSeries, bidPricesSeries],
+    values: [askPricesSeries, bidPricesSeries, , priceSeries],
   } = chart.series
+
+  priceSeries.dummyData = {
+    description: renderCurrentPriceLegentText(priceSeries.dummyData.description),
+  }
 
   askPricesSeries.adapter.add('tooltipText', (text, target) => {
     const valueX = target?.tooltipDataItem?.values?.valueX?.value ?? 0
