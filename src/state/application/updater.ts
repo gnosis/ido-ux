@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useDispatch } from 'react-redux'
 
@@ -15,41 +15,68 @@ export default function Updater() {
   const dispatch = useDispatch()
 
   const windowVisible = useIsWindowVisible()
-  const [maxBlockNumber, setMaxBlockNumber] = useState<Maybe<number>>(null)
-  // because blocks arrive in bunches with longer polling periods, we just want
-  // to process the latest one.
-  const debouncedMaxBlockNumber = useDebounce<Maybe<number>>(maxBlockNumber, 100)
+  const [blockchainState, setBlockchainState] = useState<{
+    chainId: number | undefined
+    blockNumber: number | null
+  }>({
+    chainId,
+    blockNumber: null,
+  })
+
+  const blockNumberCallback = useCallback(
+    (blockNumber: number) => {
+      setBlockchainState((currentState) => {
+        if (chainId === currentState.chainId) {
+          if (typeof currentState.blockNumber !== 'number') return { chainId, blockNumber }
+          return { chainId, blockNumber: Math.max(blockNumber, currentState.blockNumber) }
+        }
+        return currentState
+      })
+    },
+    [chainId, setBlockchainState],
+  )
 
   // update block number
   useEffect(() => {
     if (!account || !library || !chainId) return
 
-    const blockListener = (blockNumber: number) => {
-      setMaxBlockNumber((maxBlockNumber) => {
-        if (typeof maxBlockNumber !== 'number') return blockNumber
-        return Math.max(maxBlockNumber, blockNumber)
-      })
-    }
-
-    setMaxBlockNumber(null)
+    setBlockchainState({ chainId, blockNumber: null })
 
     library
       .getBlockNumber()
-      .then((blockNumber) => dispatch(updateBlockNumber({ chainId, blockNumber })))
+      .then((blockNumber) => {
+        blockNumberCallback(blockNumber)
+      })
       .catch((error) => logger.error(`Failed to get block number for chainId ${chainId}`, error))
 
-    library.on('block', blockListener)
+    library.on('block', blockNumberCallback)
     return () => {
-      library.removeListener('block', blockListener)
+      library.removeListener('block', blockNumberCallback)
     }
-  }, [dispatch, account, chainId, library])
+  }, [dispatch, account, chainId, library, blockNumberCallback])
+
+  // because blocks arrive in bunches with longer polling periods, we just want
+  // to process the latest one.
+  const debouncedBlockchainState = useDebounce(blockchainState, 100)
 
   useEffect(() => {
-    if (!account || !chainId || !debouncedMaxBlockNumber) return
+    if (!account || !debouncedBlockchainState.chainId || !debouncedBlockchainState.blockNumber)
+      return
     if (windowVisible) {
-      dispatch(updateBlockNumber({ chainId, blockNumber: debouncedMaxBlockNumber }))
+      dispatch(
+        updateBlockNumber({
+          chainId: debouncedBlockchainState.chainId,
+          blockNumber: debouncedBlockchainState.blockNumber,
+        }),
+      )
     }
-  }, [chainId, account, debouncedMaxBlockNumber, windowVisible, dispatch])
+  }, [
+    account,
+    windowVisible,
+    dispatch,
+    debouncedBlockchainState.chainId,
+    debouncedBlockchainState.blockNumber,
+  ])
 
   return null
 }
