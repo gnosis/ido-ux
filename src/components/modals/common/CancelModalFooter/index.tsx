@@ -4,6 +4,8 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import * as CSS from 'csstype'
 
+import { useActiveWeb3React } from '../../../../hooks'
+import { getChainName } from '../../../../utils/tools'
 import { Button } from '../../../buttons/Button'
 import { AlertIcon } from '../../../icons/AlertIcon'
 import { ErrorLock } from '../../../icons/ErrorLock'
@@ -63,11 +65,14 @@ interface Props {
 
 const CancelModalFooter: React.FC<Props> = (props) => {
   const { confirmText, invertPrices, onCancelOrder, orderData, tokens } = props
+  const { chainId } = useActiveWeb3React()
+
   return (
     <>
       <Wrap margin={'0 0 15px 0'}>
         <Text fontSize="18px" margin={'0'}>
-          Min (max) DAI per GNO
+          {invertPrices ? 'Min ' : 'Max '}
+          {tokens.biddingToken.symbol} per {tokens.auctioningToken.symbol}
         </Text>
         <Wrap>
           <Text fontSize="18px" margin={'0'}>
@@ -85,7 +90,7 @@ const CancelModalFooter: React.FC<Props> = (props) => {
       </Wrap>
       <Wrap margin={'0 0 15px 0'}>
         <Text fontSize="18px" margin={'0'}>
-          DAI tokens sold
+          {tokens.biddingToken.symbol} tokens sold
         </Text>
         <Wrap>
           <Text fontSize="18px" margin={'0'}>
@@ -120,22 +125,31 @@ const CancelModalFooter: React.FC<Props> = (props) => {
           </FieldRowTokenStyled>
         </Wrap>
       </Wrap>
-      <Wrap>
-        <IconWrap>
-          <ErrorLock />
-        </IconWrap>
-        <Text fontSize="14px">
-          If you Cancel an order in xDAI, you will receive back WXDAI tokens in xDAI.
-        </Text>
-      </Wrap>
-      <Wrap>
-        <IconWrap>
-          <AlertIcon />
-        </IconWrap>
-        <Text fontSize="14px">
-          You will need to place a new order if you still want to participate in this auction.
-        </Text>
-      </Wrap>
+      {(tokens.biddingToken.symbol === 'ETH' && (chainId === 4 || chainId === 1)) ||
+      (chainId === 100 && tokens.biddingToken.symbol === 'DAI') ? (
+        <>
+          <Wrap>
+            <IconWrap>
+              <ErrorLock />
+            </IconWrap>
+            <Text fontSize="14px">
+              If you Cancel an order in {chainId === 1 || chainId === 4 ? 'xDAI' : 'ETH'}, you will
+              receive back {chainId === 1 || chainId === 4 ? 'WXDAI' : 'WETH'} tokens in
+              {getChainName(chainId)}.
+            </Text>
+          </Wrap>
+          <Wrap>
+            <IconWrap>
+              <AlertIcon />
+            </IconWrap>
+            <Text fontSize="14px">
+              You will need to place a new order if you still want to participate in this auction.
+            </Text>
+          </Wrap>
+        </>
+      ) : (
+        ''
+      )}
       <ActionButton onClick={onCancelOrder}>{confirmText}</ActionButton>
     </>
   )
