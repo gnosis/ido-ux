@@ -245,6 +245,7 @@ const PaginationDropdownButton = styled.div`
 const PaginationItem = styled.div`
   align-items: center;
   border-bottom: 1px solid ${(props) => props.theme.dropdown.item.borderColor};
+  color: ${(props) => props.theme.dropdown.item.color};
   cursor: pointer;
   display: flex;
   font-size: 14px;

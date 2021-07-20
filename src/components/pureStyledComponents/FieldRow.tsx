@@ -81,7 +81,6 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
   font-weight: 400;
   height: 22px;
   line-height: 1;
-  margin-left: auto;
   margin: 0 0 0 20px;
   min-width: 0;
   outline: none;
@@ -100,6 +99,11 @@ export const FieldRowInput = styled(NumericalInput)<{ hasError?: boolean }>`
 
   &[disabled] {
     opacity: 0.7;
+  }
+  &[readonly] {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 `
 

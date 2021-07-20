@@ -26,22 +26,18 @@ const Wrapper = styled.div`
 `
 
 const IconCSS = css`
-  height: 12px;
-  width: 12px;
+  height: 9px;
+  width: 9px;
   margin-right: 5px;
 
   .fill {
-    fill: rgba(255, 255, 255, 0.9);
+    fill: rgb(255, 255, 255);
+    opacity: 1;
   }
 `
 
 const BottomIconNetwork = styled(NetworkIcon)`
   ${IconCSS}
-`
-
-const SectionTitle = styled(PageTitle)`
-  font-size: 22px;
-  margin-bottom: 24px;
 `
 
 const Chevron = styled(ChevronRightBig)`
@@ -67,7 +63,7 @@ const StyledTable = styled.div`
 const StyledTHead = styled.div`
   display: none;
   width: 100%;
-  grid-template-columns: 2.8fr 0.9fr 0.8fr 1.1fr;
+  grid-template-columns: 2.75fr 1fr 0.8fr 1.1fr;
   grid-column-gap: 15px;
   @media (min-width: ${(props) => props.theme.themeBreakPoints.xl}) {
     display: grid;
@@ -118,7 +114,6 @@ const StyledTd = styled.div<Partial<CSS.Properties & StyledTdProps>>`
   font-size: 18px;
   padding: 7px 10px;
   span {
-    font-size: 16px;
     color: ${(props) => props.theme.dropdown.item.color};
     opacity: 0.5;
     font-weight: normal;
@@ -235,7 +230,7 @@ const StyledThCell = styled.div`
   flex-grow: 1;
   align-items: center;
   justify-content: space-between;
-  font-weight: bold;
+  color: ${(props) => props.theme.dropdown.item.color};
   font-size: 18px;
   padding: 7px 10px;
   &:nth-child(2) {
@@ -248,9 +243,8 @@ const StyledThCell = styled.div`
 `
 
 const SmallLbl = styled.div`
-  font-size: 11px;
+  font-size: 9px;
   color: ${(props) => props.theme.dropdown.item.color};
-  opacity: 0.5;
   font-weight: normal;
 `
 
@@ -281,7 +275,7 @@ const HighestVolumeAuctions: FC<HVAuctionsProps> = ({ highestVolumeAuctions }) =
 
   return (
     <Wrapper>
-      <SectionTitle style={{ display: 'block' }}>Highest Volume Auctions</SectionTitle>
+      <PageTitle style={{ display: 'block' }}>Highest Volume Auctions</PageTitle>
       {noAuctions ? (
         <EmptyContentWrapper>
           <InfoIcon />
