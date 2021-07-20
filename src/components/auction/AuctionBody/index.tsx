@@ -13,7 +13,6 @@ import OrdersTable from '../OrdersTable'
 const Grid = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 0 40px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     display: grid;
@@ -28,6 +27,7 @@ const GridCol = styled.div`
   flex-direction: column;
   max-width: 100%;
   justify-content: flex-end;
+  margin: 0 0 40px;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
     overflow-x: auto;
   }
