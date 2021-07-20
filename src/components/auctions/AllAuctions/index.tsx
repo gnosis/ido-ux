@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { Scrollbars } from 'react-custom-scrollbars'
+import * as CSS from 'csstype'
 import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
@@ -71,12 +71,15 @@ const RowHead = styled.div<CellRowProps>`
   }
 `
 
-const TableCell = styled(Cell)`
+interface CellProps {
+  fs?: string
+}
+const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   color: ${({ theme }) => theme.textField.color};
   display: flex;
   justify-content: center;
   flex-direction: column;
-  font-size: 16px;
+  font-size: ${(props) => props.fs || '16px'};
   &:last-child {
     position: absolute;
     right: 15px;
@@ -290,7 +293,7 @@ const PaginationItem = styled.div`
   }
 `
 
-const TBody = styled(Scrollbars)`
+const TBody = styled.div`
   min-height: 266px;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     > div:first-child {
@@ -580,7 +583,11 @@ const AllAuctions = (props: Props) => {
               {prepareRow(page[0])}
               {page[0].cells.map(
                 (cell, i) =>
-                  cell.render('show') && <TableCell key={i}>{cell.render('Header')}</TableCell>,
+                  cell.render('show') && (
+                    <TableCell fs="14px" key={i}>
+                      {cell.render('Header')}
+                    </TableCell>
+                  ),
               )}
             </RowHead>
             <TBody>

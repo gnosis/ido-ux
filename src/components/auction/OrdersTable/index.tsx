@@ -111,7 +111,7 @@ const StyledCell = styled.div`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.dropdown.item.color};
-  font-size: 18px;
+  font-size: 14px;
   > *:first-child {
     padding-right: 6px;
   }
