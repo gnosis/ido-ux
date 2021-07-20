@@ -154,6 +154,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Legend
   chart.legend = new am4charts.Legend()
+  chart.legend.position = 'top'
+  chart.legend.marginTop = -20
+  chart.legend.marginBottom = 30
   chart.legend.labels.template.fill = am4core.color(colors.white)
   chart.legend.itemContainers.template.tooltipHTML =
     '<div>{dataContext.dummyData.description}</div>'
