@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Token } from 'uniswap-xdai-sdk'
 
@@ -60,6 +60,8 @@ const PriceInputPanel = (props: Props) => {
     value,
     ...restProps
   } = props
+
+  const [readonly, setReadonly] = useState(true)
   const error = info?.type === InfoType.error
 
   const { auctioningTokenDisplay, biddingTokenDisplay } = useMemo(() => {
@@ -128,9 +130,12 @@ const PriceInputPanel = (props: Props) => {
           )}
           <FieldRowInput
             hasError={error}
+            onBlur={() => setReadonly(true)}
+            onFocus={() => setReadonly(false)}
             onUserSellAmountInput={(val) => {
               onUserPriceInput(val, invertPrices)
             }}
+            readOnly={readonly}
             value={value}
           />
         </FieldRowBottom>

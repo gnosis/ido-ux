@@ -18,6 +18,7 @@ const Wrapper = styled(BaseCard)`
   display: flex;
   justify-content: center;
   max-width: 100%;
+  height: 100%;
   min-height: 352px;
   min-width: 100%;
 `

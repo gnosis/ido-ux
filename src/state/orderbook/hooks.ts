@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '..'
 import { additionalServiceApi } from '../../api'
 import { OrderBookData, PricePoint } from '../../api/AdditionalServicesApi'
+import { CalculatorClearingPrice } from '../../components/auction/OrderbookWidget'
 import { getLogger } from '../../utils/logger'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
 import {
@@ -23,6 +24,11 @@ export function useOrderbookState(): AppState['orderbook'] {
   return useSelector<AppState, AppState['orderbook']>((state) => state.orderbook)
 }
 
+export interface CalculatedAuctionPrice {
+  price: number
+  priceReversed: number
+}
+
 export function useOrderbookActionHandlers(): {
   onNewBid: (order: PricePoint) => void
   onRemoveBid: (order: PricePoint) => void
@@ -33,6 +39,7 @@ export function useOrderbookActionHandlers(): {
     auctionId: number,
     chainId: number,
     orderbook: OrderBookData,
+    calculatedAuctionPrice: CalculatedAuctionPrice,
     error: Maybe<Error>,
   ) => void
 } {
@@ -67,8 +74,14 @@ export function useOrderbookActionHandlers(): {
     [dispatch],
   )
   const onResetOrderbookData = useCallback(
-    (auctionId: number, chainId: number, orderbook: OrderBookData, error: Maybe<Error>) => {
-      dispatch(resetOrderbookData({ auctionId, chainId, orderbook, error }))
+    (
+      auctionId: number,
+      chainId: number,
+      orderbook: OrderBookData,
+      calculatedAuctionPrice: CalculatedAuctionPrice,
+      error: Maybe<Error>,
+    ) => {
+      dispatch(resetOrderbookData({ auctionId, chainId, orderbook, calculatedAuctionPrice, error }))
     },
     [dispatch],
   )
@@ -96,11 +109,21 @@ export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
         networkId: chainId,
         auctionId,
       })
+      const calcultatedAuctionPrice: CalculatedAuctionPrice = CalculatorClearingPrice.fromOrderbook(
+        rawData.bids,
+        rawData.asks[0],
+      )
 
-      onResetOrderbookData(auctionId, chainId, rawData, null)
+      onResetOrderbookData(auctionId, chainId, rawData, calcultatedAuctionPrice, null)
     } catch (error) {
       logger.error('Error populating orderbook with data', error)
-      onResetOrderbookData(auctionId, chainId, { bids: [], asks: [] }, null)
+      onResetOrderbookData(
+        auctionId,
+        chainId,
+        { bids: [], asks: [] },
+        { price: 0, priceReversed: 0 },
+        null,
+      )
     }
   }, [chainId, auctionId, onResetOrderbookData])
 
@@ -138,13 +161,18 @@ export const useGranularityOptions = (bids: PricePoint[]) => {
   useEffect(() => {
     if (bids?.length > 1) {
       const sortedBids = [...bids].sort((a, b) => b.price - a.price)
-      const current = (sortedBids[0].price - sortedBids[sortedBids.length - 1].price) / 10
+      const len = sortedBids.length
+      const mid = Math.ceil(len / 2)
+      const medianDivTen =
+        len % 2 == 0
+          ? (sortedBids[mid].price + sortedBids[mid - 1].price) / 20
+          : sortedBids[mid - 1].price / 10
       const digits =
-        current > 1
-          ? Math.floor(Math.log10(Math.trunc(current)) + 1)
-          : Math.floor(Math.log10(current))
+        medianDivTen > 1
+          ? Math.floor(Math.log10(Math.trunc(medianDivTen)) + 1)
+          : Math.floor(Math.log10(medianDivTen))
       const granularityOptions = buildGranularityOptions(digits)
-      const closest = getClosestNumber(granularityOptions, current)
+      const closest = getClosestNumber(granularityOptions, medianDivTen)
       setGranularity(closest)
       setGranularityOptions(granularityOptions)
     }

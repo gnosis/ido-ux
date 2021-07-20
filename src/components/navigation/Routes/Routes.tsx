@@ -57,8 +57,8 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
         effect="solid"
         textColor="#fff"
       />
-      {showTopWarning && <TopDisclaimer />}
       <MainScroll>
+        {showTopWarning && <TopDisclaimer />}
         <span id="topAnchor" />
         <Inner>
           <Web3ReactManager>
@@ -96,6 +96,7 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
                 path="/docs/Private-Auctions-And-KYC-solutions"
                 strict
               />
+              <Route component={Documentation} exact path="/docs/media-kit" strict />
               <Route component={Documentation} exact path="/docs/faq" strict />
               <Route exact path="/">
                 <Redirect to="/start" />

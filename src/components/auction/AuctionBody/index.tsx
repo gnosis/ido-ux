@@ -11,12 +11,13 @@ import { OrderBookContainer } from '../OrderbookContainer'
 import OrdersTable from '../OrdersTable'
 
 const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 20px;
+  display: flex;
+  flex-direction: column;
   margin: 0 0 40px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xxl}) {
+    display: grid;
+    row-gap: 20px;
     column-gap: 18px;
     grid-template-columns: 1fr 1fr;
   }
@@ -66,7 +67,9 @@ const AuctionBody = (props: AuctionBodyProps) => {
         <Grid>
           <GridCol>
             <Wrap>
-              <SectionTitle as="h2">Place Order</SectionTitle>
+              <SectionTitle as="h2">
+                {auctionState === AuctionState.CLAIMING ? 'Claiming Proceeds' : 'Place Order'}
+              </SectionTitle>
             </Wrap>
             {(auctionState === AuctionState.ORDER_PLACING ||
               auctionState === AuctionState.ORDER_PLACING_AND_CANCELING) && (
@@ -75,7 +78,8 @@ const AuctionBody = (props: AuctionBodyProps) => {
                 derivedAuctionInfo={derivedAuctionInfo}
               />
             )}
-            {auctionState === AuctionState.CLAIMING && (
+            {(auctionState === AuctionState.CLAIMING ||
+              auctionState === AuctionState.PRICE_SUBMISSION) && (
               <Claimer
                 auctionIdentifier={auctionIdentifier}
                 derivedAuctionInfo={derivedAuctionInfo}

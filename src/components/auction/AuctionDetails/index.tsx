@@ -6,16 +6,14 @@ import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
-import { useClearingPriceInfo } from '../../../hooks/useCurrentClearingOrderAndVolumeCallback'
 import {
   AuctionState,
   DerivedAuctionInfo,
-  orderToPrice,
-  orderToSellOrder,
   useOrderPlacementState,
   useSwapActionHandlers,
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getExplorerLink, getTokenDisplay } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { showChartsInverted } from '../../../utils/prices'
@@ -256,6 +254,10 @@ const AuctionDetails = (props: Props) => {
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
 
   const { showPriceInverted } = useOrderPlacementState()
+  const {
+    orderbookPrice: auctionCurrentPrice,
+    orderbookPriceReversed: auctionPriceReversed,
+  } = useOrderbookState()
   const { onInvertPrices } = useSwapActionHandlers()
 
   // Start with inverted prices, if orderbook is also show inverted,
@@ -274,7 +276,6 @@ const AuctionDetails = (props: Props) => {
     [chainId, derivedAuctionInfo?.biddingToken],
   )
 
-  const { clearingPriceInfo } = useClearingPriceInfo(auctionIdentifier)
   const biddingTokenDisplay = useMemo(
     () => getTokenDisplay(derivedAuctionInfo?.biddingToken, chainId),
     [derivedAuctionInfo?.biddingToken, chainId],
@@ -284,16 +285,7 @@ const AuctionDetails = (props: Props) => {
     [derivedAuctionInfo?.auctioningToken, chainId],
   )
   const clearingPriceDisplay = useMemo(() => {
-    const clearingPriceInfoAsSellOrder =
-      clearingPriceInfo &&
-      orderToSellOrder(
-        clearingPriceInfo.clearingOrder,
-        derivedAuctionInfo?.biddingToken,
-        derivedAuctionInfo?.auctioningToken,
-      )
-    const clearingPriceNumber = showPriceInverted
-      ? orderToPrice(clearingPriceInfoAsSellOrder)?.invert().toSignificant(5)
-      : orderToPrice(clearingPriceInfoAsSellOrder)?.toSignificant(5)
+    const clearingPriceNumber = showPriceInverted ? auctionPriceReversed : auctionCurrentPrice
 
     const priceSymbolStrings = showPriceInverted
       ? `${getTokenDisplay(derivedAuctionInfo?.auctioningToken, chainId)} per
@@ -311,10 +303,11 @@ const AuctionDetails = (props: Props) => {
       '-'
     )
   }, [
-    derivedAuctionInfo?.auctioningToken,
     showPriceInverted,
+    auctionPriceReversed,
+    auctionCurrentPrice,
+    derivedAuctionInfo?.auctioningToken,
     derivedAuctionInfo?.biddingToken,
-    clearingPriceInfo,
     chainId,
   ])
 
@@ -342,9 +335,10 @@ const AuctionDetails = (props: Props) => {
     () =>
       derivedAuctionInfo &&
       auctionDetails &&
-      new Fraction(Number(auctionDetails.currentBiddingAmount).toString(), '1').divide(
-        derivedAuctionInfo.clearingPrice,
-      ),
+      new Fraction(
+        auctionDetails.currentBiddingAmount,
+        BigNumber.from('10').pow(auctionDetails.decimalsBiddingToken).toString(),
+      ).divide(derivedAuctionInfo.clearingPrice),
     [auctionDetails, derivedAuctionInfo],
   )
   const extraDetails: Array<ExtraDetailsItemProps> = React.useMemo(
@@ -366,14 +360,11 @@ const AuctionDetails = (props: Props) => {
             ? auctionDetails.minFundingThreshold === '0x0'
               ? '-'
               : new Fraction(
-                  BigNumber.from(10)
-                    .pow(derivedAuctionInfo?.biddingToken.decimals + 2)
-                    .mul(BigNumber.from(auctionDetails.currentBiddingAmount))
-                    .toString(),
+                  BigNumber.from(auctionDetails.currentBiddingAmount).mul(100).toString(),
                   BigNumber.from(auctionDetails.minFundingThreshold).toString(),
                 )
                   .toSignificant(2)
-                  .concat(' %')
+                  .concat('%')
             : '-',
         title: 'Minimum funding',
         tooltip: 'Auction will not be executed, unless this minimum funding threshold is met',
