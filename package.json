@@ -160,5 +160,8 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "jest": {
+    "transformIgnorePatterns": ["/node_modules/(?!@amcharts)"]
   }
 }

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '..'
 import { additionalServiceApi } from '../../api'
 import { OrderBookData, PricePoint } from '../../api/AdditionalServicesApi'
+import { CalculatorClearingPrice } from '../../components/auction/OrderbookWidget'
 import { getLogger } from '../../utils/logger'
 import { AuctionIdentifier } from '../orderPlacement/reducer'
 import {
@@ -23,6 +24,11 @@ export function useOrderbookState(): AppState['orderbook'] {
   return useSelector<AppState, AppState['orderbook']>((state) => state.orderbook)
 }
 
+export interface CalculatedAuctionPrice {
+  price: number
+  priceReversed: number
+}
+
 export function useOrderbookActionHandlers(): {
   onNewBid: (order: PricePoint) => void
   onRemoveBid: (order: PricePoint) => void
@@ -33,6 +39,7 @@ export function useOrderbookActionHandlers(): {
     auctionId: number,
     chainId: number,
     orderbook: OrderBookData,
+    calculatedAuctionPrice: CalculatedAuctionPrice,
     error: Maybe<Error>,
   ) => void
 } {
@@ -67,8 +74,14 @@ export function useOrderbookActionHandlers(): {
     [dispatch],
   )
   const onResetOrderbookData = useCallback(
-    (auctionId: number, chainId: number, orderbook: OrderBookData, error: Maybe<Error>) => {
-      dispatch(resetOrderbookData({ auctionId, chainId, orderbook, error }))
+    (
+      auctionId: number,
+      chainId: number,
+      orderbook: OrderBookData,
+      calculatedAuctionPrice: CalculatedAuctionPrice,
+      error: Maybe<Error>,
+    ) => {
+      dispatch(resetOrderbookData({ auctionId, chainId, orderbook, calculatedAuctionPrice, error }))
     },
     [dispatch],
   )
@@ -96,11 +109,21 @@ export function useOrderbookDataCallback(auctionIdentifer: AuctionIdentifier) {
         networkId: chainId,
         auctionId,
       })
+      const calcultatedAuctionPrice: CalculatedAuctionPrice = CalculatorClearingPrice.fromOrderbook(
+        rawData.bids,
+        rawData.asks[0],
+      )
 
-      onResetOrderbookData(auctionId, chainId, rawData, null)
+      onResetOrderbookData(auctionId, chainId, rawData, calcultatedAuctionPrice, null)
     } catch (error) {
       logger.error('Error populating orderbook with data', error)
-      onResetOrderbookData(auctionId, chainId, { bids: [], asks: [] }, null)
+      onResetOrderbookData(
+        auctionId,
+        chainId,
+        { bids: [], asks: [] },
+        { price: 0, priceReversed: 0 },
+        null,
+      )
     }
   }, [chainId, auctionId, onResetOrderbookData])
 
