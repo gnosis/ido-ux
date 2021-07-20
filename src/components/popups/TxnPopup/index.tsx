@@ -45,7 +45,7 @@ export default function TxnPopup({
 
   useInterval(
     () => {
-      count > 150000000000000 ? removeThisPopup() : setCount(count + 1)
+      count > 150000000000000000 ? removeThisPopup() : setCount(count + 1)
     },
     isRunning ? delay : null,
   )

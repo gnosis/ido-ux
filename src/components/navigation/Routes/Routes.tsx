@@ -45,19 +45,19 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
   return (
     <MainWrapper>
       <Header />
-      <Popups />
-      <ReactTooltip
-        arrowColor="#001429"
-        backgroundColor="#001429"
-        border
-        borderColor="#174172"
-        className="customTooltip"
-        delayHide={250}
-        delayShow={50}
-        effect="solid"
-        textColor="#fff"
-      />
       <MainScroll>
+        <Popups />
+        <ReactTooltip
+          arrowColor="#001429"
+          backgroundColor="#001429"
+          border
+          borderColor="#174172"
+          className="customTooltip"
+          delayHide={250}
+          delayShow={50}
+          effect="solid"
+          textColor="#fff"
+        />
         {showTopWarning && <TopDisclaimer />}
         <span id="topAnchor" />
         <Inner>

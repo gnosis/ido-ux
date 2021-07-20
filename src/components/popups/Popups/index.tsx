@@ -30,13 +30,13 @@ const MobilePopupWrapper = styled.div<{ height: string | number }>`
   margin: ${({ height }) => (height ? '0 auto' : '0')};
   margin-bottom: ${({ height }) => (height ? '20px' : '0')};
   max-width: 100%;
-  position: relative;
+  position: fixed;
   z-index: 50;
 `
 
 const MobilePopupInner = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: 99%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -65,6 +65,7 @@ const Popup = styled.div`
   align-items: center;
   overflow: hidden;
   padding: 20px;
+  margin: 5px 0;
   position: relative;
   width: 100%;
   z-index: 2;
