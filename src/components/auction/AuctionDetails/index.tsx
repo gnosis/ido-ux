@@ -431,7 +431,7 @@ const AuctionDetails = (props: Props) => {
         tooltip: 'Address of the contract managing the allow-list for participation',
         url: `https://etherscan.io/address/${auctionDetails?.allowListManager}`,
         value: `${
-          auctionDetails && auctionDetails.allowListManager == ''
+          auctionDetails && auctionDetails.allowListManager !== ''
             ? auctionDetails.allowListManager.substr(0, 6).concat('...')
             : 'None'
         }`,
@@ -441,7 +441,7 @@ const AuctionDetails = (props: Props) => {
         tooltip: 'Signer Address',
         url: `https://etherscan.io/address/${auctionDetails?.allowListSigner}`,
         value: `${
-          auctionDetails && auctionDetails.allowListSigner == ''
+          auctionDetails && auctionDetails.allowListSigner !== ''
             ? auctionDetails.allowListSigner.substr(0, 6).concat('...')
             : 'None'
         }`,
