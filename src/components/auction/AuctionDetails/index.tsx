@@ -330,6 +330,7 @@ const AuctionDetails = (props: Props) => {
   const toggleExtraDetails = () => {
     setShowMoreDetails(!showMoreDetails)
   }
+  const zeroAddress = '0x0000000000000000000000000000000000000000'
 
   const tokenSold = useMemo(
     () =>
@@ -431,8 +432,11 @@ const AuctionDetails = (props: Props) => {
         tooltip: 'Address of the contract managing the allow-list for participation',
         url: `https://etherscan.io/address/${auctionDetails?.allowListManager}`,
         value: `${
-          auctionDetails && auctionDetails.allowListManager !== ''
-            ? auctionDetails.allowListManager.substr(0, 6).concat('...')
+          auctionDetails && auctionDetails.allowListManager !== zeroAddress
+            ? auctionDetails.allowListManager
+                .substr(0, 6)
+                .concat('...')
+                .concat(auctionDetails.allowListManager.substr(-6))
             : 'None'
         }`,
       },
@@ -441,8 +445,11 @@ const AuctionDetails = (props: Props) => {
         tooltip: 'Signer Address',
         url: `https://etherscan.io/address/${auctionDetails?.allowListSigner}`,
         value: `${
-          auctionDetails && auctionDetails.allowListSigner !== ''
-            ? auctionDetails.allowListSigner.substr(0, 6).concat('...')
+          auctionDetails && auctionDetails.allowListSigner !== zeroAddress
+            ? auctionDetails.allowListSigner
+                .substr(0, 6)
+                .concat('...')
+                .concat(auctionDetails.allowListManager.substr(-6))
             : 'None'
         }`,
       },
