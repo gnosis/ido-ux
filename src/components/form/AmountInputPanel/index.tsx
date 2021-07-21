@@ -78,6 +78,12 @@ const Balance = styled.div<{ disabled?: boolean }>`
   ${(props) => props.disabled && 'opacity: 0.7;'}
 `
 
+const Wrap = styled.div`
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+`
+
 Balance.defaultProps = {
   disabled: false,
 }
@@ -138,7 +144,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
           </FieldRowLineButton>
         </FieldRowTop>
         <FieldRowBottom>
-          <div>
+          <Wrap>
             {token && (
               <FieldRowToken>
                 {token.address && (
@@ -197,7 +203,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
                 <FieldRowPrimaryButtonText>Unwrap</FieldRowPrimaryButtonText>
               </FieldRowPrimaryButton>
             )}
-          </div>
+          </Wrap>
           <FieldRowInput
             disabled={!account}
             hasError={error}
