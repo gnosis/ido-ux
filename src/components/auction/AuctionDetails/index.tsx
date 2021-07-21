@@ -14,7 +14,7 @@ import {
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
-import { getExplorerLink, getTokenDisplay } from '../../../utils'
+import { getExplorerLink, getTokenDisplay, shortenAddress } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { showChartsInverted } from '../../../utils/prices'
 import { KeyValue } from '../../common/KeyValue'
@@ -430,26 +430,20 @@ const AuctionDetails = (props: Props) => {
       {
         title: 'Allow List Contract',
         tooltip: 'Address of the contract managing the allow-list for participation',
-        url: `https://etherscan.io/address/${auctionDetails?.allowListManager}`,
+        url: getExplorerLink(chainId, auctionDetails?.allowListManager, 'address'),
         value: `${
           auctionDetails && auctionDetails.allowListManager !== zeroAddress
-            ? auctionDetails.allowListManager
-                .substr(0, 6)
-                .concat('...')
-                .concat(auctionDetails.allowListManager.substr(-6))
+            ? shortenAddress(auctionDetails.allowListManager)
             : 'None'
         }`,
       },
       {
         title: 'Signer Address',
         tooltip: 'Signer Address',
-        url: `https://etherscan.io/address/${auctionDetails?.allowListSigner}`,
+        url: getExplorerLink(chainId, auctionDetails?.allowListSigner, 'address'),
         value: `${
           auctionDetails && auctionDetails.allowListSigner !== zeroAddress
-            ? auctionDetails.allowListSigner
-                .substr(0, 6)
-                .concat('...')
-                .concat(auctionDetails.allowListManager.substr(-6))
+            ? shortenAddress(auctionDetails.allowListSigner)
             : 'None'
         }`,
       },
