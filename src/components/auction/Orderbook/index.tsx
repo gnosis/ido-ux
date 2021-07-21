@@ -21,6 +21,7 @@ const Wrapper = styled(BaseCard)`
   height: 100%;
   min-height: 352px;
   min-width: 100%;
+  padding-bottom: 0;
 `
 interface OrderbookProps {
   derivedAuctionInfo: DerivedAuctionInfo

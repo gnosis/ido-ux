@@ -34,7 +34,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   chart.paddingTop = 20
   chart.marginTop = 20
-  chart.paddingBottom = 0
+  chart.paddingBottom = 20
   chart.paddingLeft = 0
   chart.paddingRight = 0
   chart.marginBottom = 0
@@ -154,9 +154,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Legend
   chart.legend = new am4charts.Legend()
-  chart.legend.position = 'top'
-  chart.legend.marginTop = -20
-  chart.legend.marginBottom = 30
+  chart.legend.position = 'bottom'
+  chart.legend.marginBottom = 15
+  chart.legend.marginTop = 10
   chart.legend.labels.template.fill = am4core.color(colors.white)
   chart.legend.itemContainers.template.tooltipHTML =
     '<div>{dataContext.dummyData.description}</div>'
