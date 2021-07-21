@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
@@ -467,6 +467,8 @@ const AllAuctions = (props: Props) => {
     usePagination,
   )
 
+  const sectionHead = useRef(null)
+
   const updateFilter = (column?: string | undefined, value?: string | undefined) => {
     setAllFilters([])
     if (column && value) {
@@ -522,8 +524,18 @@ const AllAuctions = (props: Props) => {
   const noAuctionsFound = page.length === 0
   const noData = noAuctions || noAuctionsFound
 
+  function handleNextPage() {
+    nextPage()
+    sectionHead.current.scrollIntoView()
+  }
+
+  function handlePrevPage() {
+    previousPage()
+    sectionHead.current.scrollIntoView()
+  }
+
   return (
-    <Wrapper {...restProps}>
+    <Wrapper ref={sectionHead} {...restProps}>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
       <TableControls>
         <SearchWrapper>
@@ -642,10 +654,10 @@ const AllAuctions = (props: Props) => {
                     : (pageIndex + 1) * pageSize}{' '}
                   of {rows.length} auctions
                 </PaginationText>{' '}
-                <PaginationButton disabled={!canPreviousPage} onClick={() => previousPage()}>
+                <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
                   <ChevronLeft />
                 </PaginationButton>
-                <PaginationButton disabled={!canNextPage} onClick={() => nextPage()}>
+                <PaginationButton disabled={!canNextPage} onClick={() => handleNextPage()}>
                   <ChevronRight />
                 </PaginationButton>
               </PaginationBlock>
