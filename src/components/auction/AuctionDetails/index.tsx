@@ -14,7 +14,7 @@ import {
 } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderbookState } from '../../../state/orderbook/hooks'
-import { getExplorerLink, getTokenDisplay } from '../../../utils'
+import { getExplorerLink, getTokenDisplay, shortenAddress } from '../../../utils'
 import { abbreviation } from '../../../utils/numeral'
 import { showChartsInverted } from '../../../utils/prices'
 import { KeyValue } from '../../common/KeyValue'
@@ -330,6 +330,7 @@ const AuctionDetails = (props: Props) => {
   const toggleExtraDetails = () => {
     setShowMoreDetails(!showMoreDetails)
   }
+  const zeroAddress = '0x0000000000000000000000000000000000000000'
 
   const tokenSold = useMemo(
     () =>
@@ -429,20 +430,20 @@ const AuctionDetails = (props: Props) => {
       {
         title: 'Allow List Contract',
         tooltip: 'Address of the contract managing the allow-list for participation',
-        url: `https://etherscan.io/address/${auctionDetails?.allowListManager}`,
+        url: getExplorerLink(chainId, auctionDetails?.allowListManager, 'address'),
         value: `${
-          auctionDetails && auctionDetails.allowListManager == ''
-            ? auctionDetails.allowListManager.substr(0, 6).concat('...')
+          auctionDetails && auctionDetails.allowListManager !== zeroAddress
+            ? shortenAddress(auctionDetails.allowListManager)
             : 'None'
         }`,
       },
       {
         title: 'Signer Address',
         tooltip: 'Signer Address',
-        url: `https://etherscan.io/address/${auctionDetails?.allowListSigner}`,
+        url: getExplorerLink(chainId, auctionDetails?.allowListSigner, 'address'),
         value: `${
-          auctionDetails && auctionDetails.allowListSigner == ''
-            ? auctionDetails.allowListSigner.substr(0, 6).concat('...')
+          auctionDetails && auctionDetails.allowListSigner !== zeroAddress
+            ? shortenAddress(auctionDetails.allowListSigner)
             : 'None'
         }`,
       },
