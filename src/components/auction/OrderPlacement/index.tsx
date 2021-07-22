@@ -49,6 +49,8 @@ const LinkCSS = css`
   color: ${({ theme }) => theme.text1};
   text-decoration: none;
   transition: color 0.05s linear;
+  font-size: 1.5em;
+  font-weight: bold;
 
   &:hover {
     color: ${({ theme }) => theme.primary2};
@@ -347,28 +349,27 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     <>
       <Wrapper>
         {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
-        {!auctionInfoLoading && isPrivate && !signatureAvailable && account == null && (
-          <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
-        )}
-        {!auctionInfoLoading && isPrivate && !signatureAvailable && account != null && (
-          <PrivateWrapper>
-            <LockBig />
-            <TextBig>Private auction</TextBig>
-            <EmptyContentTextNoMargin>
-              You need to get allowed to participate.
-            </EmptyContentTextNoMargin>
-            <EmptyContentTextSmall>
-              {linkForKYC ? (
-                <ExternalLink href={linkForKYC}>
-                  <h2>Get Allowed ↗</h2>
-                </ExternalLink>
-              ) : (
-                <EmptyContentTextSmall>
-                  Ask the auctioneer to get allow-listed.
-                </EmptyContentTextSmall>
-              )}{' '}
-            </EmptyContentTextSmall>
-          </PrivateWrapper>
+        {!auctionInfoLoading && isPrivate && !signatureAvailable && (
+          <>
+            <PrivateWrapper>
+              <LockBig />
+              <TextBig>Private auction</TextBig>
+              <EmptyContentTextNoMargin>
+                You need to get allowed to participate.
+              </EmptyContentTextNoMargin>
+            </PrivateWrapper>
+            {account == null ? (
+              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+            ) : (
+              <EmptyContentTextSmall>
+                {linkForKYC ? (
+                  <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>
+                ) : (
+                  <>Ask the auctioneer to get allow-listed.</>
+                )}{' '}
+              </EmptyContentTextSmall>
+            )}
+          </>
         )}
         {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
           <>
