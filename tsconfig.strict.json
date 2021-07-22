@@ -3,7 +3,6 @@
   "compilerOptions": {
     "strict": true,
     "noImplicitAny": true,
-    "resolveJsonModule": true,
     "alwaysStrict": true,
     "strictNullChecks": true,
     "noImplicitReturns": true,
