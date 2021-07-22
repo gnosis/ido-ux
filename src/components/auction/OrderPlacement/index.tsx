@@ -354,9 +354,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
             <PrivateWrapper>
               <LockBig />
               <TextBig>Private auction</TextBig>
-              <EmptyContentTextNoMargin>
-                You need to get allowed to participate.
-              </EmptyContentTextNoMargin>
+              {account !== null && (
+                <EmptyContentTextNoMargin>
+                  You need to get allowed to participate.
+                </EmptyContentTextNoMargin>
+              )}
             </PrivateWrapper>
             {account == null ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
