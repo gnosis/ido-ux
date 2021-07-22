@@ -34,9 +34,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   chart.paddingTop = 20
   chart.marginTop = 20
-  chart.paddingBottom = 20
-  chart.paddingLeft = 0
-  chart.paddingRight = 0
+  chart.paddingBottom = 0
+  chart.paddingLeft = 30
+  chart.paddingRight = 30
   chart.marginBottom = 0
 
   // Colors
@@ -91,7 +91,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const askSeries = chart.series.push(new am4charts.LineSeries())
   askSeries.dataFields.valueX = 'priceNumber'
   askSeries.dataFields.valueY = 'askValueY'
-  askSeries.name = 'Sell Suply'
+  askSeries.name = 'Supply'
   askSeries.strokeWidth = 1
   askSeries.stroke = am4core.color(colors.red)
   askSeries.fill = askSeries.stroke
@@ -105,7 +105,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const inputSeries = chart.series.push(new am4charts.LineSeries())
   inputSeries.dataFields.valueX = 'priceNumber'
   inputSeries.dataFields.valueY = 'newOrderValueY'
-  inputSeries.name = 'New orders'
+  inputSeries.name = 'New bid'
   inputSeries.strokeWidth = 1
   inputSeries.stroke = am4core.color(colors.orange)
   inputSeries.fill = inputSeries.stroke
@@ -122,7 +122,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   const priceSeries = chart.series.push(new am4charts.LineSeries())
   priceSeries.dataFields.valueX = 'priceNumber'
   priceSeries.dataFields.valueY = 'clearingPriceValueY'
-  priceSeries.name = 'Current price'
+  priceSeries.name = 'Price'
   priceSeries.strokeWidth = 2
   priceSeries.strokeDasharray = '3,3'
   priceSeries.stroke = am4core.color(colors.white)
@@ -154,9 +154,6 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
 
   // Legend
   chart.legend = new am4charts.Legend()
-  chart.legend.position = 'bottom'
-  chart.legend.marginBottom = 15
-  chart.legend.marginTop = 10
   chart.legend.labels.template.fill = am4core.color(colors.white)
   chart.legend.itemContainers.template.tooltipHTML =
     '<div>{dataContext.dummyData.description}</div>'
