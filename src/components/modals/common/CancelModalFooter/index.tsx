@@ -66,7 +66,7 @@ interface Props {
 const CancelModalFooter: React.FC<Props> = (props) => {
   const { confirmText, invertPrices, onCancelOrder, orderData, tokens } = props
   const { chainId } = useActiveWeb3React()
-
+  console.log(tokens.biddingToken)
   return (
     <>
       <Wrap margin={'0 0 15px 0'}>
@@ -125,31 +125,28 @@ const CancelModalFooter: React.FC<Props> = (props) => {
           </FieldRowTokenStyled>
         </Wrap>
       </Wrap>
-      {(tokens.biddingToken.symbol === 'ETH' && (chainId === 4 || chainId === 1)) ||
-      (chainId === 100 && tokens.biddingToken.symbol === 'DAI') ? (
-        <>
-          <Wrap>
-            <IconWrap>
-              <ErrorLock />
-            </IconWrap>
-            <Text fontSize="14px">
-              If you Cancel an order in {chainId === 1 || chainId === 4 ? 'xDAI' : 'ETH'}, you will
-              receive back {chainId === 1 || chainId === 4 ? 'WXDAI' : 'WETH'} tokens in
-              {getChainName(chainId)}.
-            </Text>
-          </Wrap>
-          <Wrap>
-            <IconWrap>
-              <AlertIcon />
-            </IconWrap>
-            <Text fontSize="14px">
-              You will need to place a new order if you still want to participate in this auction.
-            </Text>
-          </Wrap>
-        </>
+      {chainId === 4 || chainId === 1 || chainId === 100 ? (
+        <Wrap>
+          <IconWrap>
+            <ErrorLock />
+          </IconWrap>
+          <Text fontSize="14px">
+            If you Cancel an order in {tokens.biddingToken.symbol}, you will receive back
+            {chainId === 1 || chainId === 4 ? 'WXDAI' : 'WETH'} tokens in
+            {getChainName(chainId)}.
+          </Text>
+        </Wrap>
       ) : (
         ''
       )}
+      <Wrap>
+        <IconWrap>
+          <AlertIcon />
+        </IconWrap>
+        <Text fontSize="14px">
+          You will need to place a new order if you still want to participate in this auction.
+        </Text>
+      </Wrap>
       <ActionButton onClick={onCancelOrder}>{confirmText}</ActionButton>
     </>
   )
