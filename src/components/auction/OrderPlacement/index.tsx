@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
+import kycLinks from '../../../assets/links/kycLinks.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
@@ -43,6 +44,22 @@ import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
 import { InfoType } from '../../pureStyledComponents/FieldRow'
+
+const LinkCSS = css`
+  color: ${({ theme }) => theme.text1};
+  text-decoration: none;
+  transition: color 0.05s linear;
+  font-size: 1.5em;
+  font-weight: bold;
+
+  &:hover {
+    color: ${({ theme }) => theme.primary2};
+  }
+`
+
+const ExternalLink = styled.a`
+  ${LinkCSS}
+`
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
@@ -326,19 +343,35 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     !!account &&
     !!biddingToken.address
 
+  const auctioningTokenAddress = auctioningToken && auctioningToken?.address
+  const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
   return (
     <>
       <Wrapper>
         {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
         {!auctionInfoLoading && isPrivate && !signatureAvailable && (
-          <PrivateWrapper>
-            <LockBig />
-            <TextBig>Private auction</TextBig>
-            <EmptyContentTextNoMargin>
-              You are not allowed to place an order.
-            </EmptyContentTextNoMargin>
-            <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
-          </PrivateWrapper>
+          <>
+            <PrivateWrapper>
+              <LockBig />
+              <TextBig>Private auction</TextBig>
+              {account !== null && (
+                <EmptyContentTextNoMargin>
+                  You need to get allowed to participate.
+                </EmptyContentTextNoMargin>
+              )}
+            </PrivateWrapper>
+            {account == null ? (
+              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+            ) : (
+              <EmptyContentTextSmall>
+                {linkForKYC ? (
+                  <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>
+                ) : (
+                  <>Ask the auctioneer to get allow-listed.</>
+                )}{' '}
+              </EmptyContentTextSmall>
+            )}
+          </>
         )}
         {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
           <>
