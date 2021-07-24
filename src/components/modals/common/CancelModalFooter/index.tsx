@@ -5,13 +5,13 @@ import { Token } from 'uniswap-xdai-sdk'
 import * as CSS from 'csstype'
 
 import { useActiveWeb3React } from '../../../../hooks'
+import { DerivedAuctionInfo } from '../../../../state/orderPlacement/hooks'
 import { getChainName } from '../../../../utils/tools'
 import { Button } from '../../../buttons/Button'
 import { AlertIcon } from '../../../icons/AlertIcon'
 import { ErrorLock } from '../../../icons/ErrorLock'
 import DoubleLogo from '../../../token/DoubleLogo'
 import TokenLogo from '../../../token/TokenLogo'
-import { Text } from '../pureStyledComponents/Text'
 
 const ActionButton = styled(Button)`
   margin-top: 40px;
@@ -19,11 +19,12 @@ const ActionButton = styled(Button)`
 `
 interface WrapProps {
   margin?: string
+  txtAlign?: string
+  fs?: string
 }
 const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: ${(props) => (props.columns ? props.columns : '1fr 1fr')};
   margin: ${(props) => (props.margin ? props.margin : '0')};
 `
 
@@ -55,8 +56,17 @@ const FieldRowTokenStyled = styled.div`
   }
 `
 
+const Text = styled.div<Partial<CSS.Properties & WrapProps>>`
+  color: ${({ theme }) => theme.text1};
+  font-size: ${(props) => props.fs || '18px'};
+  font-weight: normal;
+  line-height: 1.4;
+  text-align: ${(props) => props.txtAlign || 'left'};
+`
+
 interface Props {
   confirmText: string
+  derivedAuctionInfo?: DerivedAuctionInfo
   invertPrices: boolean
   onCancelOrder: () => any
   orderData?: any
@@ -64,24 +74,23 @@ interface Props {
 }
 
 const CancelModalFooter: React.FC<Props> = (props) => {
-  const { confirmText, invertPrices, onCancelOrder, orderData, tokens } = props
+  const { confirmText, derivedAuctionInfo, invertPrices, onCancelOrder, orderData, tokens } = props
   const { chainId } = useActiveWeb3React()
-  console.log(tokens.biddingToken)
+
   return (
     <>
       <Wrap margin={'0 0 15px 0'}>
-        <Text fontSize="18px" margin={'0'}>
+        <Text>
           {invertPrices ? 'Min ' : 'Max '}
-          {tokens.biddingToken.symbol} per {tokens.auctioningToken.symbol}
+          {invertPrices ? tokens.auctioningToken.symbol : tokens.biddingToken.symbol} per&nbsp;
+          {invertPrices ? tokens.biddingToken.symbol : tokens.auctioningToken.symbol}
         </Text>
-        <Wrap>
-          <Text fontSize="18px" margin={'0'}>
-            {orderData.price}
-          </Text>
+        <Wrap columns={'1fr 52px'}>
+          <Text txtAlign={'right'}>{orderData.price}</Text>
           <FieldRowTokenStyled>
             {tokens.biddingToken.address && (
               <TokenLogo
-                size={'18px'}
+                size={'24px'}
                 token={{ address: tokens.biddingToken.address, symbol: tokens.biddingToken.symbol }}
               />
             )}
@@ -89,13 +98,9 @@ const CancelModalFooter: React.FC<Props> = (props) => {
         </Wrap>
       </Wrap>
       <Wrap margin={'0 0 15px 0'}>
-        <Text fontSize="18px" margin={'0'}>
-          {tokens.biddingToken.symbol} tokens sold
-        </Text>
-        <Wrap>
-          <Text fontSize="18px" margin={'0'}>
-            {orderData.sellAmount}
-          </Text>
+        <Text>{tokens.biddingToken.symbol} tokens sold</Text>
+        <Wrap columns={'1fr 52px'}>
+          <Text txtAlign={'right'}>{orderData.sellAmount}</Text>
           <FieldRowTokenStyled>
             {invertPrices ? (
               <DoubleLogo
@@ -107,7 +112,7 @@ const CancelModalFooter: React.FC<Props> = (props) => {
                   address: tokens.auctioningToken.address,
                   symbol: tokens.auctioningToken.symbol,
                 }}
-                size="16px"
+                size="24px"
               />
             ) : (
               <DoubleLogo
@@ -125,25 +130,27 @@ const CancelModalFooter: React.FC<Props> = (props) => {
           </FieldRowTokenStyled>
         </Wrap>
       </Wrap>
-      {chainId === 4 || chainId === 1 || chainId === 100 ? (
-        <Wrap>
+      {(derivedAuctionInfo.biddingToken.symbol === 'ETH' && chainId === 4) ||
+      (derivedAuctionInfo.biddingToken.symbol === 'ETH' && chainId === 1) ||
+      (derivedAuctionInfo.biddingToken.symbol === 'XDAI' && chainId === 100) ? (
+        <Wrap columns={'30px 1fr'}>
           <IconWrap>
             <ErrorLock />
           </IconWrap>
-          <Text fontSize="14px">
-            If you Cancel an order in {tokens.biddingToken.symbol}, you will receive back
-            {chainId === 1 || chainId === 4 ? 'WXDAI' : 'WETH'} tokens in
+          <Text fs={'14px'}>
+            If you Cancel an order in {tokens.biddingToken.symbol}, you will receive back&nbsp;
+            {chainId === 1 || chainId === 4 ? 'WXDAI' : 'WETH'} tokens in&nbsp;
             {getChainName(chainId)}.
           </Text>
         </Wrap>
       ) : (
         ''
       )}
-      <Wrap>
+      <Wrap columns={'30px 1fr'} margin={'12px 0 0 0'}>
         <IconWrap>
           <AlertIcon />
         </IconWrap>
-        <Text fontSize="14px">
+        <Text fs={'14px'}>
           You will need to place a new order if you still want to participate in this auction.
         </Text>
       </Wrap>

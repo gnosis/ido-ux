@@ -294,6 +294,7 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
             content={
               <CancelModalFooter
                 confirmText={'Cancel Order'}
+                derivedAuctionInfo={derivedAuctionInfo}
                 invertPrices={showPriceInverted}
                 onCancelOrder={onCancelOrder}
                 orderData={canceledOrder}
