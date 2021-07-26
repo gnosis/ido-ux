@@ -17,8 +17,8 @@ import TxnPopup from '../TxnPopup'
 
 const StyledClose = styled(X)`
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 5px;
+  top: 5px;
 
   &:hover {
     cursor: pointer;
@@ -51,11 +51,7 @@ const FixedPopupColumn = styled(AutoColumn)`
   right: 20px;
   top: 75px;
   width: 355px;
-  z-index: 50;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
+  z-index: 950;
 `
 
 const Popup = styled.div`
@@ -163,7 +159,7 @@ export default function Popups() {
   //mobile
   else
     return (
-      <MobilePopupWrapper height={activePopups?.length > 0 ? 'fit-content' : 0}>
+      <MobilePopupWrapper height={activePopups?.length > 0 ? 'auto' : 0}>
         <MobilePopupInner>
           {activePopups // reverse so new items up front
             .slice(0)
