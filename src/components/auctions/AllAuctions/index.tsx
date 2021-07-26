@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import * as CSS from 'csstype'
 import { useFilters, useGlobalFilter, usePagination, useTable } from 'react-table'
 
 import { ButtonSelect } from '../../buttons/ButtonSelect'
 import { Dropdown, DropdownDirection, DropdownItem, DropdownPosition } from '../../common/Dropdown'
-import { KeyValue } from '../../common/KeyValue'
 import { ChevronRight } from '../../icons/ChevronRight'
 import { Delete } from '../../icons/Delete'
 import { InfoIcon } from '../../icons/InfoIcon'
@@ -28,8 +28,7 @@ const SectionTitle = styled(PageTitle)`
   font-size: 22px;
   margin-bottom: 14px;
 `
-
-const RowLink = styled(NavLink)<CellRowProps>`
+const rowCss = css<CellRowProps>`
   ${CellRowCSS}
   column-gap: 6px;
   cursor: pointer;
@@ -44,7 +43,7 @@ const RowLink = styled(NavLink)<CellRowProps>`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     column-gap: 10px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 80px 1fr 1fr 1fr 1fr 100px 1fr 100px 20px;
     padding-left: 15px;
     padding-right: 15px;
   }
@@ -54,12 +53,53 @@ const RowLink = styled(NavLink)<CellRowProps>`
   }
 `
 
-const TableCell = styled(Cell)`
+const RowLink = styled(NavLink)<CellRowProps>`
+  ${rowCss}
+`
+
+const RowHead = styled.div<CellRowProps>`
+  ${rowCss}
+  pointer-events: none;
+  font-size: 14px;
+  display: none;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr 1fr 1fr 1fr 100px 1fr 100px 20px;
+  }
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
+    grid-template-columns: ${(props) => getColumns(props.columns)};
+  }
+`
+
+interface CellProps {
+  fs?: string
+}
+const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
+  color: ${({ theme }) => theme.textField.color};
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-size: ${(props) => props.fs || '16px'};
   &:last-child {
     position: absolute;
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
+  }
+
+  > span {
+    display: flex;
+    align-items: center;
+    > *:not(:last-child) {
+      margin-right: 6px;
+    }
+    &:last-child {
+      font-size: 16px;
+      font-weight: bold;
+      @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+        display: none;
+      }
+    }
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.xl}) {
@@ -69,13 +109,6 @@ const TableCell = styled(Cell)`
       top: auto;
       transform: none;
     }
-  }
-`
-
-const KeyValueStyled = styled(KeyValue)`
-  .itemKey,
-  .itemValue {
-    white-space: nowrap;
   }
 `
 
@@ -260,6 +293,18 @@ const PaginationItem = styled.div`
   }
 `
 
+const TBody = styled.div`
+  min-height: 266px;
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.md}) {
+    > div:first-child {
+      position: relative !important;
+    }
+    > div:not(:first-child) {
+      display: none !important;
+    }
+  }
+`
+
 interface Props {
   tableData: any[]
 }
@@ -422,6 +467,8 @@ const AllAuctions = (props: Props) => {
     usePagination,
   )
 
+  const sectionHead = useRef(null)
+
   const updateFilter = (column?: string | undefined, value?: string | undefined) => {
     setAllFilters([])
     if (column && value) {
@@ -477,8 +524,18 @@ const AllAuctions = (props: Props) => {
   const noAuctionsFound = page.length === 0
   const noData = noAuctions || noAuctionsFound
 
+  function handleNextPage() {
+    nextPage()
+    sectionHead.current.scrollIntoView()
+  }
+
+  function handlePrevPage() {
+    previousPage()
+    sectionHead.current.scrollIntoView()
+  }
+
   return (
-    <Wrapper {...restProps}>
+    <Wrapper ref={sectionHead} {...restProps}>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
       <TableControls>
         <SearchWrapper>
@@ -534,30 +591,39 @@ const AllAuctions = (props: Props) => {
       ) : (
         <>
           <Table>
-            {page.map((row, i) => {
-              prepareRow(row)
-              return (
-                <RowLink
-                  columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
-                  key={i}
-                  to={row.original['url'] ? row.original['url'] : '#'}
-                >
-                  {row.cells.map(
-                    (cell, j) =>
-                      cell.render('show') && (
-                        <TableCell key={j}>
-                          <KeyValueStyled
-                            align={cell.render('align')}
-                            itemKey={cell.render('Header')}
-                            itemValue={cell.render('Cell')}
-                            style={cell.render('style')}
-                          />
-                        </TableCell>
-                      ),
-                  )}
-                </RowLink>
-              )
-            })}
+            <RowHead columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}>
+              {prepareRow(page[0])}
+              {page[0].cells.map(
+                (cell, i) =>
+                  cell.render('show') && (
+                    <TableCell fs="14px" key={i}>
+                      {cell.render('Header')}
+                    </TableCell>
+                  ),
+              )}
+            </RowHead>
+            <TBody>
+              {page.map((row, i) => {
+                prepareRow(row)
+                return (
+                  <RowLink
+                    columns={'85px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 40px'}
+                    key={i}
+                    to={row.original['url'] ? row.original['url'] : '#'}
+                  >
+                    {row.cells.map(
+                      (cell, j) =>
+                        cell.render('show') && (
+                          <TableCell key={j}>
+                            <span>{cell.render('Cell')}</span>
+                            <span>{cell.render('Header')}</span>
+                          </TableCell>
+                        ),
+                    )}
+                  </RowLink>
+                )
+              })}
+            </TBody>
             <Pagination>
               <PaginationBlock>
                 <PaginationText>Items per page</PaginationText>{' '}
@@ -588,10 +654,10 @@ const AllAuctions = (props: Props) => {
                     : (pageIndex + 1) * pageSize}{' '}
                   of {rows.length} auctions
                 </PaginationText>{' '}
-                <PaginationButton disabled={!canPreviousPage} onClick={() => previousPage()}>
+                <PaginationButton disabled={!canPreviousPage} onClick={() => handlePrevPage()}>
                   <ChevronLeft />
                 </PaginationButton>
-                <PaginationButton disabled={!canNextPage} onClick={() => nextPage()}>
+                <PaginationButton disabled={!canNextPage} onClick={() => handleNextPage()}>
                   <ChevronRight />
                 </PaginationButton>
               </PaginationBlock>

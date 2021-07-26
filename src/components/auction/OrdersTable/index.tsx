@@ -1,6 +1,8 @@
 import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 
+import * as CSS from 'csstype'
+
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useCancelOrderCallback } from '../../../hooks/useCancelOrderCallback'
 import {
@@ -16,7 +18,6 @@ import { abbreviation } from '../../../utils/numeral'
 import { getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { KeyValue } from '../../common/KeyValue'
 import { Tooltip } from '../../common/Tooltip'
 import { InfoIcon } from '../../icons/InfoIcon'
 import { OrderPending } from '../../icons/OrderPending'
@@ -39,13 +40,41 @@ const Title = styled(PageTitle)`
   margin-bottom: 16px;
   margin-top: 0;
 `
+interface RowProps {
+  hiddenMd?: boolean
+}
 
-const Row = styled(CellRow)`
+const Row = styled(CellRow)<Partial<CSS.Properties & RowProps>>`
   grid-template-columns: 1fr 1fr;
   row-gap: 15px;
+  color: ${({ theme }) => theme.dropdown.item.color};
+  ${(props) => props.hiddenMd && 'display : none'};
+  align-items: center;
+  font-size: 16px;
+  p {
+    display: flex;
+    margin: 0;
+    align-items: center;
+  }
+  p + span {
+    display: flex;
+    svg {
+      margin-left: 6px;
+    }
+  }
+  .tooltipComponent {
+    margin-left: 6px;
+  }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     grid-template-columns: ${(props) => getColumns(props.columns)};
+    ${(props) => props.hiddenMd && 'display : grid'};
+    > span {
+      line-height: 1;
+    }
+    p {
+      display: none;
+    }
   }
 `
 
@@ -75,6 +104,16 @@ const ActionButton = styled(Button)`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
     width: auto;
+  }
+`
+
+const StyledCell = styled.div`
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.dropdown.item.color};
+  font-size: 14px;
+  > *:first-child {
+    padding-right: 6px;
   }
 `
 
@@ -171,58 +210,54 @@ const OrdersTable: React.FC<OrdersTableProps> = (props) => {
       )}
       {!ordersEmpty && (
         <TableWrapper>
+          <Row columns={hideCancelButton ? 4 : 5} hiddenMd>
+            <StyledCell>
+              <div>Amount</div>
+              <Tooltip text={'The amount of bidding token committed to the order.'} />
+            </StyledCell>
+            <StyledCell>
+              <div>Limit Price</div>
+              <Tooltip text={priceExplainer} />
+            </StyledCell>
+            <StyledCell>
+              <div>Status</div>
+            </StyledCell>
+            <StyledCell>
+              <div>Network</div>
+            </StyledCell>
+          </Row>
           {ordersSortered.map((order) => (
             <Row columns={hideCancelButton ? 4 : 5} key={order.id}>
               <Cell>
-                <KeyValue
-                  align="flex-start"
-                  itemKey={
-                    <>
-                      <span>Amount</span>
-                      <Tooltip text={'The amount of bidding token committed to the order.'} />
-                    </>
-                  }
-                  itemValue={abbreviation(order.sellAmount)}
-                />
+                <p>
+                  <span>Amount</span>
+                  <Tooltip text={'The amount of bidding token committed to the order.'} />
+                </p>
+                <span>{abbreviation(order.sellAmount)}</span>
               </Cell>
               <Cell>
-                <KeyValue
-                  align="flex-start"
-                  itemKey={
-                    <>
-                      <span>Limit Price</span>
-                      <Tooltip text={priceExplainer} />
-                    </>
-                  }
-                  itemValue={abbreviation(
+                <p>
+                  <span>Limit Price</span>
+                  <Tooltip text={priceExplainer} />
+                </p>
+                <span>
+                  {abbreviation(
                     showPriceInverted
                       ? getInverse(order.price, NUMBER_OF_DIGITS_FOR_INVERSION)
                       : order.price,
                   )}
-                />
+                </span>
               </Cell>
               <Cell>
-                <KeyValue
-                  align="flex-start"
-                  itemKey={<span>Status</span>}
-                  itemValue={
-                    <>
-                      <span>{orderStatusText[order.status]}</span>
-                      {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
-                    </>
-                  }
-                />
+                <p>Status</p>
+                <span>
+                  <span>{orderStatusText[order.status]}</span>
+                  {order.status === OrderStatus.PLACED ? <OrderPlaced /> : <OrderPending />}
+                </span>
               </Cell>
               <Cell>
-                <KeyValue
-                  align="flex-start"
-                  itemKey={<span>Network</span>}
-                  itemValue={
-                    <>
-                      <span>{getChainName(order.chainId)}</span>
-                    </>
-                  }
-                />
+                <p>Network</p>
+                <span>{getChainName(order.chainId)}</span>
               </Cell>
               {!hideCancelButton && (
                 <ButtonCell>
