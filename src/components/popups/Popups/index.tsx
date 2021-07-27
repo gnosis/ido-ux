@@ -17,8 +17,8 @@ import TxnPopup from '../TxnPopup'
 
 const StyledClose = styled(X)`
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 5px;
+  top: 5px;
 
   &:hover {
     cursor: pointer;
@@ -30,13 +30,13 @@ const MobilePopupWrapper = styled.div<{ height: string | number }>`
   margin: ${({ height }) => (height ? '0 auto' : '0')};
   margin-bottom: ${({ height }) => (height ? '20px' : '0')};
   max-width: 100%;
-  position: relative;
+  position: fixed;
   z-index: 50;
 `
 
 const MobilePopupInner = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: 99%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -51,19 +51,17 @@ const FixedPopupColumn = styled(AutoColumn)`
   right: 20px;
   top: 75px;
   width: 355px;
-  z-index: 50;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
+  z-index: 950;
 `
 
 const Popup = styled.div`
   background-color: ${({ theme }) => theme.bg1};
   border-radius: 6px;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   overflow: hidden;
   padding: 20px;
+  margin: 5px 0;
   position: relative;
   width: 100%;
   z-index: 2;
@@ -161,7 +159,7 @@ export default function Popups() {
   //mobile
   else
     return (
-      <MobilePopupWrapper height={activePopups?.length > 0 ? 'fit-content' : 0}>
+      <MobilePopupWrapper height={activePopups?.length > 0 ? 'auto' : 0}>
         <MobilePopupInner>
           {activePopups // reverse so new items up front
             .slice(0)
