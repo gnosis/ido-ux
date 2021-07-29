@@ -4,8 +4,12 @@ import { Token } from 'uniswap-xdai-sdk'
 
 import * as CSS from 'csstype'
 
+import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../../constants/config'
 import { useActiveWeb3React } from '../../../../hooks'
 import { DerivedAuctionInfo } from '../../../../state/orderPlacement/hooks'
+import { getTokenDisplay } from '../../../../utils'
+import { abbreviation } from '../../../../utils/numeral'
+import { getInverse } from '../../../../utils/prices'
 import { getChainName } from '../../../../utils/tools'
 import { Button } from '../../../buttons/Button'
 import { AlertIcon } from '../../../icons/AlertIcon'
@@ -77,6 +81,10 @@ const CancelModalFooter: React.FC<Props> = (props) => {
   const { confirmText, derivedAuctionInfo, invertPrices, onCancelOrder, orderData, tokens } = props
   const { chainId } = useActiveWeb3React()
 
+  const biddingToken = React.useMemo(() => derivedAuctionInfo.biddingToken, [
+    derivedAuctionInfo.biddingToken,
+  ])
+
   return (
     <>
       <Wrap margin={'0 0 15px 0'}>
@@ -86,7 +94,13 @@ const CancelModalFooter: React.FC<Props> = (props) => {
           {invertPrices ? tokens.biddingToken.symbol : tokens.auctioningToken.symbol}
         </Text>
         <Wrap columns={'1fr 52px'}>
-          <Text txtAlign={'right'}>{orderData.price}</Text>
+          <Text txtAlign={'right'}>
+            {abbreviation(
+              invertPrices
+                ? getInverse(orderData.price, NUMBER_OF_DIGITS_FOR_INVERSION)
+                : orderData.price,
+            )}
+          </Text>
           <FieldRowTokenStyled>
             {tokens.biddingToken.address && (
               <TokenLogo
@@ -130,16 +144,18 @@ const CancelModalFooter: React.FC<Props> = (props) => {
           </FieldRowTokenStyled>
         </Wrap>
       </Wrap>
-      {(derivedAuctionInfo.biddingToken.symbol === 'ETH' && chainId === 4) ||
-      (derivedAuctionInfo.biddingToken.symbol === 'ETH' && chainId === 1) ||
-      (derivedAuctionInfo.biddingToken.symbol === 'XDAI' && chainId === 100) ? (
+      {(derivedAuctionInfo.biddingToken.symbol.includes('ETH') && chainId === 4) ||
+      (derivedAuctionInfo.biddingToken.symbol.includes('ETH') && chainId === 1) ||
+      (derivedAuctionInfo.biddingToken.symbol.includes('XDAI') && chainId === 100) ? (
         <Wrap columns={'30px 1fr'}>
           <IconWrap>
             <ErrorLock />
           </IconWrap>
           <Text fs={'14px'}>
-            If you Cancel an order in {tokens.biddingToken.symbol}, you will receive back&nbsp;
-            {chainId === 1 || chainId === 4 ? 'WXDAI' : 'WETH'} tokens in&nbsp;
+            If you Cancel an order in&nbsp;
+            {biddingToken && biddingToken.symbol && getTokenDisplay(biddingToken, chainId)}, you
+            will receive back&nbsp;
+            {tokens.biddingToken.symbol} tokens in&nbsp;
             {getChainName(chainId)}.
           </Text>
         </Wrap>
