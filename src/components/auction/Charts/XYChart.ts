@@ -99,6 +99,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.dummyData = {
     description:
       'Shows sell supply of the auction<br/> based on the price and nominated<br/> in the bidding token',
+    path:
+      'M276.58,66.99l44.26,103.44c2.96,6.92,9.48,11.65,16.97,12.33l112.05,10.13c17.93,1.62,25.17,23.93,11.62,35.78l-84.7,74.05c-5.66,4.95-8.15,12.61-6.48,19.95l25,109.7c4,17.55-14.98,31.34-30.43,22.11l-96.6-57.67c-6.46-3.86-14.51-3.86-20.97,0l-96.6,57.67c-15.45,9.23-34.43-4.56-30.43-22.11l25-109.7c1.67-7.33-0.82-15-6.48-19.95l-84.7-74.05c-13.55-11.85-6.3-34.16,11.62-35.78l112.05-10.13c7.49-0.68,14.01-5.41,16.97-12.33l44.26-103.44C246.04,50.44,269.5,50.44,276.58,66.99z',
   }
 
   // New order to be placed
@@ -113,6 +115,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   inputSeries.dummyData = {
     description:
       'Shows the new order<br/> that would be placed based<br/> on the current amount and price input',
+    path:
+      'M276.58,66.99l44.26,103.44c2.96,6.92,9.48,11.65,16.97,12.33l112.05,10.13c17.93,1.62,25.17,23.93,11.62,35.78l-84.7,74.05c-5.66,4.95-8.15,12.61-6.48,19.95l25,109.7c4,17.55-14.98,31.34-30.43,22.11l-96.6-57.67c-6.46-3.86-14.51-3.86-20.97,0l-96.6,57.67c-15.45,9.23-34.43-4.56-30.43-22.11l25-109.7c1.67-7.33-0.82-15-6.48-19.95l-84.7-74.05c-13.55-11.85-6.3-34.16,11.62-35.78l112.05-10.13c7.49-0.68,14.01-5.41,16.97-12.33l44.26-103.44C246.04,50.44,269.5,50.44,276.58,66.99z',
   }
 
   // Dotted white line -> shows the Current price, which is the closing price of the auction if
@@ -130,6 +134,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.fillOpacity = 0.1
   priceSeries.dummyData = {
     description: `Shows the current price: <strong style="font-size:14px;">[${currPriceMockVal}]</strong> <br/>This price would be<br/> the closing price of the auction<br/> if no more bids are submitted or cancelled`,
+    path:
+      'M276.58,66.99l44.26,103.44c2.96,6.92,9.48,11.65,16.97,12.33l112.05,10.13c17.93,1.62,25.17,23.93,11.62,35.78l-84.7,74.05c-5.66,4.95-8.15,12.61-6.48,19.95l25,109.7c4,17.55-14.98,31.34-30.43,22.11l-96.6-57.67c-6.46-3.86-14.51-3.86-20.97,0l-96.6,57.67c-15.45,9.23-34.43-4.56-30.43-22.11l25-109.7c1.67-7.33-0.82-15-6.48-19.95l-84.7-74.05c-13.55-11.85-6.3-34.16,11.62-35.78l112.05-10.13c7.49-0.68,14.01-5.41,16.97-12.33l44.26-103.44C246.04,50.44,269.5,50.44,276.58,66.99z',
   }
 
   // Add cursor
@@ -163,6 +169,38 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.tooltip.getFillFromObject = false
   chart.tooltip.background.stroke = am4core.color(colors.blue)
   chart.tooltip.background.fill = am4core.color(colors.darkBlue)
+  const marker = chart.legend.markers.template
+  marker.disposeChildren()
+  const flag = marker.createChild(am4core.Sprite)
+  flag.width = 40
+  flag.height = 40
+  flag.scale = 0.1
+  flag.verticalCenter = 'top'
+  flag.horizontalCenter = 'left'
+
+  flag.propertyFields.fill = 'fill'
+  flag.adapter.add('dx', (dx, target) => {
+    target.path = target?.dummyData?.path ?? 0
+    return dx
+  })
+
+  // const dollar = marker.createChild(am4core.Image)
+  // dollar.width = 40
+  // dollar.height = 40
+  // dollar.verticalCenter = 'top'
+  // dollar.horizontalCenter = 'left'
+  // chart.legend.useDefaultMarker = true
+  // const marker = chart.legend.markers.template
+  // // markerColumnActiveState.properties.fillOpacity = 0;
+  //
+  // // Add custom image instead
+  // const checkbox = marker.createChild(am4core.Image)
+  // checkbox.width = 23
+  // checkbox.height = 23
+  // checkbox.verticalCenter = 'top'
+  // checkbox.horizontalCenter = 'left'
+  //
+  // checkbox.href ='data:image/svg+xml;base64, PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBoZWlnaHQ9IjIzcHgiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDIzIDIzIiB3aWR0aD0iMjNweCI+PHRpdGxlLz48ZGVzYy8+PGRlZnMvPjxnIGZpbGw9IiMwMDAwMDAiIHN0eWxlPSJwb2ludGVyLWV2ZW50czogbm9uZTsiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIiBzdHJva2Utb3BhY2l0eT0iMCI+PHJlY3Qgd2lkdGg9IjIzIiBoZWlnaHQ9IjIzIi8+PC9nPjwvZz48L3N2Zz4K'
 
   return chart
 }
@@ -202,7 +240,7 @@ export const drawInformation = (props: DrawInformation) => {
   }
 
   const {
-    values: [askPricesSeries, bidPricesSeries, , priceSeries],
+    values: [askPricesSeries, bidPricesSeries, priceSeries],
   } = chart.series
 
   priceSeries.dummyData = {
