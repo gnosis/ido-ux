@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react'
-import { AlertCircle, CheckCircle } from 'react-feather'
 import styled from 'styled-components'
 
 import { useActiveWeb3React } from '../../../hooks'
@@ -8,6 +7,8 @@ import { useRemovePopup } from '../../../state/application/hooks'
 import { TYPE } from '../../../theme'
 import { ExternalLink } from '../../../theme/components'
 import { getExplorerLink } from '../../../utils'
+import { CheckCircle } from '../../icons/CheckCircle'
+import { CloseCircle } from '../../icons/CloseCircle'
 import { AutoColumn } from '../../swap/Column'
 import { AutoRow } from '../../swap/Row'
 
@@ -52,9 +53,9 @@ export default function TxnPopup({
   return (
     <AutoRow onMouseEnter={() => setIsRunning(false)} onMouseLeave={() => setIsRunning(true)}>
       {success ? (
-        <CheckCircle color={'#27AE60'} size={24} style={{ paddingRight: '24px' }} />
+        <CheckCircle color={'#27AE60'} style={{ marginRight: '15px' }} width="42" />
       ) : (
-        <AlertCircle color={'#FF6871'} size={24} style={{ paddingRight: '24px' }} />
+        <CloseCircle color={'#FF6871'} style={{ marginRight: '15px' }} width="42" />
       )}
       <AutoColumn gap="8px">
         <TYPE.body fontWeight={500}>
