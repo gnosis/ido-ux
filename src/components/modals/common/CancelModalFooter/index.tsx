@@ -85,13 +85,22 @@ const CancelModalFooter: React.FC<Props> = (props) => {
     derivedAuctionInfo.biddingToken,
   ])
 
+  const auctioningToken = React.useMemo(() => derivedAuctionInfo.auctioningToken, [
+    derivedAuctionInfo.auctioningToken,
+  ])
+
   return (
     <>
       <Wrap margin={'0 0 15px 0'}>
         <Text>
           {invertPrices ? 'Min ' : 'Max '}
-          {invertPrices ? tokens.auctioningToken.symbol : tokens.biddingToken.symbol} per&nbsp;
-          {invertPrices ? tokens.biddingToken.symbol : tokens.auctioningToken.symbol}
+          {invertPrices
+            ? getTokenDisplay(auctioningToken, chainId)
+            : getTokenDisplay(biddingToken, chainId)}
+          &nbsp;per&nbsp;
+          {invertPrices
+            ? getTokenDisplay(biddingToken, chainId)
+            : getTokenDisplay(auctioningToken, chainId)}
         </Text>
         <Wrap columns={'1fr 52px'}>
           <Text txtAlign={'right'}>
@@ -112,7 +121,7 @@ const CancelModalFooter: React.FC<Props> = (props) => {
         </Wrap>
       </Wrap>
       <Wrap margin={'0 0 15px 0'}>
-        <Text>{tokens.biddingToken.symbol} tokens sold</Text>
+        <Text>{getTokenDisplay(biddingToken, chainId)} tokens sold</Text>
         <Wrap columns={'1fr 52px'}>
           <Text txtAlign={'right'}>{orderData.sellAmount}</Text>
           <FieldRowTokenStyled>
