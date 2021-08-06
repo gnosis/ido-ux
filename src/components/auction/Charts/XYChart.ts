@@ -189,7 +189,7 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // dollar.height = 40
   // dollar.verticalCenter = 'top'
   // dollar.horizontalCenter = 'left'
-  // chart.legend.useDefaultMarker = true
+  chart.legend.useDefaultMarker = true
   // const marker = chart.legend.markers.template
   // // markerColumnActiveState.properties.fillOpacity = 0;
   //
