@@ -153,9 +153,9 @@ const CancelModalFooter: React.FC<Props> = (props) => {
           </FieldRowTokenStyled>
         </Wrap>
       </Wrap>
-      {(derivedAuctionInfo.biddingToken.symbol.includes('ETH') && chainId === 4) ||
-      (derivedAuctionInfo.biddingToken.symbol.includes('ETH') && chainId === 1) ||
-      (derivedAuctionInfo.biddingToken.symbol.includes('XDAI') && chainId === 100) ? (
+      {(derivedAuctionInfo.biddingToken.symbol.toLowerCase().includes('eth') && chainId === 4) ||
+      (derivedAuctionInfo.biddingToken.symbol.toLowerCase().includes('eth') && chainId === 1) ||
+      (derivedAuctionInfo.biddingToken.symbol.toLowerCase().includes('dai') && chainId === 100) ? (
         <Wrap columns={'30px 1fr'}>
           <IconWrap>
             <ErrorLock />
