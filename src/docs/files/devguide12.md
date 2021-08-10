@@ -8,9 +8,9 @@ Vested tokens implementations are not trivial, as the vesting period can be bypa
 
 #### Vested token contracts
 
-The vested token contract with the best fit for the gnosis auction platform is an ERC20 token with a disabled `transfer` function during the vesting period for all addresses, but a few exceptions. The exceptions needed to do a successful auctions are the auctioneer and the gnosis auction contract.
+The vested token contract with the best fit for the gnosis auction platform is an ERC20 token with a disabled `transfer` function during the vesting period for all addresses, but a few exceptions. The exceptions required to start a successful auction are the auctioneer's adddress and the gnosis auction contract.
 
-In this setup, every users can use bidding tokens - e.g. USDC - to bid in the auction for the vesting tokens and then later claim the bought vested tokens into their wallet. But no investor will be able to move the vested tokens out of their wallet during the vesting period. If each participating wallet is only a EAO account, the claimed vested tokens can not be tokenized in a trustless manner.
+In this setup, every user can use bidding tokens - e.g. USDC - to bid in the auction for the vesting tokens and then later claim the bought vested tokens into their wallet. But no investor will be able to move the vested tokens out of their wallet during the vesting period. If each participating wallet is only an EAO account, the claimed vested tokens can not be tokenized in a trustless manner.
 
 Further additions like linear vesting schedules can also be applied.
 
@@ -18,7 +18,7 @@ An example of a vested token can be found [here](https://etherscan.io/address/0x
 
 #### Procedure to start an auction for vested tokens
 
-1. Deploy your vesting token
-2. Declare the necessary exceptions for the transfer-restrictions: Auctioneer + Gnosis auction contract
-3. Start a [new private auction](/#/docs/starting-an-auction-with-safe) via the auction-starter app on the gnosis-safe interface
-4. Only allowlist participants that are EAO accounts (and, if it applies, satisfy the needed kyc-level)
+1. Deploy your vesting token.
+2. Declare the necessary exceptions for the transfer restrictions: Auctioneer + Gnosis auction contract.
+3. Start a [new private auction](/#/docs/starting-an-auction-with-safe) via the auction-starter app on the gnosis-safe interface.
+4. Only allowlist participants that are EAO accounts (and, if it applies, satisfy the needed KYC-level).
