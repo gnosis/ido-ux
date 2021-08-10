@@ -16,6 +16,7 @@ import faqDocMarkdown from '../../docs/files/devguide07.md'
 import startingAnAuctionWithSafe from '../../docs/files/devguide08.md'
 import privateAuctionsAndKYCSolutions from '../../docs/files/devguide09.md'
 import mediaKitDocMarkdown from '../../docs/files/devguide11.md'
+import vestedTokens from '../../docs/files/devguide12.md'
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -182,6 +183,7 @@ export const Documentation: React.FC = (props) => {
     if (location.pathname === '/docs/private-auctions-and-KYC-solutions')
       fetchGuide(privateAuctionsAndKYCSolutions)
     if (location.pathname === '/docs/media-kit') fetchGuide(mediaKitDocMarkdown)
+    if (location.pathname === '/docs/vested-tokens') fetchGuide(vestedTokens)
     if (location.pathname === '/docs/faq') fetchGuide(faqDocMarkdown)
   }, [location, fetchGuide])
 
@@ -213,6 +215,9 @@ export const Documentation: React.FC = (props) => {
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/private-auctions-and-KYC-solutions">
             Private auctions/KYC solutions
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/vested-tokens">
+            Vested tokens
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/media-kit">
             Media kit
