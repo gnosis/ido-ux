@@ -506,7 +506,7 @@ const AuctionDetails = (props: Props) => {
                         symbol: derivedAuctionInfo?.auctioningToken.symbol,
                       }}
                     />
-                    <TokenText>{auctioningTokenDisplay}</TokenText>
+                    <TokenText>{auctioningTokenDisplay.slice(0, 7)}</TokenText>
                     <ExternalLink href={auctionTokenAddress} />
                   </TokenSymbol>
                 </>
@@ -534,7 +534,7 @@ const AuctionDetails = (props: Props) => {
                         symbol: derivedAuctionInfo?.biddingToken.symbol,
                       }}
                     />
-                    <TokenText>{biddingTokenDisplay}</TokenText>
+                    <TokenText>{biddingTokenDisplay.slice(0, 7)}</TokenText>
                     <ExternalLink href={biddingTokenAddress} />
                   </TokenSymbol>
                 </>
@@ -579,8 +579,14 @@ const AuctionDetails = (props: Props) => {
                 <TokenSymbol>
                   {initialPriceToDisplay && auctioningTokenDisplay
                     ? showPriceInverted
-                      ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
-                      : ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
+                      ? ` ${auctioningTokenDisplay.slice(0, 7)} per ${biddingTokenDisplay.slice(
+                          0,
+                          7,
+                        )}`
+                      : ` ${biddingTokenDisplay.slice(0, 7)} per ${auctioningTokenDisplay.slice(
+                          0,
+                          7,
+                        )}`
                     : '-'}
                 </TokenSymbol>
               </>
