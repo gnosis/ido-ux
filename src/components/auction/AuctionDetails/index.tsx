@@ -479,6 +479,7 @@ const AuctionDetails = (props: Props) => {
     )
   }
 
+  const getCuttedTokenDisplay = (item: string) => item.slice(0, 7)
   return (
     <Wrapper>
       <MainDetails>
@@ -506,7 +507,7 @@ const AuctionDetails = (props: Props) => {
                         symbol: derivedAuctionInfo?.auctioningToken.symbol,
                       }}
                     />
-                    <TokenText>{auctioningTokenDisplay.slice(0, 7)}</TokenText>
+                    <TokenText>{getCuttedTokenDisplay(auctioningTokenDisplay)}</TokenText>
                     <ExternalLink href={auctionTokenAddress} />
                   </TokenSymbol>
                 </>
@@ -534,7 +535,7 @@ const AuctionDetails = (props: Props) => {
                         symbol: derivedAuctionInfo?.biddingToken.symbol,
                       }}
                     />
-                    <TokenText>{biddingTokenDisplay.slice(0, 7)}</TokenText>
+                    <TokenText>{getCuttedTokenDisplay(biddingTokenDisplay)}</TokenText>
                     <ExternalLink href={biddingTokenAddress} />
                   </TokenSymbol>
                 </>
@@ -579,13 +580,11 @@ const AuctionDetails = (props: Props) => {
                 <TokenSymbol>
                   {initialPriceToDisplay && auctioningTokenDisplay
                     ? showPriceInverted
-                      ? ` ${auctioningTokenDisplay.slice(0, 7)} per ${biddingTokenDisplay.slice(
-                          0,
-                          7,
-                        )}`
-                      : ` ${biddingTokenDisplay.slice(0, 7)} per ${auctioningTokenDisplay.slice(
-                          0,
-                          7,
+                      ? ` ${getCuttedTokenDisplay(
+                          auctioningTokenDisplay,
+                        )} per ${getCuttedTokenDisplay(biddingTokenDisplay)}`
+                      : ` ${getCuttedTokenDisplay(biddingTokenDisplay)} per ${getCuttedTokenDisplay(
+                          auctioningTokenDisplay,
                         )}`
                     : '-'}
                 </TokenSymbol>
