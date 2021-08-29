@@ -479,7 +479,6 @@ const AuctionDetails = (props: Props) => {
     )
   }
 
-  const getCuttedTokenDisplay = (item: string) => item.slice(0, 7)
   return (
     <Wrapper>
       <MainDetails>
@@ -507,7 +506,7 @@ const AuctionDetails = (props: Props) => {
                         symbol: derivedAuctionInfo?.auctioningToken.symbol,
                       }}
                     />
-                    <TokenText>{getCuttedTokenDisplay(auctioningTokenDisplay)}</TokenText>
+                    <TokenText>{auctioningTokenDisplay}</TokenText>
                     <ExternalLink href={auctionTokenAddress} />
                   </TokenSymbol>
                 </>
@@ -535,7 +534,7 @@ const AuctionDetails = (props: Props) => {
                         symbol: derivedAuctionInfo?.biddingToken.symbol,
                       }}
                     />
-                    <TokenText>{getCuttedTokenDisplay(biddingTokenDisplay)}</TokenText>
+                    <TokenText>{biddingTokenDisplay}</TokenText>
                     <ExternalLink href={biddingTokenAddress} />
                   </TokenSymbol>
                 </>
@@ -580,12 +579,8 @@ const AuctionDetails = (props: Props) => {
                 <TokenSymbol>
                   {initialPriceToDisplay && auctioningTokenDisplay
                     ? showPriceInverted
-                      ? ` ${getCuttedTokenDisplay(
-                          auctioningTokenDisplay,
-                        )} per ${getCuttedTokenDisplay(biddingTokenDisplay)}`
-                      : ` ${getCuttedTokenDisplay(biddingTokenDisplay)} per ${getCuttedTokenDisplay(
-                          auctioningTokenDisplay,
-                        )}`
+                      ? ` ${auctioningTokenDisplay} per ${biddingTokenDisplay}`
+                      : ` ${biddingTokenDisplay} per ${auctioningTokenDisplay}`
                     : '-'}
                 </TokenSymbol>
               </>
