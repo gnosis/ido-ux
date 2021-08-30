@@ -51,6 +51,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   }
 
   // Create axes
+  console.log(chart.yAxes, chart)
+  const valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
   const priceAxis = chart.xAxes.push(new am4charts.ValueAxis())
   const volumeAxis = chart.yAxes.push(new am4charts.ValueAxis())
   volumeAxis.renderer.grid.template.stroke = am4core.color(colors.white)
@@ -163,6 +165,28 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   chart.legend.position = 'bottom'
   chart.legend.marginBottom = 15
   chart.legend.marginTop = 10
+  // chart.legend.useDefaultMarker = true
+  // chart.colors.step = 2
+  // /* Remove square from marker template */
+  // const marker = chart.legend.markers.template
+  // marker.disposeChildren()
+  // marker.width = 40
+  // marker.height = 40
+  //
+  // const flag = marker.createChild(am4core.Sprite)
+  // flag.width = 40
+  // flag.height = 40
+  // flag.scale = 0.1
+  // flag.verticalCenter = 'top'
+  // flag.horizontalCenter = 'left'
+  //
+  // flag.propertyFields.fill = 'fill'
+  //
+  // flag.adapter.add('dx', function (dx, target) {
+  //   target.path = target.dataItem.dataContext?.dummyData.path
+  //   return dx
+  // }
+
   chart.legend.labels.template.fill = am4core.color(colors.white)
   chart.legend.itemContainers.template.tooltipHTML =
     '<div>{dataContext.dummyData.description}</div>'
