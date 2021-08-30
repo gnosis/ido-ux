@@ -220,7 +220,13 @@ export const drawInformation = (props: DrawInformation) => {
     values: [askPricesSeries, inputSeries, bidPricesSeries, priceSeries],
   } = chart.series
 
+  inputSeries.dummyData = {
+    flag: newOrderPic,
+    description: renderCurrentPriceLegentText(inputSeries.dummyData.description),
+  }
+
   priceSeries.dummyData = {
+    flag: currPricePic,
     description: renderCurrentPriceLegentText(priceSeries.dummyData.description),
   }
 
