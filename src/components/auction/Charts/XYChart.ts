@@ -108,6 +108,9 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   bidSeries.dataFields.valueY = 'bidValueY'
   bidSeries.name = 'Bids'
   bidSeries.stroke = am4core.color(colors.green)
+  bidSeries.fill = bidSeries.stroke
+  bidSeries.startLocation = 0.5
+  bidSeries.fillOpacity = 0.1
   bidSeries.dummyData = {
     flag: bidsPic,
     description:
@@ -120,6 +123,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   askSeries.dataFields.valueY = 'askValueY'
   askSeries.name = 'Sell Supply'
   askSeries.stroke = am4core.color(colors.red)
+  askSeries.fill = askSeries.stroke
+  askSeries.fillOpacity = 0.1
   askSeries.dummyData = {
     flag: sellSupplyPic,
     description:
@@ -132,6 +137,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   inputSeries.dataFields.valueY = 'newOrderValueY'
   inputSeries.name = 'New orders'
   inputSeries.stroke = am4core.color(colors.orange)
+  inputSeries.fill = inputSeries.stroke
+  inputSeries.fillOpacity = 0.1
   inputSeries.dummyData = {
     flag: newOrderPic,
     description:
@@ -148,6 +155,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   priceSeries.strokeWidth = 2
   priceSeries.strokeDasharray = '3,3'
   priceSeries.stroke = am4core.color(colors.white)
+  priceSeries.fill = inputSeries.stroke
+  priceSeries.fillOpacity = 0.1
   priceSeries.dummyData = {
     flag: currPricePic,
     description: `Shows the current price: <strong style="font-size:14px;">[${currPriceMockVal}]</strong> <br/>This price would be<br/> the closing price of the auction<br/> if no more bids are submitted or cancelled`,
@@ -217,7 +226,7 @@ export const drawInformation = (props: DrawInformation) => {
   }
 
   const {
-    values: [askPricesSeries, inputSeries, bidPricesSeries, priceSeries],
+    values: [askPricesSeries, bidPricesSeries, inputSeries, priceSeries],
   } = chart.series
 
   inputSeries.dummyData = {
