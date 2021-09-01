@@ -84,9 +84,8 @@ describe('CalculatorClearingPrice', () => {
       const buyAmount = JSBI.BigInt(4500)
       const sellAmount = JSBI.BigInt(1500)
       const fractionClearingPrice = new Fraction(buyAmount, sellAmount)
-      const { price, priceReversed } = CalculatorClearingPrice.convertFromFraction(
-        fractionClearingPrice,
-      )
+      const { price, priceReversed } =
+        CalculatorClearingPrice.convertFromFraction(fractionClearingPrice)
 
       expect(price).toEqual('3')
       expect(priceReversed).toEqual('0.33333')

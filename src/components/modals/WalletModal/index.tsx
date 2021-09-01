@@ -133,13 +133,14 @@ const WalletModal: React.FC = () => {
 
   const tryActivation = async (connector: AbstractConnector) => {
     let name = ''
+    const reactGA = ReactGA
     Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
         return (name = SUPPORTED_WALLETS[key].name)
       }
       return true
     })
-    ReactGA.event({
+    reactGA.event({
       category: 'Wallet',
       action: 'Change Wallet',
       label: name,
