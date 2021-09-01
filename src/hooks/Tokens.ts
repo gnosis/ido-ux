@@ -46,9 +46,11 @@ export function useToken(tokenAddress?: string): Token | undefined {
 
 // gets token information by address (typically user input) and
 // automatically adds it for the user if the token address is valid
-export function useTokenByAddressAndAutomaticallyAdd(
-  tokenAddress?: string,
-): { token: Token | undefined; error: Maybe<Error>; isLoading: boolean } {
+export function useTokenByAddressAndAutomaticallyAdd(tokenAddress?: string): {
+  token: Token | undefined
+  error: Maybe<Error>
+  isLoading: boolean
+} {
   const fetchTokenByAddress = useFetchTokenByAddress()
   const addToken = useAddUserToken()
   const token = useToken(tokenAddress)

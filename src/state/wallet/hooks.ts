@@ -11,9 +11,9 @@ import { useMultipleContractSingleData, useSingleContractMultipleData } from '..
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
  */
-export function useETHBalances(
-  uncheckedAddresses?: (string | undefined)[],
-): { [address: string]: JSBI | undefined } {
+export function useETHBalances(uncheckedAddresses?: (string | undefined)[]): {
+  [address: string]: JSBI | undefined
+} {
   const multicallContract = useMulticallContract()
 
   const addresses: string[] = useMemo(
@@ -56,9 +56,10 @@ export function useTokenBalances(
     [tokens],
   )
 
-  const validatedTokenAddresses = useMemo(() => validatedTokens.map((vt) => vt.address), [
-    validatedTokens,
-  ])
+  const validatedTokenAddresses = useMemo(
+    () => validatedTokens.map((vt) => vt.address),
+    [validatedTokens],
+  )
 
   const balances = useMultipleContractSingleData(
     validatedTokenAddresses,

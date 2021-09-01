@@ -310,9 +310,7 @@ export const useGetOrderPlacementError = (
   }
 }
 
-export function useDeriveAuctioningAndBiddingToken(
-  auctionIdentifer: AuctionIdentifier,
-): {
+export function useDeriveAuctioningAndBiddingToken(auctionIdentifer: AuctionIdentifier): {
   auctioningToken: Token | undefined
   biddingToken: Token | undefined
 } {
@@ -429,9 +427,10 @@ export function useDerivedAuctionInfo(
     [auctionDetails],
   )
 
-  const clearingPrice: Fraction | undefined = useMemo(() => orderToPrice(clearingPriceSellOrder), [
-    clearingPriceSellOrder,
-  ])
+  const clearingPrice: Fraction | undefined = useMemo(
+    () => orderToPrice(clearingPriceSellOrder),
+    [clearingPriceSellOrder],
+  )
 
   const initialPrice = useMemo(() => {
     let initialPrice: Fraction | undefined
@@ -580,9 +579,7 @@ export function useDerivedClaimInfo(
   }
 }
 
-export function useOnChainAuctionData(
-  auctionIdentifier: AuctionIdentifier,
-): {
+export function useOnChainAuctionData(auctionIdentifier: AuctionIdentifier): {
   auctioningToken?: Maybe<Token>
   biddingToken?: Maybe<Token>
   clearingPriceSellOrder: Maybe<SellOrder>
@@ -595,22 +592,19 @@ export function useOnChainAuctionData(
     easyAuctionABI,
   )
 
-  const {
-    loading: isLoadingAuctionInfo,
-    result: auctionInfo,
-  } = useSingleCallResult(easyAuctionInstance, 'auctionData', [auctionId])
+  const { loading: isLoadingAuctionInfo, result: auctionInfo } = useSingleCallResult(
+    easyAuctionInstance,
+    'auctionData',
+    [auctionId],
+  )
   const auctioningTokenAddress: string | undefined = auctionInfo?.auctioningToken.toString()
 
   const biddingTokenAddress: string | undefined = auctionInfo?.biddingToken.toString()
 
-  const {
-    isLoading: isAuctioningTokenLoading,
-    token: auctioningToken,
-  } = useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
-  const {
-    isLoading: isBiddingTokenLoading,
-    token: biddingToken,
-  } = useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
+  const { isLoading: isAuctioningTokenLoading, token: auctioningToken } =
+    useTokenByAddressAndAutomaticallyAdd(auctioningTokenAddress)
+  const { isLoading: isBiddingTokenLoading, token: biddingToken } =
+    useTokenByAddressAndAutomaticallyAdd(biddingTokenAddress)
 
   const clearingPriceSellOrder: Maybe<SellOrder> = decodeSellOrder(
     auctionInfo?.clearingPriceOrder,
