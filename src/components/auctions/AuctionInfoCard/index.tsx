@@ -49,7 +49,7 @@ const Tokens = styled.span`
   line-height: 1.2;
   margin: 0;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
 `
 
 const Badge = styled.span`
