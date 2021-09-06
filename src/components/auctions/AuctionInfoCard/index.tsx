@@ -1,3 +1,4 @@
+import { transparentize } from 'polished'
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
@@ -111,7 +112,7 @@ const TokenIcons = styled(DoubleLogo)`
 `
 
 const Selling = styled.h3`
-  color: #fff;
+  color: ${({ theme }) => theme.text1};
   font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
@@ -146,7 +147,7 @@ const BottomCell = styled.span`
 `
 
 const BottomCellText = styled.span`
-  color: rgba(255, 255, 255, 0.9);
+  color: ${({ theme }) => transparentize(0.1, theme.text1)};
   font-size: 11px;
   font-weight: 600;
   line-height: 1.2;
@@ -159,7 +160,7 @@ const IconCSS = css`
   margin-right: 5px;
 
   .fill {
-    fill: rgba(255, 255, 255, 0.9);
+    fill: ${({ theme }) => transparentize(0.1, theme.text1)};
   }
 `
 

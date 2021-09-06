@@ -31,7 +31,7 @@ const IconCSS = css`
   margin-right: 5px;
 
   .fill {
-    fill: rgb(255, 255, 255);
+    fill: ${({ theme }) => transparentize(0.1, theme.text1)};
     opacity: 1;
   }
 `

@@ -10,7 +10,7 @@ const Wrapper = styled.button`
   border-radius: ${({ theme }) => theme.textField.borderRadius};
   border-style: ${({ theme }) => theme.textField.borderStyle};
   border-width: ${({ theme }) => theme.textField.borderWidth};
-  color: ${({ theme }) => theme.textField.color};
+  color: ${({ theme }) => theme.textField.borderColor};
   display: flex;
   font-size: ${({ theme }) => theme.textField.fontSize};
   font-weight: ${({ theme }) => theme.textField.fontWeight};

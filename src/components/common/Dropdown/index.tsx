@@ -63,7 +63,7 @@ const Items = styled(BaseCard)<{
   fullWidth?: boolean
   isOpen: boolean
 }>`
-  background: ${({ theme }) => theme.dropdown.background};
+  background: ${({ theme }) => theme.dropdown.bg2};
   border-radius: ${({ theme }) => theme.dropdown.borderRadius};
   border: 1px solid ${({ theme }) => theme.dropdown.border};
   box-shadow: ${({ theme }) => theme.dropdown.boxShadow};
@@ -109,7 +109,7 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   user-select: none;
 
   &.isActive {
-    background-color: ${(props) => props.theme.dropdown.item.backgroundColorActive};
+    background-color: ${({ theme }) => theme.text5};
     color: ${(props) => props.theme.dropdown.item.colorActive};
     font-weight: 600;
   }
@@ -126,7 +126,7 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   }
 
   &:hover {
-    background-color: ${(props) => props.theme.dropdown.item.backgroundColorHover};
+    background-color: ${({ theme }) => theme.text5};
   }
 
   &:disabled,
