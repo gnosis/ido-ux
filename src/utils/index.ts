@@ -185,7 +185,16 @@ export function escapeRegExp(string: string): string {
 }
 
 // Always return a non-undefined token display
-export function getTokenDisplay(token: Token, chainId: ChainId): string {
+export function getTokenDisplay(token: Token, chainId: ChainId, full?: boolean): string {
+  if (isTokenXDAI(token.address, chainId)) return `XDAI`
+  if (isTokenWETH(token.address, chainId)) return `ETH`
+  return full
+    ? token?.symbol || token?.name || token?.address || '🤔'
+    : token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
+}
+
+// Always return a non-undefined token display
+export function getFullTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
   if (isTokenWETH(token.address, chainId)) return `ETH`
   return token?.symbol || token?.name || token?.address || '🤔'
