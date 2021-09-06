@@ -1,3 +1,4 @@
+import { transparentize } from 'polished'
 import React, { DOMAttributes, createRef, useCallback, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -109,7 +110,6 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   user-select: none;
 
   &.isActive {
-    background-color: ${({ theme }) => theme.text5};
     color: ${(props) => props.theme.dropdown.item.colorActive};
     font-weight: 600;
   }
@@ -124,9 +124,9 @@ export const DropdownItemCSS = css<DropdownItemProps>`
     border-bottom-right-radius: ${(props) => props.theme.cards.borderRadius};
     border-bottom: none;
   }
-
+  &.isActive,
   &:hover {
-    background-color: ${({ theme }) => theme.text5};
+    background-color: ${({ theme }) => transparentize(0.9, theme.text2)};
   }
 
   &:disabled,
