@@ -47,7 +47,7 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
   const { size, symbol, ...restProps } = props
   const timestamp = React.useMemo(() => Date.now(), [])
   const tooltipId = `tooltip_${symbol}_${size}_${timestamp}`
-
+  const cuttedSymbol = symbol.slice(0, 7)
   return (
     <Wrapper
       data-for={tooltipId}
@@ -58,7 +58,7 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
       {...restProps}
     >
       <Icon />
-      <Badge size={size}>{symbol}</Badge>
+      <Badge size={size}>{cuttedSymbol}</Badge>
       <ReactTooltip
         arrowColor={'#001429'}
         backgroundColor={'#001429'}
