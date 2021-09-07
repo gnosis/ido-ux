@@ -151,9 +151,9 @@ const TokenSymbol = styled.span`
   line-height: 1.4;
   margin-bottom: 0;
   justify-content: center;
-  white-space: normal;
-  flex-direction: column;
   text-align: center;
+  flex-direction: row;
+  white-space: nowrap;
 
   .tokenLogo {
     margin-top: -4px;
@@ -163,8 +163,6 @@ const TokenSymbol = styled.span`
     margin-right: 0;
   }
   @media (min-width: 768px) {
-    flex-direction: row;
-    white-space: nowrap;
     text-align: left;
   }
 `
