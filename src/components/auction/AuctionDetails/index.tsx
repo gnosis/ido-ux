@@ -254,8 +254,10 @@ const AuctionDetails = (props: Props) => {
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
 
   const { showPriceInverted } = useOrderPlacementState()
-  const { orderbookPrice: auctionCurrentPrice, orderbookPriceReversed: auctionPriceReversed } =
-    useOrderbookState()
+  const {
+    orderbookPrice: auctionCurrentPrice,
+    orderbookPriceReversed: auctionPriceReversed,
+  } = useOrderbookState()
   const { onInvertPrices } = useSwapActionHandlers()
 
   // Start with inverted prices, if orderbook is also show inverted,

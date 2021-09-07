@@ -140,10 +140,9 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
     chainNamesFormatted += getChainName(Number(chains[count])) + postPend
   }
 
-  const isAuctionPage = React.useMemo(
-    () => location.pathname.includes('/auction'),
-    [location.pathname],
-  )
+  const isAuctionPage = React.useMemo(() => location.pathname.includes('/auction'), [
+    location.pathname,
+  ])
   const chainMismatch = React.useMemo(
     () => errorWrongNetwork === NetworkError.noChainMatch && isAuctionPage,
     [errorWrongNetwork, isAuctionPage],

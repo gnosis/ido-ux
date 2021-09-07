@@ -221,8 +221,13 @@ export const drawInformation = (props: DrawInformation) => {
 
   xAxis.title.text = priceTitle
   yAxis.title.text = volumeTitle
-  const renderCurrentPriceLegentText = (textToReplace: string) => {
-    return textToReplace.replace(/(?<=">)[^<\\/strong>]*/, textAuctionCurrentPrice)
+  const renderCurrentPriceLegendText = (textToReplace: string) => {
+    const regex = /(?<=">)[^<\\/strong>]*/
+    const match = textToReplace.match(regex)
+    if (match) {
+      return textToReplace.replace(/(?<=">)[^<\\/strong>]*/, textAuctionCurrentPrice)
+    }
+    return textToReplace
   }
 
   const {
@@ -231,12 +236,12 @@ export const drawInformation = (props: DrawInformation) => {
 
   inputSeries.dummyData = {
     flag: newOrderPic,
-    description: renderCurrentPriceLegentText(inputSeries.dummyData.description),
+    description: renderCurrentPriceLegendText(inputSeries.dummyData.description),
   }
 
   priceSeries.dummyData = {
     flag: currPricePic,
-    description: renderCurrentPriceLegentText(priceSeries.dummyData.description),
+    description: renderCurrentPriceLegendText(priceSeries.dummyData.description),
   }
 
   askPricesSeries.adapter.add('tooltipText', (text, target) => {

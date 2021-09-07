@@ -65,10 +65,9 @@ export function usePlaceOrderCallback(
   const { onNewBid } = useOrderbookActionHandlers()
   const gasPrice = useGasPrice(chainId)
 
-  const price = (
-    isPriceInverted
-      ? getInverse(priceFromSwapState, NUMBER_OF_DIGITS_FOR_INVERSION)
-      : priceFromSwapState
+  const price = (isPriceInverted
+    ? getInverse(priceFromSwapState, NUMBER_OF_DIGITS_FOR_INVERSION)
+    : priceFromSwapState
   ).toString()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(

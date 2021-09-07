@@ -14,8 +14,9 @@ export const useClearingPriceInfo = (
   loadingClearingPrice: boolean
 } => {
   const { auctionId, chainId } = auctionIdentifer
-  const [clearingInfo, setClearingPriceAndVolume] =
-    useState<Maybe<ClearingPriceAndVolumeData>>(null)
+  const [clearingInfo, setClearingPriceAndVolume] = useState<Maybe<ClearingPriceAndVolumeData>>(
+    null,
+  )
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {

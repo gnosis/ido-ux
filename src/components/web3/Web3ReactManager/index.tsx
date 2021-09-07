@@ -27,11 +27,9 @@ const Message = styled.h2`
 
 export default function Web3ReactManager({ children }) {
   const { t } = useTranslation()
-  const {
-    activate: activateNetwork,
-    active: networkActive,
-    error: networkError,
-  } = useWeb3React(NetworkContextName)
+  const { activate: activateNetwork, active: networkActive, error: networkError } = useWeb3React(
+    NetworkContextName,
+  )
   const { onLoadTokenList } = useTokenListActionHandlers()
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already

@@ -106,14 +106,14 @@ const SwapModalFooter: React.FC<Props> = (props) => {
     )
   }
 
-  const biddingTokenDisplay = useMemo(
-    () => getTokenDisplay(biddingToken, chainId),
-    [biddingToken, chainId],
-  )
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(auctioningToken, chainId),
-    [auctioningToken, chainId],
-  )
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
 
   return (
     <>

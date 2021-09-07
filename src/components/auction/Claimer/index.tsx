@@ -122,10 +122,10 @@ const Claimer: React.FC<Props> = (props) => {
         setUserConfirmedTx(false)
       })
 
-  const biddingTokenDisplay = useMemo(
-    () => getTokenDisplay(biddingToken, chainId),
-    [biddingToken, chainId],
-  )
+  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
 
   const biddingTokenDisplayWrapped = useMemo(
     () =>
@@ -137,10 +137,10 @@ const Claimer: React.FC<Props> = (props) => {
     [biddingTokenDisplay],
   )
 
-  const auctioningTokenDisplay = useMemo(
-    () => getTokenDisplay(auctioningToken, chainId),
-    [auctioningToken, chainId],
-  )
+  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
 
   const isLoading = useMemo(
     () =>
