@@ -222,7 +222,7 @@ export const drawInformation = (props: DrawInformation) => {
   xAxis.title.text = priceTitle
   yAxis.title.text = volumeTitle
   const renderCurrentPriceLegendText = (textToReplace: string) => {
-    const regex = /(?<=">)[^<\\/strong>]*/
+    const regex = '(?<=">)[^<\\/strong>]*'
     const match = textToReplace.match(new RegExp(regex))
     if (match) {
       return textToReplace.replace(regex, textAuctionCurrentPrice)
