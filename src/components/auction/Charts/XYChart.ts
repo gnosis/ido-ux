@@ -225,7 +225,7 @@ export const drawInformation = (props: DrawInformation) => {
     const regex = /(?<=">)[^<\\/strong>]*/
     const match = textToReplace.match(regex)
     if (match) {
-      return textToReplace.replace(/(?<=">)[^<\\/strong>]*/, textAuctionCurrentPrice)
+      return textToReplace.replace(regex, textAuctionCurrentPrice)
     }
     return textToReplace
   }
