@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import * as CSS from 'csstype'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import {
@@ -144,7 +145,7 @@ const TokenValue = styled.span`
   white-space: nowrap;
 `
 
-const TokenSymbol = styled.span`
+const TokenSymbol = styled.span<Partial<CSS.Properties & { whiteSpace?: string }>>`
   align-items: center;
   display: flex;
   font-size: 18px;
@@ -153,7 +154,7 @@ const TokenSymbol = styled.span`
   justify-content: center;
   text-align: center;
   flex-direction: row;
-  white-space: nowrap;
+  white-space: ${(props) => props.whiteSpace || 'wrap'};
 
   .tokenLogo {
     margin-top: -4px;
@@ -263,10 +264,8 @@ const AuctionDetails = (props: Props) => {
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
 
   const { showPriceInverted } = useOrderPlacementState()
-  const {
-    orderbookPrice: auctionCurrentPrice,
-    orderbookPriceReversed: auctionPriceReversed,
-  } = useOrderbookState()
+  const { orderbookPrice: auctionCurrentPrice, orderbookPriceReversed: auctionPriceReversed } =
+    useOrderbookState()
   const { onInvertPrices } = useSwapActionHandlers()
 
   // Start with inverted prices, if orderbook is also show inverted,
@@ -507,7 +506,7 @@ const AuctionDetails = (props: Props) => {
                       derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4),
                     )}
                   </TokenValue>
-                  <TokenSymbol>
+                  <TokenSymbol whiteSpace={'nowrap'}>
                     <TokenLogo
                       size={'18px'}
                       token={{
@@ -535,7 +534,7 @@ const AuctionDetails = (props: Props) => {
             itemValue={
               derivedAuctionInfo?.biddingToken ? (
                 <>
-                  <TokenSymbol>
+                  <TokenSymbol whiteSpace={'nowrap'}>
                     <TokenLogo
                       size={'18px'}
                       token={{
