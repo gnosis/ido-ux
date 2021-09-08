@@ -209,17 +209,18 @@ export const CookiesBanner: React.FC<Props> = (props) => {
     }
 
     if (typeof GOOGLE_ANALYTICS_ID === 'string') {
-      ReactGA.initialize(GOOGLE_ANALYTICS_ID, { gaOptions: { cookieDomain: 'auto' } })
-      ReactGA.set({
+      const reactGA = ReactGA
+      reactGA.initialize(GOOGLE_ANALYTICS_ID, { gaOptions: { cookieDomain: 'auto' } })
+      reactGA.set({
         customBrowserType: !isMobile
           ? 'desktop'
           : 'web3' in window || 'ethereum' in window
           ? 'mobileWeb3'
           : 'mobileRegular',
       })
-      ReactGA.set({ anonymizeIp: true })
-      ReactGA.set({ page: location.pathname })
-      ReactGA.pageview(location.pathname)
+      reactGA.set({ anonymizeIp: true })
+      reactGA.set({ page: location.pathname })
+      reactGA.pageview(location.pathname)
     }
   }, [location])
 
