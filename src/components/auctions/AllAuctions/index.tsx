@@ -533,7 +533,6 @@ const AllAuctions = (props: Props) => {
     previousPage()
     sectionHead.current.scrollIntoView()
   }
-
   return (
     <Wrapper ref={sectionHead} {...restProps}>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
@@ -611,15 +610,20 @@ const AllAuctions = (props: Props) => {
                     key={i}
                     to={row.original['url'] ? row.original['url'] : '#'}
                   >
-                    {row.cells.map(
-                      (cell, j) =>
+                    {row.cells.map((cell, j) => {
+                      return (
                         cell.render('show') && (
                           <TableCell key={j}>
-                            <span>{cell.render('Cell')}</span>
+                            <span>
+                              {cell.column.Header === 'Selling' || cell.column.Header === 'Buying'
+                                ? cell.value.slice(0, 7)
+                                : cell.value}
+                            </span>
                             <span>{cell.render('Header')}</span>
                           </TableCell>
-                        ),
-                    )}
+                        )
+                      )
+                    })}
                   </RowLink>
                 )
               })}

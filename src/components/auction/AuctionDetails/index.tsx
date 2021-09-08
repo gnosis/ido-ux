@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import * as CSS from 'csstype'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import {
@@ -75,6 +76,7 @@ const CellPair = styled.div`
 `
 
 const Cell = styled(KeyValue)`
+  height: 100%;
   .itemKey {
     color: ${({ theme }) => rgba(theme.text1, 0.9)};
     font-size: 15px;
@@ -92,11 +94,14 @@ const Cell = styled(KeyValue)`
   .itemValue {
     color: ${({ theme }) => theme.text1};
     flex-direction: column;
-    flex-grow: 0;
+    flex-grow: 1;
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;
     margin-bottom: 0;
+  }
+  @media (min-width: 1024px) {
+    height: auto;
   }
 `
 
@@ -140,14 +145,16 @@ const TokenValue = styled.span`
   white-space: nowrap;
 `
 
-const TokenSymbol = styled.span`
+const TokenSymbol = styled.span<Partial<CSS.Properties & { whiteSpace?: string }>>`
   align-items: center;
   display: flex;
   font-size: 18px;
   line-height: 1.4;
   margin-bottom: 0;
   justify-content: center;
-  white-space: nowrap;
+  text-align: center;
+  flex-direction: row;
+  white-space: ${(props) => props.whiteSpace || 'wrap'};
 
   .tokenLogo {
     margin-top: -4px;
@@ -155,6 +162,9 @@ const TokenSymbol = styled.span`
 
   & > * {
     margin-right: 0;
+  }
+  @media (min-width: 768px) {
+    text-align: left;
   }
 `
 
@@ -498,7 +508,7 @@ const AuctionDetails = (props: Props) => {
                       derivedAuctionInfo?.initialAuctionOrder?.sellAmount.toSignificant(4),
                     )}
                   </TokenValue>
-                  <TokenSymbol>
+                  <TokenSymbol whiteSpace={'nowrap'}>
                     <TokenLogo
                       size={'18px'}
                       token={{
@@ -526,7 +536,7 @@ const AuctionDetails = (props: Props) => {
             itemValue={
               derivedAuctionInfo?.biddingToken ? (
                 <>
-                  <TokenSymbol>
+                  <TokenSymbol whiteSpace={'nowrap'}>
                     <TokenLogo
                       size={'18px'}
                       token={{
