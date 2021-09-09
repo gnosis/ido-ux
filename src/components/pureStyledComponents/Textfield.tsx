@@ -24,7 +24,7 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
   }
 
   &:disabled::placeholder {
-    color: ${({ theme }) => theme.textField.color}!important;
+    color: ${({ theme }) => theme.textField.colorPlaceholder}!important;
   }
 
   &::placeholder {

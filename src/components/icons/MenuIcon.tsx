@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const Wrapper = styled.svg`
   .fill {
-    fill: #fff;
+    fill: ${({ theme }) => theme.text1};
   }
 `
 

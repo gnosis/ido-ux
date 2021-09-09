@@ -75,7 +75,8 @@ const SectionTitle = styled(PageTitle)`
 const StyledButtonSelect = styled(ButtonSelect)`
   height: 19px;
   font-size: 13px;
-  border-color: ${({ theme }) => theme.textField.color};
+  border-color: ${({ theme }) => theme.bg6};
+  color: ${({ theme }) => theme.bg6};
   padding: 2px 6px;
   line-height: 13px;
   cursor: pointer;
@@ -93,8 +94,8 @@ const StyledDropdown = styled(Dropdown)`
   }
   &.isOpen {
     button {
-      background-color: ${({ theme }) => theme.textField.color};
-      border-color: ${({ theme }) => theme.textField.color};
+      background-color: ${({ theme }) => theme.bg6};
+      border-color: ${({ theme }) => theme.bg6};
       color: ${({ theme }) => theme.textField.backgroundColor};
       .fill {
         fill: ${({ theme }) => theme.textField.backgroundColor};

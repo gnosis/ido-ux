@@ -1,3 +1,4 @@
+import { transparentize } from 'polished'
 import React, { DOMAttributes, createRef, useCallback, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -63,7 +64,7 @@ const Items = styled(BaseCard)<{
   fullWidth?: boolean
   isOpen: boolean
 }>`
-  background: ${({ theme }) => theme.dropdown.background};
+  background: ${({ theme }) => theme.dropdown.bg2};
   border-radius: ${({ theme }) => theme.dropdown.borderRadius};
   border: 1px solid ${({ theme }) => theme.dropdown.border};
   box-shadow: ${({ theme }) => theme.dropdown.boxShadow};
@@ -109,7 +110,6 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   user-select: none;
 
   &.isActive {
-    background-color: ${(props) => props.theme.dropdown.item.backgroundColorActive};
     color: ${(props) => props.theme.dropdown.item.colorActive};
     font-weight: 600;
   }
@@ -124,9 +124,9 @@ export const DropdownItemCSS = css<DropdownItemProps>`
     border-bottom-right-radius: ${(props) => props.theme.cards.borderRadius};
     border-bottom: none;
   }
-
+  &.isActive,
   &:hover {
-    background-color: ${(props) => props.theme.dropdown.item.backgroundColorHover};
+    background-color: ${({ theme }) => transparentize(0.9, theme.text2)};
   }
 
   &:disabled,

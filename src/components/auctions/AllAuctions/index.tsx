@@ -75,7 +75,7 @@ interface CellProps {
   fs?: string
 }
 const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
-  color: ${({ theme }) => theme.textField.color};
+  color: ${({ theme }) => theme.text1};
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -148,8 +148,7 @@ const SearchInput = styled.input`
   ${TexfieldPartsCSS};
   background: none;
   border: none;
-  color: ${({ theme }) => (props) =>
-    props.error ? theme.textField.errorColor : theme.textField.color};
+  color: ${({ theme }) => (props) => (props.error ? theme.textField.errorColor : theme.text1)};
   flex-grow: 1;
   font-size: ${({ theme }) => theme.textField.fontSize};
   font-weight: ${({ theme }) => theme.textField.fontWeight};
