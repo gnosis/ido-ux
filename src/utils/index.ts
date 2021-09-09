@@ -188,7 +188,9 @@ export function escapeRegExp(string: string): string {
 export function getTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
   if (isTokenWETH(token.address, chainId)) return `ETH`
-  return token?.symbol || token?.name || token?.address || '🤔'
+  return (
+    token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
+  )
 }
 
 export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
