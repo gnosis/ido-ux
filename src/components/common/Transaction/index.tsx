@@ -11,9 +11,10 @@ import { OrderPlaced } from '../../icons/OrderPlaced'
 
 const Wrapper = styled(ExternalLink)`
   align-items: center;
-  background-color: transparent;
   border-radius: 12px;
   border: solid 1px ${({ theme }) => theme.primary2};
+  background-color: ${({ theme }) => theme.bg2};
+  color: ${({ theme }) => theme.text1};
   cursor: pointer;
   display: flex;
   justify-content: flex-start;
@@ -26,7 +27,8 @@ const Wrapper = styled(ExternalLink)`
   &:hover,
   &:active,
   &:focus {
-    background-color: #001e3c;
+    color: ${({ theme }) => theme.text5};
+    background-color: ${({ theme }) => theme.bg6};
     text-decoration: none;
   }
 `
@@ -41,7 +43,7 @@ const IconWrapper = styled.span<{ size?: number }>`
 `
 
 const Text = styled.span`
-  color: ${({ theme }) => theme.text1};
+  color: inherit;
   font-size: 17px;
   font-weight: 400;
   line-height: 1.2;

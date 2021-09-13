@@ -75,6 +75,7 @@ const CellPair = styled.div`
 `
 
 const Cell = styled(KeyValue)`
+  height: 100%;
   .itemKey {
     color: ${({ theme }) => rgba(theme.text1, 0.9)};
     font-size: 15px;
@@ -92,11 +93,14 @@ const Cell = styled(KeyValue)`
   .itemValue {
     color: ${({ theme }) => theme.text1};
     flex-direction: column;
-    flex-grow: 0;
+    flex-grow: 1;
     font-size: 18px;
     font-weight: 600;
     line-height: 1.2;
     margin-bottom: 0;
+  }
+  @media (min-width: 1024px) {
+    height: auto;
   }
 `
 
@@ -147,7 +151,9 @@ const TokenSymbol = styled.span`
   line-height: 1.4;
   margin-bottom: 0;
   justify-content: center;
-  white-space: nowrap;
+  white-space: normal;
+  flex-direction: column;
+  text-align: center;
 
   .tokenLogo {
     margin-top: -4px;
@@ -155,6 +161,11 @@ const TokenSymbol = styled.span`
 
   & > * {
     margin-right: 0;
+  }
+  @media (min-width: 768px) {
+    flex-direction: row;
+    white-space: nowrap;
+    text-align: left;
   }
 `
 
@@ -254,10 +265,8 @@ const AuctionDetails = (props: Props) => {
   const { auctionDetails } = useAuctionDetails(auctionIdentifier)
 
   const { showPriceInverted } = useOrderPlacementState()
-  const {
-    orderbookPrice: auctionCurrentPrice,
-    orderbookPriceReversed: auctionPriceReversed,
-  } = useOrderbookState()
+  const { orderbookPrice: auctionCurrentPrice, orderbookPriceReversed: auctionPriceReversed } =
+    useOrderbookState()
   const { onInvertPrices } = useSwapActionHandlers()
 
   // Start with inverted prices, if orderbook is also show inverted,

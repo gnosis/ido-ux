@@ -7,13 +7,13 @@ import { FeaturedAuctions } from '../../components/auctions/FeaturedAuctions'
 import HighestVolumeAuctions from '../../components/auctions/HighestVolumeAuctions'
 import { ButtonCSS } from '../../components/buttons/buttonStylingTypes'
 import { Send } from '../../components/icons/Send'
+import { ShapeIcon1 } from '../../components/icons/ShapeIcon1'
+import { ShapeIcon2 } from '../../components/icons/ShapeIcon2'
+import { ShapeIcon3 } from '../../components/icons/ShapeIcon3'
 import { useAllAuctionInfo } from '../../hooks/useAllAuctionInfos'
 import { useInterestingAuctionInfo } from '../../hooks/useInterestingAuctionDetails'
 import { useSetNoDefaultNetworkId } from '../../state/orderPlacement/hooks'
 import AuctionsIcon from './img/eth.svg'
-import Shape1 from './img/shape-1.svg'
-import Shape2 from './img/shape-2.svg'
-import Shape3 from './img/shape-3.svg'
 
 const Welcome = styled.div`
   display: flex;
@@ -239,12 +239,12 @@ export const Landing: React.FC = () => {
           </Text>
         </TextBlock>
         <ImageBlock align="left">
-          <img alt="" src={Shape1} />
+          <ShapeIcon1 />
         </ImageBlock>
       </BlockGrid>
       <BlockGrid>
         <ImageBlock align="right">
-          <img alt="" src={Shape2} />
+          <ShapeIcon2 />
         </ImageBlock>
         <TextBlock>
           <SubTitle>Fair And Resistant</SubTitle>
@@ -264,7 +264,7 @@ export const Landing: React.FC = () => {
           </Text>
         </TextBlock>
         <ImageBlock align="left">
-          <img alt="" src={Shape3} />
+          <ShapeIcon3 />
         </ImageBlock>
       </BlockGrid>
       <ButtonWrapper>

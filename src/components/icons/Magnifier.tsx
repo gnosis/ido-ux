@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const Wrapper = styled.svg`
   .fill {
-    fill: #bfdeff;
+    fill: ${({ theme }) => theme.textField.colorPlaceholder};
   }
 `
 

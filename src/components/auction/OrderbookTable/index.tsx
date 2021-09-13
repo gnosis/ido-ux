@@ -57,14 +57,14 @@ const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: ${({ theme }) => theme.textField.color};
+  color: ${({ theme }) => theme.text1};
   .tooltipComponent {
     a {
       border-radius: 50%;
       width: 12px;
       height: 12px;
-      border-color: ${({ theme }) => theme.textField.color};
-      color: ${({ theme }) => theme.textField.color};
+      border-color: ${({ theme }) => theme.text1};
+      color: ${({ theme }) => theme.text1};
       font-size: 10px;
     }
   }
@@ -77,7 +77,7 @@ const Wrap = styled.div<Partial<CSS.Properties & WrapProps>>`
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  color: ${({ theme }) => theme.textField.color};
+  color: ${({ theme }) => theme.text1};
   font-weight: 600;
   font-size: 14px;
   margin: ${(props) => (props.margin ? props.margin : '0')};

@@ -19,7 +19,7 @@ const StyledDialogOverlay = styled(DialogOverlay)`
   position: fixed;
   top: 0;
   width: 100vw;
-  z-index: 100;
+  z-index: 100000;
 `
 
 const StyledDialogContent = styled(DialogContent)`

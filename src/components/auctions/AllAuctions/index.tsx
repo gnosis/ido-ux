@@ -75,7 +75,7 @@ interface CellProps {
   fs?: string
 }
 const TableCell = styled(Cell)<Partial<CSS.Properties & CellProps>>`
-  color: ${({ theme }) => theme.textField.color};
+  color: ${({ theme }) => theme.text1};
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -135,8 +135,9 @@ const SearchWrapper = styled.div`
 
   &:focus-within {
     background-color: ${({ theme }) => theme.textField.backgroundColorActive};
-    border-color: ${({ theme }) => (props) =>
-      props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
+    border-color: ${({ theme }) =>
+      (props) =>
+        props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
@@ -148,8 +149,9 @@ const SearchInput = styled.input`
   ${TexfieldPartsCSS};
   background: none;
   border: none;
-  color: ${({ theme }) => (props) =>
-    props.error ? theme.textField.errorColor : theme.textField.color};
+  color: ${({ theme }) =>
+    (props) =>
+      props.error ? theme.textField.errorColor : theme.text1};
   flex-grow: 1;
   font-size: ${({ theme }) => theme.textField.fontSize};
   font-weight: ${({ theme }) => theme.textField.fontWeight};
@@ -533,7 +535,6 @@ const AllAuctions = (props: Props) => {
     previousPage()
     sectionHead.current.scrollIntoView()
   }
-
   return (
     <Wrapper ref={sectionHead} {...restProps}>
       <SectionTitle style={{ display: 'block' }}>Auctions</SectionTitle>
@@ -611,15 +612,20 @@ const AllAuctions = (props: Props) => {
                     key={i}
                     to={row.original['url'] ? row.original['url'] : '#'}
                   >
-                    {row.cells.map(
-                      (cell, j) =>
+                    {row.cells.map((cell, j) => {
+                      return (
                         cell.render('show') && (
                           <TableCell key={j}>
-                            <span>{cell.render('Cell')}</span>
+                            <span>
+                              {cell.column.Header === 'Selling' || cell.column.Header === 'Buying'
+                                ? cell.value.slice(0, 7)
+                                : cell.value}
+                            </span>
                             <span>{cell.render('Header')}</span>
                           </TableCell>
-                        ),
-                    )}
+                        )
+                      )
+                    })}
                   </RowLink>
                 )
               })}
