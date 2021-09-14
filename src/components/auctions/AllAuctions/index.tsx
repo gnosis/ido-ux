@@ -136,8 +136,7 @@ const SearchWrapper = styled.div`
   &:focus-within {
     background-color: ${({ theme }) => theme.textField.backgroundColorActive};
     border-color: ${({ theme }) =>
-      (props) =>
-        props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
+      (props) => props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
@@ -150,8 +149,7 @@ const SearchInput = styled.input`
   background: none;
   border: none;
   color: ${({ theme }) =>
-    (props) =>
-      props.error ? theme.textField.errorColor : theme.text1};
+    (props) => props.error ? theme.textField.errorColor : theme.text1};
   flex-grow: 1;
   font-size: ${({ theme }) => theme.textField.fontSize};
   font-weight: ${({ theme }) => theme.textField.fontWeight};
