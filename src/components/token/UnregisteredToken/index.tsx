@@ -48,7 +48,7 @@ export const UnregisteredToken: React.FC<Props> = (props) => {
   const timestamp = React.useMemo(() => Date.now(), [])
   const tooltipId = `tooltip_${symbol}_${size}_${timestamp}`
   const cuttedSymbol = symbol.slice(0, 2)
-  console.log('okok', symbol, cuttedSymbol)
+
   return (
     <Wrapper
       data-for={tooltipId}
