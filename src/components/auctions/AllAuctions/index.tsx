@@ -148,8 +148,7 @@ const SearchInput = styled.input`
   ${TexfieldPartsCSS};
   background: none;
   border: none;
-  color: ${({ theme }) =>
-    (props) => props.error ? theme.textField.errorColor : theme.text1};
+  color: ${({ theme }) => (props) => props.error ? theme.textField.errorColor : theme.text1};
   flex-grow: 1;
   font-size: ${({ theme }) => theme.textField.fontSize};
   font-weight: ${({ theme }) => theme.textField.fontWeight};
