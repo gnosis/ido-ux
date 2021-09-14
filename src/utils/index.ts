@@ -197,9 +197,7 @@ export function getTokenDisplay(token: Token, chainId: ChainId): string {
 export function getFullTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
   if (isTokenWETH(token.address, chainId)) return `ETH`
-  return (
-    token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
-  )
+  return token?.symbol || token?.name || token?.address || '🤔'
 }
 
 export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
