@@ -12,7 +12,7 @@ import {
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getTokenDisplay, isTokenWETH, isTokenXDAI } from '../../../utils'
+import { getFullTokenDisplay, isTokenWETH, isTokenXDAI } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import { ButtonAnchor } from '../../buttons/ButtonAnchor'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
@@ -122,7 +122,7 @@ const Claimer: React.FC<Props> = (props) => {
         setUserConfirmedTx(false)
       })
 
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+  const biddingTokenDisplay = useMemo(() => getFullTokenDisplay(biddingToken, chainId), [
     biddingToken,
     chainId,
   ])
@@ -137,7 +137,7 @@ const Claimer: React.FC<Props> = (props) => {
     [biddingTokenDisplay],
   )
 
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+  const auctioningTokenDisplay = useMemo(() => getFullTokenDisplay(auctioningToken, chainId), [
     auctioningToken,
     chainId,
   ])
