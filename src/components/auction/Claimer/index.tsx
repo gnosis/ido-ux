@@ -1,3 +1,4 @@
+import { transparentize } from 'polished'
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
@@ -38,7 +39,7 @@ const ActionButton = styled(Button)`
 `
 
 const TokensWrapper = styled.div`
-  background-color: ${({ theme }) => theme.primary4};
+  background-color: ${({ theme }) => transparentize(0.9, theme.bg2)};
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.textField.borderColor};
   margin-bottom: 20px;
