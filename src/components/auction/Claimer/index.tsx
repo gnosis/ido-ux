@@ -137,10 +137,14 @@ const Claimer: React.FC<Props> = (props) => {
     [biddingTokenDisplay],
   )
 
+  const biddingTokenDisplayCut = biddingTokenDisplayWrapped.slice(0, 7)
+
   const auctioningTokenDisplay = useMemo(() => getFullTokenDisplay(auctioningToken, chainId), [
     auctioningToken,
     chainId,
   ])
+
+  const auctioningTokenDisplayCut = auctioningTokenDisplay.slice(0, 7)
 
   const isLoading = useMemo(
     () =>
@@ -196,7 +200,7 @@ const Claimer: React.FC<Props> = (props) => {
                         symbol: biddingTokenDisplay,
                       }}
                     />
-                    <Text>{biddingTokenDisplayWrapped}</Text>
+                    <Text>{biddingTokenDisplayCut}</Text>
                     {showUnwrapButton && (
                       <span
                         className={`tooltipComponent`}
@@ -246,7 +250,7 @@ const Claimer: React.FC<Props> = (props) => {
                         symbol: auctioningTokenDisplay,
                       }}
                     />
-                    <Text>{auctioningTokenDisplay}</Text>
+                    <Text>{auctioningTokenDisplayCut}</Text>
                   </>
                 ) : (
                   '-'
