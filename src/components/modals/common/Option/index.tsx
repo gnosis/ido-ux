@@ -1,3 +1,4 @@
+import { transparentize } from 'polished'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -19,7 +20,7 @@ const Wrapper = styled.button<{ disabled?: boolean }>`
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg2};
+    background-color: ${({ theme }) => transparentize(0.9, theme.bg6)};
   }
 
   ${(props) => props.disabled && `&[disabled] { opacity: 0.5; cursor: not-allowed;}`}
