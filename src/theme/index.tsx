@@ -39,7 +39,7 @@ export function colors(darkMode: boolean): Colors {
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#565A69' : '#888D9B',
     bg6: darkMode ? '#F7F8FA' : '#001429',
-    bg7: darkMode ? '#001E3C' : '#F7F8FA',
+    bg7: darkMode ? '#001E3C' : '#EDEEF2',
     black: '#000',
     blue1: '#3F77FF',
     border: darkMode ? '#174172' : '#174172',
