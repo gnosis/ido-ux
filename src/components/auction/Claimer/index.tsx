@@ -38,7 +38,7 @@ const ActionButton = styled(Button)`
 `
 
 const TokensWrapper = styled.div`
-  background-color: ${({ theme }) => theme.primary4};
+  background-color: ${({ theme }) => theme.bg7};
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.textField.borderColor};
   margin-bottom: 20px;
