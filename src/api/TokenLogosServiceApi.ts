@@ -7,6 +7,7 @@ import { getLogger } from '../utils/logger'
 const logger = getLogger('TokenLogosServiceApi')
 
 const TOKEN_LIST_RESOURCES = [
+  'https://raw.githubusercontent.com/ribbon-finance/ribbon-token-list/82c7808f7b0322b2ba8807d7dc88c2db7fb9971a/ribbon.tokenlist.json',
   'https://tokens.coingecko.com/uniswap/all.json',
   'https://t2crtokens.eth.link',
   'https://tokens.1inch.eth.link',
