@@ -4,7 +4,7 @@
   "homepage": ".",
   "private": true,
   "engines": {
-    "node": ">=4.4.7 <=14.16.4"
+    "node": ">=4.4.7 <=16.17.6"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -162,6 +162,8 @@
     }
   },
   "jest": {
-    "transformIgnorePatterns": ["/node_modules/(?!@amcharts)"]
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@amcharts)"
+    ]
   }
 }
