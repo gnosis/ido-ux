@@ -16,7 +16,7 @@ import { AuctionInfoDetail, useAuctionDetails } from '../../hooks/useAuctionDeta
 import { ClaimState } from '../../hooks/useClaimOrderCallback'
 import { useContract } from '../../hooks/useContract'
 import { useClearingPriceInfo } from '../../hooks/useCurrentClearingOrderAndVolumeCallback'
-import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTimeout } from '../../utils'
+import { ChainId, EASY_AUCTION_NETWORKS, getFullTokenDisplay, isTimeout } from '../../utils'
 import { getLogger } from '../../utils/logger'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../utils/prices'
 import { calculateTimeLeft } from '../../utils/tools'
@@ -241,7 +241,7 @@ export const useGetOrderPlacementError = (
     balanceIn &&
     amountIn &&
     balanceIn.lessThan(amountIn) &&
-    `Insufficient ${getTokenDisplay(amountIn.token, chainId)}` + ' balance.'
+    `Insufficient ${getFullTokenDisplay(amountIn.token, chainId)}` + ' balance.'
 
   const messageHigherInitialPrice = `Price must be higher than ${derivedAuctionInfo?.initialPrice?.toSignificant(
     5,

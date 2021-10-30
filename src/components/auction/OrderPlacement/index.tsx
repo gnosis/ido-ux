@@ -25,7 +25,7 @@ import { useTokenBalancesTreatWETHAsETH } from '../../../state/wallet/hooks'
 import {
   ChainId,
   EASY_AUCTION_NETWORKS,
-  getTokenDisplay,
+  getFullTokenDisplay,
   isTokenWETH,
   isTokenXDAI,
 } from '../../../utils'
@@ -222,11 +222,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   const pendingText = `Placing order`
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+  const biddingTokenDisplay = useMemo(() => getFullTokenDisplay(biddingToken, chainId), [
     biddingToken,
     chainId,
   ])
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+  const auctioningTokenDisplay = useMemo(() => getFullTokenDisplay(auctioningToken, chainId), [
     auctioningToken,
     chainId,
   ])

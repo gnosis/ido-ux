@@ -214,9 +214,8 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     }, 1000)
     return () => clearInterval(interval)
   }, [endTimeTimestamp])
-  const sliceLabel = (label) => {
-    return label.slice(0, 7)
-  }
+  const auctionSymbolBiddingToken = auctionInfo.symbolBiddingToken.slice(0, 7)
+  const auctionSymbolAuctioningToken = auctionInfo.symbolAuctioningToken.slice(0, 7)
   return (
     <Wrapper
       to={`/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(
@@ -226,8 +225,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     >
       <Top>
         <Tokens>
-          {sliceLabel(auctionInfo.symbolAuctioningToken)} /&nbsp;
-          {sliceLabel(auctionInfo.symbolBiddingToken)}
+          {auctionSymbolAuctioningToken} / {auctionSymbolBiddingToken}
         </Tokens>
         <Badge>{timeLeft && timeLeft > -1 ? formatSeconds(timeLeft) : '-'}</Badge>
       </Top>
@@ -248,13 +246,13 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
           <span title={auctionInfo.order.volume + ' ' + auctionInfo.symbolAuctioningToken}>
             {abbreviation(auctionInfo.order.volume.toFixed(2)) + ` `}
           </span>
-          {sliceLabel(auctionInfo.symbolAuctioningToken)}
+          {auctionSymbolAuctioningToken}
         </Selling>
         <CurrentPrice>
           Current price:{' '}
-          {`${abbreviation(auctionInfo.currentClearingPrice.toString())} ${sliceLabel(
-            auctionInfo.symbolBiddingToken,
-          )} per ${sliceLabel(auctionInfo.symbolAuctioningToken)}`}
+          {`${abbreviation(
+            auctionInfo.currentClearingPrice.toString(),
+          )} ${auctionSymbolBiddingToken} per ${auctionSymbolAuctioningToken}`}
         </CurrentPrice>
       </Details>
       <Bottom>
