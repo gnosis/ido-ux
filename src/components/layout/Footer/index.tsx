@@ -104,6 +104,15 @@ export const Footer: React.FC = (props) => {
         </Item>
         <Item>
           <ExternalLink
+            href="https://dune.xyz/josojo/Gnosis-Auction"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Analystics
+          </ExternalLink>
+        </Item>
+        <Item>
+          <ExternalLink
             href="https://discord.com/invite/M39dTHQ"
             rel="noopener noreferrer"
             target="_blank"
