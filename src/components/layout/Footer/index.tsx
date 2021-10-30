@@ -108,7 +108,7 @@ export const Footer: React.FC = (props) => {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Analystics
+            Analytics
           </ExternalLink>
         </Item>
         <Item>
