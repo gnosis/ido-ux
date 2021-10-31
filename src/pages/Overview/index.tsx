@@ -127,7 +127,7 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       {isLoading && <InlineLoading />}
       {!isLoading && (
         <>
-          <FeaturedAuctions featuredAuctions={featuredAuctions} />
+          {featuredAuctions.length > 0 ?? <FeaturedAuctions featuredAuctions={featuredAuctions} />}
           <AllAuctions tableData={tableData} />
         </>
       )}

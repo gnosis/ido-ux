@@ -226,7 +226,7 @@ export const Landing: React.FC = () => {
           </AuctionsButton>
         </AuctionsBlock>
       </Welcome>
-      {featuredAuctions && (
+      {featuredAuctions && featuredAuctions.length > 0 && (
         <Featured className="featuredAuctions" featuredAuctions={featuredAuctions} />
       )}
       <HighestVolumeAuctions highestVolumeAuctions={highestVolumeAuctions} />
