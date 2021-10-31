@@ -1,3 +1,4 @@
+import { transparentize } from 'polished'
 import React from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
@@ -49,7 +50,7 @@ const Tokens = styled.span`
   line-height: 1.2;
   margin: 0;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
 `
 
 const Badge = styled.span`
@@ -111,7 +112,7 @@ const TokenIcons = styled(DoubleLogo)`
 `
 
 const Selling = styled.h3`
-  color: #fff;
+  color: ${({ theme }) => theme.text1};
   font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
@@ -146,7 +147,7 @@ const BottomCell = styled.span`
 `
 
 const BottomCellText = styled.span`
-  color: rgba(255, 255, 255, 0.9);
+  color: ${({ theme }) => transparentize(0.1, theme.text1)};
   font-size: 11px;
   font-weight: 600;
   line-height: 1.2;
@@ -159,7 +160,7 @@ const IconCSS = css`
   margin-right: 5px;
 
   .fill {
-    fill: rgba(255, 255, 255, 0.9);
+    fill: ${({ theme }) => transparentize(0.1, theme.text1)};
   }
 `
 
@@ -213,7 +214,8 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     }, 1000)
     return () => clearInterval(interval)
   }, [endTimeTimestamp])
-
+  const auctionSymbolBiddingToken = auctionInfo.symbolBiddingToken.slice(0, 7)
+  const auctionSymbolAuctioningToken = auctionInfo.symbolAuctioningToken.slice(0, 7)
   return (
     <Wrapper
       to={`/auction?auctionId=${auctionInfo.auctionId}&chainId=${Number(
@@ -223,7 +225,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
     >
       <Top>
         <Tokens>
-          {auctionInfo.symbolAuctioningToken} / {auctionInfo.symbolBiddingToken}
+          {auctionSymbolAuctioningToken} / {auctionSymbolBiddingToken}
         </Tokens>
         <Badge>{timeLeft && timeLeft > -1 ? formatSeconds(timeLeft) : '-'}</Badge>
       </Top>
@@ -244,13 +246,13 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
           <span title={auctionInfo.order.volume + ' ' + auctionInfo.symbolAuctioningToken}>
             {abbreviation(auctionInfo.order.volume.toFixed(2)) + ` `}
           </span>
-          {auctionInfo.symbolAuctioningToken}
+          {auctionSymbolAuctioningToken}
         </Selling>
         <CurrentPrice>
           Current price:{' '}
-          {`${abbreviation(auctionInfo.currentClearingPrice.toFixed(2))} ${
-            auctionInfo.symbolBiddingToken
-          } per ${auctionInfo.symbolAuctioningToken}`}
+          {`${abbreviation(
+            auctionInfo.currentClearingPrice.toString(),
+          )} ${auctionSymbolBiddingToken} per ${auctionSymbolAuctioningToken}`}
         </CurrentPrice>
       </Details>
       <Bottom>

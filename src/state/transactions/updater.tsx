@@ -6,6 +6,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { getLogger } from '../../utils/logger'
 import { useAddPopup, useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
+import { pullOrderbookData } from '../orderbook/actions'
 import { finalizeOrderCancellation, finalizeOrderPlacement } from '../orders/actions'
 import { finalizeTransaction } from './actions'
 
@@ -53,6 +54,7 @@ export default function Updater() {
               )
               dispatch(finalizeOrderCancellation())
               dispatch(finalizeOrderPlacement())
+              dispatch(pullOrderbookData())
               // add success or failure popup
               if (receipt.status === 1) {
                 addPopup({

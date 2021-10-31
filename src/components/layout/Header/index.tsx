@@ -26,8 +26,11 @@ const Wrapper = styled.header`
   border-bottom: 1px solid ${({ theme }) => theme.border};
   display: flex;
   flex-shrink: 0;
-  position: relative;
-  z-index: 100;
+  position: fixed;
+  z-index: 12345;
+  left: 0;
+  right: 0;
+  background-color: ${({ theme }) => theme.mainBackground};
 `
 
 const Inner = styled(InnerContainer)`
@@ -169,7 +172,7 @@ export const Component: React.FC<RouteComponentProps> = (props) => {
           {isConnected && chainMismatch && (
             <Error>
               <ErrorText>Connect to the {getChainName(chainId)} network</ErrorText>
-              <Tooltip id="wrongNetwork" text={`Supported networks are: ${chainNamesFormatted}`} />
+              <Tooltip text={`Supported networks are: ${chainNamesFormatted}`} />
             </Error>
           )}
           {isConnected && !chainMismatch && <UserDropdownStyled disabled={mobileMenuVisible} />}

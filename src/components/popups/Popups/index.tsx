@@ -1,15 +1,14 @@
 import React, { useContext, useMemo } from 'react'
 import { X } from 'react-feather'
 import styled, { ThemeContext } from 'styled-components'
-import { Pair, Token } from 'uniswap-xdai-sdk'
 
+import { ChainId, Pair, Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 import { Text } from 'rebass'
 import { useMediaLayout } from 'use-media'
 
 import { PopupContent } from '../../../state/application/actions'
 import { useActivePopups, useRemovePopup } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
-import { ChainId } from '../../../utils'
 import { AutoColumn } from '../../swap/Column'
 import Row from '../../swap/Row'
 import DoubleTokenLogo from '../../token/DoubleLogo'
@@ -17,28 +16,29 @@ import TxnPopup from '../TxnPopup'
 
 const StyledClose = styled(X)`
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 5px;
+  top: 5px;
 
-  :hover {
+  &:hover {
     cursor: pointer;
   }
 `
 
 const MobilePopupWrapper = styled.div<{ height: string | number }>`
-  position: relative;
-  max-width: 100%;
   height: ${({ height }) => height};
-  margin: ${({ height }) => (height ? '0 auto;' : 0)};
-  margin-bottom: ${({ height }) => (height ? '20px' : 0)}};
+  margin: ${({ height }) => (height ? '0 auto' : '0')};
+  margin-bottom: ${({ height }) => (height ? '20px' : '0')};
+  max-width: 100%;
+  position: fixed;
+  z-index: 50;
 `
 
 const MobilePopupInner = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 99%;
   overflow-x: auto;
   overflow-y: hidden;
-  display: flex;
-  flex-direction: row;
   -webkit-overflow-scrolling: touch;
   ::-webkit-scrollbar {
     display: none;
@@ -46,28 +46,24 @@ const MobilePopupInner = styled.div`
 `
 
 const FixedPopupColumn = styled(AutoColumn)`
-  position: absolute;
-  top: 112px;
-  right: 1rem;
-  max-width: 355px !important;
-  width: 100%;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
+  position: fixed;
+  right: 20px;
+  top: 75px;
+  width: 355px;
+  z-index: 950;
 `
 
 const Popup = styled.div`
-  display: inline-block;
-  width: 100%;
-  padding: 1em;
   background-color: ${({ theme }) => theme.bg1};
-  position: relative;
-  border-radius: 10px;
-  padding: 20px;
-  padding-right: 35px;
-  z-index: 2;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
   overflow: hidden;
+  padding: 20px;
+  margin: 5px 0;
+  position: relative;
+  width: 100%;
+  z-index: 2;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 290px;
@@ -140,11 +136,9 @@ function PopupItem({ content, popKey }: { content: PopupContent; popKey: string 
 
 export default function Popups() {
   const theme = useContext(ThemeContext)
-  // get all popups
   const activePopups = useActivePopups()
   const removePopup = useRemovePopup()
 
-  // switch view settings on mobile
   const isMobile = useMediaLayout({ maxWidth: '600px' })
 
   if (!isMobile) {
@@ -164,7 +158,7 @@ export default function Popups() {
   //mobile
   else
     return (
-      <MobilePopupWrapper height={activePopups?.length > 0 ? 'fit-content' : 0}>
+      <MobilePopupWrapper height={activePopups?.length > 0 ? 'auto' : 0}>
         <MobilePopupInner>
           {activePopups // reverse so new items up front
             .slice(0)

@@ -2,6 +2,8 @@ import React from 'react'
 import { Redirect, Route, RouteComponentProps, Switch, withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 
+import ReactTooltip from 'react-tooltip'
+
 import Auction from '../../../pages/Auction'
 import { Documentation } from '../../../pages/Documentation'
 import { Landing } from '../../../pages/Landing'
@@ -43,9 +45,20 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
   return (
     <MainWrapper>
       <Header />
-      <Popups />
-      {showTopWarning && <TopDisclaimer />}
       <MainScroll>
+        <Popups />
+        <ReactTooltip
+          arrowColor="#001429"
+          backgroundColor="#001429"
+          border
+          borderColor="#174172"
+          className="customTooltip"
+          delayHide={250}
+          delayShow={50}
+          effect="solid"
+          textColor="#fff"
+        />
+        {showTopWarning && <TopDisclaimer />}
         <span id="topAnchor" />
         <Inner>
           <Web3ReactManager>
@@ -83,6 +96,8 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
                 path="/docs/Private-Auctions-And-KYC-solutions"
                 strict
               />
+              <Route component={Documentation} exact path="/docs/vested-tokens" strict />
+              <Route component={Documentation} exact path="/docs/media-kit" strict />
               <Route component={Documentation} exact path="/docs/faq" strict />
               <Route exact path="/">
                 <Redirect to="/start" />

@@ -23,8 +23,8 @@ export const setupNetwork = async (chainId: ChainId) => {
         })
       }
 
-      if (chainId === ChainId.POLYGON) {
-        const config = NETWORK_CONFIGS[ChainId.POLYGON]
+      if (chainId === ChainId.MATIC) {
+        const config = NETWORK_CONFIGS[ChainId.MATIC]
         await provider.request({
           method: 'wallet_addEthereumChain',
           params: [

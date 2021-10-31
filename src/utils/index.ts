@@ -1,11 +1,10 @@
-import { JSBI, Percent, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
-
 import { getAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
+import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
@@ -34,21 +33,21 @@ export enum ChainId {
   MAINNET = 1,
   RINKEBY = 4,
   XDAI = 100,
-  POLYGON = 137,
+  MATIC = 137,
 }
 
 export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
   [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
   [ChainId.XDAI]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
-  [ChainId.POLYGON]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
+  [ChainId.MATIC]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
 }
 
 export const DEPOSIT_AND_PLACE_ORDER: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
   [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
   [ChainId.XDAI]: '0x845AbED0734e39614FEC4245F3F3C88E2da98157',
-  [ChainId.POLYGON]: '0x93D2BbA07b44e8F2b02F7DA164eE4f7442a3B618',
+  [ChainId.MATIC]: '0x93D2BbA07b44e8F2b02F7DA164eE4f7442a3B618',
 }
 
 type NetworkConfig = {
@@ -82,7 +81,7 @@ export const NETWORK_CONFIGS: { [chainId in ChainId]: NetworkConfig } = {
     name: 'Matic Mainnet',
     symbol: 'MATIC',
     rpc: NETWORK_URL_MATIC,
-    explorer: 'https://explorer.matic.network',
+    explorer: 'https://polygonscan.com/',
   },
 }
 
@@ -229,9 +228,32 @@ export function escapeRegExp(string: string): string {
 // Always return a non-undefined token display
 export function getTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
+  if (isTokenWETH(token.address, chainId)) return `ETH`
+  return (
+    token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
+  )
+}
+
+// Always return a non-undefined token display
+export function getFullTokenDisplay(token: Token, chainId: ChainId): string {
+  if (isTokenXDAI(token.address, chainId)) return `XDAI`
+  if (isTokenWETH(token.address, chainId)) return `ETH`
   return token?.symbol || token?.name || token?.address || '🤔'
 }
 
 export function isTokenXDAI(tokenAddress?: string, chainId?: ChainId): boolean {
-  return !!tokenAddress && !!chainId && chainId == 100 && tokenAddress == WETH[100].address
+  return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId === 100
+}
+
+export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
+  return (
+    !!tokenAddress &&
+    !!chainId &&
+    tokenAddress == WETH[chainId].address &&
+    (chainId === 1 || chainId === 4)
+  )
+}
+
+export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {
+  return typeof timeId !== 'undefined'
 }

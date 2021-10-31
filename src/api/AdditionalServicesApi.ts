@@ -17,7 +17,8 @@ export interface AdditionalServicesApi {
   getAllUserOrdersUrl(params: UserOrderParams): string
   getAllUserOrders(params: UserOrderParams): Promise<string[]>
   getMostInterestingAuctionDetailsUrl(params: InterestingAuctionParams): string
-  getMostInterestingAuctionDetails(): Promise<AuctionInfo[]>
+  getMostInterestingClosedAuctionDetailsUrl(params: InterestingAuctionParams): string
+  getMostInterestingAuctionDetails(closedAuctions?: boolean): Promise<AuctionInfo[]>
   getAllAuctionDetailsUrl(networkId: number): string
   getAllAuctionDetails(): Promise<AuctionInfo[]>
   getAllAuctionDetailsWithUserParticipationUrl(
@@ -161,6 +162,15 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url
   }
 
+  public getMostInterestingClosedAuctionDetailsUrl(params: InterestingAuctionParams): string {
+    const { networkId, numberOfAuctions } = params
+
+    const baseUrl = this._getBaseUrl(networkId)
+
+    const url = `${baseUrl}get_details_of_most_interesting_closed_auctions/${numberOfAuctions}`
+    return url
+  }
+
   public getAllAuctionDetailsUrl(networkId: number): string {
     const baseUrl = this._getBaseUrl(networkId)
 
@@ -212,9 +222,13 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
           if (!res.value.ok) {
             // backend returns {"message":"invalid url query"}
             // for bad requests
-            throw await res.value.json()
+            logger.error(
+              'Error getting all auction details with user participation: ',
+              res.value.json(),
+            )
+          } else {
+            allAuctions.push(await res.value.json())
           }
-          allAuctions.push(await res.value.json())
         }
       }
       return allAuctions.flat()
@@ -242,15 +256,24 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
         promises.push(fetch(url))
       }
-      const results = await Promise.all(promises)
+      const results = await Promise.allSettled(promises)
       const allAuctions = []
       for (const res of results) {
-        if (!res.ok) {
-          // backend returns {"message":"invalid url query"}
-          // for bad requests
-          throw await res.json()
+        if (res.status === 'rejected') {
+          logger.error('Error getting all auction details without user participation: ', res.reason)
         }
-        allAuctions.push(await res.json())
+        if (res.status === 'fulfilled') {
+          if (!res.value.ok) {
+            // backend returns {"message":"invalid url query"}
+            // for bad requests
+            logger.error(
+              'Error getting all auction details without user participation: ',
+              res.value.json(),
+            )
+          } else {
+            allAuctions.push(await res.value.json())
+          }
+        }
       }
       return allAuctions.flat()
     } catch (error) {
@@ -283,13 +306,18 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     }
   }
 
-  public async getMostInterestingAuctionDetails(): Promise<Maybe<AuctionInfo[]>> {
+  public async getMostInterestingAuctionDetails(
+    closedAuctions = false,
+  ): Promise<Maybe<AuctionInfo[]>> {
     try {
       const promises: Promise<Response>[] = []
       for (const networkId in this.urlsByNetwork) {
-        const url = await this.getMostInterestingAuctionDetailsUrl({
+        const fn = closedAuctions
+          ? this.getMostInterestingClosedAuctionDetailsUrl
+          : this.getMostInterestingAuctionDetailsUrl
+        const url = fn.bind(this)({
           networkId: Number(networkId),
-          numberOfAuctions: 3,
+          numberOfAuctions: 4,
         })
 
         promises.push(fetch(url))
@@ -308,9 +336,10 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
           if (!res.value.ok) {
             // backend returns {"message":"invalid url query"}
             // for bad requests
-            throw await res.value.json()
+            logger.error('Error getting most interesting auction details: ', res.value.json())
+          } else {
+            allInterestingAuctions.push(await res.value.json())
           }
-          allInterestingAuctions.push(await res.value.json())
         }
       }
 

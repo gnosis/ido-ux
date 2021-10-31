@@ -1,39 +1,23 @@
 import React from 'react'
-import styled from 'styled-components'
 
 import { escapeRegExp } from '../../../utils'
-import { TexfieldPartsCSS } from '../../pureStyledComponents/Textfield'
-
-const StyledInput = styled.input<{ error?: boolean }>`
-  background-color: ${({ theme }) => theme.textField.backgroundColor};
-  border: none;
-  border-radius: 0;
-  color: ${({ theme }) => (props) =>
-    props.error ? theme.textField.errorColor : theme.textField.color};
-  font-size: ${({ theme }) => theme.textField.fontSize};
-  font-weight: ${({ theme }) => theme.textField.fontWeight};
-  height: 100%;
-  outline: none;
-  padding: 0;
-  width: 100%;
-
-  ${TexfieldPartsCSS}
-`
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
-export const Input = React.memo(function InnerInput({
-  onUserSellAmountInput,
-  placeholder,
-  value,
-  ...rest
-}: {
-  value: string | number
+interface Props {
+  hasError?: boolean
   onUserSellAmountInput: (string) => void
-  error?: boolean
-  fontSize?: string
-  align?: 'right' | 'left'
-} & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
+  value: string | number
+  className?: string
+  onFocus?: any
+  onBlur?: any
+  readOnly?: boolean
+}
+
+export const NumericalInput = React.memo(function InnerInput(
+  props: Props & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>,
+) {
+  const { className, onBlur, onFocus, onUserSellAmountInput, placeholder, readOnly, value } = props
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserSellAmountInput(nextUserInput)
@@ -41,27 +25,24 @@ export const Input = React.memo(function InnerInput({
   }
 
   return (
-    <StyledInput
+    <input
       autoComplete="off"
       autoCorrect="off"
-      // universal input options
+      className={className}
       inputMode="decimal"
       maxLength={79}
       minLength={1}
+      onBlur={onBlur}
       onChange={(event) => {
-        // replace commas with periods, because uniswap exclusively uses period as the decimal separator
         enforcer(event.target.value.replace(/,/g, '.'))
       }}
-      // text-specific options
+      onFocus={onFocus}
       pattern="^[0-9]*[.,]?[0-9]*$"
       placeholder={placeholder || '0.0'}
+      readOnly={readOnly}
       spellCheck="false"
-      title="Token Amount"
       type="text"
       value={value}
-      {...rest}
     />
   )
 })
-
-export default Input

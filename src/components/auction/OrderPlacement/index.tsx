@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
-import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
+import styled, { css } from 'styled-components'
 
-import ReactTooltip from 'react-tooltip'
+import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
+import kycLinks from '../../../assets/links/kycLinks.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState, useApproveCallback } from '../../../hooks/useApproveCallback'
@@ -22,96 +22,57 @@ import {
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
 import { useOrderState } from '../../../state/orders/hooks'
 import { OrderState } from '../../../state/orders/reducer'
-import { useTokenBalancesTreatWETHAsETHonXDAI } from '../../../state/wallet/hooks'
-import { ChainId, EASY_AUCTION_NETWORKS, getTokenDisplay, isTokenXDAI } from '../../../utils'
+import { useTokenBalancesTreatWETHAsETH } from '../../../state/wallet/hooks'
+import {
+  ChainId,
+  EASY_AUCTION_NETWORKS,
+  getFullTokenDisplay,
+  isTokenWETH,
+  isTokenXDAI,
+} from '../../../utils'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
 import { getChainName } from '../../../utils/tools'
 import { Button } from '../../buttons/Button'
-import { ButtonAnchor } from '../../buttons/ButtonAnchor'
-import { ButtonType } from '../../buttons/buttonStylingTypes'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
-import CurrencyInputPanel from '../../form/CurrencyInputPanel'
+import AmountInputPanel from '../../form/AmountInputPanel'
 import PriceInputPanel from '../../form/PriceInputPanel'
-import { ErrorInfo } from '../../icons/ErrorInfo'
-import { ErrorLock } from '../../icons/ErrorLock'
+import { Calendar } from '../../icons/Calendar'
 import { LockBig } from '../../icons/LockBig'
 import ConfirmationModal from '../../modals/ConfirmationModal'
 import WarningModal from '../../modals/WarningModal'
 import SwapModalFooter from '../../modals/common/PlaceOrderModalFooter'
 import { BaseCard } from '../../pureStyledComponents/BaseCard'
 import { EmptyContentText } from '../../pureStyledComponents/EmptyContent'
-import { ErrorRow, ErrorText, ErrorWrapper } from '../../pureStyledComponents/Error'
+import { InfoType } from '../../pureStyledComponents/FieldRow'
+
+const LinkCSS = css`
+  color: ${({ theme }) => theme.text1};
+  text-decoration: none;
+  transition: color 0.05s linear;
+  font-size: 1.5em;
+  font-weight: bold;
+
+  &:hover {
+    color: ${({ theme }) => theme.primary2};
+  }
+`
+
+const ExternalLink = styled.a`
+  ${LinkCSS}
+`
 
 const Wrapper = styled(BaseCard)`
   max-width: 100%;
-  min-height: 352px;
+  min-height: 392px;
   min-width: 100%;
+  padding: 20px;
 `
 
 const ActionButton = styled(Button)`
   flex-shrink: 0;
-  height: 52px;
+  height: 40px;
   margin-top: auto;
-`
-
-const BalanceWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 20px;
-`
-
-const Balance = styled.p`
-  color: ${({ theme }) => theme.text1};
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0 10px 0 0;
-  text-align: left;
-`
-
-const Total = styled.span`
-  font-weight: 400;
-`
-
-const ApprovalWrapper = styled.div`
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.primary1};
-  display: block;
-  margin-bottom: 40px;
-  padding: 7px 12px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    align-items: center;
-    display: flex;
-    margin-bottom: 10px;
-  }
-`
-
-const ApprovalText = styled.p`
-  color: ${({ theme }) => theme.primary1};
-  font-size: 13px;
-  font-weight: normal;
-  line-height: 1.23;
-  margin: 0 0 15px 0;
-  text-align: left;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    margin: 0 25px 0 0;
-  }
-`
-
-const ApprovalButton = styled(Button)`
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  height: 26px;
-  padding: 0 14px;
-  width: 100%;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.md}) {
-    width: auto;
-  }
 `
 
 const PrivateWrapper = styled.div`
@@ -139,12 +100,21 @@ const EmptyContentTextSmall = styled(EmptyContentText)`
   margin-top: 0;
 `
 
-const ButtonWrap = styled(ButtonAnchor)`
-  border-radius: 4px;
-  font-size: 12px;
-  height: 20px;
-  margin: -2px 6px 0 0;
-  padding: 0 5px;
+const Warning = styled.div`
+  align-items: center;
+  display: flex;
+  margin-bottom: 16px;
+`
+
+const WarningText = styled.div`
+  color: ${({ theme }) => theme.text1};
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-left: 8px;
+  position: relative;
+  top: 2px;
+  text-align: left;
 `
 
 interface OrderPlacementProps {
@@ -163,7 +133,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orders: OrderState | undefined = useOrderState()
   const toggleWalletModal = useWalletModalToggle()
   const { price, sellAmount, showPriceInverted } = useOrderPlacementState()
-  const { error } = useGetOrderPlacementError(
+  const { errorAmount, errorPrice } = useGetOrderPlacementError(
     derivedAuctionInfo,
     auctionState,
     auctionIdentifier,
@@ -173,7 +143,6 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const { onUserSellAmountInput } = useSwapActionHandlers()
   const { onUserPriceInput } = useSwapActionHandlers()
   const { auctionDetails, auctionInfoLoading } = useAuctionDetails(auctionIdentifier)
-  const isValid = !error
   const { signature } = useSignature(auctionIdentifier, account)
 
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
@@ -199,18 +168,8 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     chainIdFromWeb3 as ChainId,
   )
 
-  const [approvalSubmitted, setApprovalSubmitted] = useState<boolean>(false)
-
-  const relevantTokenBalances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, [
-    biddingToken,
-  ])
+  const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account ?? undefined, [biddingToken])
   const biddingTokenBalance = relevantTokenBalances?.[biddingToken?.address ?? '']
-
-  useEffect(() => {
-    if (approval === ApprovalState.PENDING) {
-      setApprovalSubmitted(true)
-    }
-  }, [approval, approvalSubmitted])
 
   const maxAmountInput: TokenAmount = biddingTokenBalance ? biddingTokenBalance : undefined
 
@@ -264,11 +223,11 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   const pendingText = `Placing order`
-  const biddingTokenDisplay = useMemo(() => getTokenDisplay(biddingToken, chainId), [
+  const biddingTokenDisplay = useMemo(() => getFullTokenDisplay(biddingToken, chainId), [
     biddingToken,
     chainId,
   ])
-  const auctioningTokenDisplay = useMemo(() => getTokenDisplay(auctioningToken, chainId), [
+  const auctioningTokenDisplay = useMemo(() => getFullTokenDisplay(auctioningToken, chainId), [
     auctioningToken,
     chainId,
   ])
@@ -276,7 +235,7 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
     const standardizedPrice = showPriceInverted
-      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      ? getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION)
       : price
 
     const { buyAmountScaled, sellAmountScaled } = convertPriceIntoBuyAndSellAmount(
@@ -324,142 +283,145 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     auctionDetails,
   ])
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
-  const isPlaceOrderDisabled =
-    !isValid || notApproved || showWarning || showWarningWrongChainId || showConfirm
 
   const onMaxInput = React.useCallback(() => {
     maxAmountInput && onUserSellAmountInput(maxAmountInput.toExact())
   }, [maxAmountInput, onUserSellAmountInput])
 
   const balanceString = React.useMemo(() => {
-    return account
-      ? chainId !== chainIdFromWeb3
-        ? 'Switch network'
-        : `${biddingTokenBalance?.toSignificant(6) || '0'} ${getTokenDisplay(
-            biddingToken,
-            chainId,
-          )}`
-      : 'Connect your wallet'
-  }, [account, biddingToken, biddingTokenBalance, chainId, chainIdFromWeb3])
+    return biddingTokenBalance?.toSignificant(6)
+  }, [biddingTokenBalance])
 
+  const showTopWarning = orderPlacingOnly || cancelDate
+
+  const amountInfo = React.useMemo(
+    () =>
+      !account
+        ? {
+            text: 'Please connect your wallet.',
+            type: InfoType.info,
+          }
+        : notApproved && approval !== ApprovalState.PENDING && approval !== ApprovalState.APPROVED
+        ? {
+            text: `You need to unlock ${biddingTokenDisplay} to allow the smart contract to interact with it.`,
+            type: InfoType.info,
+          }
+        : errorAmount
+        ? {
+            text: errorAmount,
+            type: InfoType.error,
+          }
+        : null,
+    [account, approval, errorAmount, notApproved, biddingTokenDisplay],
+  )
+
+  const priceInfo = React.useMemo(
+    () =>
+      errorPrice
+        ? {
+            text: errorPrice,
+            type: InfoType.error,
+          }
+        : null,
+    [errorPrice],
+  )
+
+  const disablePlaceOrder =
+    (errorAmount ||
+      errorPrice ||
+      notApproved ||
+      showWarning ||
+      showWarningWrongChainId ||
+      showConfirm ||
+      sellAmount === '' ||
+      price === '') &&
+    true
+
+  const isWrappable =
+    biddingTokenBalance &&
+    biddingTokenBalance.greaterThan('0') &&
+    (isTokenXDAI(biddingToken.address, chainId) || isTokenWETH(biddingToken.address, chainId)) &&
+    !!account &&
+    !!biddingToken.address
+
+  const auctioningTokenAddress = auctioningToken && auctioningToken?.address
+  const linkForKYC = auctioningTokenAddress ? kycLinks[auctioningTokenAddress] : null
   return (
     <>
       <Wrapper>
         {auctionInfoLoading && <InlineLoading size={SpinnerSize.small} />}
         {!auctionInfoLoading && isPrivate && !signatureAvailable && (
-          <PrivateWrapper>
-            <LockBig />
-            <TextBig>Private auction</TextBig>
-            <EmptyContentTextNoMargin>You are not allowed place an order.</EmptyContentTextNoMargin>
-            <EmptyContentTextSmall>Ask the auctioneer to get allow-listed.</EmptyContentTextSmall>
-          </PrivateWrapper>
+          <>
+            <PrivateWrapper>
+              <LockBig />
+              <TextBig>Private auction</TextBig>
+              {account !== null && (
+                <EmptyContentTextNoMargin>
+                  You need to get allowed to participate.
+                </EmptyContentTextNoMargin>
+              )}
+            </PrivateWrapper>
+            {account == null ? (
+              <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
+            ) : (
+              <EmptyContentTextSmall>
+                {linkForKYC ? (
+                  <ExternalLink href={linkForKYC}>Get Allowed ↗</ExternalLink>
+                ) : (
+                  <>Ask the auctioneer to get allow-listed.</>
+                )}{' '}
+              </EmptyContentTextSmall>
+            )}
+          </>
         )}
         {!auctionInfoLoading && (!isPrivate || signatureAvailable) && (
           <>
-            <BalanceWrapper>
-              <Balance>
-                Your Balance: <Total>{`${balanceString} `}</Total>
-              </Balance>
-              {isTokenXDAI(biddingToken.address, chainId) &&
-                account &&
-                biddingToken &&
-                biddingToken.address && (
-                  <span
-                    className={`tooltipComponent`}
-                    data-for={'wrap_button'}
-                    data-html={true}
-                    data-multiline={true}
-                    data-tip={`Unwrap WXDAI to XDAI on Honeyswap`}
-                  >
-                    <ReactTooltip
-                      arrowColor={'#001429'}
-                      backgroundColor={'#001429'}
-                      border
-                      borderColor={'#174172'}
-                      className="customTooltip"
-                      delayHide={50}
-                      delayShow={250}
-                      effect="solid"
-                      id={'wrap_button'}
-                      textColor="#fff"
-                    />
-                    <ButtonWrap
-                      buttonType={ButtonType.primaryInverted}
-                      href={`https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`}
-                      target="_blank"
-                    >
-                      Unwrap WXDAI
-                    </ButtonWrap>
-                  </span>
-                )}
-            </BalanceWrapper>
-            <CurrencyInputPanel
+            {showTopWarning && (
+              <Warning>
+                <Calendar />
+                <WarningText>
+                  {orderPlacingOnly &&
+                    `Orders cannot be canceled once you confirm the transaction.`}
+                  {cancelDate &&
+                    !orderPlacingOnly &&
+                    `Orders cannot be canceled after ${cancelDate}`}
+                </WarningText>
+              </Warning>
+            )}
+            <AmountInputPanel
+              balance={balanceString}
               chainId={chainId}
+              info={amountInfo}
               onMax={onMaxInput}
               onUserSellAmountInput={onUserSellAmountInput}
               token={biddingToken}
+              unlock={{ isLocked: notApproved, onUnlock: approveCallback, unlockState: approval }}
               value={sellAmount}
+              wrap={{
+                isWrappable,
+                onClick: () =>
+                  chainId == 100
+                    ? window.open(
+                        `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      )
+                    : window.open(
+                        `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      ),
+              }}
             />
             <PriceInputPanel
-              auctioningToken={auctioningToken}
-              biddingToken={biddingToken}
+              chainId={chainId}
+              info={priceInfo}
               invertPrices={showPriceInverted}
-              label={
-                showPriceInverted
-                  ? `Min ${auctioningTokenDisplay} per ${biddingTokenDisplay} price`
-                  : `Max ${biddingTokenDisplay} per ${auctioningTokenDisplay} price`
-              }
               onInvertPrices={onInvertPrices}
               onUserPriceInput={onUserPriceInput}
+              tokens={{ auctioningToken: auctioningToken, biddingToken: biddingToken }}
               value={price}
             />
-            {(error || orderPlacingOnly || cancelDate) && (
-              <ErrorWrapper>
-                {error && sellAmount !== '' && price !== '' && (
-                  <ErrorRow>
-                    <ErrorInfo />
-                    <ErrorText>{error}</ErrorText>
-                  </ErrorRow>
-                )}
-                {orderPlacingOnly && !cancelDate && (
-                  <ErrorRow>
-                    <ErrorLock />
-                    <ErrorText>
-                      New orders can&apos;t be canceled once you confirm the transaction in the next
-                      step.
-                    </ErrorText>
-                  </ErrorRow>
-                )}
-                {cancelDate && (
-                  <ErrorRow>
-                    <ErrorInfo />
-                    <ErrorText>
-                      Beware: after <strong>{cancelDate}</strong> and until the end of the auction,
-                      orders cannot be canceled.
-                    </ErrorText>
-                  </ErrorRow>
-                )}
-              </ErrorWrapper>
-            )}
-            {notApproved && (
-              <ApprovalWrapper>
-                <ApprovalText>
-                  You need to unlock {biddingTokenDisplay} to allow the smart contract to interact
-                  with it. This has to be done for each new token.
-                </ApprovalText>
-                <ApprovalButton
-                  buttonType={ButtonType.primaryInverted}
-                  disabled={approval === ApprovalState.PENDING}
-                  onClick={approveCallback}
-                >
-                  {approval === ApprovalState.PENDING ? `Approving` : `Approve`}
-                </ApprovalButton>
-              </ApprovalWrapper>
-            )}
             {!account ? (
               <ActionButton onClick={toggleWalletModal}>Connect Wallet</ActionButton>
             ) : (
-              <ActionButton disabled={isPlaceOrderDisabled} onClick={handleShowConfirm}>
+              <ActionButton disabled={disablePlaceOrder} onClick={handleShowConfirm}>
                 Place Order
               </ActionButton>
             )}

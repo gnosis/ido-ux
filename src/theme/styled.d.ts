@@ -11,6 +11,8 @@ export interface Colors {
   bg3: Color;
   bg4: Color;
   bg5: Color;
+  bg6: Color;
+  bg7: Color;
   black: Color;
   blue1: Color;
   border: Color;
@@ -19,6 +21,7 @@ export interface Colors {
   disabled: Color;
   error: Color;
   green1: Color;
+  green2: Color;
   mainBackground: Color;
   modalBG: Color;
   primary1: Color;

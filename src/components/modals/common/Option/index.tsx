@@ -19,7 +19,7 @@ const Wrapper = styled.button<{ disabled?: boolean }>`
   }
 
   &:hover {
-    background-color: #001e3c;
+    background-color: ${({ theme }) => theme.bg7};
   }
 
   ${(props) => props.disabled && `&[disabled] { opacity: 0.5; cursor: not-allowed;}`}

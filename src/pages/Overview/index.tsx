@@ -68,16 +68,13 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
   allAuctionsSorted?.forEach((item) => {
     tableData.push({
       auctionId: `#${item.auctionId}`,
-      buying: item.symbolBiddingToken,
+      buying: item.symbolBiddingToken.slice(0, 7),
       chainId: getChainName(Number(item.chainId)),
       chevron: <Chevron />,
       date: (
         <>
           <span>{new Date(item.endTimeTimestamp * 1000).toLocaleDateString()}</span>
-          <Tooltip
-            id={`auction_date${item.auctionId}`}
-            text={new Date(item.endTimeTimestamp * 1000).toString()}
-          />
+          <Tooltip text={new Date(item.endTimeTimestamp * 1000).toString()} />
         </>
       ),
       participation: item.hasParticipation ? (
@@ -88,7 +85,8 @@ const OverviewCommon = ({ allAuctions }: OverviewProps) => {
       ) : (
         'No'
       ),
-      selling: item.symbolAuctioningToken == 'WXDAI' ? 'XDAI' : item.symbolAuctioningToken,
+      selling:
+        item.symbolAuctioningToken == 'WXDAI' ? 'XDAI' : item.symbolAuctioningToken.slice(0, 7),
       status: new Date(item.endTimeTimestamp * 1000) > new Date() ? 'Ongoing' : 'Ended',
       symbol: (
         <DoubleLogo

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { useWeb3React } from '@web3-react/core'
 
 import { useActiveWeb3React } from '../../../hooks'
@@ -143,6 +144,7 @@ const DisconnectButton = styled(Button)`
   height: 28px;
   line-height: 1;
   width: 100%;
+  font-family: 'Averta', sans-serif;
 `
 
 const UserDropdownButton = () => {
@@ -191,8 +193,12 @@ export const UserDropdown: React.FC<Props> = (props) => {
 
   const disconnect = React.useCallback(async () => {
     deactivate()
-    localStorage.removeItem('walletconnect')
-  }, [deactivate])
+    if (connector instanceof WalletConnectConnector && typeof connector.close === 'function') {
+      connector.close()
+      connector.walletConnectProvider = null
+      localStorage.removeItem('walletconnect')
+    }
+  }, [connector, deactivate])
 
   const UserDropdownContent = () => {
     const items = [
@@ -236,9 +242,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
           <DisconnectButton
             buttonType={ButtonType.danger}
             onClick={() => {
-              const c: any = connector
-              if (typeof c.close === 'function') c.close()
-              else disconnect()
+              disconnect()
             }}
           >
             Disconnect

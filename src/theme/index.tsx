@@ -14,9 +14,9 @@ export * from './components'
 
 const MEDIA_WIDTHS = {
   upToExtraSmall: 500,
-  upToSmall: 600,
-  upToMedium: 960,
   upToLarge: 1280,
+  upToMedium: 960,
+  upToSmall: 600,
 }
 
 const mediaWidthTemplates: {
@@ -38,6 +38,8 @@ export function colors(darkMode: boolean): Colors {
     bg3: darkMode ? '#40444f' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#565A69' : '#888D9B',
+    bg6: darkMode ? '#F7F8FA' : '#001429',
+    bg7: darkMode ? '#001E3C' : '#EDEEF2',
     black: '#000',
     blue1: '#3F77FF',
     border: darkMode ? '#174172' : '#174172',
@@ -46,11 +48,12 @@ export function colors(darkMode: boolean): Colors {
     disabled: darkMode ? '#31323e' : 'rgb(237, 238, 242)',
     error: '#e73c3c',
     green1: ' #008c73',
+    green2: ' #00cba7',
     mainBackground: darkMode ? '#001429' : '#F7F8FA',
     modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
     primary1: darkMode ? '#e8663d' : '#e8663d',
-    primary2: darkMode ? '#0052af' : '#0052af',
-    primary3: darkMode ? '#522420' : '#522420',
+    primary2: darkMode ? '#174172' : '#174172',
+    primary3: darkMode ? '#9f482d' : '#9f482d',
     primary4: darkMode ? '#001E3C' : '#001E3C',
     primary5: darkMode ? 'rgba(69,104,255,0.25)' : 'rgba(69,104,255,0.25)',
     primaryText1: darkMode ? '#6F9DFF' : '#3F77FF',
@@ -59,7 +62,7 @@ export function colors(darkMode: boolean): Colors {
     secondary1: darkMode ? '#2172E5' : '#3F77FF',
     secondary2: darkMode ? '#17000b26' : '#F6DDE8',
     secondary3: darkMode ? '#17000b26' : 'rgba(69,104,255,0.25)',
-    text1: darkMode ? '#FFFFFF' : '#000000',
+    text1: darkMode ? '#FFFFFF' : '#001429',
     text2: darkMode ? '#DCDCDC' : '#565A69',
     text3: darkMode ? '#001429' : '#001429',
     text4: darkMode ? '#565A69' : '#C3C5CB',
@@ -143,7 +146,7 @@ export const theme = (darkMode: boolean): DefaultTheme => ({
     borderStyle: 'solid',
     borderWidth: '1px',
     color: '#fff',
-    colorPlaceholder: '#bfdeff',
+    colorPlaceholder: darkMode ? '#bfdeff' : '#194a81',
     errorColor: '#e73c3c',
     fontSize: '16px',
     fontWeight: '400',

@@ -1,4 +1,4 @@
-import { Token } from 'uniswap-xdai-sdk'
+import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import { ChainId } from '../../utils'
 
@@ -12,4 +12,5 @@ export default [
   ),
   new Token(ChainId.RINKEBY, '0xF9bA5210F91D0474bd1e1DcDAeC4C58E359AaD85', 18, 'MKR', 'Maker'),
   new Token(ChainId.RINKEBY, '0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b', 6, 'USDC', 'USDC'),
+  new Token(ChainId.RINKEBY, '0x29Db448452e17DC5c50CF5D6e3198b1a531E0D6A', 18, 'VITA', 'VITA'),
 ]

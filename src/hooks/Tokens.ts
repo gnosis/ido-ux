@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Token, WETH } from 'uniswap-xdai-sdk'
+
+import { Token, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import { ALL_TOKENS } from '../constants/tokens'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'

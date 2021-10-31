@@ -14,6 +14,17 @@ export interface ButtonCommonProps {
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, ButtonCommonProps {}
 
+export interface ButtonGroupCommonProps {
+  left?: any
+  right?: any
+  theme?: any
+  activate?: boolean
+}
+
+export interface ButtonGroupProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    ButtonGroupCommonProps {}
+
 export interface ButtonLinkProps
   extends AnchorHTMLAttributes<HTMLAnchorElement>,
     ButtonCommonProps {}
@@ -92,6 +103,7 @@ export const ButtonCSS = css<ButtonCommonProps>`
   transition: all 0.15s ease-out;
   user-select: none;
   white-space: nowrap;
+  font-family: 'Averta', sans-serif;
 
   ${(props) => getButtonTypeStyles(props.buttonType)}
 `

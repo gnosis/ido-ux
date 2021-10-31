@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy-staging
 
 # Run on every commit
 on:
@@ -55,6 +55,8 @@ jobs:
           REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-api-rinkeby.gnosis.io/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-api-mainnet.gnosis.io/
+          REACT_APP_NETWORK_URL_MATIC: https://rpc-mainnet.matic.network
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_MATIC: https://ido-api-polygon.gnosis.io/
       - name: Get PR number
         uses: jwalton/gh-find-current-pr@v1
         id: findPr

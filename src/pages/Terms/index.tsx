@@ -33,7 +33,7 @@ export const Terms: React.FC = () => {
   return (
     <>
       <PageTitleStyled>Gnosis Auction Terms &amp; Conditions</PageTitleStyled>
-      <PageTitleNote>(Last updated: March 2021)</PageTitleNote>
+      <PageTitleNote>(Last updated: June 2021)</PageTitleNote>
       <Paragraph>
         Please read these Terms carefully before participating on our auction platform. These Terms
         tell you who we are, what we offer and what to do if there is a problem and other important
@@ -51,18 +51,18 @@ export const Terms: React.FC = () => {
             <LiMultiNumber>
               Gnosis Auction is operated by GnosisDAO <strong>(&quot;We&quot;)</strong>. We are an
               Ethereum based organisation managed by community members. To contact us, please write
-              to us at{' '}
+              to us via the GnosisDAO subcategory of{' '}
               <a href="https://forum.gnosis.io" rel="noreferrer" target="_blank">
                 forum.gnosis.io
               </a>
               .
             </LiMultiNumber>
             <LiMultiNumber>
-              We use open source products and developer materials from Gnosis Limited and its
-              shareholders, subsidiaries, employees, contractors, agents, directors, and officers
-              <strong>(&quot;Affiliates&quot;)</strong> to provide a Platform to the Gnosis Auction
-              Protocol. For the avoidance of doubt, the provision of the Platform and the Protocol
-              is based solely on our independent actions.
+              We use open source products and developer materials from Gnosis Limited and affiliated
+              persons and entities
+              <strong>(&quot;Affiliates&quot;)</strong> as well as other third parties to provide a
+              Platform to the Gnosis Auction Protocol. The provision of the Platform and the
+              Protocol is based solely on our independent actions.
             </LiMultiNumber>
           </OrderedListMultiNumber>
         </LiMultiNumber>
@@ -103,11 +103,12 @@ export const Terms: React.FC = () => {
             <LiMultiNumber>
               The Protocol was developed by Gnosis Limited and is governed by a series of smart
               contracts that allow permissionless peer-to-peer auctions between users applying a
-              batch auction mechanism and without the need for intermediaries on the Ethereum
-              Blockchain. We are not a custodian or a counterparty to any transactions executed by
-              you on the Protocol. We do not support any other service, particularly we do not
-              provide any order matching, guaranteed prices, or similar exchange or trading platform
-              services.
+              batch auction mechanism and without the need for intermediaries on Ethereum Mainnet,
+              and Ethereum Virtual Machine compatible validation mechanisms. We are not a custodian
+              or a counterparty to any transactions executed by you on the Protocol. We do not
+              support any other service, particularly we do not provide any order matching,
+              guaranteed prices, or similar exchange or trading platform services. We neither
+              initiate or organise auctions nor do we have any involvement with the auctioneers.
             </LiMultiNumber>
           </OrderedListMultiNumber>
         </LiMultiNumber>
@@ -127,21 +128,6 @@ export const Terms: React.FC = () => {
               You are responsible for ensuring that all persons who access or use our Platform
               through your device or internet connection are aware of these Terms, and that they
               comply with them.
-            </LiMultiNumber>
-            <LiMultiNumber>
-              <span>
-                The Terms refer to the following additional terms, which also apply to your use of
-                our Platform and are hereby incorporated by reference:
-              </span>
-              <OrderedListMultiNumber>
-                <LiMultiNumber>
-                  Our <HashLink to="/privacy-policy#topAnchor">Privacy Policy.</HashLink>
-                </LiMultiNumber>
-                <LiMultiNumber>
-                  Our <HashLink to="/cookie-policy#topAnchor">Cookie Policy</HashLink>, which sets
-                  out information about the cookies on our site.
-                </LiMultiNumber>
-              </OrderedListMultiNumber>
             </LiMultiNumber>
             <LiMultiNumber>
               We may amend these Terms at our sole discretion. We regularly do so. Every time you
@@ -164,8 +150,9 @@ export const Terms: React.FC = () => {
           <LiTitleNoMarginTop>WHAT YOU REQUIRE TO USE OUR PLATFORM</LiTitleNoMarginTop>
           <OrderedListMultiNumber>
             <LiMultiNumber>
-              Participants may use our Platform to interact with the Protocol and buy or sell ERC 20
-              tokens by placing their tokens in a batch auction running on the Protocol.
+              Users may use our Platform to interact with the Protocol and buy ERC20 tokens offered
+              by third-party auctioneers by placing your tokens into a batch auction organised by
+              the third-party auctioneers and running on the Protocol.
             </LiMultiNumber>
             <LiMultiNumber>
               A detailed step-by-step guide on how to use the Platform may be found in the{' '}
@@ -175,18 +162,20 @@ export const Terms: React.FC = () => {
               <span>To use the Platform you require: </span>
               <OrderedListMultiNumber>
                 <LiMultiNumber>
-                  A wallet compatible with the Platform. We currently only support MetaMask and
+                  A wallet compatible with the Ethereum Blockchain or Ethereum Virtual Machine
+                  compatible validation mechanisms. We currently only support MetaMask and
                   WalletConnect compatible wallets. We have not tested compatibility with any other
                   wallet.
                 </LiMultiNumber>
                 <LiMultiNumber>
-                  An ERC 20 token to participate on the buy or sell side of an auction. Buyers can
-                  only pay with the ERC 20 token as specified by the seller at the beginning of the
-                  auction.
+                  An ERC 20 token to participate on the buy side of an auction. Buyers can only pay
+                  with the ERC 20 token as specified by the third party auctioneer.
                 </LiMultiNumber>
                 <LiMultiNumber>
-                  ETH in your Wallet to pay for transactions fees, which are incurred through the
-                  Protocol and on the Ethereum Blockchain.
+                  Depending on whether you interact with Gnosis Auction on Ethereum Mainnet or
+                  Ethereum Virtual Machine compatible validation mechanisms, sufficient ETH or the
+                  networks native crypto asset, respectively, must be in your Wallet to pay for
+                  transactions fees, which are incurred through the Protocol and on the Blockchain.
                 </LiMultiNumber>
               </OrderedListMultiNumber>
             </LiMultiNumber>
@@ -196,19 +185,17 @@ export const Terms: React.FC = () => {
           <LiTitleNoMarginTop>NO FEES LEVIED BY US</LiTitleNoMarginTop>
           <OrderedListMultiNumber>
             <LiMultiNumber>
-              We do not levy any fees on users of our Platform at this moment in time. This may
-              however change in the future. Fees are incurred at the Protocol level and amount to a
-              maximum of 1.5% of the tokens deposited by the seller to be auctioned.
+              We do not currently levy any fees on users of our Platform at this moment in time, but
+              this might change in the future.
             </LiMultiNumber>
             <LiMultiNumber>
-              Users interacting with the Ethereum Blockchain will incur network fees (so called gas
-              costs). Gas costs are independent of the Platform and go to miners processing the
-              transaction on the Ethereum Blockchain. We have no control over and do not set the gas
-              costs, and do not benefit from them. Gas costs are calculated by multiplying the gas
-              price with the gas used. The Platform does not change the default suggestion of your
-              wallet provider. Gas costs may differ significantly, depending on the ETH-USD rate and
-              network usage at the transaction time. Users may be able to change the default gas
-              price within their wallet, depending on the wallet used.
+              Users interacting with the Ethereum Mainnet or Ethereum Virtual Machine compatible
+              validation mechanisms will incur transaction costs. Transaction costs are independent
+              of the Platform and go to miners processing the transaction on the networks. We have
+              no control over and do not set the transaction costs, and do not benefit from them.
+              The Platform does not change the default suggestion of your wallet provider. Users may
+              be able to change the default transaction fee within their wallet, depending on the
+              wallet used.
             </LiMultiNumber>
           </OrderedListMultiNumber>
         </LiMultiNumber>
@@ -310,28 +297,29 @@ export const Terms: React.FC = () => {
           <LiTitleNoMarginTop>OUR INTELLECTUAL PROPERTY RIGHTS ARE RESERVED</LiTitleNoMarginTop>
           <OrderedListMultiNumber>
             <LiMultiNumber>
-              We are the owner or the licensee of all intellectual property rights of the Platform.
-              Those works are protected by intellectual property laws and treaties around the world.
-              All such rights are reserved.
+              Subject to the application of the GNU Lesser General Public License v3.0 to the
+              software code of the Platform, we are the owner or the licensee of all intellectual
+              property rights of the Platform. Those works are protected by intellectual property
+              laws and treaties around the world. All such rights are reserved.
             </LiMultiNumber>
             <LiMultiNumber>
               Subject to your compliance with these Terms, we grant you a limited, revocable,
-              non-exclusive, non-transferable, non-sublicensable licence to access and make personal
-              and non-commercial use of the Platform. This licence does not include any resale,
-              commercial or derivative use of our Platform. We reserve and retain all rights not
-              expressly granted to you in these Terms. The Platform may not be reproduced, sold, or
-              otherwise exploited for any commercial purpose without our express prior written
-              consent. You may not frame or utilize framing techniques to enclose any trademark,
-              logo, or other proprietary information of us without our express prior written
-              consent. You may not misuse the Platform and may only use it as permitted by law. If
-              you breach our intellectual property rights in violation of these Terms, your license
-              to use our Platform will automatically be revoked and terminated immediately.
+              non-exclusive, non-transferable, non-sublicensable licence to access the Platform.
+              This licence does not include any resale, commercial or derivative use of our
+              Platform. We reserve and retain all rights not expressly granted to you in these
+              Terms. The Platform may not be reproduced, sold, or otherwise exploited for any
+              commercial purpose without our express prior written consent. You may not frame or
+              utilize framing techniques to enclose any trademark, logo, or other proprietary
+              information of us without our express prior written consent. You may not misuse the
+              Platform and may only use it as permitted by law. If you breach our intellectual
+              property rights in violation of these Terms, your license to use our Platform will
+              automatically be revoked and terminated immediately.
             </LiMultiNumber>
           </OrderedListMultiNumber>
         </LiMultiNumber>
         <LiMultiNumber>
           <LiTitleNoMarginTop>
-            WE ARE NOT RESPONSIBLE FOR VIRUSES AND YOU MUST NOT INTRODUCE THEM
+            WE ARE NOT RESPONSIBLE FOR BUGS AND YOU MUST NOT INTRODUCE THEM
           </LiTitleNoMarginTop>
           <OrderedListMultiNumber>
             <LiMultiNumber>
@@ -344,13 +332,13 @@ export const Terms: React.FC = () => {
             <LiMultiNumber>
               You must not misuse our Platform by knowingly introducing material that is malicious
               or technologically harmful. You must not attempt to gain unauthorised access to our
-              Platform, the server on which our interface is stored or any server, computer or
-              database connected to our interface. You must not attack our Platform via a
-              denial-of-service attack or a distributed denial-of service attack. By breaching this
-              provision, you would commit a criminal offence. We will report any such breach to the
-              relevant law enforcement authorities and we will cooperate with those authorities,
-              including, where possible, by disclosing your identity to them. In the event of such a
-              breach, your right to use our Platform will cease immediately.
+              Platform, any server on which our Platform may be stored, computer or database
+              connected to our Platform. You must not attack our Platform via a denial-of-service
+              attack or a distributed denial-of service attack. By breaching this provision, you
+              would commit a criminal offence. We will report any such breach to the relevant law
+              enforcement authorities and we will cooperate with those authorities, including, where
+              possible, by disclosing your identity to them. In the event of such a breach, your
+              right to use our Platform will cease immediately.
             </LiMultiNumber>
           </OrderedListMultiNumber>
         </LiMultiNumber>
@@ -362,7 +350,7 @@ export const Terms: React.FC = () => {
               does not damage our reputation or take advantage of it. You must not establish a link
               in such a way as to suggest any form of association, approval or endorsement on our
               part where none exists. You must not establish a link to our Platform in any website
-              that is not owned by you.
+              without the website’s authorization.
             </LiMultiNumber>
             <LiMultiNumber>
               Our interface must not be framed on any other site, nor may you create a link to any
@@ -409,10 +397,10 @@ export const Terms: React.FC = () => {
                   blockchain-based software systems;
                 </LiMultiNumber>
                 <LiMultiNumber>
-                  you understand that transactions on the Ethereum Blockchain are irreversible and
-                  may not be erased and that your wallet address and transaction is displayed
-                  permanently and publicly and that you relinquish any right of rectification or
-                  erasure of personal data;
+                  you understand that transactions on the Ethereum Mainnet and Ethereum Virtual
+                  Machine compatible validation mechanisms are irreversible and may not be erased
+                  and that your wallet address and transaction is displayed permanently and publicly
+                  and that you relinquish any right of rectification or erasure of personal data;
                 </LiMultiNumber>
                 <LiMultiNumber>
                   you shall comply with any applicable tax obligations in your jurisdiction arising
@@ -442,9 +430,9 @@ export const Terms: React.FC = () => {
                   criminal or fraudulent activity;
                 </LiMultiNumber>
                 <LiMultiNumber>
-                  the Platform, Protocol and the underlying Ethereum Blockchain are in an early
-                  development stage and we accordingly do not guarantee an error-free process and
-                  give no price or liquidity guarantee;
+                  the Platform, Protocol and the Ethereum and Ethereum Virtual Machine compatible
+                  validation mechanisms are in an early development stage and we accordingly do not
+                  guarantee an error-free process and give no price or liquidity guarantee;
                 </LiMultiNumber>
                 <LiMultiNumber>you are using the Platform at your own risk;</LiMultiNumber>
                 <LiMultiNumber>
@@ -461,8 +449,8 @@ export const Terms: React.FC = () => {
           <LiTitleNoMarginTop>YOUR INDEMNIFICATION AND LIABILITY TO US</LiTitleNoMarginTop>
           <OrderedListMultiNumber>
             <LiMultiNumber>
-              You agree to release and indemnify, defend and hold us and any of our affiliates
-              harmless, as well as any directors, officers, employees, shareholders and
+              You agree to release and indemnify, defend and hold us and any of our Affiliates
+              harmless, as well as any directors, officers, employees, contractors, shareholders and
               representatives of any of the foregoing, from and against any and all losses,
               liabilities, damages, costs claims or actions of any kind arising or resulting from
               your use of our Platform, your breach of these Terms, and any of your acts or
@@ -492,11 +480,11 @@ export const Terms: React.FC = () => {
                 IF YOU ARE A BUSINESS USER: YOU USE THIS PLATFORM AT YOUR OWN RISK AND YOU ASSUME
                 FULL RESPONSIBILITY FOR SUCH USE. WE EXCLUDE ALL IMPLIED CONDITIONS, WARRANTIES,
                 REPRESENTATIONS OR OTHER TERMS THAT MAY APPLY TO OUR PLATFORM OR ANY OTHER CONTENT
-                ON OUR INTERFACE. WE WILL NOT BE LIABLE TO YOU FOR ANY LOSS OR DAMAGE, WHETHER IN
+                ON OUR PLATFORM. WE WILL NOT BE LIABLE TO YOU FOR ANY LOSS OR DAMAGE, WHETHER IN
                 CONTRACT, TORT (INCLUDING NEGLIGENCE), BREACH OF STATUTORY DUTY, OR OTHERWISE, EVEN
                 IF FORESEEABLE, ARISING UNDER OR IN CONNECTION WITH THE USE OF, OR INABILITY TO USE,
-                OUR PLATFORM; OR THE USE OF OR RELIANCE ON ANY CONTENT DISPLAYED ON OUR INTERFACE.
-                WE WILL NOT BE LIABLE FOR LOSS OF PROFITS, SALES, BUSINESS, OR REVENUE, BUSINESS
+                OUR PLATFORM; OR THE USE OF OR RELIANCE ON ANY CONTENT DISPLAYED ON OUR PLATFROM. WE
+                WILL NOT BE LIABLE FOR LOSS OF PROFITS, SALES, BUSINESS, OR REVENUE, BUSINESS
                 INTERRUPTION, ANTICIPATED SAVINGS, BUSINESS OPPORTUNITY, GOODWILL OR REPUTATION OR
                 ANY INDIRECT OR CONSEQUENTIAL LOSS OR DAMAGE.
               </Red>
@@ -511,21 +499,12 @@ export const Terms: React.FC = () => {
                 PLATFORM DAMAGES A DEVICE OR DIGITAL CONTENT BELONGING TO YOU AND THIS IS CAUSED BY
                 OUR FAILURE TO USE REASONABLE CARE AND SKILL, WE WILL PAY YOU COMPENSATION. SUCH
                 COMPENSATION SHALL BE LIMITED TO THE AMOUNT OF FEES PAID BY YOU TO US FOR USING OUR
-                PLATFORM. AT THIS POINT IN TIME, OUR SERVICE IS FREE OF CHARGE AND ACCORDINGLY NO
+                PLATFORM. AT THIS POINT IN TIME, OUR SERVICES ARE FREE OF CHARGE AND ACCORDINGLY NO
                 COMPENSATION WILL BE PAYABLE TO YOU. MOREOVER, WE WILL NOT BE LIABLE FOR DAMAGE THAT
                 YOU COULD HAVE AVOIDED BY FOLLOWING OUR ADVICE OR FOR DAMAGE THAT WAS CAUSED BY YOU
                 FAILING TO CORRECTLY FOLLOW OUR INSTRUCTIONS OR TO HAVE IN PLACE THE MINIMUM SYSTEM
                 REQUIREMENTS ADVISED BY US.
               </Green>
-            </LiMultiNumber>
-          </OrderedListMultiNumber>
-        </LiMultiNumber>
-        <LiMultiNumber>
-          <LiTitleNoMarginTop>HOW WE MAY USE YOUR PERSONAL INFORMATION</LiTitleNoMarginTop>
-          <OrderedListMultiNumber>
-            <LiMultiNumber>
-              We will only use your personal information as set out in our{' '}
-              <HashLink to="/privacy-policy#topAnchor">Privacy Policy</HashLink>.
             </LiMultiNumber>
           </OrderedListMultiNumber>
         </LiMultiNumber>
@@ -537,46 +516,10 @@ export const Terms: React.FC = () => {
                 If an alleged breach, controversy, claim, dispute or difference arises out of or in
                 connection with the present Terms between you and us (a{' '}
                 <strong>&quot;Dispute&quot;</strong>), you agree to seek to resolve the matter with
-                us amicably by referring the matter first to:
+                us amicably by referring the matter first to GnosisDAO subcategory of the
+                gnosis.forum.io with a detailed description, the date and time the issue arose, your
+                handle to contact you on and the outcome you are seeking.
               </span>
-              <OrderedListMultiNumber>
-                <LiMultiNumber>
-                  any member of your executive management in case of legal persons, or you
-                  personally if you are acting as a natural person;
-                </LiMultiNumber>
-                <LiMultiNumber>in the case of us, our support team.</LiMultiNumber>
-              </OrderedListMultiNumber>
-            </LiMultiNumber>
-            <LiMultiNumber>
-              <span>
-                If you wish to report a Dispute, you must contact our support team at{' '}
-                <a href="https://forum.gnosis.io" rel="noreferrer" target="_blank">
-                  forum.gnosis.io
-                </a>
-                . The following information will need to be included:
-              </span>
-              <OrderedListMultiNumber>
-                <LiMultiNumber>your name and surname;</LiMultiNumber>
-                <LiMultiNumber>your e-mail address (or other recognition details);</LiMultiNumber>
-                <LiMultiNumber>detailed enquiry description;</LiMultiNumber>
-                <LiMultiNumber>the date and time that the issue arose.</LiMultiNumber>
-              </OrderedListMultiNumber>
-            </LiMultiNumber>
-            <LiMultiNumber>
-              <span>
-                If you receive a response from the support team but deem it unsatisfactory, or if
-                you have not received an e-mail within two weeks, you shall submit a request for
-                action to us by way of Gnosis Improvement Proposal via{' '}
-                <a href="https://forum.gnosis.io" rel="noreferrer" target="_blank">
-                  forum.gnosis.io
-                </a>
-                . The following information will need to be included:
-              </span>
-              <OrderedListMultiNumber>
-                <LiMultiNumber>detailed enquiry description;</LiMultiNumber>
-                <LiMultiNumber>the date and time that the issue arose;</LiMultiNumber>
-                <LiMultiNumber>the outcome you are seeking.</LiMultiNumber>
-              </OrderedListMultiNumber>
             </LiMultiNumber>
             <LiMultiNumber>
               Your right to take legal action remains unaffected by the existence or use of this
@@ -630,12 +573,12 @@ export const Terms: React.FC = () => {
           <LiTitleNoMarginTop>THIRD PARTY BENEFICIARIES</LiTitleNoMarginTop>
           <OrderedListMultiNumber>
             <LiMultiNumber>
-              Clauses 4 to 24 also apply to the benefit of the Affiliates and also refer to the
-              Protocol in this context.
+              Clauses 4 to 24 also apply to the benefit of the Affiliates and such benefit and also
+              encompasses Protocol related matters in this context.
             </LiMultiNumber>
             <LiMultiNumber>
-              Unless it expressly states otherwise, these Terms do not give rise to any third party
-              rights, which may be enforced against us.
+              Subject to 21.1, these terms do not give rise to any third party rights, which may be
+              enforced against Us.
             </LiMultiNumber>
           </OrderedListMultiNumber>
         </LiMultiNumber>
@@ -716,24 +659,31 @@ export const Terms: React.FC = () => {
           understanding of computer science and mathematics to appreciate the inherent risks.
         </Paragraph>
         <Paragraph>
-          <Underline>TRANSACTIONS ON ETHEREUM BLOCKCHAIN ARE IMMUTABLE AND IRREVERSIBLE</Underline>
+          <Underline>
+            TRANSACTIONS ON ETHEREUM MAINNET AND ETHEREUM VIRTUAL MACHINE COMPATIBLE VALIDATION
+            MECHANISMS ARE IMMUTABLE AND IRREVERSIBLE
+          </Underline>
           <br />
-          Transactions on Ethereum Blockchain are generally immutable and irreversible. Any
-          transaction thereon is therefore irrevocable and final as soon as it is settled thereon.
-          In the event that you send your tokens to sell to any other destination other than the
-          Protocol smart contracts, such tokens may not be returned. We assume no responsibility and
-          shall have no obligation to you if this occurs, including but not limited to any
-          responsibility to recover, or assist to recover, any such tokens.
+          Transactions on Ethereum Mainnet and Ethereum Virtual Machine compatible validation
+          mechanisms are generally immutable and irreversible. Any transaction thereon is therefore
+          irrevocable and final as soon as it is settled thereon. In the event that you send your
+          tokens to sell to any other destination other than the Protocol smart contracts, such
+          tokens may not be returned. We assume no responsibility and shall have no obligation to
+          you if this occurs, including but not limited to any responsibility to recover, or assist
+          to recover, any such tokens.
         </Paragraph>
         <Paragraph>
-          <Underline>THIRD PARTY DATA CENTRE FAILURES</Underline>
+          <Underline>FAILURES WITHIN DATA STORAGE SYSTEMS</Underline>
           <br />
           Our Platform may in part be established on servers at data centre facilities of third
-          party providers. We may be required to transfer our Platform to different facilities, and
-          may incur service interruption in connection with such relocation. Data centre facilities
-          are vulnerable to force majeure events or other failures. Third party providers may suffer
-          breaches of security and others may obtain unauthorised access to our server data. As
-          techniques used to obtain unauthorised access change frequently and generally are not
+          party providers and on in a distributed systems for storing and accessing data including
+          IPFS. Where centralised services may be used, we may be required to transfer our Platform
+          to different facilities, and may incur service interruption in connection with such
+          relocation. Data centre facilities are vulnerable to force majeure events or other
+          failures. Third party providers may suffer breaches of security and others may obtain
+          unauthorised access to our server data. Where content is stored via distributed systems,
+          there may be interference in content addressing, content linking, indexing and discovery.
+          As techniques used to obtain unauthorised access change frequently and generally are not
           recognised until used against a target, it may not be possible to anticipate these
           techniques or to implement adequate preventive measures.
         </Paragraph>

@@ -35,19 +35,19 @@ export const walletconnect = {
   1: new WalletConnectConnector({
     rpc: { 1: NETWORK_CONFIGS[1].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
-    qrcode: false,
+    qrcode: true,
     pollingInterval: POLLING_INTERVAL,
   }),
   100: new WalletConnectConnector({
     rpc: { 100: NETWORK_CONFIGS[100].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
-    qrcode: false,
+    qrcode: true,
     pollingInterval: POLLING_INTERVAL,
   }),
   4: new WalletConnectConnector({
     rpc: { 4: NETWORK_CONFIGS[4].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
-    qrcode: false,
+    qrcode: true,
     pollingInterval: POLLING_INTERVAL,
   }),
   // if no network is defined, we look whether wallet connect supports all possible chains
@@ -56,7 +56,7 @@ export const walletconnect = {
   undefined: new WalletConnectConnector({
     rpc: rpcs,
     bridge: 'https://safe-walletconnect.gnosis.io',
-    qrcode: false,
+    qrcode: true,
     pollingInterval: POLLING_INTERVAL,
   }),
 }

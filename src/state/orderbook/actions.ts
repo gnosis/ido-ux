@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 
 import { OrderBookData, PricePoint } from '../../api/AdditionalServicesApi'
+import { CalculatedAuctionPrice } from './hooks'
 
 export const appendBid = createAction<{
   order: PricePoint
@@ -14,6 +15,7 @@ export const resetOrderbookData = createAction<{
   auctionId: number
   chainId: number
   orderbook: OrderBookData
+  calculatedAuctionPrice: CalculatedAuctionPrice
   error: Maybe<Error>
 }>('ResetOrderbookOrders')
 

@@ -6,7 +6,13 @@ import { AuctionInfo } from './useAllAuctionInfos'
 
 const logger = getLogger('useInterestingAuctionInfo')
 
-export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
+interface InterestingAuctionInfo {
+  closedAuctions: boolean
+}
+
+export function useInterestingAuctionInfo(
+  params?: Maybe<InterestingAuctionInfo>,
+): Maybe<AuctionInfo[]> {
   const [auctionInfo, setMostInterestingAuctions] = useState<Maybe<AuctionInfo[]>>(null)
 
   useEffect(() => {
@@ -17,13 +23,15 @@ export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
         if (!additionalServiceApi) {
           throw new Error('missing dependencies in useInterestingAuctionInfo callback')
         }
-        const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails()
+        const auctionInfo = await additionalServiceApi.getMostInterestingAuctionDetails(
+          params?.closedAuctions,
+        )
         if (cancelled) return
         setMostInterestingAuctions(auctionInfo)
       } catch (error) {
         if (cancelled) return
         setMostInterestingAuctions(null)
-        logger.error('Error getting clearing price info', error)
+        logger.error('Error getting most interesting auction details info', error)
       }
     }
     fetchApiData()
@@ -31,7 +39,7 @@ export function useInterestingAuctionInfo(): Maybe<AuctionInfo[]> {
     return (): void => {
       cancelled = true
     }
-  }, [setMostInterestingAuctions])
+  }, [params?.closedAuctions])
 
   return auctionInfo
 }

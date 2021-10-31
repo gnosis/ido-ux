@@ -4,8 +4,8 @@ import styled from 'styled-components'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'
 import { DerivedAuctionInfo } from '../../../state/orderPlacement/hooks'
-import { AuctionIdentifier, parseURL } from '../../../state/orderPlacement/reducer'
-import { useOrderbookDataCallback, useOrderbookState } from '../../../state/orderbook/hooks'
+import { parseURL } from '../../../state/orderPlacement/reducer'
+import { useOrderbookState } from '../../../state/orderbook/hooks'
 import { getInverse, showChartsInverted } from '../../../utils/prices'
 import { InlineLoading } from '../../common/InlineLoading'
 import { SpinnerSize } from '../../common/Spinner'
@@ -18,17 +18,16 @@ const Wrapper = styled(BaseCard)`
   display: flex;
   justify-content: center;
   max-width: 100%;
+  height: 100%;
   min-height: 352px;
   min-width: 100%;
 `
 interface OrderbookProps {
-  auctionIdentifier: AuctionIdentifier
   derivedAuctionInfo: DerivedAuctionInfo
 }
 
 export const OrderBook: React.FC<OrderbookProps> = (props) => {
-  const { auctionIdentifier, derivedAuctionInfo } = props
-  useOrderbookDataCallback(auctionIdentifier)
+  const { derivedAuctionInfo } = props
   const {
     asks,
     auctionId: orderbookAuctionId,
@@ -59,8 +58,8 @@ export const OrderBook: React.FC<OrderbookProps> = (props) => {
 
   if (showChartsInverted(baseToken)) {
     for (const p of processedOrderbook) {
-      p.priceNumber = getInverse(p.price, NUMBER_OF_DIGITS_FOR_INVERSION)
-      p.priceFormatted = getInverse(p.price, NUMBER_OF_DIGITS_FOR_INVERSION).toString()
+      p.priceNumber = Number(getInverse(p.price.toString(), NUMBER_OF_DIGITS_FOR_INVERSION))
+      p.priceFormatted = getInverse(p.price.toString(), NUMBER_OF_DIGITS_FOR_INVERSION)
     }
   }
 

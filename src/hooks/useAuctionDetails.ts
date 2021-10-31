@@ -23,6 +23,11 @@ export interface AuctionInfoDetail {
   orderCancellationEndDate: number | undefined
   exactOrder: string
   isPrivateAuction: boolean
+  isAtomicClosureAllowed: boolean
+  currentBiddingAmount: string
+  minFundingThreshold: string
+  allowListManager: string
+  allowListSigner: string
 }
 
 export const useAuctionDetails = (

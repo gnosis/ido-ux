@@ -1,9 +1,12 @@
-import { Token } from 'uniswap-xdai-sdk'
+import { Fraction, Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
-import { MAX_DECIMALS_PRICE_FORMAT } from '../../../constants/config'
+import {
+  MAX_DECIMALS_PRICE_FORMAT,
+  NUMBER_OF_DIGITS_FOR_INVERSION,
+} from '../../../constants/config'
 import { getLogger } from '../../../utils/logger'
-import { showChartsInverted } from '../../../utils/prices'
+import { getInverse, showChartsInverted } from '../../../utils/prices'
 import { Offer, Props as OrderBookChartProps, PricePointDetails } from '../OrderbookChart'
 
 const logger = getLogger('OrderbookWidget')
@@ -393,4 +396,30 @@ export const processOrderbookData = ({
 
 export interface OrderBookProps extends Omit<OrderBookChartProps, 'data'> {
   auctionId?: number
+}
+
+export class CalculatorClearingPrice {
+  static fromOrderbook(
+    sellOrders: PricePoint[],
+    initialAuctionOrder: PricePoint,
+    userOrder?: PricePoint,
+  ) {
+    const price = findClearingPrice([...sellOrders], userOrder, initialAuctionOrder)
+    const priceReversed = getInverse(String(price), NUMBER_OF_DIGITS_FOR_INVERSION)
+
+    return { price: price ? price : 0, priceReversed: Number(priceReversed) }
+  }
+
+  /**
+   * Allows to get the clearingPrice from Fraction with
+   * SellOrder (sellAmountToken / buyAmountToken)
+   *
+   * That info is assembled from API.
+   */
+  static convertFromFraction(fractionClearingPrice: Fraction) {
+    const price = fractionClearingPrice.toSignificant(5)
+    const priceReversed = fractionClearingPrice.invert().toSignificant(5)
+
+    return { price, priceReversed }
+  }
 }

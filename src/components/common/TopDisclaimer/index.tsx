@@ -9,6 +9,7 @@ const Wrapper = styled.div`
   flex-shrink: 0;
   min-height: 30px;
   padding: 5px 0;
+  width: 100%;
 `
 
 const Inner = styled(InnerContainer)`

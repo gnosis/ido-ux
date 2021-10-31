@@ -1,8 +1,8 @@
-import { Token } from 'uniswap-xdai-sdk'
-
 import * as am4charts from '@amcharts/amcharts4/charts'
 import * as am4core from '@amcharts/amcharts4/core'
 import am4themesSpiritedaway from '@amcharts/amcharts4/themes/spiritedaway'
+import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Decimal } from 'decimal.js'
 
 import { ChainId, getTokenDisplay } from '../../../utils'
 
@@ -45,6 +45,8 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
     white: '#FFFFFF',
     grey: '#565A69',
     orange: '#FF6347',
+    tooltipBg: '#001429',
+    tooltipBorder: '#174172',
   }
 
   // Create axes
@@ -147,7 +149,11 @@ export const XYChart = (props: XYChartProps): am4charts.XYChart => {
   // Legend
   chart.legend = new am4charts.Legend()
   chart.legend.labels.template.fill = am4core.color(colors.white)
-  chart.legend.itemContainers.template.tooltipText = '{dataContext.dummyData.description}'
+  chart.tooltip.getFillFromObject = false
+  chart.tooltip.background.fill = am4core.color(colors.tooltipBg)
+  chart.tooltip.background.stroke = am4core.color(colors.tooltipBorder)
+  chart.legend.itemContainers.template.tooltipHTML =
+    '<div style="white-space: normal!important;max-width: 300px;padding:0 5px 5px;">{dataContext.dummyData.description}</div>'
 
   return chart
 }
@@ -160,7 +166,11 @@ interface DrawInformation {
 }
 
 const formatNumberForChartTooltip = (n: number) => {
-  return numberFormatter.format(n, '###.00 a')
+  const d = new Decimal(n)
+  const nd = d.toSignificantDigits(6)
+  const digits = nd.decimalPlaces()
+  const decimalFormatPart = `.${'0'.repeat(digits)}`
+  return numberFormatter.format(nd.toNumber(), `###${digits > 0 ? decimalFormatPart : ''} a`)
 }
 
 export const drawInformation = (props: DrawInformation) => {

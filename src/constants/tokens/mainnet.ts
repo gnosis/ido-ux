@@ -1,4 +1,4 @@
-import { Token } from 'uniswap-xdai-sdk'
+import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import { ChainId } from '../../utils'
 export default [
@@ -470,6 +470,7 @@ export default [
     'VERI',
     'Veritaseum',
   ),
+  new Token(ChainId.MAINNET, '0x81f8f0bb1cB2A06649E51913A151F0E7Ef6FA321', 18, 'VITA', 'VITA'),
   new Token(
     ChainId.MAINNET,
     '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',

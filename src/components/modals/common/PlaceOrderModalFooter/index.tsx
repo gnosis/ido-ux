@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { Fraction, Percent, Token, TokenAmount, Trade } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { Fraction, Percent, Token, TokenAmount, Trade } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../../constants/config'
 import { ChainId, getTokenDisplay } from '../../../../utils'
@@ -94,10 +94,7 @@ const SwapModalFooter: React.FC<Props> = (props) => {
   const { buyAmountScaled } = convertPriceIntoBuyAndSellAmount(
     auctioningToken,
     biddingToken,
-    (isPriceInverted
-      ? getInverse(Number(price), NUMBER_OF_DIGITS_FOR_INVERSION)
-      : price
-    ).toString(),
+    isPriceInverted ? getInverse(price, NUMBER_OF_DIGITS_FOR_INVERSION) : price,
     sellAmount,
   )
 

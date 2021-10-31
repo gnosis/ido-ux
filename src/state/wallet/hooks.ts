@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { JSBI, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
+
+import { JSBI, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'
@@ -87,31 +88,31 @@ export function useTokenBalances(
 
 // contains the hacky logic to treat the WETH token input as if it's ETH to
 // maintain compatibility until we handle them separately.
-export function useTokenBalancesTreatWETHAsETHonXDAI(
+export function useTokenBalancesTreatWETHAsETH(
   address?: string,
   tokens?: (Token | undefined)[],
 ): { [tokenAddress: string]: TokenAmount | undefined } {
   const { chainId } = useActiveWeb3React()
-  const { includesWETHonXDAI, tokensWithoutWETH } = useMemo(() => {
+  const { includesWETH, tokensWithoutWETH } = useMemo(() => {
     if (!tokens || tokens.length === 0) {
       return { includesWETH: false, tokensWithoutWETH: [] }
     }
-    let includesWETHonXDAI = false
+    let includesWETH = false
     const tokensWithoutWETH = tokens.filter((t) => {
       if (!chainId) return true
-      const isWETHonXDAI = (t?.equals(WETH[chainId as ChainId]) && chainId == 100) ?? false
-      if (isWETHonXDAI) includesWETHonXDAI = true
-      return !isWETHonXDAI
+      const isWETH = t?.equals(WETH[chainId as ChainId]) ?? false
+      if (isWETH) includesWETH = true
+      return !isWETH
     })
-    return { includesWETHonXDAI, tokensWithoutWETH }
+    return { includesWETH, tokensWithoutWETH }
   }, [tokens, chainId])
 
   const balancesWithoutWETH = useTokenBalances(address, tokensWithoutWETH)
-  const ETHBalance = useETHBalances(includesWETHonXDAI ? [address] : [])
+  const ETHBalance = useETHBalances(includesWETH ? [address] : [])
 
   return useMemo(() => {
     if (!chainId || !address) return {}
-    if (includesWETHonXDAI) {
+    if (includesWETH) {
       const weth = WETH[chainId as ChainId]
       const ethBalance = ETHBalance[address]
       return {
@@ -121,7 +122,7 @@ export function useTokenBalancesTreatWETHAsETHonXDAI(
     } else {
       return balancesWithoutWETH
     }
-  }, [balancesWithoutWETH, ETHBalance, includesWETHonXDAI, address, chainId])
+  }, [balancesWithoutWETH, ETHBalance, includesWETH, address, chainId])
 }
 
 // get the balance for a single token/account combo
@@ -136,18 +137,18 @@ export function useTokenBalanceTreatingWETHasETHonXDAI(
   account?: string,
   token?: Token,
 ): TokenAmount | undefined {
-  const balances = useTokenBalancesTreatWETHAsETHonXDAI(account, [token])
+  const balances = useTokenBalancesTreatWETHAsETH(account, [token])
   if (!token) return
   return balances?.[token.address]
 }
 
 // mimics useAllBalances
-export function useAllTokenBalancesTreatingWETHasETHonXDAI(): {
+export function useAllTokenBalancesTreatingWETHasETH(): {
   [tokenAddress: string]: TokenAmount | undefined
 } {
   const { account } = useActiveWeb3React()
   const allTokens = useAllTokens()
   const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
-  const balances = useTokenBalancesTreatWETHAsETHonXDAI(account ?? undefined, allTokensArray)
+  const balances = useTokenBalancesTreatWETHAsETH(account ?? undefined, allTokensArray)
   return balances ?? {}
 }

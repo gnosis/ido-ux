@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { URI_AVAILABLE } from '@anxolin/walletconnect-connector'
+import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
+import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import ReactGA from 'react-ga'
 
-import { injected, walletconnect } from '../../../connectors'
+import { injected } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
 import usePrevious from '../../../hooks/usePrevious'
 import { useWalletModalOpen, useWalletModalToggle } from '../../../state/application/hooks'
@@ -15,7 +16,7 @@ import { ExternalLink } from '../../../theme'
 import { setupNetwork } from '../../../utils/setupNetwork'
 import { AlertIcon } from '../../icons/AlertIcon'
 import { Checkbox } from '../../pureStyledComponents/Checkbox'
-import { useNetworkCheck } from '../../web3/Web3Status'
+import { NetworkError, useNetworkCheck } from '../../web3/Web3Status'
 import Modal from '../common/Modal'
 import { ModalTitle } from '../common/ModalTitle'
 import Option from '../common/Option'
@@ -78,9 +79,9 @@ const WALLET_VIEWS = {
 }
 
 const WalletModal: React.FC = () => {
-  const { account, activate, active, connector, error } = useWeb3React()
+  const { account, activate, active, connector, deactivate, error } = useWeb3React()
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
-  const [pendingWallet, setPendingWallet] = useState()
+  const [pendingWallet, setPendingWallet] = useState<AbstractConnector>()
   const [pendingError, setPendingError] = useState<boolean>()
   const walletModalOpen = useWalletModalOpen()
   const toggleWalletModal = useWalletModalToggle()
@@ -88,6 +89,7 @@ const WalletModal: React.FC = () => {
   const { errorWrongNetwork } = useNetworkCheck()
   const [termsAccepted, setTermsAccepted] = useState(false)
   const { chainId } = useOrderPlacementState()
+  const [walletConnectChainError, setWalletConnectChainError] = useState<NetworkError>()
 
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
@@ -95,23 +97,14 @@ const WalletModal: React.FC = () => {
     }
   }, [account, previousAccount, toggleWalletModal, walletModalOpen])
 
+  // always reset to account view
   useEffect(() => {
     if (walletModalOpen) {
       setPendingError(false)
       setWalletView(WALLET_VIEWS.ACCOUNT)
+      setWalletConnectChainError(undefined)
     }
   }, [walletModalOpen])
-
-  const [uri, setUri] = useState()
-  useEffect(() => {
-    const activateWC = (uri) => {
-      setUri(uri)
-    }
-    walletconnect[chainId].on(URI_AVAILABLE, activateWC)
-    return () => {
-      walletconnect[chainId].off(URI_AVAILABLE, activateWC)
-    }
-  }, [chainId])
 
   const activePrevious = usePrevious(active)
   const connectorPrevious = usePrevious(connector)
@@ -120,7 +113,10 @@ const WalletModal: React.FC = () => {
     if (
       walletModalOpen &&
       ((active && !activePrevious) ||
-        (connector && connector !== connectorPrevious && !error && errorWrongNetwork === undefined))
+        (connector &&
+          connector !== connectorPrevious &&
+          !error &&
+          errorWrongNetwork === NetworkError.noError))
     ) {
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }
@@ -135,7 +131,7 @@ const WalletModal: React.FC = () => {
     connectorPrevious,
   ])
 
-  const tryActivation = async (connector) => {
+  const tryActivation = async (connector: AbstractConnector) => {
     let name = ''
     Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
@@ -163,10 +159,16 @@ const WalletModal: React.FC = () => {
       // if connector is an object with the set variable of [chainId], we know that its walletconnect object
       // otherwise, we will just use Metamask connector object
       if (connector[chainId]) {
-        setPendingWallet(connector[chainId]) // set wallet for pending view
+        setPendingWallet(connector) // set wallet for pending view
         setWalletView(WALLET_VIEWS.PENDING)
 
-        await activate(connector[chainId], undefined, true)
+        const walletConnect = connector[chainId]
+        // if the user has already tried to connect, manually reset the connector
+        if (walletConnect.walletConnectProvider?.wc?.uri) {
+          walletConnect.walletConnectProvider = undefined
+        }
+
+        await activate(walletConnect, undefined, true)
       } else {
         setPendingWallet(connector) // set wallet for pending view
         setWalletView(WALLET_VIEWS.PENDING)
@@ -177,7 +179,14 @@ const WalletModal: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof UnsupportedChainIdError) {
-        activate(connector) // a little janky...can't use setError because the connector isn't set
+        // a little janky...can't use setError because the connector isn't set
+        const muteWalletConnectError = () => {
+          deactivate()
+          setWalletConnectChainError(NetworkError.noChainMatch)
+        }
+        connector[chainId] instanceof WalletConnectConnector
+          ? activate(connector[chainId], muteWalletConnectError)
+          : activate(connector)
       } else {
         setPendingError(true)
       }
@@ -190,6 +199,7 @@ const WalletModal: React.FC = () => {
     return Object.keys(SUPPORTED_WALLETS).map((key) => {
       const option = SUPPORTED_WALLETS[key]
 
+      // overwrite injected when needed
       if (option.connector === injected) {
         if (!(window.web3 || window.ethereum)) {
           return null //dont want to return install twice
@@ -216,18 +226,20 @@ const WalletModal: React.FC = () => {
     })
   }
 
-  const networkError = error instanceof UnsupportedChainIdError || errorWrongNetwork
+  const networkError =
+    error instanceof UnsupportedChainIdError || errorWrongNetwork || walletConnectChainError
   const viewAccountTransactions = account && walletView === WALLET_VIEWS.ACCOUNT
   const connectingToWallet = walletView === WALLET_VIEWS.PENDING
-  const title = networkError
-    ? 'Wrong Network'
-    : error && viewAccountTransactions
-    ? ''
-    : error
-    ? 'Error connecting'
-    : 'Connect to a wallet'
+  const title =
+    networkError === NetworkError.noChainMatch
+      ? 'Wrong Network'
+      : error && viewAccountTransactions
+      ? ''
+      : error
+      ? 'Error connecting'
+      : 'Connect a wallet'
   const errorMessage =
-    error instanceof UnsupportedChainIdError
+    error instanceof UnsupportedChainIdError || walletConnectChainError
       ? 'Please connect to the appropriate Ethereum network.'
       : errorWrongNetwork
       ? errorWrongNetwork
@@ -241,7 +253,7 @@ const WalletModal: React.FC = () => {
     >
       <ModalTitle onClose={toggleWalletModal} title={title} />
       <Content>
-        {error && (
+        {(error || walletConnectChainError) && (
           <>
             <IconWrapper>
               <AlertIcon />
@@ -270,13 +282,12 @@ const WalletModal: React.FC = () => {
             </Footer>
           </>
         )}
-        {!error && connectingToWallet && (
+        {!error && !walletConnectChainError && connectingToWallet && (
           <PendingView
             connector={pendingWallet}
             error={pendingError}
             setPendingError={setPendingError}
             tryActivation={tryActivation}
-            uri={uri}
           />
         )}
       </Content>

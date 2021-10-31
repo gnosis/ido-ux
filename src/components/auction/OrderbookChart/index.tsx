@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Token } from 'uniswap-xdai-sdk'
+
+import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import useChart from '../../../hooks/useChart'
 import { ChainId } from '../../../utils'
@@ -49,8 +50,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-grow: 1;
   flex-shrink: 0;
-  height: 340px;
   justify-content: center;
+  height: 100%;
   max-height: 340px;
   position: relative;
   width: 100%;
@@ -60,9 +61,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-grow: 1;
     flex-shrink: 0;
-    height: 340px;
     justify-content: center;
-    max-height: 340px;
     width: 100%;
 
     > svg {

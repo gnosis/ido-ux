@@ -60,6 +60,7 @@ export const getChainName = (chainId: number) => {
     (chainId === ChainId.RINKEBY && 'Rinkeby') ||
     (chainId === ChainId.MAINNET && 'Mainnet') ||
     (chainId === ChainId.XDAI && 'xDai') ||
+    (chainId === ChainId.MATIC && 'Polygon') ||
     'Unknown Network'
   )
 }

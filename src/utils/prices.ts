@@ -1,15 +1,24 @@
-import { Token } from 'uniswap-xdai-sdk'
-
 import { BigNumber } from '@ethersproject/bignumber'
+import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
 
 import { STABLE_TOKENS_FOR_INVERTED_CHARTS } from '../constants/config'
 import { tryParseAmount } from '../state/orderPlacement/hooks'
 
-export function getInverse(price: number, nrDigits: number): number {
+export function getInverse(price: string, nrDigits: number): string {
+  if (price == '-') {
+    return '-'
+  }
+
+  // prevent division by 0
+  if (price === '0') {
+    return price
+  }
+
   // if 1/price has more than `nrDigits`, we make a cut off and only take the first `nrDigits`
-  const re = new RegExp('(\\d+\\.\\d{' + nrDigits + '})(\\d)'),
-    m = (1 / price).toString().match(re)
-  return m ? parseFloat(m[1]) : (1 / price).valueOf()
+  const re = new RegExp('(\\d+\\.\\d{' + nrDigits + '})(\\d)')
+  const m = (1 / Number(price)).toString().match(re)
+
+  return (m ? parseFloat(m[1]) : (1 / Number(price)).valueOf()).toString()
 }
 
 export function convertPriceIntoBuyAndSellAmount(
