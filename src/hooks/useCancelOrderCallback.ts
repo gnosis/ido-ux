@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { Fraction, Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Fraction, Token } from '@josojo/honeyswap-sdk'
 
 import { chainNames } from '../constants'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'

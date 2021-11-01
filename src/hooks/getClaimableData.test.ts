@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
-import { ChainId, Token, TokenAmount } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { ChainId, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { encodeOrder } from './Order'
 import { getClaimableData } from './useClaimOrderCallback'

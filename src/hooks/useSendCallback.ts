@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
-import { JSBI, TokenAmount, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { JSBI, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETHonXDAI } from '../state/wallet/hooks'

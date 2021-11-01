@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
-import { Token, TokenAmount } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { DerivedAuctionInfo } from '../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'

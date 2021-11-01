@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
-import { TokenAmount } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'

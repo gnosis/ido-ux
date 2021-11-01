@@ -1,4 +1,4 @@
-import { Fraction, JSBI } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Fraction, JSBI } from '@josojo/honeyswap-sdk'
 
 import { PricePoint } from '../../../api/AdditionalServicesApi'
 import { CalculatorClearingPrice, findClearingPrice } from './'

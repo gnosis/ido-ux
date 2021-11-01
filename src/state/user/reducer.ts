@@ -1,4 +1,4 @@
-import { WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { WETH } from '@josojo/honeyswap-sdk'
 import { createReducer } from '@reduxjs/toolkit'
 
 import { GIT_COMMIT_HASH } from '../../constants/config'

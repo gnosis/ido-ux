@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { Token, TokenAmount } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Token, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useTokenContract } from '../hooks/useContract'
 import { useSingleCallResult } from '../state/multicall/hooks'

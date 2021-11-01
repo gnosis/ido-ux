@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { ThemeContext } from 'styled-components'
 
-import { Percent } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Percent } from '@josojo/honeyswap-sdk'
 import { Text } from 'rebass'
 
 import { YellowCard } from './Card'

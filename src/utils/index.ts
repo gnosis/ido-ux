@@ -4,7 +4,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
-import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'

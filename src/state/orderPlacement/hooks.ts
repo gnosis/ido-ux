@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
-import { Fraction, JSBI, Token, TokenAmount } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Fraction, JSBI, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { additionalServiceApi } from '../../api'

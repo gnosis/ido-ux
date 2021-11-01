@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { JSBI, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { JSBI, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 
 import ERC20_INTERFACE from '../../constants/abis/erc20'
 import { useActiveWeb3React } from '../../hooks'

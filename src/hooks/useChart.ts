@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import * as am4charts from '@amcharts/amcharts4/charts'
-import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Token } from '@josojo/honeyswap-sdk'
 
 import { XYChartProps, drawInformation } from '../components/auction/Charts/XYChart'
 import { PricePointDetails } from '../components/auction/OrderbookChart'

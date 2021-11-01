@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import kycLinks from '../../../assets/links/kycLinks.json'
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../constants/config'

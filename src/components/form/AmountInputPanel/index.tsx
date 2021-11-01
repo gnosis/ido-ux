@@ -2,7 +2,7 @@ import { rgba } from 'polished'
 import React, { useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Token } from '@josojo/honeyswap-sdk'
 import ReactTooltip from 'react-tooltip'
 
 import { useActiveWeb3React } from '../../../hooks'

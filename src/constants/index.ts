@@ -1,4 +1,4 @@
-import { JSBI, Percent } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { JSBI, Percent } from '@josojo/honeyswap-sdk'
 
 import ArrowRightIcon from '../assets/images/arrow-right.svg'
 import CoinbaseWalletIcon from '../assets/images/coinbaseWalletIcon.svg'

@@ -1,4 +1,4 @@
-import { Token, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Token, WETH } from '@josojo/honeyswap-sdk'
 
 import { ChainId } from '../../utils'
 

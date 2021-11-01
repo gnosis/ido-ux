@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Token } from '@josojo/honeyswap-sdk'
 
 import useChart from '../../../hooks/useChart'
 import { ChainId } from '../../../utils'

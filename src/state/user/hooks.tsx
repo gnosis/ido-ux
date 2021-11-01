@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import { JSBI, Pair, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { JSBI, Pair, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 import flatMap from 'lodash.flatmap'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 

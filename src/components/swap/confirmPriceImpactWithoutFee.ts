@@ -1,5 +1,5 @@
 // gathers additional user consent for a high price impact
-import { Percent } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Percent } from '@josojo/honeyswap-sdk'
 
 import { ALLOWED_PRICE_IMPACT_HIGH, PRICE_IMPACT_WITHOUT_FEE_CONFIRM_MIN } from '../../constants'
 

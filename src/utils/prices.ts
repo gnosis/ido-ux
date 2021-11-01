@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Token } from '@josojo/honeyswap-sdk'
 
 import { STABLE_TOKENS_FOR_INVERTED_CHARTS } from '../constants/config'
 import { tryParseAmount } from '../state/orderPlacement/hooks'

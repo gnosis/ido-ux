@@ -1,4 +1,4 @@
-import { Fraction, Token } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { Fraction, Token } from '@josojo/honeyswap-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
 import {

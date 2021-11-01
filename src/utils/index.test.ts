@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { JSBI, Percent } from '@josojo/honeyswap-sdk' // eslint-disable-line import/no-extraneous-dependencies
+import { JSBI, Percent } from '@josojo/honeyswap-sdk'
 
 import {
   ChainId,
