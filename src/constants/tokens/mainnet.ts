@@ -1,4 +1,4 @@
-import { Token } from 'uniswap-xdai-sdk'
+import { Token } from '@josojo/honeyswap-sdk'
 
 import { ChainId } from '../../utils'
 export default [

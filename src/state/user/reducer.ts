@@ -1,5 +1,4 @@
-import { WETH } from 'uniswap-xdai-sdk'
-
+import { WETH } from '@josojo/honeyswap-sdk'
 import { createReducer } from '@reduxjs/toolkit'
 
 import { GIT_COMMIT_HASH } from '../../constants/config'

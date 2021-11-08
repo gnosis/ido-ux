@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Token } from 'uniswap-xdai-sdk'
+
+import { Token } from '@josojo/honeyswap-sdk'
 
 import useChart from '../../../hooks/useChart'
 import { ChainId } from '../../../utils'

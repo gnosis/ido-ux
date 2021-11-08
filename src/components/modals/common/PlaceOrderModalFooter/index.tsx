@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { Fraction, Percent, Token, TokenAmount, Trade } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { Fraction, Percent, Token, TokenAmount, Trade } from '@josojo/honeyswap-sdk'
 
 import { NUMBER_OF_DIGITS_FOR_INVERSION } from '../../../../constants/config'
 import { ChainId, getTokenDisplay } from '../../../../utils'

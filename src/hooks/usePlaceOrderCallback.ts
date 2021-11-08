@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
-import { Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract, ContractFunction } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers'
+import { Token } from '@josojo/honeyswap-sdk'
 
 import { additionalServiceApi } from '../api'
 import depositAndPlaceOrderABI from '../constants/abis/easyAuction/depositAndPlaceOrder.json'

@@ -1,6 +1,5 @@
-import { JSBI, Percent } from 'uniswap-xdai-sdk'
-
 import { BigNumber } from '@ethersproject/bignumber'
+import { JSBI, Percent } from '@josojo/honeyswap-sdk'
 
 import {
   ChainId,
@@ -18,9 +17,6 @@ describe('utils', () => {
     })
     it('correct for address', () => {
       expect(getExplorerLink(1, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
-    })
-    it('unrecognized chain id defaults to mainnet', () => {
-      expect(getExplorerLink(2, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
     })
     it('enum', () => {
       expect(getExplorerLink(ChainId.RINKEBY, 'abc', 'address')).toEqual(

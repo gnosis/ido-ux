@@ -1,16 +1,21 @@
-import { JSBI, Percent, Token, TokenAmount, WETH } from 'uniswap-xdai-sdk'
-
 import { getAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { AddressZero } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
+import { JSBI, Percent, Token, TokenAmount, WETH } from '@josojo/honeyswap-sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 
 import easyAuctionABI from '../constants/abis/easyAuction/easyAuction.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
+import {
+  NETWORK_URL_MAINNET,
+  NETWORK_URL_POLYGON,
+  NETWORK_URL_RINKEBY,
+  NETWORK_URL_XDAI,
+} from '../constants/config'
 import { getLogger } from '../utils/logger'
 
 const logger = getLogger('utils/index')
@@ -28,24 +33,63 @@ export enum ChainId {
   MAINNET = 1,
   RINKEBY = 4,
   XDAI = 100,
+  MATIC = 137,
 }
 
 export const EASY_AUCTION_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
   [ChainId.RINKEBY]: '0xC5992c0e0A3267C7F75493D0F717201E26BE35f7',
   [ChainId.XDAI]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
+  [ChainId.MATIC]: '0x0b7fFc1f4AD541A4Ed16b40D8c37f0929158D101',
 }
 
 export const DEPOSIT_AND_PLACE_ORDER: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x10D15DEA67f7C95e2F9Fe4eCC245a8862b9B5B96',
   [ChainId.RINKEBY]: '0x8624fbDf455D51B967ff40aaB4019281A855f008',
   [ChainId.XDAI]: '0x845AbED0734e39614FEC4245F3F3C88E2da98157',
+  [ChainId.MATIC]: '0x93D2BbA07b44e8F2b02F7DA164eE4f7442a3B618',
 }
 
-const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
-  1: '',
-  4: 'rinkeby.',
-  100: 'xdai.',
+type NetworkConfig = {
+  name: string
+  rpc: string
+  symbol: string
+  explorer?: string
+  etherscan_prefix?: string
+}
+
+export const NETWORK_CONFIGS: { [chainId in ChainId]: NetworkConfig } = {
+  1: {
+    name: 'Mainnet',
+    symbol: 'ETH',
+    rpc: NETWORK_URL_MAINNET,
+    etherscan_prefix: '',
+  },
+  4: {
+    name: 'Rinkeby',
+    symbol: 'ETH',
+    rpc: NETWORK_URL_RINKEBY,
+    etherscan_prefix: 'rinkeby.',
+  },
+  100: {
+    name: 'XDAI',
+    symbol: 'xDai',
+    rpc: NETWORK_URL_XDAI,
+    explorer: 'https://blockscout.com/xdai/mainnet',
+  },
+  137: {
+    name: 'Matic Mainnet',
+    symbol: 'MATIC',
+    rpc: NETWORK_URL_POLYGON,
+    explorer: 'https://polygonscan.com',
+  },
+}
+
+const getExplorerPrefix = (chainId: ChainId) => {
+  return (
+    NETWORK_CONFIGS[chainId].explorer ||
+    `https://${NETWORK_CONFIGS[chainId].etherscan_prefix || ''}etherscan.io`
+  )
 }
 
 export function getExplorerLink(
@@ -53,10 +97,7 @@ export function getExplorerLink(
   data: string,
   type: 'transaction' | 'address',
 ): string {
-  const prefix =
-    chainId === 100
-      ? `https://blockscout.com/xdai/mainnet`
-      : `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
+  const prefix = getExplorerPrefix(chainId)
 
   switch (type) {
     case 'transaction': {

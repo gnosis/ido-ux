@@ -1,6 +1,5 @@
-import { ChainId, Token } from 'uniswap-xdai-sdk'
-
 import { parseUnits } from '@ethersproject/units'
+import { ChainId, Token } from '@josojo/honeyswap-sdk'
 
 import { isMinFundingReached } from './useClaimOrderCallback'
 

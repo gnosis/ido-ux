@@ -1,4 +1,4 @@
-import { JSBI, Percent } from 'uniswap-xdai-sdk'
+import { JSBI, Percent } from '@josojo/honeyswap-sdk'
 
 import ArrowRightIcon from '../assets/images/arrow-right.svg'
 import CoinbaseWalletIcon from '../assets/images/coinbaseWalletIcon.svg'

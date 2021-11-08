@@ -1,4 +1,4 @@
-import { Fraction, JSBI } from 'uniswap-xdai-sdk'
+import { Fraction, JSBI } from '@josojo/honeyswap-sdk'
 
 import { PricePoint } from '../../../api/AdditionalServicesApi'
 import { CalculatorClearingPrice, findClearingPrice } from './'

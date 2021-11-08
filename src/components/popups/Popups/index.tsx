@@ -1,15 +1,14 @@
 import React, { useContext, useMemo } from 'react'
 import { X } from 'react-feather'
 import styled, { ThemeContext } from 'styled-components'
-import { Pair, Token } from 'uniswap-xdai-sdk'
 
+import { ChainId, Pair, Token } from '@josojo/honeyswap-sdk'
 import { Text } from 'rebass'
 import { useMediaLayout } from 'use-media'
 
 import { PopupContent } from '../../../state/application/actions'
 import { useActivePopups, useRemovePopup } from '../../../state/application/hooks'
 import { ExternalLink } from '../../../theme'
-import { ChainId } from '../../../utils'
 import { AutoColumn } from '../../swap/Column'
 import Row from '../../swap/Row'
 import DoubleTokenLogo from '../../token/DoubleLogo'

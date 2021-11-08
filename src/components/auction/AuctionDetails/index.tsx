@@ -1,9 +1,9 @@
 import { rgba } from 'polished'
 import React, { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { Fraction, TokenAmount } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { Fraction, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useAuctionDetails } from '../../../hooks/useAuctionDetails'
 import {

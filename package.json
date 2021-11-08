@@ -4,7 +4,7 @@
   "homepage": ".",
   "private": true,
   "engines": {
-    "node": ">=4.4.7 <=16.17.6"
+    "node": ">=4.4.7"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -79,6 +79,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.32",
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.14",
+    "@josojo/honeyswap-sdk": "^1.0.0",
     "@popperjs/core": "^2.4.0",
     "@reach/dialog": "^0.10.3",
     "@reach/portal": "^0.10.3",

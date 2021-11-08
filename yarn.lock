@@ -2459,6 +2459,19 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@josojo/honeyswap-sdk@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@josojo/honeyswap-sdk/-/honeyswap-sdk-1.0.0.tgz#2b97d35cbafe1f75c51fcc9a14c53ba98735f4c3"
+  integrity sha512-rJ6S6A3wZhqeTkZa7QCTEyG3QT9ffjha/bvgNmZ9oOltDqf1NHOh76yW3TtV0Ps7BxQC+damBhwkcvi2nKueWA==
+  dependencies:
+    "@uniswap/v2-core" "^1.0.0"
+    big.js "^5.2.2"
+    decimal.js-light "^2.5.0"
+    jsbi "^3.1.1"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
+    toformat "^2.0.0"
+
 "@json-rpc-tools/types@^1.7.6":
   version "1.7.6"
   resolved "https://registry.yarnpkg.com/@json-rpc-tools/types/-/types-1.7.6.tgz#5abd5fde01364a130c46093b501715bcce5bdc0e"

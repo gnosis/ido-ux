@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
-import { TokenAmount } from 'uniswap-xdai-sdk'
 
 import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
+import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'

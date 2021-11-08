@@ -1,4 +1,4 @@
-import { Fraction, Token } from 'uniswap-xdai-sdk'
+import { Fraction, Token } from '@josojo/honeyswap-sdk'
 
 import { OrderBookData, PricePoint } from '../../../api/AdditionalServicesApi'
 import {

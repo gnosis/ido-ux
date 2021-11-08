@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { Fraction, Token } from 'uniswap-xdai-sdk'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract } from '@ethersproject/contracts'
+import { Fraction, Token } from '@josojo/honeyswap-sdk'
 
 import { chainNames } from '../constants'
 import { AuctionIdentifier } from '../state/orderPlacement/reducer'

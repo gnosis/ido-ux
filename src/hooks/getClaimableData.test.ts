@@ -1,7 +1,6 @@
-import { ChainId, Token, TokenAmount } from 'uniswap-xdai-sdk'
-
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
+import { ChainId, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { encodeOrder } from './Order'
 import { getClaimableData } from './useClaimOrderCallback'

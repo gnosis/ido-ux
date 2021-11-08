@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { Token } from 'uniswap-xdai-sdk'
+
+import { Token } from '@josojo/honeyswap-sdk'
 
 import { getTokenDisplay } from '../../../utils'
 import { Tooltip } from '../../common/Tooltip'

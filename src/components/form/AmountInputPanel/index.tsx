@@ -1,8 +1,8 @@
 import { rgba } from 'polished'
 import React, { useState } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { Token } from 'uniswap-xdai-sdk'
 
+import { Token } from '@josojo/honeyswap-sdk'
 import ReactTooltip from 'react-tooltip'
 
 import { useActiveWeb3React } from '../../../hooks'

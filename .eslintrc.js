@@ -42,6 +42,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
     'prettier/prettier': ["error", { "endOfLine": "auto" }],
+    "import/no-extraneous-dependencies": '["error", { "dependencies": true , "devDependencies": true }]',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': 'off',
     'react/prop-types': 'off',

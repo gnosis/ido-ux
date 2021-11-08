@@ -1,8 +1,10 @@
 import {
   API_URL_DEVELOP_MAINNET,
+  API_URL_DEVELOP_POLYGON,
   API_URL_DEVELOP_RINKEBY,
   API_URL_DEVELOP_XDAI,
   API_URL_PRODUCTION_MAINNET,
+  API_URL_PRODUCTION_POLYGON,
   API_URL_PRODUCTION_RINKEBY,
   API_URL_PRODUCTION_XDAI,
 } from '../constants/config'
@@ -24,6 +26,11 @@ function createAdditionalServiceApi(): AdditionalServicesApi {
       networkId: 1,
       url_production: API_URL_PRODUCTION_MAINNET,
       url_develop: API_URL_DEVELOP_MAINNET,
+    },
+    {
+      networkId: 137,
+      url_production: API_URL_PRODUCTION_POLYGON,
+      url_develop: API_URL_DEVELOP_POLYGON,
     },
   ]
   if (API_URL_DEVELOP_RINKEBY)
