@@ -12,7 +12,7 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
 import {
   NETWORK_URL_MAINNET,
-  NETWORK_URL_MATIC,
+  NETWORK_URL_POLYGON,
   NETWORK_URL_RINKEBY,
   NETWORK_URL_XDAI,
 } from '../constants/config'
@@ -80,8 +80,8 @@ export const NETWORK_CONFIGS: { [chainId in ChainId]: NetworkConfig } = {
   137: {
     name: 'Matic Mainnet',
     symbol: 'MATIC',
-    rpc: NETWORK_URL_MATIC,
-    explorer: 'https://polygonscan.com/',
+    rpc: NETWORK_URL_POLYGON,
+    explorer: 'https://polygonscan.com',
   },
 }
 

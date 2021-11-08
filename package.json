@@ -4,7 +4,7 @@
   "homepage": ".",
   "private": true,
   "engines": {
-    "node": ">=4.4.7 <=16.17.6"
+    "node": ">=4.4.7"
   },
   "scripts": {
     "start": "react-scripts start",

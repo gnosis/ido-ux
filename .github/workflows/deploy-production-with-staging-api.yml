@@ -50,8 +50,8 @@ jobs:
           REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-v1-api-mainnet.dev.gnosisdev.com/
           REACT_APP_NETWORK_URL_RINKEBYs: https://rinkeby.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-v1-api-rinkeby.dev.gnosisdev.com/
-          REACT_APP_NETWORK_URL_MATIC: https://rpc-mainnet.matic.network
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_MATIC: https://ido-v1-api-polygon.dev.gnosisdev.com/
+          REACT_APP_NETWORK_URL_POLYGON: https://polygon-rpc.com
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_POLYGON: https://ido-v1-api-polygon.dev.gnosisdev.com/
 
       - name: 'Deploy to IPFS with infura'
         run: yarn ipfs-publish

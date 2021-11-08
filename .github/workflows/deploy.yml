@@ -52,8 +52,8 @@ jobs:
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-v1-api-mainnet.dev.gnosisdev.com/
-          REACT_APP_NETWORK_URL_MATIC: https://rpc-mainnet.matic.network
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_MATIC: https://ido-v1-api-polygon.dev.gnosisdev.com/
+          REACT_APP_NETWORK_URL_POLYGON: https://polygon-rpc.com
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_POLYGON: https://ido-v1-api-polygon.dev.gnosisdev.com/
       - name: Get PR number
         uses: jwalton/gh-find-current-pr@v1
         id: findPr
