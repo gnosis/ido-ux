@@ -4,7 +4,7 @@ import { X } from 'react-feather'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import ReactGA from 'react-ga'
+import { outboundLink } from 'react-ga'
 
 import { getLogger } from '../utils/logger'
 
@@ -126,13 +126,13 @@ export function ExternalLink({
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       // don't prevent default, don't redirect if it's a new tab
       if (target === '_blank' || event.ctrlKey || event.metaKey) {
-        ReactGA.outboundLink({ label: href }, () => {
+        outboundLink({ label: href }, () => {
           logger.debug('Fired outbound link event', href)
         })
       } else {
         event.preventDefault()
         // send a ReactGA event and then trigger a location change
-        ReactGA.outboundLink({ label: href }, () => {
+        outboundLink({ label: href }, () => {
           window.location.href = href
         })
       }
