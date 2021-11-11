@@ -12,6 +12,7 @@ export const chainNames = {
   1: 'mainnet',
   4: 'rinkeby',
   100: 'xdai',
+  137: 'polygon',
 }
 
 const MAINNET_WALLETS = {
