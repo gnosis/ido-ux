@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import ReactGA from 'react-ga'
+import { event } from 'react-ga'
 
 import { injected } from '../../../connectors'
 import { SUPPORTED_WALLETS } from '../../../constants'
@@ -139,7 +139,7 @@ const WalletModal: React.FC = () => {
       }
       return true
     })
-    ReactGA.event({
+    event({
       category: 'Wallet',
       action: 'Change Wallet',
       label: name,

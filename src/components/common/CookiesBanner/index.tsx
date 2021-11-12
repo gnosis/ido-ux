@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { isMobile } from 'react-device-detect'
-import ReactGA from 'react-ga'
+import { initialize, pageview, set } from 'react-ga'
 
 import { GOOGLE_ANALYTICS_ID } from '../../../constants/config'
 import { getLogger } from '../../../utils/logger'
@@ -209,17 +209,17 @@ export const CookiesBanner: React.FC<Props> = (props) => {
     }
 
     if (typeof GOOGLE_ANALYTICS_ID === 'string') {
-      ReactGA.initialize(GOOGLE_ANALYTICS_ID, { gaOptions: { cookieDomain: 'auto' } })
-      ReactGA.set({
+      initialize(GOOGLE_ANALYTICS_ID, { gaOptions: { cookieDomain: 'auto' } })
+      set({
         customBrowserType: !isMobile
           ? 'desktop'
           : 'web3' in window || 'ethereum' in window
           ? 'mobileWeb3'
           : 'mobileRegular',
       })
-      ReactGA.set({ anonymizeIp: true })
-      ReactGA.set({ page: location.pathname })
-      ReactGA.pageview(location.pathname)
+      set({ anonymizeIp: true })
+      set({ page: location.pathname })
+      pageview(location.pathname)
     }
   }, [location])
 
