@@ -9,10 +9,10 @@ import WalletConnectIcon from '../assets/images/wallet-connect.svg'
 import { injected, portis, walletconnect, walletlink } from '../connectors'
 
 export const chainNames = {
-  1: 'mainnet',
-  4: 'rinkeby',
-  100: 'xdai',
-  137: 'polygon',
+  1: 'Mainnet',
+  4: 'Rinkeby',
+  100: 'xDai',
+  137: 'Polygon',
 }
 
 const MAINNET_WALLETS = {
