@@ -28,6 +28,7 @@ import {
   EASY_AUCTION_NETWORKS,
   getFullTokenDisplay,
   isTokenWETH,
+  isTokenWMATIC,
   isTokenXDAI,
 } from '../../../utils'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
@@ -152,15 +153,13 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true) // waiting for user confirmation
   const [txHash, setTxHash] = useState<string>('')
 
-  const auctioningToken = React.useMemo(
-    () => derivedAuctionInfo.auctioningToken,
-    [derivedAuctionInfo.auctioningToken],
-  )
+  const auctioningToken = React.useMemo(() => derivedAuctionInfo.auctioningToken, [
+    derivedAuctionInfo.auctioningToken,
+  ])
 
-  const biddingToken = React.useMemo(
-    () => derivedAuctionInfo.biddingToken,
-    [derivedAuctionInfo.biddingToken],
-  )
+  const biddingToken = React.useMemo(() => derivedAuctionInfo.biddingToken, [
+    derivedAuctionInfo.biddingToken,
+  ])
 
   const parsedBiddingAmount = tryParseAmount(sellAmount, biddingToken)
   const approvalTokenAmount: TokenAmount | undefined = parsedBiddingAmount
@@ -225,14 +224,14 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   }
 
   const pendingText = `Placing order`
-  const biddingTokenDisplay = useMemo(
-    () => getFullTokenDisplay(biddingToken, chainId),
-    [biddingToken, chainId],
-  )
-  const auctioningTokenDisplay = useMemo(
-    () => getFullTokenDisplay(auctioningToken, chainId),
-    [auctioningToken, chainId],
-  )
+  const biddingTokenDisplay = useMemo(() => getFullTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
+  const auctioningTokenDisplay = useMemo(() => getFullTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
   const notApproved = approval === ApprovalState.NOT_APPROVED || approval === ApprovalState.PENDING
   const orderPlacingOnly = auctionState === AuctionState.ORDER_PLACING
   const coversClearingPrice = (price: string | undefined, showPriceInverted: boolean): boolean => {
@@ -281,10 +280,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
     [derivedAuctionInfo?.auctionEndDate, derivedAuctionInfo?.orderCancellationEndDate],
   )
 
-  const isPrivate = React.useMemo(
-    () => auctionDetails && auctionDetails.isPrivateAuction,
-    [auctionDetails],
-  )
+  const isPrivate = React.useMemo(() => auctionDetails && auctionDetails.isPrivateAuction, [
+    auctionDetails,
+  ])
   const signatureAvailable = React.useMemo(() => signature && signature.length > 10, [signature])
 
   const onMaxInput = React.useCallback(() => {
@@ -343,7 +341,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const isWrappable =
     biddingTokenBalance &&
     biddingTokenBalance.greaterThan('0') &&
-    (isTokenXDAI(biddingToken.address, chainId) || isTokenWETH(biddingToken.address, chainId)) &&
+    (isTokenXDAI(biddingToken.address, chainId) ||
+      isTokenWETH(biddingToken.address, chainId) ||
+      isTokenWMATIC(biddingToken.address, chainId)) &&
     !!account &&
     !!biddingToken.address
 
@@ -406,6 +406,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   chainId == 100
                     ? window.open(
                         `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      )
+                    : chainId == 137
+                    ? window.open(
+                        `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
                       )
                     : window.open(
                         `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,

@@ -12,7 +12,7 @@ import {
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { DerivedAuctionInfo, useDerivedClaimInfo } from '../../../state/orderPlacement/hooks'
 import { AuctionIdentifier } from '../../../state/orderPlacement/reducer'
-import { getFullTokenDisplay, isTokenWETH, isTokenXDAI } from '../../../utils'
+import { getFullTokenDisplay, isTokenWETH, isTokenWMATIC, isTokenXDAI } from '../../../utils'
 import { Button } from '../../buttons/Button'
 import { ButtonAnchor } from '../../buttons/ButtonAnchor'
 import { ButtonType } from '../../buttons/buttonStylingTypes'
@@ -122,10 +122,10 @@ const Claimer: React.FC<Props> = (props) => {
         setUserConfirmedTx(false)
       })
 
-  const biddingTokenDisplay = useMemo(
-    () => getFullTokenDisplay(biddingToken, chainId),
-    [biddingToken, chainId],
-  )
+  const biddingTokenDisplay = useMemo(() => getFullTokenDisplay(biddingToken, chainId), [
+    biddingToken,
+    chainId,
+  ])
 
   const biddingTokenDisplayWrapped = useMemo(
     () =>
@@ -133,16 +133,18 @@ const Claimer: React.FC<Props> = (props) => {
         ? 'WXDAI'
         : biddingTokenDisplay === 'ETH'
         ? 'WETH'
+        : biddingTokenDisplay === 'WMATIC'
+        ? 'MATIC'
         : biddingTokenDisplay,
     [biddingTokenDisplay],
   )
 
   const biddingTokenDisplayCut = biddingTokenDisplayWrapped.slice(0, 7)
 
-  const auctioningTokenDisplay = useMemo(
-    () => getFullTokenDisplay(auctioningToken, chainId),
-    [auctioningToken, chainId],
-  )
+  const auctioningTokenDisplay = useMemo(() => getFullTokenDisplay(auctioningToken, chainId), [
+    auctioningToken,
+    chainId,
+  ])
 
   const auctioningTokenDisplayCut = auctioningTokenDisplay.slice(0, 7)
 
@@ -165,22 +167,26 @@ const Claimer: React.FC<Props> = (props) => {
 
   const isXDAI = isTokenXDAI(derivedAuctionInfo.biddingToken.address, chainId)
   const isWETH = isTokenWETH(derivedAuctionInfo.biddingToken.address, chainId)
+  const isMATIC = isTokenWMATIC(derivedAuctionInfo.biddingToken.address, chainId)
 
   const showUnwrapButton = useMemo(
     () =>
-      (isXDAI || isWETH) &&
+      (isXDAI || isWETH || isMATIC) &&
       account &&
       chainId === Web3ChainId &&
       claimableBiddingToken &&
       claimableBiddingToken.greaterThan('0'),
-    [Web3ChainId, account, chainId, claimableBiddingToken, isWETH, isXDAI],
+    [Web3ChainId, account, chainId, claimableBiddingToken, isWETH, isXDAI, isMATIC],
   )
-
+  // eslint-disable-next-line
+  console.log('isMATIC', isMATIC)
   const unwrapTooltip = `Unwrap ${biddingToken.symbol} on ${
-    isXDAI ? 'Honeyswap' : 'Uniswap'
+    isXDAI ? 'Honeyswap' : isMATIC ? 'QuickSwap' : 'Uniswap'
   }. Do it after you claimed your ${biddingTokenDisplayWrapped}`
   const unwrapURL = isXDAI
     ? `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`
+    : isMATIC
+    ? 'https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}'
     : `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`
 
   return (

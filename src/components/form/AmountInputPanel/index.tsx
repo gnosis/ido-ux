@@ -129,7 +129,11 @@ const AmountInputPanel: React.FC<Props> = (props) => {
   const isUnlocking = unlock.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
   const dataTip =
-    chainId == 100 ? `Unwrap WXDAI to XDAI on Honeyswap` : `Unwrap WETH to ETH on Uniswap`
+    chainId == 100
+      ? `Unwrap WXDAI to XDAI on Honeyswap`
+      : chainId == 137
+      ? `Unwrap WMATIC to MATIC on Quickswap`
+      : `Unwrap WETH to ETH on Uniswap`
 
   return (
     <>

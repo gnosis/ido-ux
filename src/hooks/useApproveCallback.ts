@@ -6,7 +6,7 @@ import { TokenAmount } from '@josojo/honeyswap-sdk'
 
 import { useTokenAllowance } from '../data/Allowances'
 import { useHasPendingApproval, useTransactionAdder } from '../state/transactions/hooks'
-import { ChainId, calculateGasMargin, isTokenWETH, isTokenXDAI } from '../utils'
+import { ChainId, calculateGasMargin, isTokenWETH, isTokenWMATIC, isTokenXDAI } from '../utils'
 import { getLogger } from '../utils/logger'
 import { useActiveWeb3React } from './index'
 import { useTokenContract } from './useContract'
@@ -45,7 +45,8 @@ export function useApproveCallback(
     // amountToApprove will be defined if currentAllowance is
     if (
       isTokenXDAI(amountToApprove?.token?.address, chainId) ||
-      isTokenWETH(amountToApprove?.token?.address, chainId)
+      isTokenWETH(amountToApprove?.token?.address, chainId) ||
+      isTokenWMATIC(amountToApprove?.token?.address, chainId)
     ) {
       return ApprovalState.APPROVED
     }

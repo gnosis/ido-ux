@@ -229,6 +229,7 @@ export function escapeRegExp(string: string): string {
 export function getTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
   if (isTokenWETH(token.address, chainId)) return `ETH`
+  if (isTokenWMATIC(token.address, chainId)) return `MATIC`
   return (
     token?.symbol?.slice(0, 7) || token?.name?.slice(0, 7) || token?.address.slice(0, 7) || '🤔'
   )
@@ -238,6 +239,7 @@ export function getTokenDisplay(token: Token, chainId: ChainId): string {
 export function getFullTokenDisplay(token: Token, chainId: ChainId): string {
   if (isTokenXDAI(token.address, chainId)) return `XDAI`
   if (isTokenWETH(token.address, chainId)) return `ETH`
+  if (isTokenWMATIC(token.address, chainId)) return `MATIC`
   return token?.symbol || token?.name || token?.address || '🤔'
 }
 
@@ -252,6 +254,10 @@ export function isTokenWETH(tokenAddress?: string, chainId?: ChainId): boolean {
     tokenAddress == WETH[chainId].address &&
     (chainId === 1 || chainId === 4)
   )
+}
+
+export function isTokenWMATIC(tokenAddress?: string, chainId?: ChainId): boolean {
+  return !!tokenAddress && !!chainId && tokenAddress == WETH[chainId].address && chainId === 137
 }
 
 export function isTimeout(timeId: NodeJS.Timeout | undefined): timeId is NodeJS.Timeout {

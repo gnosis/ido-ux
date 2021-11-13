@@ -25,6 +25,7 @@ import {
   getEasyAuctionContract,
   getTokenDisplay,
   isTokenWETH,
+  isTokenWMATIC,
   isTokenXDAI,
 } from '../utils'
 import { getLogger } from '../utils/logger'
@@ -65,10 +66,9 @@ export function usePlaceOrderCallback(
   const { onNewBid } = useOrderbookActionHandlers()
   const gasPrice = useGasPrice(chainId)
 
-  const price = (
-    isPriceInverted
-      ? getInverse(priceFromSwapState, NUMBER_OF_DIGITS_FOR_INVERSION)
-      : priceFromSwapState
+  const price = (isPriceInverted
+    ? getInverse(priceFromSwapState, NUMBER_OF_DIGITS_FOR_INVERSION)
+    : priceFromSwapState
   ).toString()
 
   const easyAuctionInstance: Maybe<Contract> = useContract(
@@ -202,7 +202,11 @@ const getEstimateParams = (
   signature: string,
 ): EstimateAndParams => {
   const easyAuctionContract: Contract = getEasyAuctionContract(chainId, library, account)
-  if (isTokenXDAI(biddingToken.address, chainId) || isTokenWETH(biddingToken.address, chainId)) {
+  if (
+    isTokenXDAI(biddingToken.address, chainId) ||
+    isTokenWETH(biddingToken.address, chainId) ||
+    isTokenWMATIC(biddingToken.address, chainId)
+  ) {
     const depositAndPlaceOrderContract = getContract(
       DEPOSIT_AND_PLACE_ORDER[chainId],
       depositAndPlaceOrderABI,

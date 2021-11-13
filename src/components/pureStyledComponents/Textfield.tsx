@@ -11,9 +11,8 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
   &:active,
   &:focus {
     background-color: ${({ theme }) => theme.textField.backgroundColorActive};
-    border-color: ${({ theme }) =>
-      (props) =>
-        props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
+    border-color: ${({ theme }) => (props) =>
+      props.error ? theme.textField.errorColor : theme.textField.borderColorActive};
   }
 
   &[disabled],
@@ -62,15 +61,13 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
 
 export const TextfieldCSS = css<TexfieldCSSProps>`
   background-color: ${({ theme }) => theme.textField.backgroundColor};
-  border-color: ${({ theme }) =>
-    (props) =>
-      props.error ? theme.textField.errorColor : theme.textField.borderColor};
+  border-color: ${({ theme }) => (props) =>
+    props.error ? theme.textField.errorColor : theme.textField.borderColor};
   border-radius: ${({ theme }) => theme.textField.borderRadius};
   border-style: ${({ theme }) => theme.textField.borderStyle};
   border-width: ${({ theme }) => theme.textField.borderWidth};
-  color: ${({ theme }) =>
-    (props) =>
-      props.error ? theme.textField.errorColor : theme.textField.color};
+  color: ${({ theme }) => (props) =>
+    props.error ? theme.textField.errorColor : theme.textField.color};
   font-size: ${({ theme }) => theme.textField.fontSize};
   font-weight: ${({ theme }) => theme.textField.fontWeight};
   height: ${({ theme }) => theme.textField.height};

@@ -39,10 +39,9 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 export const FeaturedAuctions: React.FC<Props> = (props) => {
   const { featuredAuctions, ...restProps } = props
 
-  const auctions = React.useMemo(
-    () => featuredAuctions && featuredAuctions.slice(0, 4),
-    [featuredAuctions],
-  )
+  const auctions = React.useMemo(() => featuredAuctions && featuredAuctions.slice(0, 4), [
+    featuredAuctions,
+  ])
   return (
     <Wrapper {...restProps}>
       <PageTitle as="h2" className="featuredAuctionsTitle">
