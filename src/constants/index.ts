@@ -15,6 +15,20 @@ export const chainNames = {
   137: 'Polygon',
 }
 
+export const explorerNames = {
+  1: 'Etherscan',
+  4: 'Etherscan',
+  100: 'Blockscout',
+  137: 'Polyscan',
+}
+
+export const unwrapMessage = {
+  1: `Unwrap WETH to ETH on Uniswap`,
+  4: `Unwrap WETH to ETH on Uniswap`,
+  100: `Unwrap WXDAI to XDAI on Honeyswap`,
+  137: `Unwrap WMATIC to MATIC on Quickswap`,
+}
+
 const MAINNET_WALLETS = {
   INJECTED: {
     connector: injected,

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { explorerNames } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ExternalLink } from '../../../theme'
 import { getExplorerLink } from '../../../utils'
@@ -75,7 +76,7 @@ const ClaimConfirmationModal: React.FC<Props> = (props) => {
               {pendingText}
             </Text>
             <Link href={getExplorerLink(chainId, hash, 'transaction')}>
-              <span>View transaction {`on ${chainId === 100 ? 'Blockscout' : 'Etherscan'}`}</span>
+              <span>View transaction {`on ${explorerNames[chainId]}`}</span>
               <LinkIcon />
             </Link>
           </>
