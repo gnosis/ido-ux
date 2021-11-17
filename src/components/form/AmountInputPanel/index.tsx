@@ -5,6 +5,7 @@ import styled, { keyframes } from 'styled-components'
 import { Token } from '@josojo/honeyswap-sdk'
 import ReactTooltip from 'react-tooltip'
 
+import { unwrapMessage } from '../../../constants'
 import { useActiveWeb3React } from '../../../hooks'
 import { ApprovalState } from '../../../hooks/useApproveCallback'
 import { ChainId, getTokenDisplay } from '../../../utils'
@@ -128,8 +129,7 @@ const AmountInputPanel: React.FC<Props> = (props) => {
   const { account } = useActiveWeb3React()
   const isUnlocking = unlock.unlockState === ApprovalState.PENDING
   const error = info?.type === InfoType.error
-  const dataTip =
-    chainId == 100 ? `Unwrap WXDAI to XDAI on Honeyswap` : `Unwrap WETH to ETH on Uniswap`
+  const dataTip = unwrapMessage[chainId]
 
   return (
     <>

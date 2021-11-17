@@ -28,6 +28,7 @@ import {
   EASY_AUCTION_NETWORKS,
   getFullTokenDisplay,
   isTokenWETH,
+  isTokenWMATIC,
   isTokenXDAI,
 } from '../../../utils'
 import { convertPriceIntoBuyAndSellAmount, getInverse } from '../../../utils/prices'
@@ -343,7 +344,9 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
   const isWrappable =
     biddingTokenBalance &&
     biddingTokenBalance.greaterThan('0') &&
-    (isTokenXDAI(biddingToken.address, chainId) || isTokenWETH(biddingToken.address, chainId)) &&
+    (isTokenXDAI(biddingToken.address, chainId) ||
+      isTokenWETH(biddingToken.address, chainId) ||
+      isTokenWMATIC(biddingToken.address, chainId)) &&
     !!account &&
     !!biddingToken.address
 
@@ -406,6 +409,10 @@ const OrderPlacement: React.FC<OrderPlacementProps> = (props) => {
                   chainId == 100
                     ? window.open(
                         `https://app.honeyswap.org/#/swap?inputCurrency=${biddingToken.address}`,
+                      )
+                    : chainId == 137
+                    ? window.open(
+                        `https://quickswap.exchange/#/swap?inputCurrency=${biddingToken.address}`,
                       )
                     : window.open(
                         `https://app.uniswap.org/#/swap?inputCurrency=${biddingToken.address}`,
