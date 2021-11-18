@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -19,24 +15,10 @@
     "jsx": "react",
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "types": [
-      "react-spring",
-      "jest"
-    ],
+    "types": ["react-spring", "jest"],
     "noFallthroughCasesInSwitch": true
   },
-  "exclude": [
-    "node_modules",
-    "cypress"
-  ],
-  "include": [
-    "**/*.js",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "files": [
-    "src/types.d.ts",
-    "src/images.d.ts",
-    "src/ethereum.d.ts"
-  ]
+  "exclude": ["node_modules", "cypress"],
+  "include": ["**/*.js", "**/*.ts", "**/*.tsx"],
+  "files": ["src/types.d.ts", "src/images.d.ts", "src/ethereum.d.ts"]
 }
