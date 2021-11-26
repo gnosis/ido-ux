@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.13",
-    "@anxolin/walletconnect-connector": "6.1.9",
+    "@web3-react/walletconnect-connector": "^6.2.8",
     "@babel/helper-define-map": "^7.12.13",
     "@babel/helper-regex": "^7.10.5",
     "@ethersproject/address": "^5.0.0-beta.134",
@@ -148,7 +148,7 @@
     "use-media": "^1.4.0"
   },
   "resolutions": {
-    "@walletconnect/web3-provider": "1.4.2-rc.2"
+    "@walletconnect/ethereum-provider": "1.6.4"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
