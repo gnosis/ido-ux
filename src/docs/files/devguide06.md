@@ -12,7 +12,7 @@ All auctions need to include the following parameters:
 
 **&quot;--sell-amount&quot;** refers to the amount of tokens that you will sell, add amount as integer
 
-**&quot;--min-buy-amount&quot;** refers to the minimum amount of buy tokens you are willing to accept. The minimum sell price of the auction is calculated by dividing the --sell-amount/--min-buy-amount
+**&quot;--min-buy-amount&quot;** refers to the minimum amount of buy tokens you are willing to accept. The minimum sell price of the auction is calculated by dividing the --min-buy-amount/--sell-amount
 
 **&quot;--auction-end-date&quot;** determines the end date and time of the auction in Unix Timestamp format. Use [this website](https://www.epochconverter.com/) in order to convert from human date and time format to Unix Timestamp.
 
