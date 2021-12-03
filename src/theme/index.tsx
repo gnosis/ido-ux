@@ -22,6 +22,7 @@ const MEDIA_WIDTHS = {
 const mediaWidthTemplates: {
   [width in keyof typeof MEDIA_WIDTHS]: typeof css
 } = Object.keys(MEDIA_WIDTHS).reduce((accumulator, size) => {
+  // eslint-disable-next-line @typescript-eslint/no-extra-semi
   ;(accumulator as any)[size] = (a: any, b: any, c: any) => css`
     @media (max-width: ${(MEDIA_WIDTHS as any)[size]}px) {
       ${css(a, b, c)}
