@@ -14,7 +14,7 @@ The final clearing price will be the price where the supply and demand curve int
 If the final clearing price was higher than your limit order price, you will receive back your funds using for bidding. Otherwise, you will receive the `bidding amount * clearing price` auctioned tokens.
 
 
-**Here are one example:**
+**Here is one example:**
 
 There is an auction ETH for DAI
 - You place a limit order of 1000 DAI with a limit price of 4000 DAI per ETH
@@ -34,7 +34,7 @@ Auctioneers: After the auction time has ended, submit the transaction to settle 
 
 This cannot be known before the auction closes, as it needs to take into account all bids. For more information on calculating the closing price, check "How is the final price calculated".
 
-"Current Price" on the interface gives you an estimate of what the closing price might be, as it shows the current closing price of the auction if no more bids are submitted or canceled.
+"Current Price" on the interface gives you an estimate of what the closing price might be, as it shows the current closing price of the auction if no more bids are submitted or cancelled.
 
 #### How can I make sure my bid is included?
 
@@ -62,7 +62,7 @@ You can always cancel your bid (before the optional cancellation period set up b
 
 - Cancellation (optional)
 
-Note: after the auction ends, bidders (anyone) can theoretically also submit the transaction for auction settlement. Nonetheless, we expect the auctioneer to carry out this process
+Note: after the auction ends, bidders (anyone) can theoretically also submit the transaction for auction settlement. Nonetheless, we expect the auctioneer to carry out this process.
 
 #### The auction closed but I couldn't claim any of the auctioned tokens, what happened?
 
@@ -73,13 +73,13 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 <img src="/assets/BosonScreenShot.png" alt="drawing" width="500"/>
 
 
-- Dotted white line -> shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends
+- Dotted white line -> shows the "Current price", which is the closing price of the auction if no more bids are submitted or cancelled and the auction ends
 
 - Green line -> shows cumulative tokens (y axis) of the bids that have been placed over the price (x axis), both expressed in the bid token
 
 - Red line -> shows the sell supply from the auctioneer (y axis) in bidding tokens over the price (x axis). The auctioneer is selling a predefined amount of tokens, but they will raise linearly more bidding tokens, if the price increases. As an example: If the auctioneer sells 1 ETH for USDC, at a price of 2000, they will get 2000 USD, but at a price of 4000, they will receive 4000 USDC.
 
-- Orange line -> shows the order that the user will submit
+- Orange line -> shows the order that the user will submit.
 
 #### What is the settlement transaction?
 
