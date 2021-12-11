@@ -44,7 +44,7 @@ Alternatively, bidders can try to wait shortly before the end of the auction whe
 
 #### What does Current Price mean?
 
-"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled
+"Current Price" shows the current closing price of the auction if no more bids are submitted or cancelled.
 
 #### I placed a bid, where is my balance?
 
