@@ -2,9 +2,25 @@
 
 #### When does the auction end?
 
-The auctioneer defines the duration of the auction. You can see it on the top of the auction screen. After the auction time finishes, a settlement transaction needs to be submitted.
+The auction will always end at the predefined time set by the auctioneer. Each auction page has a countdown until the auction ending (timer in the orange circle).
 
-Although we expect the auctioneer to submit the settlement transaction, anyone can submit this transaction.This will calculate the settlement price and return the proceeds to the auctioneer. After that, the bidders will be able to claim.
+#### How is the final price calculated?
+
+The final clearing price will be the price where the supply and demand curve intersect. (In the graph, it's where the red supply line meets the green demand curve, indicated by the white dashed line).
+
+<img src="/assets/BosonScreenShot.png" alt="drawing" width="500"/>
+
+#### I was bidding X tokens, how many can I claim?
+If the final clearing price was higher than your limit order price, you will receive back your funds using for bidding. Otherwise, you will receive the `bidding amount * clearing price` auctioned tokens.
+
+
+**Here is one example:**
+
+There is an auction ETH for DAI
+- You place a limit order of 1000 DAI with a limit price of 4000 DAI per ETH
+- If the clearing price ends up being 5000 DAI per ETH, you will receive your 1000 DAI back
+- If the clearing price ends up being 3000 DAI per ETH, you will receive 1000* 1/3000 ETH = 1/3 ETH
+
 
 #### How do I claim my tokens from the auction?
 
@@ -12,37 +28,29 @@ Bidders: After the auction has ended, and the settlement transaction has been mi
 
 Auctioneers: After the auction time has ended, submit the transaction to settle the auction. Find an [example of the command here](https://ido-ux.dev.gnosisdev.com/#/docs/participate-as-auctioneer#topAnchor).
 
-#### How is the final price calculated?
 
-1.  Bids are gathered by the smart contract and sorted from highest to lowest price
-
-2.  The smart contract works back from the highest bid, adding each bid's amount of tokens to buy, until the original amount to sell is reached
-
-3.  The bid that adds up the amount of tokens to sell is selected as the final closing for all participants.
-
-4.  Participants that selected a maximum price at the final closing price or higher receive tokens, the ones that had selected a maximum price below the closing price are left out
 
 #### Can I know what the closing price will be?
 
-This cannot be known before the auction closes, as it needs to take into account all bids once the auction closes. For more information on calculating the closing price, check "how is the final price calculated"
+This cannot be known before the auction closes, as it needs to take into account all bids. For more information on calculating the closing price, check "How is the final price calculated".
 
-"Current Price" on the interface gives you an estimate of what the closing price might be, as it shows the current closing price of the auction if no more bids are submitted or canceled
+"Current Price" on the interface gives you an estimate of what the closing price might be, as it shows the current closing price of the auction if no more bids are submitted or cancelled.
 
 #### How can I make sure my bid is included?
 
-You cannot guarantee that your bid will be included in the auction. To increase your chances of being included, bidders can try to wait for the end of the auction, and bid above "Current Price" shown in the interface.
+You cannot guarantee that your bid will be included in the auction. Though you can bid with a very high price, which is very likely higher than the closing price. Then your bid will be - very likely - above the final clearing price and hence you will get the tokens at the clearing price. This is called non-competitive price bidding.
 
-Alternatively, you can bid with a very high price (near infinite), which would signal that you are willing to participate at any price, and would have a higher chance of being included on the auction.
+Alternatively, bidders can try to wait shortly before the end of the auction when its easier to estimate the final clearing price. Then they can bid higher than their estimated clearing price.
 
 #### What does Current Price mean?
 
-"Current Price" shows the current closing price of the auction if no more bids are submitted or canceled
+"Current Price" shows the current closing price of the auction if no more bids are submitted or cancelled.
 
 #### I placed a bid, where is my balance?
 
 When you place a bid, your balance of the bid token will be subtracted from the wallet so it is committed to the auction.
 
-You can always cancel your bid (before the optional cancelation period set up by the auctioneer) and have your balance back in your wallet.
+You can always cancel your bid (before the optional cancellation period set up by the auctioneer) and have your balance back in your wallet.
 
 #### How many transactions does a bidder need to submit?
 
@@ -52,9 +60,9 @@ You can always cancel your bid (before the optional cancelation period set up by
 
 - Claim auction proceeds/receive funds back if not included
 
-- Cancelation (optional)
+- Cancellation (optional)
 
-Note: after the auction ends, bidders (anyone) can theoretically also submit the transaction for auction settlement. Nonetheless, we expect the auctioneer to carry out this process
+Note: after the auction ends, bidders (anyone) can theoretically also submit the transaction for auction settlement. Nonetheless, we expect the auctioneer to carry out this process.
 
 #### The auction closed but I couldn't claim any of the auctioned tokens, what happened?
 
@@ -62,15 +70,16 @@ It is likely that you placed your bid price too low. Read the answer to "How is 
 
 #### What is the chart showing?
 
-<img src="/assets/FAQChartImage.png" alt="drawing" width="500"/>
+<img src="/assets/BosonScreenShot.png" alt="drawing" width="500"/>
 
-- Dotted white line -> shows the Current price, which is the closing price of the auction if no more bids are submitted or canceled and the auction ends
 
-- Green line -> shows the price (x axis) and cumulative size (y axis) of the bids that have been placed, both expressed in the bid token
+- Dotted white line -> shows the "Current price", which is the closing price of the auction if no more bids are submitted or cancelled and the auction ends
 
-- Red line -> shows the minimum sell price (x axis) the auctioneer is willing to accept.
+- Green line -> shows cumulative tokens (y axis) of the bids that have been placed over the price (x axis), both expressed in the bid token
 
-- Orange line -> shows the order that the user will submitt
+- Red line -> shows the sell supply from the auctioneer (y axis) in bidding tokens over the price (x axis). The auctioneer is selling a predefined amount of tokens, but they will raise linearly more bidding tokens, if the price increases. As an example: If the auctioneer sells 1 ETH for USDC, at a price of 2000, they will get 2000 USD, but at a price of 4000, they will receive 4000 USDC.
+
+- Orange line -> shows the order that the user will submit.
 
 #### What is the settlement transaction?
 
@@ -98,4 +107,8 @@ Yes, as long as you have sufficient balance of the bidding token and meet the au
 
 #### Who is responsible for Gnosis Auction?
 
-Anyone can utilise Gnosis Auction to conduct a token auction subject to the laws applicable to them. Gnosis Ltd, GnosisDAO or any affiliated entity ("Gnosis") has no involvement with the auctioneer(s) or the auctions, which are independently organised by the auctioneer(s). Gnosis is only involved in developing the smart contracts that make the dapp run.
+Anyone can utilise Gnosis Auction to conduct a token auction subject to the laws applicable to them. Gnosis Ltd, GnosisDAO or any affiliated entity ("Gnosis") has no involvement with the auctioneer(s) or the auctions, which are independently organized by the auctioneer(s). Gnosis is only involved in developing the smart contracts that make the dapp run.
+
+#### Can I subscribe to get a notification for new auctions?
+
+The [gnosis-auction](https://twitter.com/GnosisAuction) twitter account will tweet automatically about new auctions.
