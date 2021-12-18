@@ -24,7 +24,7 @@ Additionally, Auctioneers can further customize the auction by using the followi
 
 **&quot;--min-funding-threshold&quot;** The minimal funding threshold for executing the settlement. If funding is not reached, everyone will get back their investment. Default is 0.
 
-**&quot;--order-cancellation-date&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
+**&quot;--order-cancellation-end-date&quot;** The unix timestamp (in seconds) until which orders can be canceled. Default is 0.
 
 **&quot;--min-buy-amount-per-order&quot;** Describes the minimal buyAmount per order placed in the auction. Auctioneers can define if there is minimum order size in their auction. Default is 0.01
 
