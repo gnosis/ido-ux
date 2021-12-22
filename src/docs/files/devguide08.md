@@ -2,7 +2,7 @@
 
 #### Connect Wallet & App
 
-1. First, you will need to have a [Gnosis Safe](https://gnosis-safe.io/) that you control deployed in Network of interest. We suggest everyone to try it out on Rinkeby.
+1. First, you will need to have a [Gnosis Safe](https://gnosis-safe.io/) that you control deployed in the network of interest. We suggest everyone to try it out on Rinkeby.
 
 2. Once you have the Gnosis Safe created, you can see the following:
 
