@@ -90,6 +90,7 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
                 path="/docs/starting-an-auction-with-safe"
                 strict
               />
+              <Route component={Documentation} exact path="/docs/settle-an-auction" strict />
               <Route
                 component={Documentation}
                 exact

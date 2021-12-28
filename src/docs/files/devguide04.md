@@ -27,7 +27,7 @@ _Important: as a bidder, it is important to note that many participants might su
 
 It's the auctioneers duty to finish the auction by sending the transaction that calculates the price of the auction on-chain. Though it's also a permissionless process and everyone can do it.
 
-Check out the [guide](https://github.com/gnosis/ido-contracts#settle-auctionss) for doing the price calculation.
+Check out the [guide](https://github.com/gnosis/ido-contracts#settle-auctions) for doing the price calculation.
 
 #### 4. Bidders: Claiming
 

@@ -1,4 +1,4 @@
-### How to Participate as an Auctioneer using the Gnosis Safe App
+### How to start a new auction using the Gnosis Safe App
 
 #### Connect Wallet & App
 
