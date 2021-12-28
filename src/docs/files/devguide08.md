@@ -2,7 +2,8 @@
 
 #### Connect Wallet & App
 
-1. First, you will need to have a [Gnosis Safe](https://gnosis-safe.io/) that you control deployed in Mainnet.
+1. First, you will need to have a [Gnosis Safe](https://gnosis-safe.io/) that you control deployed in the network of interest. We suggest everyone to try it out on Rinkeby.
+
 2. Once you have the Gnosis Safe created, you can see the following:
 
 <img src="/assets/GA_SafeApp_1.png" alt="drawing" width="500"/>
@@ -57,6 +58,8 @@ As you can see in the image below, if you try to input a value of more tokens th
 
 <img src="/assets/GA_SafeApp_9.png" alt="drawing" width="500"/>
 
-8. That's it! You have successfully set up and deployed an auction using the Gnosis Safe App for Gnosis Auction.
+8. That's it! You have successfully set up and deployed an auction using the Gnosis Safe App for Gnosis Auction. 
+
+PS: Rinkeby auctions will only be shown in the staging environment: [https://ido-ux.dev.gnosisdev.com/](https://ido-ux.dev.gnosisdev.com/)
 
 PS: We strongly recommend auctioneers to use the method described above instead of using the script, since we believe that the Gnosis Safe is better suited for handling large amounts of digital assets
