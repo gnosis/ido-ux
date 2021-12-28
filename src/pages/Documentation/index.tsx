@@ -17,6 +17,7 @@ import startingAnAuctionWithSafe from '../../docs/files/devguide08.md'
 import privateAuctionsAndKYCSolutions from '../../docs/files/devguide09.md'
 import mediaKitDocMarkdown from '../../docs/files/devguide11.md'
 import vestedTokens from '../../docs/files/devguide12.md'
+import settlingAnAuction from '../../docs/files/devguide13.md'
 
 const Wrapper = styled.div`
   padding-bottom: 50px;
@@ -180,6 +181,7 @@ export const Documentation: React.FC = (props) => {
       fetchGuide(participateAsAuctioneerDocMarkdown)
     if (location.pathname === '/docs/starting-an-auction-with-safe')
       fetchGuide(startingAnAuctionWithSafe)
+    if (location.pathname === '/docs/settle-an-auction') fetchGuide(settlingAnAuction)
     if (location.pathname === '/docs/private-auctions-and-KYC-solutions')
       fetchGuide(privateAuctionsAndKYCSolutions)
     if (location.pathname === '/docs/media-kit') fetchGuide(mediaKitDocMarkdown)
@@ -212,6 +214,9 @@ export const Documentation: React.FC = (props) => {
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/starting-an-auction-with-safe#topAnchor">
             Start an auction via UI
+          </IndexLink>
+          <IndexLink activeClassName="isActive" to="/docs/settle-an-auction#topAnchor">
+            Settle an auction
           </IndexLink>
           <IndexLink activeClassName="isActive" to="/docs/private-auctions-and-KYC-solutions">
             Private auctions/KYC solutions
