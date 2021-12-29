@@ -44,6 +44,12 @@ export const walletconnect = {
     qrcode: true,
     pollingInterval: POLLING_INTERVAL,
   }),
+  137: new WalletConnectConnector({
+    rpc: { 100: NETWORK_CONFIGS[137].rpc },
+    bridge: 'https://safe-walletconnect.gnosis.io',
+    qrcode: true,
+    pollingInterval: POLLING_INTERVAL,
+  }),
   4: new WalletConnectConnector({
     rpc: { 4: NETWORK_CONFIGS[4].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
