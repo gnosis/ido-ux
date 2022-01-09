@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { event } from 'react-ga'
 
 import { injected } from '../../../connectors'
@@ -164,8 +164,8 @@ const WalletModal: React.FC = () => {
 
         const walletConnect = connector[chainId]
         // if the user has already tried to connect, manually reset the connector
-        if (walletConnect.walletConnectProvider?.wc?.uri) {
-          walletConnect.walletConnectProvider = undefined
+        if (walletConnect.walletConnectProvider) {
+          walletConnect.walletConnectProvider = null
         }
 
         await activate(walletConnect, undefined, true)

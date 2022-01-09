@@ -1,13 +1,11 @@
-import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { InjectedConnector } from '@web3-react/injected-connector'
 import { NetworkConnector } from '@web3-react/network-connector'
 import { PortisConnector } from '@web3-react/portis-connector'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { WalletLinkConnector } from '@web3-react/walletlink-connector'
 
 import { NETWORK_URL_MAINNET, PORTIS_ID } from '../constants/config'
 import { ChainId, NETWORK_CONFIGS } from './../utils/index'
-
-const POLLING_INTERVAL = 10000
 
 const urls: string[] = []
 
@@ -36,13 +34,11 @@ export const walletconnect = {
     rpc: { 1: NETWORK_CONFIGS[1].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: true,
-    pollingInterval: POLLING_INTERVAL,
   }),
   100: new WalletConnectConnector({
     rpc: { 100: NETWORK_CONFIGS[100].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: true,
-    pollingInterval: POLLING_INTERVAL,
   }),
   137: new WalletConnectConnector({
     rpc: { 137: NETWORK_CONFIGS[137].rpc },
@@ -54,7 +50,6 @@ export const walletconnect = {
     rpc: { 4: NETWORK_CONFIGS[4].rpc },
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: true,
-    pollingInterval: POLLING_INTERVAL,
   }),
   // if no network is defined, we look whether wallet connect supports all possible chains
   // this might cause issues on the auction overview page.
@@ -63,7 +58,6 @@ export const walletconnect = {
     rpc: rpcs,
     bridge: 'https://safe-walletconnect.gnosis.io',
     qrcode: true,
-    pollingInterval: POLLING_INTERVAL,
   }),
 }
 

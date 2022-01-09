@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { WalletConnectConnector } from '@anxolin/walletconnect-connector'
 import { useWeb3React } from '@web3-react/core'
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 
 import { useActiveWeb3React } from '../../../hooks'
 import { useDarkModeManager } from '../../../state/user/hooks'
@@ -193,9 +193,7 @@ export const UserDropdown: React.FC<Props> = (props) => {
 
   const disconnect = React.useCallback(async () => {
     deactivate()
-    if (connector instanceof WalletConnectConnector && typeof connector.close === 'function') {
-      connector.close()
-      connector.walletConnectProvider = null
+    if (connector instanceof WalletConnectConnector) {
       localStorage.removeItem('walletconnect')
     }
   }, [connector, deactivate])
@@ -227,11 +225,11 @@ export const UserDropdown: React.FC<Props> = (props) => {
         {items.map((item, index) => {
           return (
             <Item
-              disabled={item.disabled && item.disabled}
-              hasOnClick={item.onClick && item.onClick ? true : false}
-              hide={item.hide && item.hide}
+              disabled={item && item.disabled}
+              hasOnClick={item && item.onClick ? true : false}
+              hide={item && item.hide}
               key={index}
-              onClick={item.onClick && item.onClick}
+              onClick={item && item.onClick}
             >
               <Title>{item.title}</Title>
               <Value>{item.value}</Value>
