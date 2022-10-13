@@ -21,7 +21,15 @@ The github repository for this audited contract can be found [here](https://gith
 
 **Setup:**
 
-If KYC is required for your sale, then you have to work with different KYC providers like [Fractal](https://www.trustfractal.com/) or [Fireblocks](https://www.fireblocks.com/). Once they provided you with a list of addresses with a successful KYC process, you can start the allow-listing steps.
+If KYC is required for your sale, then you have to work with different KYC providers like [Fractal](https://www.trustfractal.com/) or [Fireblocks](https://www.fireblocks.com/). 
+
+Fractal provides both the KYC service and an implementation of the `allow-list-contract` that you can use. For Fractal's KYC service, contact them [here](https://web.fractal.id/). 
+
+Fractal offers auctioneers two web3 solutions for verifying credentials - [Credentials API](https://docs.developer.fractal.id/fractal-credentials-api) and [DID Registry](https://docs.developer.fractal.id/fractal-did-registry). Both provide on-chain credential verification. You can see a summary of these products and their pros/cons [here](https://fractal.notion.site/Fractal-Product-Overview-2c63841aebaf4000b96f1c44c1680ad1).
+
+With Credentials API, your dApp sends a signed proof it has received from Fractal as part of the user transaction. Fractal has provided an example `allow-list-manager` (see it [here](https://gist.github.com/pkoch/dca4dff50b01fcac47010a326125d255)) for integrating their Credentials Proof with your auction. For DID Registry, the `allow-list-manager` calls Fractal's smart contract (DID Registry) to verify the credential of a wallet address. Fractal has provided an example `allow-list-manager` (see it [here](https://gist.github.com/pkoch/b0e9d31b2a2a7d83693d982110ede0e9)) for integrating their DID Registry with your auction. 
+
+Alternatively, either Fireblocks or Fractal can provide you a list of addresses that have successfully completed the KYC process and you can implement it yourself by following the allow-listing steps below.
 
 1. Upon auction initiation, the auctioneer must specify the designated EOA in the [Gnosis Auction Starter safe app](/#/docs/starting-an-auction-with-safe). You can do this in the following field:
    <img src="/assets/SignerAddress.png" alt="drawing" width="500"/>
