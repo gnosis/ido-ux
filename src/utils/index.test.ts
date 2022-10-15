@@ -19,8 +19,8 @@ describe('utils', () => {
       expect(getExplorerLink(1, 'abc', 'address')).toEqual('https://etherscan.io/address/abc')
     })
     it('enum', () => {
-      expect(getExplorerLink(ChainId.RINKEBY, 'abc', 'address')).toEqual(
-        'https://rinkeby.etherscan.io/address/abc',
+      expect(getExplorerLink(ChainId.GOERLI, 'abc', 'address')).toEqual(
+        'https://goerli.etherscan.io/address/abc',
       )
     })
   })

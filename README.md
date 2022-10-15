@@ -43,7 +43,7 @@ in the .env or .env.local file to the connect to the local api
 Set the env variable:
 
 ```bash
-REACT_APP_ADDITIONAL_SERVICES_API_URL=https://ido-v1-api-rinkeby.dev.gnosisdev.com/
+REACT_APP_ADDITIONAL_SERVICES_API_URL=https://ido-v1-api-goerli.dev.gnosisdev.com/
 ```
 
 in the .env.local file to the connect to the development api

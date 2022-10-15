@@ -10,7 +10,7 @@ import { injected, portis, walletconnect, walletlink } from '../connectors'
 
 export const chainNames = {
   1: 'Mainnet',
-  4: 'Rinkeby',
+  4: 'Goerli',
   100: 'xDai',
   137: 'Polygon',
 }

@@ -2005,10 +2005,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@josojo/honeyswap-sdk@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@josojo/honeyswap-sdk/-/honeyswap-sdk-1.0.0.tgz#2b97d35cbafe1f75c51fcc9a14c53ba98735f4c3"
-  integrity sha512-rJ6S6A3wZhqeTkZa7QCTEyG3QT9ffjha/bvgNmZ9oOltDqf1NHOh76yW3TtV0Ps7BxQC+damBhwkcvi2nKueWA==
+"@josojo/honeyswap-sdk@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@josojo/honeyswap-sdk/-/honeyswap-sdk-1.0.2.tgz#05a3db12e628a971e4e8627fbd88c1d9b161bd84"
+  integrity sha512-2iQJmjf8Nl95t/kc7dTRmW98iaOdYpitNH+UbjkxGUhq/wKinaO+Dxij/a4lwM+pnGhRW37bDfGtFm7GSLMf+g==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
