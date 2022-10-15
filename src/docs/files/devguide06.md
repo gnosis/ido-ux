@@ -1,6 +1,6 @@
 ### How to start an auction via scripts
 
-This guide will first list all the parameters in order to run an auction, and then go through an example of setting up an auction on the Rinkeby testnet.
+This guide will first list all the parameters in order to run an auction, and then go through an example of setting up an auction on the Goerli testnet.
 
 ### Required Parameters
 
@@ -53,7 +53,7 @@ yarn build
 Do the following command in order to set the network you will use:
 
 ```
-export NETWORK= rinkeby
+export NETWORK= goerli
 ```
 
 Select the gas price:
@@ -77,13 +77,13 @@ export PK=PRIVATE_KEY_HERE
 Example of final command to initiate the auction:
 
 ```
-yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780140aa0cd5a" --bidding-token "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa" --sell-amount 0.1 --min-buy-amount 50 --auction-end-date 1616497200 --network rinkeby
+yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780140aa0cd5a" --bidding-token "0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa" --sell-amount 0.1 --min-buy-amount 50 --auction-end-date 1616497200 --network goerli
 ```
 
 An example of a more complex auction with allow-listing would be:
 
 ```
-yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780140aa0cd5ab" --bidding-token "0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea" --sell-amount 0.5 --min-buy-amount 800 --auction-end-date 1619195139 --order-cancellation-end-date 1619195139 --allow-list-manager "0x80b8AcA4689EC911F048c4E0976892cCDE14031E" --allow-list-data "0x000000000000000000000000740a98f8f4fae0986fb3264fe4aacf94ac1ee96f"  --network rinkeby
+yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780140aa0cd5ab" --bidding-token "0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea" --sell-amount 0.5 --min-buy-amount 800 --auction-end-date 1619195139 --order-cancellation-end-date 1619195139 --allow-list-manager "0x80b8AcA4689EC911F048c4E0976892cCDE14031E" --allow-list-data "0x000000000000000000000000740a98f8f4fae0986fb3264fe4aacf94ac1ee96f"  --network goerli
 ```
 
 ### Closing an auction
@@ -91,7 +91,7 @@ yarn hardhat initiateAuction --auctioning-token "0xc778417e063141139fce010982780
 After the auction time has finished, ANY participant can settle the auction by running this command:
 
 ```
-yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network rinkeby
+yarn hardhat clearAuction --auction-id INSERT_AUCTION_ID_HERE --network goerli
 ```
 
 ### Allow-Listing: Generating signatures

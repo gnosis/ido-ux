@@ -51,8 +51,8 @@ jobs:
         env:
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-api-xdai.gnosis.io/
-          REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-api-rinkeby.gnosis.io/
+          REACT_APP_NETWORK_URL_GOERLI: https://goerli.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_GOERLI: https://ido-api-goerli.gnosis.io/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-api-mainnet.gnosis.io/
           REACT_APP_NETWORK_URL_POLYGON: https://polygon-rpc.com
