@@ -5,11 +5,11 @@ import { ChainId, Token, TokenAmount } from '@josojo/honeyswap-sdk'
 import { encodeOrder } from './Order'
 import { getClaimableData } from './useClaimOrderCallback'
 
-const weth = new Token(ChainId.GOERLI, '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6', 18, 'WETH', '')
+const weth = new Token(ChainId.GÖRLI, '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6', 18, 'WETH', '')
 
-const usdc = new Token(ChainId.GOERLI, '0x5ffbac75efc9547fbc822166fed19b05cd5890bb', 6, 'USDC', '')
+const usdc = new Token(ChainId.GÖRLI, '0x5ffbac75efc9547fbc822166fed19b05cd5890bb', 6, 'USDC', '')
 
-const dai = new Token(ChainId.GOERLI, '0xe68104d83e647b7c1c15a91a8d8aad21a51b3b3e', 18, 'DAI', '')
+const dai = new Token(ChainId.GÖRLI, '0xe68104d83e647b7c1c15a91a8d8aad21a51b3b3e', 18, 'DAI', '')
 
 describe('getClaimableData when minFundingThreshold was not met', () => {
   it('checks that participant receives all their biddingTokens back', () => {

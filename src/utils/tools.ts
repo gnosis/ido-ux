@@ -57,7 +57,7 @@ export const calculateTimeProgress = (auctionStartDate: number, auctionEndDate: 
 
 export const getChainName = (chainId: number) => {
   return (
-    (chainId === ChainId.GOERLI && 'Goerli') ||
+    (chainId === ChainId.GÖRLI && 'Goerli') ||
     (chainId === ChainId.MAINNET && 'Mainnet') ||
     (chainId === ChainId.XDAI && 'xDai') ||
     (chainId === ChainId.MATIC && 'Polygon') ||
