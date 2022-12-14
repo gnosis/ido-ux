@@ -77,7 +77,6 @@ jobs:
           message: |
             * **🔭 [IDO UI](${{ env.REVIEW_FEATURE_URL }})**: Easy IDO auction
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]'
         if: success() && steps.findPr.outputs.number
         env:
           REVIEW_FEATURE_URL: https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
