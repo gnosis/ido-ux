@@ -36,7 +36,7 @@ This will start the necessary backend end points for a smooth development. Then 
 REACT_APP_ADDITIONAL_SERVICES_API_URL=http://127.0.0.1:8080/
 ```
 
-in the .env or .env.local file to the connect to the local api
+in the .env or .env.local file to the connect to the local api.
 
 ## Connect to additional - development services api
 
