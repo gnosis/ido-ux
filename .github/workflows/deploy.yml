@@ -72,7 +72,7 @@ jobs:
         run: aws s3 sync build s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/${{ env.REPO_NAME_SLUG }}/pr${{ steps.findPr.outputs.number }} --delete
 
       - name: 'PRaul: Comment PR with app URLs'
-        uses: mshick/add-pr-comment@v1
+        uses: mshick/add-pr-comment@v2
         with:
           message: |
             * **🔭 [IDO UI](${{ env.REVIEW_FEATURE_URL }})**: Easy IDO auction
