@@ -46,8 +46,8 @@ jobs:
       - name: Build Web Apps
         run: yarn build
         env:
-          REACT_APP_NETWORK_URL_RINKEBY: https://rinkeby.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_RINKEBY: https://ido-v1-api-rinkeby.dev.gnosisdev.com/
+          REACT_APP_NETWORK_URL_GOERLI: https://goerli.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_GOERLI: https://ido-v1-api-goerli.dev.gnosisdev.com/
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
@@ -72,12 +72,11 @@ jobs:
         run: aws s3 sync build s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/${{ env.REPO_NAME_SLUG }}/pr${{ steps.findPr.outputs.number }} --delete
 
       - name: 'PRaul: Comment PR with app URLs'
-        uses: mshick/add-pr-comment@v1
+        uses: mshick/add-pr-comment@v2
         with:
           message: |
             * **🔭 [IDO UI](${{ env.REVIEW_FEATURE_URL }})**: Easy IDO auction
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: 'github-actions[bot]'
         if: success() && steps.findPr.outputs.number
         env:
           REVIEW_FEATURE_URL: https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
