@@ -75,12 +75,10 @@ jobs:
         uses: mshick/add-pr-comment@v2
         with:
           message: |
-            * **🔭 [IDO UI](${{ env.REVIEW_FEATURE_URL }})**: Easy IDO auction
+            * **🔭 [IDO UI](https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }})**: Easy IDO auction
           repo-token: ${{ secrets.GITHUB_TOKEN }}
         if: success() && steps.findPr.outputs.number
-        env:
-          REVIEW_FEATURE_URL: https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }}.review.gnosisdev.com
 
       - name: 'Deploy to S3: Develop'
         if: github.ref == 'refs/heads/develop'
-        run: aws s3 sync build s3://${{ secrets.AWS_DEV_BUCKET_NAME }} --delete
+        run: aws s3 sync build s3://${{ secrets.AWS_REVIEW_BUCKET_NAME }}/develop --delete
