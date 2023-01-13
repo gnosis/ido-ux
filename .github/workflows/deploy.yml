@@ -47,13 +47,13 @@ jobs:
         run: yarn build
         env:
           REACT_APP_NETWORK_URL_GOERLI: https://goerli.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_GOERLI: https://ido-v1-api-goerli.dev.gnosisdev.com/
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_GOERLI: http://44.203.242.67:8080/
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: https://ido-v1-api-xdai.dev.gnosisdev.com/
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: http://54.80.73.189:8080/
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: https://ido-v1-api-mainnet.dev.gnosisdev.com/
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: http://100.25.191.22:8080/
           REACT_APP_NETWORK_URL_POLYGON: https://polygon-rpc.com
-          REACT_APP_ADDITIONAL_SERVICES_API_URL_POLYGON: https://ido-v1-api-polygon.dev.gnosisdev.com/
+          REACT_APP_ADDITIONAL_SERVICES_API_URL_POLYGON: http://54.91.90.23:8080/
       - name: Get PR number
         uses: jwalton/gh-find-current-pr@v1
         id: findPr
@@ -75,7 +75,7 @@ jobs:
         uses: mshick/add-pr-comment@v2
         with:
           message: |
-            * **🔭 [IDO UI](https://pr${{ steps.findPr.outputs.number }}--${{ env.REPO_NAME_SLUG }})**: Easy IDO auction
+            * **🔭 [IDO UI](http://idoux-review.s3-website-ap-northeast-1.amazonaws.com/idoux/pr${{ steps.findPr.outputs.number }}/#/)**: Easy IDO auction
           repo-token: ${{ secrets.GITHUB_TOKEN }}
         if: success() && steps.findPr.outputs.number
 
