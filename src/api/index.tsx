@@ -35,7 +35,7 @@ function createAdditionalServiceApi(): AdditionalServicesApi {
   ]
   if (API_URL_DEVELOP_GOERLI)
     config.push({
-      networkId: 4,
+      networkId: 5,
       url_production: API_URL_PRODUCTION_GOERLI,
       url_develop: API_URL_DEVELOP_GOERLI,
     })
