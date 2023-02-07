@@ -1,11 +1,11 @@
 import {
+  API_URL_DEVELOP_GOERLI,
   API_URL_DEVELOP_MAINNET,
   API_URL_DEVELOP_POLYGON,
-  API_URL_DEVELOP_RINKEBY,
   API_URL_DEVELOP_XDAI,
+  API_URL_PRODUCTION_GOERLI,
   API_URL_PRODUCTION_MAINNET,
   API_URL_PRODUCTION_POLYGON,
-  API_URL_PRODUCTION_RINKEBY,
   API_URL_PRODUCTION_XDAI,
 } from '../constants/config'
 import {
@@ -33,11 +33,11 @@ function createAdditionalServiceApi(): AdditionalServicesApi {
       url_develop: API_URL_DEVELOP_POLYGON,
     },
   ]
-  if (API_URL_DEVELOP_RINKEBY)
+  if (API_URL_DEVELOP_GOERLI)
     config.push({
-      networkId: 4,
-      url_production: API_URL_PRODUCTION_RINKEBY,
-      url_develop: API_URL_DEVELOP_RINKEBY,
+      networkId: 5,
+      url_production: API_URL_PRODUCTION_GOERLI,
+      url_develop: API_URL_DEVELOP_GOERLI,
     })
   const dexPriceEstimatorApi = new AdditionalServicesApiImpl(config)
 

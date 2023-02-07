@@ -28,7 +28,7 @@ export const ALL_TOKENS: AllTokens = [
     },
     {
       [ChainId.MAINNET]: {},
-      [ChainId.RINKEBY]: {},
+      [ChainId.GÖRLI]: {},
       [ChainId.XDAI]: {},
       [ChainId.MATIC]: {},
     },
