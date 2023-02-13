@@ -48,12 +48,16 @@ jobs:
         env:
           REACT_APP_NETWORK_URL_GOERLI: https://goerli.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_GOERLI: http://44.203.242.67:8080/
+          REACT_APP_GRAPH_API_URL_GOERLI: https://api.thegraph.com/subgraphs/name/aireshbhat/gnosisauctiongoerli
           REACT_APP_NETWORK_URL_XDAI: https://rpc.xdaichain.com/
           REACT_APP_ADDITIONAL_SERVICES_API_URL_XDAI: http://54.80.73.189:8080/
+          REACT_APP_GRAPH_API_URL_XDAI: https://api.thegraph.com/subgraphs/name/aireshbhat/gnosisauction
           REACT_APP_NETWORK_URL_MAINNET: https://mainnet.infura.io/v3/${{ secrets.INFURA_PROJECT_KEY_DEV }}
           REACT_APP_ADDITIONAL_SERVICES_API_URL_MAINNET: http://100.25.191.22:8080/
+          REACT_APP_GRAPH_API_URL_MAINNET: https://api.thegraph.com/subgraphs/name/aireshbhat/gnosisauctionservices
           REACT_APP_NETWORK_URL_POLYGON: https://polygon-rpc.com
           REACT_APP_ADDITIONAL_SERVICES_API_URL_POLYGON: http://54.91.90.23:8080/
+          REACT_APP_GRAPH_API_URL_POLYGON: https://api.thegraph.com/subgraphs/name/aireshbhat/gnosisauctionpolygon
       - name: Get PR number
         uses: jwalton/gh-find-current-pr@v1
         id: findPr
