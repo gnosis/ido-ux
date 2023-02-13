@@ -1,9 +1,22 @@
+import {
+  ApolloClient,
+  ApolloQueryResult,
+  DocumentNode,
+  InMemoryCache,
+  NormalizedCacheObject,
+  gql,
+} from '@apollo/client'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { Order, decodeOrder, encodeOrder } from '../hooks/Order'
 import { AuctionInfo } from '../hooks/useAllAuctionInfos'
 import { AuctionInfoDetail } from '../hooks/useAuctionDetails'
 import { getLogger } from '../utils/logger'
+import {
+  GET_ALL_AUCTION_DETAILS,
+  GET_DETAILS_OF_MOST_INTERESTING_AUCTIONS,
+  GET_DETAILS_OF_MOST_INTERESTING_CLOSED_AUCTIONS,
+} from './Queries'
 
 const logger = getLogger('AdditionalServicesApi')
 
@@ -77,7 +90,7 @@ interface AuctionDetailWithUserParticipationParams {
  */
 export interface PricePoint {
   price: number
-  volume: number
+  volume: string
 }
 
 /**
@@ -96,6 +109,8 @@ export interface AdditionalServicesEndpoint {
   networkId: number
   url_production: string
   url_develop?: string
+  graph_url_production: string
+  graph_url_develop?: string
 }
 function getAdditionalServiceUrl(baseUrl: string): string {
   return `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}api/v1/`
@@ -105,6 +120,7 @@ export type AdditionalServicesApiParams = AdditionalServicesEndpoint[]
 
 export class AdditionalServicesApiImpl implements AdditionalServicesApi {
   private urlsByNetwork: { [networkId: number]: string } = {}
+  private clientsByNetwork: { [networkId: number]: ApolloClient<NormalizedCacheObject> } = {}
 
   public constructor(params: AdditionalServicesApiParams) {
     params.forEach((endpoint) => {
@@ -114,6 +130,15 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
             ? endpoint.url_production
             : endpoint.url_develop || endpoint.url_production, // fallback on required url_production
         )
+      }
+      if (endpoint.graph_url_develop || endpoint.graph_url_production) {
+        this.clientsByNetwork[endpoint.networkId] = new ApolloClient({
+          uri:
+            process.env.PRICE_ESTIMATOR_URL === 'production'
+              ? endpoint.graph_url_production
+              : endpoint.graph_url_develop || endpoint.graph_url_production,
+          cache: new InMemoryCache(),
+        })
       }
     })
   }
@@ -171,11 +196,23 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     return url
   }
 
+  public getMostInterestingAuctionDetailsQuery(): DocumentNode {
+    return gql(GET_DETAILS_OF_MOST_INTERESTING_AUCTIONS)
+  }
+
+  public getMostInterestingClosedAuctionDetailsQuery(): DocumentNode {
+    return gql(GET_DETAILS_OF_MOST_INTERESTING_CLOSED_AUCTIONS)
+  }
+
   public getAllAuctionDetailsUrl(networkId: number): string {
     const baseUrl = this._getBaseUrl(networkId)
 
     const url = `${baseUrl}get_all_auction_with_details/`
     return url
+  }
+
+  public getAllAuctionDetailsQuery(): DocumentNode {
+    return gql(GET_ALL_AUCTION_DETAILS)
   }
 
   public getAllAuctionDetailsWithUserParticipationUrl(
@@ -250,11 +287,13 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
 
   public async getAllAuctionDetails(): Promise<Maybe<AuctionInfo[]>> {
     try {
-      const promises: Promise<Response>[] = []
+      const promises: Promise<ApolloQueryResult<any>>[] = []
       for (const networkId in this.urlsByNetwork) {
-        const url = await this.getAllAuctionDetailsUrl(Number(networkId))
+        const client = this._getApolloClient(networkId)
+        const query = this.getAllAuctionDetailsQuery()
+        // const url = await this.getAllAuctionDetailsUrl(Number(networkId))
 
-        promises.push(fetch(url))
+        promises.push(client.query({ query }))
       }
       const results = await Promise.allSettled(promises)
       const allAuctions = []
@@ -263,15 +302,15 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
           logger.error('Error getting all auction details without user participation: ', res.reason)
         }
         if (res.status === 'fulfilled') {
-          if (!res.value.ok) {
+          if (res.value.error) {
             // backend returns {"message":"invalid url query"}
             // for bad requests
             logger.error(
               'Error getting all auction details without user participation: ',
-              res.value.json(),
+              res.value.error,
             )
           } else {
-            allAuctions.push(await res.value.json())
+            allAuctions.push(await res.value.data.auctionDetails)
           }
         }
       }
@@ -310,8 +349,13 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     closedAuctions = false,
   ): Promise<Maybe<AuctionInfo[]>> {
     try {
-      const promises: Promise<Response>[] = []
+      const promises: Promise<ApolloQueryResult<any>>[] = []
       for (const networkId in this.urlsByNetwork) {
+        const client = this._getApolloClient(networkId)
+        const query = closedAuctions
+          ? this.getMostInterestingClosedAuctionDetailsQuery()
+          : this.getMostInterestingAuctionDetailsQuery()
+
         const fn = closedAuctions
           ? this.getMostInterestingClosedAuctionDetailsUrl
           : this.getMostInterestingAuctionDetailsUrl
@@ -320,12 +364,23 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
           numberOfAuctions: 4,
         })
 
-        promises.push(fetch(url))
+        promises.push(
+          client.query({
+            query,
+            variables: {
+              // unix timestamp in seconds
+              currentTimeStamp: Math.round(new Date().getTime() / 1000),
+              count: 4,
+            },
+          }),
+        )
       }
 
       // The Promise.allSettled() method returns a promise that resolves
       // after all of the given promises have either fulfilled or rejected.
-      const results: PromiseSettledResult<Response>[] = await Promise.allSettled(promises)
+      const results: PromiseSettledResult<ApolloQueryResult<any>>[] = await Promise.allSettled(
+        promises,
+      )
       const allInterestingAuctions = []
       for (const res of results) {
         if (res.status === 'rejected') {
@@ -333,12 +388,12 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
         }
 
         if (res.status === 'fulfilled') {
-          if (!res.value.ok) {
+          if (res.value.error) {
             // backend returns {"message":"invalid url query"}
             // for bad requests
-            logger.error('Error getting most interesting auction details: ', res.value.json())
+            logger.error('Error getting most interesting auction details: ', res.value.error)
           } else {
-            allInterestingAuctions.push(await res.value.json())
+            allInterestingAuctions.push(await res.value.data.auctionDetails)
           }
         }
       }
@@ -523,5 +578,16 @@ export class AdditionalServicesApiImpl implements AdditionalServicesApi {
     }
 
     return baseUrl
+  }
+
+  private _getApolloClient(networkId: string): ApolloClient<NormalizedCacheObject> {
+    const client = this.clientsByNetwork[networkId]
+    if (typeof client === 'undefined') {
+      throw new Error(
+        `REACT_APP_GRAPH_API_URL must be a defined environment variable for network ${networkId}`,
+      )
+    }
+
+    return client
   }
 }

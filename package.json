@@ -64,6 +64,7 @@
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.13",
     "@anxolin/walletconnect-connector": "^6.1.9",
+    "@apollo/client": "^3.7.7",
     "@babel/core": "^7.16.5",
     "@babel/helper-define-map": "^7.16.0",
     "@ethersproject/address": "^5.0.0-beta.134",
@@ -104,6 +105,7 @@
     "csstype": "^3.0.8",
     "cypress": "^4.5.0",
     "decimal.js": "^10.2.1",
+    "graphql": "^16.6.0",
     "i18next": "^21.6.4",
     "i18next-browser-languagedetector": "^6.1.2",
     "i18next-xhr-backend": "^2.0.1",

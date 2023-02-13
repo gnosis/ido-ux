@@ -244,7 +244,7 @@ const AuctionInfoCard: React.FC<Props> = (props) => {
         <Selling>
           Selling{' '}
           <span title={auctionInfo.order.volume + ' ' + auctionInfo.symbolAuctioningToken}>
-            {abbreviation(auctionInfo.order.volume.toFixed(2)) + ` `}
+            {abbreviation(parseFloat(auctionInfo.order.volume).toFixed(2)) + ` `}
           </span>
           {auctionSymbolAuctioningToken}
         </Selling>
